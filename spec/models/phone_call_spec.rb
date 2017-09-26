@@ -31,7 +31,7 @@ RSpec.describe PhoneCall do
     end
   end
 
-  describe "state_machine", :focus do
+  describe "state_machine" do
     def assert_transitions!
       is_expected.to transition_from(:new).to(:queued).on_event(:queue)
     end
@@ -45,5 +45,25 @@ RSpec.describe PhoneCall do
     end
 
     it { assert_remote_response! }
+  end
+
+  describe ".not_recent" do
+    let(:not_recent) {
+      create(
+        factory,
+        :created_at => described_class::DEFAULT_TIME_CONSIDERED_RECENT_SECONDS.seconds.ago
+      )
+    }
+
+    def setup_scenario
+      create(factory)
+      not_recent
+    end
+
+    before do
+      setup_scenario
+    end
+
+    it { expect(described_class.not_recent).to match_array([not_recent]) }
   end
 end

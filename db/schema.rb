@@ -23,6 +23,7 @@ ActiveRecord::Schema.define(version: 20170926070754) do
     t.string "status", null: false
     t.string "remote_call_id"
     t.string "remote_status"
+    t.text "remote_error_message"
     t.text "remote_response", default: "{}", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

@@ -110,6 +110,12 @@ RSpec.describe PhoneNumber do
         let(:asserted_results) { [phone_number_last_attempt_completed] }
         it { assert_scope! }
       end
+
+      context "failed or completed" do
+        let(:status) { [:failed, :completed] }
+        let(:asserted_results) { [phone_number_last_attempt_failed, phone_number_last_attempt_completed] }
+        it { assert_scope! }
+      end
     end
 
     describe ".no_phone_calls_or_last_attempt(status)" do
@@ -119,7 +125,7 @@ RSpec.describe PhoneNumber do
       it { assert_scope! }
     end
 
-    describe ".no_phone_calls", :focus do
+    describe ".no_phone_calls" do
       let(:results) { described_class.no_phone_calls }
       let(:asserted_results) { [phone_number_with_no_calls] }
       it { assert_scope! }

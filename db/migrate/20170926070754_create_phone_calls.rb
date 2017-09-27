@@ -5,6 +5,7 @@ class CreatePhoneCalls < ActiveRecord::Migration[5.1]
       t.string(:status, :null => false)
       t.string(:remote_call_id, :index => {:unique => true})
       t.string(:remote_status)
+      t.text(:remote_error_message)
       t.text(:remote_response, :null => false, :default => '{}')
       t.timestamps
     end

@@ -33,7 +33,14 @@ RSpec.describe PhoneCall do
 
   describe "state_machine" do
     def assert_transitions!
-      is_expected.to transition_from(:created).to(:queued).on_event(:queue)
+      is_expected.to transition_from(:created).to(:scheduling).on_event(:schedule)
+      is_expected.to transition_from(:scheduling).to(:errored).on_event(:queue)
+    end
+
+    context "remote_call_id is present" do
+      subject { build(factory, :remote_call_id => "1234") }
+
+      it { is_expected.to transition_from(:scheduling).to(:queued).on_event(:queue) }
     end
 
     it { assert_transitions! }

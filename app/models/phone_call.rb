@@ -10,16 +10,37 @@ class PhoneCall < ApplicationRecord
 
   include AASM
 
-  aasm :column => :status do
+  aasm :column => :status, :whiny_transitions => false do
     state :created, :initial => true
+    state :scheduling
     state :queued
+    state :errored
     state :failed
     state :completed
 
-    event :queue do
-      transitions :from => :created,
-                  :to => :queued
+    event :schedule do
+      transitions(
+        :from => :created,
+        :to => :scheduling
+      )
     end
+
+    event :queue do
+      transitions(
+        :from => :scheduling,
+        :to => :queued,
+        :guard => :has_remote_call_id?
+      )
+
+      transitions(
+        :from => :scheduling,
+        :to => :errored
+      )
+    end
+  end
+
+  def has_remote_call_id?
+    remote_call_id?
   end
 
   def self.not_recently_created

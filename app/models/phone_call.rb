@@ -1,5 +1,5 @@
 class PhoneCall < ApplicationRecord
-  DEFAULT_TIME_CONSIDERED_RECENT_SECONDS = 60
+  DEFAULT_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS = 60
 
   belongs_to :phone_number
 
@@ -11,20 +11,22 @@ class PhoneCall < ApplicationRecord
   include AASM
 
   aasm :column => :status do
-    state :new, :initial => true
+    state :created, :initial => true
     state :queued
+    state :failed
+    state :completed
 
     event :queue do
-      transitions :from => :new,
+      transitions :from => :created,
                   :to => :queued
     end
   end
 
-  def self.not_recent
-    where(arel_table[:created_at].lt(time_considered_recent_seconds.seconds.ago))
+  def self.not_recently_created
+    where(arel_table[:created_at].lt(time_considered_recently_created_seconds.seconds.ago))
   end
 
-  def self.time_considered_recent_seconds
-    ENV["SOMLENG_SIMPLE_CFM_TIME_CONSIDERED_RECENT_SECONDS"] || DEFAULT_TIME_CONSIDERED_RECENT_SECONDS
+  def self.time_considered_recently_created_seconds
+    (ENV["PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS"] || DEFAULT_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS).to_i
   end
 end

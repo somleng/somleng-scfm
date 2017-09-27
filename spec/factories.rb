@@ -3,7 +3,11 @@ FactoryGirl.define do
     n.to_s
   end
 
+  factory :callout do
+  end
+
   factory :phone_number do
+    callout
     msisdn { generate(:somali_msisdn) }
   end
 

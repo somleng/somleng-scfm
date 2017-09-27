@@ -33,7 +33,7 @@ RSpec.describe PhoneCall do
 
   describe "state_machine" do
     def assert_transitions!
-      is_expected.to transition_from(:new).to(:queued).on_event(:queue)
+      is_expected.to transition_from(:created).to(:queued).on_event(:queue)
     end
 
     it { assert_transitions! }
@@ -47,11 +47,13 @@ RSpec.describe PhoneCall do
     it { assert_remote_response! }
   end
 
-  describe ".not_recent" do
+  describe ".not_recently_created" do
+    let(:results) { described_class.not_recently_created }
+
     let(:not_recent) {
       create(
         factory,
-        :created_at => described_class::DEFAULT_TIME_CONSIDERED_RECENT_SECONDS.seconds.ago
+        :created_at => time_considered_recently_created_seconds.to_i.seconds.ago
       )
     }
 
@@ -64,6 +66,28 @@ RSpec.describe PhoneCall do
       setup_scenario
     end
 
-    it { expect(described_class.not_recent).to match_array([not_recent]) }
+    def assert_scope!
+      expect(results).to match_array([not_recent])
+    end
+
+    context "using defaults" do
+      let(:time_considered_recently_created_seconds) {
+        described_class::DEFAULT_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS
+      }
+      it { assert_scope! }
+    end
+
+    context "setting PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS" do
+      let(:time_considered_recently_created_seconds) { "120" }
+
+      def setup_scenario
+        stub_env(
+          "PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS" => time_considered_recently_created_seconds
+        )
+        super
+      end
+
+      it { assert_scope! }
+    end
   end
 end

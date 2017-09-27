@@ -58,7 +58,7 @@ RSpec.describe CalloutTask do
     def assert_run!
       assert_somleng_client_request!
       expect(callout.phone_calls).to be_present
-      expect(callout.phone_calls.size).to eq(described_class::DEFAULT_MAX_PHONE_CALLS_TO_ENQUEUE)
+      expect(callout.phone_calls.size).to eq(described_class::DEFAULT_MAX_CALLS_TO_ENQUEUE)
       expect(asserted_queued_phone_number.phone_calls).to be_present
       expect(phone_number.phone_calls).not_to be_present
       queued_call = callout.phone_calls.first!

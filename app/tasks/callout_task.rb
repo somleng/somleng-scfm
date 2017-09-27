@@ -1,8 +1,8 @@
 class CalloutTask < ApplicationTask
-  DEFAULT_MAX_PHONE_CALLS_TO_ENQUEUE = 1
+  DEFAULT_MAX_CALLS_TO_ENQUEUE = 1
 
   def run!
-    callout.phone_numbers.no_phone_calls_or_last_attempt(:failed).limit(max_phone_calls_to_enqueue).find_each do |phone_number|
+    callout.phone_numbers.no_phone_calls_or_last_attempt(:failed).limit(max_calls_to_enqueue).find_each do |phone_number|
       phone_call = schedule_phone_call!(phone_number)
       enqueue_phone_call!(phone_call)
     end
@@ -35,8 +35,8 @@ class CalloutTask < ApplicationTask
     )
   end
 
-  def max_phone_calls_to_enqueue
-    (ENV["CALLOUT_TASK_MAX_PHONE_CALLS_TO_ENQUEUE"] || DEFAULT_MAX_PHONE_CALLS_TO_ENQUEUE).to_i
+  def max_calls_to_enqueue
+    (ENV["CALLOUT_TASK_MAX_CALLS_TO_ENQUEUE"] || DEFAULT_MAX_CALLS_TO_ENQUEUE).to_i
   end
 
   def callout

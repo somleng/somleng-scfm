@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CalloutScheduler do
+RSpec.describe CalloutTask do
   describe "#run!" do
     let(:callout) { create(:callout) }
     let(:msisdn) { "+85512345678" }
@@ -39,7 +39,7 @@ RSpec.describe CalloutScheduler do
         "SOMLENG_CLIENT_REST_API_BASE_URL" => somleng_client_rest_api_base_url,
         "SOMLENG_ACCOUNT_SID" => somleng_account_sid,
         "SOMLENG_AUTH_TOKEN" => somleng_auth_token,
-        "CALLOUT_SCHEDULER_DEFAULT_CALL_PARAMS" => default_call_params
+        "CALLOUT_TASK_DEFAULT_CALL_PARAMS" => default_call_params
       }
     end
 
@@ -71,7 +71,7 @@ RSpec.describe CalloutScheduler do
 
     def assert_run!
       expect(callout.phone_calls).to be_present
-      expect(callout.phone_calls.size).to eq(described_class::DEFAULT_MAX_PHONE_CALLS_TO_SCHEDULE)
+      expect(callout.phone_calls.size).to eq(described_class::DEFAULT_MAX_PHONE_CALLS_TO_ENQUEUE)
       expect(asserted_queued_phone_number.phone_calls).to be_present
       expect(phone_number.phone_calls).not_to be_present
       queued_call = callout.phone_calls.first!

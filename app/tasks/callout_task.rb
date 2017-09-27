@@ -1,10 +1,10 @@
-class CalloutScheduler < ApplicationScheduler
-  DEFAULT_MAX_PHONE_CALLS_TO_SCHEDULE = 1
+class CalloutTask < ApplicationTask
+  DEFAULT_MAX_PHONE_CALLS_TO_ENQUEUE = 1
 
   def run!
-    callout.phone_numbers.no_phone_calls_or_last_attempt(:failed).limit(max_phone_calls_to_schedule).find_each do |phone_number|
+    callout.phone_numbers.no_phone_calls_or_last_attempt(:failed).limit(max_phone_calls_to_enqueue).find_each do |phone_number|
       phone_call = schedule_phone_call!(phone_number)
-      queue_phone_call!(phone_call)
+      enqueue_phone_call!(phone_call)
     end
   end
 
@@ -16,7 +16,7 @@ class CalloutScheduler < ApplicationScheduler
     phone_call
   end
 
-  def queue_phone_call!(phone_call)
+  def enqueue_phone_call!(phone_call)
     begin
       response = queue_remote_call!(phone_call.phone_number)
       phone_call.remote_call_id = response.sid
@@ -35,8 +35,8 @@ class CalloutScheduler < ApplicationScheduler
     )
   end
 
-  def max_phone_calls_to_schedule
-    (ENV["CALLOUT_SCHEDULER_MAX_PHONE_CALLS_TO_SCHEDULE"] || DEFAULT_MAX_PHONE_CALLS_TO_SCHEDULE).to_i
+  def max_phone_calls_to_enqueue
+    (ENV["CALLOUT_TASK_MAX_PHONE_CALLS_TO_ENQUEUE"] || DEFAULT_MAX_PHONE_CALLS_TO_ENQUEUE).to_i
   end
 
   def callout
@@ -55,6 +55,6 @@ class CalloutScheduler < ApplicationScheduler
   end
 
   def default_call_params
-    @default_call_params ||= JSON.parse(ENV["CALLOUT_SCHEDULER_DEFAULT_CALL_PARAMS"] || "{}").symbolize_keys
+    @default_call_params ||= JSON.parse(ENV["CALLOUT_TASK_DEFAULT_CALL_PARAMS"] || "{}").symbolize_keys
   end
 end

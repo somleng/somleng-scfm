@@ -1,4 +1,4 @@
-class ApplicationScheduler
+class ApplicationTask
   def initialize(options = {})
   end
 

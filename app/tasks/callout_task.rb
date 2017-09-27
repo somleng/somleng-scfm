@@ -28,7 +28,7 @@ class CalloutTask < ApplicationTask
   end
 
   def queue_remote_call!(phone_number)
-    somleng_rest_client.api.account.calls.create(
+    somleng_client.api.account.calls.create(
       {
         :to => phone_number.msisdn
       }.merge(default_call_params)
@@ -45,13 +45,6 @@ class CalloutTask < ApplicationTask
 
   def find_callout
     Callout.first!
-  end
-
-  def somleng_rest_client
-    @somleng_rest_client ||= Somleng::REST::Client.new(
-      ENV["SOMLENG_ACCOUNT_SID"],
-      ENV["SOMLENG_AUTH_TOKEN"]
-    )
   end
 
   def default_call_params

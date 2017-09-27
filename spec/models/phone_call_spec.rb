@@ -32,18 +32,84 @@ RSpec.describe PhoneCall do
   end
 
   describe "state_machine" do
+    subject { create(factory, factory_attributes) }
+
+    def factory_attributes
+      {:status => current_status}
+    end
+
     def assert_transitions!
-      is_expected.to transition_from(:created).to(:scheduling).on_event(:schedule)
-      is_expected.to transition_from(:scheduling).to(:errored).on_event(:queue)
+      is_expected.to transition_from(current_status).to(asserted_new_status).on_event(event)
     end
 
-    context "remote_call_id is present" do
-      subject { build(factory, :remote_call_id => "1234") }
+    context "schedule!" do
+      let(:current_status) { :created }
+      let(:asserted_new_status) { :scheduling }
+      let(:event) { :schedule }
 
-      it { is_expected.to transition_from(:scheduling).to(:queued).on_event(:queue) }
+      it { assert_transitions! }
     end
 
-    it { assert_transitions! }
+    context "queue!" do
+      let(:current_status) { :scheduling }
+      let(:event) { :queue }
+
+      context "by default" do
+        let(:asserted_new_status) { :errored }
+        it { assert_transitions! }
+      end
+
+      context "remote_call_id is present" do
+        let(:asserted_new_status) { :queued }
+
+        def factory_attributes
+          super.merge(:remote_call_id => "1234")
+        end
+
+        it { assert_transitions! }
+      end
+    end
+
+    context "complete!" do
+      let(:event) { :complete }
+
+      def factory_attributes
+        super.merge(:remote_status => remote_status)
+      end
+
+      context "current_status: 'queued'" do
+        let(:current_status) { :queued }
+
+        ["in-progress", "ringing"].each do |remote_status|
+          context "remote_status: '#{remote_status}'" do
+            let(:remote_status) { remote_status }
+            let(:asserted_new_status) { :in_progress }
+
+            it { assert_transitions! }
+          end
+        end
+      end
+
+      [:queued, :in_progress].each do |current_status|
+        context "current_status: '#{current_status}'" do
+          let(:current_status) { current_status }
+
+          {
+            "busy" => :busy,
+            "failed" => :failed,
+            "no-answer" => :not_answered,
+            "canceled" => :canceled,
+            "completed" => :completed
+          }.each do |remote_status, asserted_new_status|
+            context "remote_status: '#{remote_status}'" do
+              let(:remote_status) { remote_status }
+              let(:asserted_new_status) { asserted_new_status }
+              it { assert_transitions! }
+            end
+          end
+        end
+      end
+    end
   end
 
   describe "#remote_response" do
@@ -54,47 +120,65 @@ RSpec.describe PhoneCall do
     it { assert_remote_response! }
   end
 
-  describe ".not_recently_created" do
-    let(:results) { described_class.not_recently_created }
-
-    let(:not_recent) {
-      create(
-        factory,
-        :created_at => time_considered_recently_created_seconds.to_i.seconds.ago
-      )
-    }
-
-    def setup_scenario
-      create(factory)
-      not_recent
-    end
-
+  describe "scopes" do
     before do
       setup_scenario
     end
 
-    def assert_scope!
-      expect(results).to match_array([not_recent])
-    end
-
-    context "using defaults" do
-      let(:time_considered_recently_created_seconds) {
-        described_class::DEFAULT_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS
-      }
-      it { assert_scope! }
-    end
-
-    context "setting PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS" do
-      let(:time_considered_recently_created_seconds) { "120" }
+    describe ".with_remote_call_id" do
+      let(:phone_call) { create(factory, :remote_call_id => "foo") }
+      let(:results) { described_class.with_remote_call_id }
 
       def setup_scenario
-        stub_env(
-          "PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS" => time_considered_recently_created_seconds
-        )
-        super
+        create(factory)
+        phone_call
+      end
+
+      def assert_scope!
+        expect(results).to match_array([phone_call])
       end
 
       it { assert_scope! }
+    end
+
+    describe ".not_recently_created" do
+      let(:results) { described_class.not_recently_created }
+
+      let(:not_recently_created) {
+        create(
+          factory,
+          :created_at => time_considered_recently_created_seconds.to_i.seconds.ago
+        )
+      }
+
+      def setup_scenario
+        create(factory)
+        not_recently_created
+      end
+
+      def assert_scope!
+        expect(results).to match_array([not_recently_created])
+      end
+
+      context "using defaults" do
+        let(:time_considered_recently_created_seconds) {
+          described_class::DEFAULT_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS
+        }
+        it { assert_scope! }
+      end
+
+      context "setting PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS" do
+        let(:time_considered_recently_created_seconds) { "120" }
+
+        def setup_scenario
+          stub_env(
+            "PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS" => time_considered_recently_created_seconds
+          )
+          super
+        end
+
+        it { assert_scope! }
+      end
     end
   end
 end

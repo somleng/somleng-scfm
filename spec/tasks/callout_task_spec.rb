@@ -2,6 +2,8 @@ require 'rails_helper'
 
 RSpec.describe CalloutTask do
   describe "#run!" do
+    include SomlengScfm::SpecHelpers::SomlengClientHelpers
+
     let(:callout) { create(:callout) }
     let(:msisdn) { "+85512345678" }
 
@@ -17,10 +19,6 @@ RSpec.describe CalloutTask do
       create(:phone_number, :callout => callout)
     }
 
-    let(:somleng_client_rest_api_host) { "api.twilio.com" }
-    let(:somleng_client_rest_api_base_url) { "https://api.twilio.com" }
-    let(:somleng_account_sid) { "account-sid" }
-    let(:somleng_auth_token) { "auth-token" }
     let(:default_call_params_from) { "1234" }
     let(:default_call_params_url) { "http://demo.twilio.com/docs/voice.xml" }
     let(:default_call_params_method) { "GET" }
@@ -34,49 +32,38 @@ RSpec.describe CalloutTask do
     }
 
     def env
-      {
-        "SOMLENG_CLIENT_REST_API_HOST" => somleng_client_rest_api_host,
-        "SOMLENG_CLIENT_REST_API_BASE_URL" => somleng_client_rest_api_base_url,
-        "SOMLENG_ACCOUNT_SID" => somleng_account_sid,
-        "SOMLENG_AUTH_TOKEN" => somleng_auth_token,
+      super.merge(
         "CALLOUT_TASK_DEFAULT_CALL_PARAMS" => default_call_params
-      }
+      )
     end
 
-    let(:asserted_remote_api_endpoint) {
-      "#{somleng_client_rest_api_base_url}/2010-04-01/Accounts/#{somleng_account_sid}/Calls.json"
-    }
+    def asserted_remote_api_endpoint
+      super("Calls")
+    end
 
-    let(:asserted_remote_response_status) { 200 }
     let(:asserted_remote_response_body) { { "sid" => "1234" }.to_json }
 
-    let(:asserted_remote_response) {
-      {
-        :status => asserted_remote_response_status,
-        :body => asserted_remote_response_body
-      }
-    }
-
     before do
-      stub_env(env)
-      stub_request(:post, asserted_remote_api_endpoint).to_return(asserted_remote_response)
       setup_scenario
     end
 
     def setup_scenario
+      stub_env(env)
+      stub_request(:post, asserted_remote_api_endpoint).to_return(asserted_remote_response)
       asserted_queued_phone_number
       phone_number
       subject.run!
     end
 
     def assert_run!
+      assert_somleng_client_request!
       expect(callout.phone_calls).to be_present
       expect(callout.phone_calls.size).to eq(described_class::DEFAULT_MAX_PHONE_CALLS_TO_ENQUEUE)
       expect(asserted_queued_phone_number.phone_calls).to be_present
       expect(phone_number.phone_calls).not_to be_present
       queued_call = callout.phone_calls.first!
-      request = WebMock.requests.last
-      request_body = WebMock::Util::QueryMapper.query_to_values(request.body)
+      request = client_requests.last
+      request_body = client_request_body(request)
       expect(request_body).to include(
         "From" => default_call_params_from,
         "To" => msisdn,

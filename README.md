@@ -8,13 +8,13 @@ Somleng Simple Call Flow Manager (Somleng SCFM) can be used to enqueue, throttle
 
 ## Getting Started
 
-## Pull the latest Docker image
+### Pull the latest Docker image
 
 ```
 $ sudo docker pull dwilkie/somleng-scfm
 ```
 
-## Setup Production Database (SQLite)
+### Setup Production Database (SQLite)
 
 ```
 $ sudo docker run --rm -v $(pwd)/db:/usr/src/app/db -e RAILS_ENV=production -e RAILS_DB_ADAPTER=sqlite3 -e DATABASE_NAME=somleng_scfm_production dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake db:create && bundle exec rake db:migrate'

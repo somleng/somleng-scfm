@@ -8,25 +8,49 @@ RSpec.shared_examples_for "has_metadata" do
   end
 
   describe ".metadata_has_value(key, value)" do
-    let(:key) { "foo" }
-    let(:value) { "bar" }
-    let(:metadata) { { key => value } }
+    let(:metadata_key) { "foo" }
+    let(:metadata_value) { "bar" }
+    let(:metadata) { { metadata_key => metadata_value } }
+
+    let(:key) { metadata_key }
+    let(:value) { metadata_value }
     let(:results) { described_class.metadata_has_value(key, value) }
-    let(:asserted_result) { create(factory, :metadata => metadata) }
+
+    let(:record_with_metadata) { create(factory, :metadata => metadata) }
+    let(:record_without_metadata) { create(factory) }
 
     before do
       setup_scenario
     end
 
     def setup_scenario
-      create(factory, :metadata => {"foo" => "baz"})
-      asserted_result
+      record_with_metadata
+      record_without_metadata
     end
 
     def assert_scope!
-      expect(results).to match_array([asserted_result])
+      expect(results).to match_array(asserted_results)
     end
 
-    it { assert_scope! }
+    context "passing a key and value matching existing metadata" do
+      let(:asserted_results) { [record_with_metadata] }
+      it { assert_scope! }
+    end
+
+    context "passing nil as the value" do
+      let(:value) { nil }
+
+      context "where the key exists (but it's value is nil)" do
+        let(:metadata_value) { nil }
+        let(:asserted_results) { [record_with_metadata, record_without_metadata] }
+
+        it { assert_scope! }
+      end
+
+      context "where the key does not exist" do
+        let(:asserted_results) { [record_without_metadata] }
+        it { assert_scope! }
+      end
+    end
   end
 end

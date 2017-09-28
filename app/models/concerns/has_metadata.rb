@@ -8,15 +8,20 @@ module HasMetadata
 
   module ClassMethods
     def metadata_has_value(key, value)
-      # from:
+      # Adapted from:
       # https://stackoverflow.com/questions/33432421/sqlite-json1-example-for-json-extract-set
       # http://guides.rubyonrails.org/active_record_postgresql.html#json
 
+      value_condition = value.nil? ? "IS NULL" : "= ?"
+
       if ActiveRecord::Base.connection.adapter_name.downcase == "sqlite"
-        where("json_extract(\"#{table_name}\".\"metadata\", ?) = ?", "$.#{key}", value)
+        sql = "json_extract(\"#{table_name}\".\"metadata\", ?) #{value_condition}"
+        key = "$.#{key}"
       else
-        where("\"#{table_name}\".\"metadata\" ->> ? = ?", key, value)
+        sql = "\"#{table_name}\".\"metadata\" ->> ? #{value_condition}"
       end
+
+      where(sql, *[key, value].compact)
     end
   end
 end

@@ -6,6 +6,7 @@ default: &default
   <% default_db_adapter = "sqlite3" %>
   <% rails_db_adapter = ENV.fetch("RAILS_DB_ADAPTER") { default_db_adapter } %>
 
+
 development:
   <<: *default
   database: <%= rails_db_adapter == "sqlite3" ? "db/development.sqlite3" : "somleng_scfm_development" %>
@@ -15,4 +16,5 @@ test:
 
 production:
   <<: *default
-  database: <%= rails_db_adapter == "sqlite3" ? "db/production.sqlite3" : "somleng_scfm_production" %>
+  <% database_name = ENV.fetch("DATABASE_NAME") { "somleng_scfm_production" } %>
+  database: <%= rails_db_adapter == "sqlite3" ?  "db/#{database_name}.sqlite3" : database_name %>

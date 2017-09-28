@@ -19,6 +19,7 @@ gem 'aasm'
 gem 'phony_rails'
 gem 'phony'
 gem 'twilio-ruby'
+gem 'httparty'
 
 group :development, :test do
   gem 'pry'

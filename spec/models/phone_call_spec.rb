@@ -32,6 +32,21 @@ RSpec.describe PhoneCall do
     end
   end
 
+  describe "optimistic locking" do
+    subject { create(factory) }
+
+    def assert_optimistic_locking!
+      process1 = described_class.find(subject.id)
+      process2 = described_class.find(subject.id)
+      process1.metadata["foo"] = "bar"
+      process1.save!
+      process2.metadata["foo"] = "bar"
+      expect { process2.save! }.to raise_error(ActiveRecord::StaleObjectError)
+    end
+
+    it { assert_optimistic_locking! }
+  end
+
   describe "state_machine" do
     subject { create(factory, factory_attributes) }
 
@@ -71,43 +86,42 @@ RSpec.describe PhoneCall do
       end
     end
 
+    context "fetch_status!" do
+      let(:current_status) { :queued }
+      let(:asserted_new_status) { :fetching_status }
+      let(:event) { :fetch_status }
+
+      it { assert_transitions! }
+    end
+
     context "complete!" do
       let(:event) { :complete }
+      let(:current_status) { :fetching_status }
 
       def factory_attributes
         super.merge(:remote_status => remote_status)
       end
 
-      context "current_status: 'queued'" do
-        let(:current_status) { :queued }
+      ["in-progress", "ringing"].each do |remote_status|
+        context "remote_status: '#{remote_status}'" do
+          let(:remote_status) { remote_status }
+          let(:asserted_new_status) { :in_progress }
 
-        ["in-progress", "ringing"].each do |remote_status|
-          context "remote_status: '#{remote_status}'" do
-            let(:remote_status) { remote_status }
-            let(:asserted_new_status) { :in_progress }
-
-            it { assert_transitions! }
-          end
+          it { assert_transitions! }
         end
       end
 
-      [:queued, :in_progress].each do |current_status|
-        context "current_status: '#{current_status}'" do
-          let(:current_status) { current_status }
-
-          {
-            "busy" => :busy,
-            "failed" => :failed,
-            "no-answer" => :not_answered,
-            "canceled" => :canceled,
-            "completed" => :completed
-          }.each do |remote_status, asserted_new_status|
-            context "remote_status: '#{remote_status}'" do
-              let(:remote_status) { remote_status }
-              let(:asserted_new_status) { asserted_new_status }
-              it { assert_transitions! }
-            end
-          end
+      {
+        "busy" => :busy,
+        "failed" => :failed,
+        "no-answer" => :not_answered,
+        "canceled" => :canceled,
+        "completed" => :completed
+      }.each do |remote_status, asserted_new_status|
+        context "remote_status: '#{remote_status}'" do
+          let(:remote_status) { remote_status }
+          let(:asserted_new_status) { asserted_new_status }
+          it { assert_transitions! }
         end
       end
     end

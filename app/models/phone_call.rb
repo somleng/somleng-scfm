@@ -27,6 +27,7 @@ class PhoneCall < ApplicationRecord
     state :scheduling
     state :queued
     state :errored
+    state :fetching_status
     state :failed
     state :in_progress
     state :busy
@@ -54,28 +55,35 @@ class PhoneCall < ApplicationRecord
       )
     end
 
+    event :fetch_status do
+      transitions(
+        :from => :queued,
+        :to => :fetching_status
+      )
+    end
+
     event :complete do
-      transitions :from => :queued,
+      transitions :from => :fetching_status,
                   :to => :in_progress,
                   :if => :remote_status_in_progress?
 
-      transitions :from => [:queued, :in_progress],
+      transitions :from => :fetching_status,
                   :to => :busy,
                   :if => :remote_status_busy?
 
-      transitions :from => [:queued, :in_progress],
+      transitions :from => :fetching_status,
                   :to => :failed,
                   :if => :remote_status_failed?
 
-      transitions :from => [:queued, :in_progress],
+      transitions :from => :fetching_status,
                   :to => :not_answered,
                   :if => :remote_status_not_answered?
 
-      transitions :from => [:queued, :in_progress],
+      transitions :from => :fetching_status,
                   :to => :canceled,
                   :if => :remote_status_canceled?
 
-      transitions :from => [:queued, :in_progress],
+      transitions :from => :fetching_status,
                   :to => :completed,
                   :if => :remote_status_completed?
     end

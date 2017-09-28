@@ -1,13 +1,21 @@
 class PhoneCallUpdaterTask < ApplicationTask
   def run!
-    PhoneCall.queued.with_remote_call_id.not_recently_created.limit(num_calls_to_fetch).find_each do |phone_call|
-      update_from_remote_call!(phone_call)
+    PhoneCall.waiting_for_completion.with_remote_call_id.not_recently_created.limit(num_calls_to_fetch).find_each do |phone_call|
+      begin
+        mark_as_fetching_status!(phone_call)
+        fetch_remote!(phone_call)
+      rescue ActiveRecord::StaleObjectError
+      end
     end
   end
 
   private
 
-  def update_from_remote_call!(phone_call)
+  def mark_as_fetching_status!(phone_call)
+    phone_call.fetch_status!
+  end
+
+  def fetch_remote!(phone_call)
     response = somleng_client.api.calls(phone_call.remote_call_id).fetch
     phone_call.remote_status = response.status
     phone_call.remote_response = response.instance_variable_get(:@properties).compact

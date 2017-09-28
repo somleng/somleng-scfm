@@ -97,6 +97,7 @@ GEM
     nio4r (2.1.0)
     nokogiri (1.8.1)
       mini_portile2 (~> 2.3.0)
+    pg (0.21.0)
     phony (2.15.48)
     phony_rails (0.14.6)
       activesupport (>= 3.0)
@@ -219,6 +220,7 @@ DEPENDENCIES
   factory_girl_rails
   jbuilder (~> 2.5)
   listen (>= 3.0.5, < 3.2)
+  pg
   phony
   phony_rails
   pry

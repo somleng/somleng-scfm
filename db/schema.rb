@@ -25,6 +25,7 @@ ActiveRecord::Schema.define(version: 20170926070754) do
     t.string "remote_status"
     t.text "remote_error_message"
     t.text "remote_response", default: "{}", null: false
+    t.text "metadata", default: "{}", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["phone_number_id"], name: "index_phone_calls_on_phone_number_id"
@@ -34,6 +35,7 @@ ActiveRecord::Schema.define(version: 20170926070754) do
   create_table "phone_numbers", force: :cascade do |t|
     t.integer "callout_id", null: false
     t.string "msisdn", null: false
+    t.text "metadata", default: "{}", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["callout_id", "msisdn"], name: "index_phone_numbers_on_callout_id_and_msisdn", unique: true

@@ -6,7 +6,9 @@ class CreatePhoneCalls < ActiveRecord::Migration[5.1]
       t.string(:remote_call_id, :index => {:unique => true})
       t.string(:remote_status)
       t.text(:remote_error_message)
-      t.text(:remote_response, :null => false, :default => '{}')
+      json_column_type = ActiveRecord::Base.connection.adapter_name.downcase == "postgresql" ? :json : :text
+      t.public_send(json_column_type, :remote_response, :null => false, :default => '{}')
+      t.public_send(json_column_type, :metadata, :null => false, :default => '{}')
       t.timestamps
     end
   end

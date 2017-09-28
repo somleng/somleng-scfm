@@ -14,7 +14,8 @@ class PhoneCall < ApplicationRecord
 
   belongs_to :phone_number
 
-  serialize :remote_response, JSON
+  include HasMetadata
+  conditionally_serialize(:remote_response, JSON)
 
   validates :remote_call_id, :uniqueness => {:case_sensitive => false, :allow_nil => true}
   validates :status, :presence => true

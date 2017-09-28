@@ -38,6 +38,10 @@ class CalloutTask < ApplicationTask
     )
   end
 
+  def somleng_client
+    @somleng_client ||= Somleng::Client.new
+  end
+
   def callout
     @callout ||= find_callout
   end

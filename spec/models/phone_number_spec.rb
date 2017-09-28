@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe PhoneNumber do
   let(:factory) { :phone_number }
+  include_examples "has_metadata"
 
   describe "associations" do
     def assert_associations!

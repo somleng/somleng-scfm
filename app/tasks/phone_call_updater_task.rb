@@ -1,6 +1,6 @@
 class PhoneCallUpdaterTask < ApplicationTask
   def run!
-    PhoneCall.queued.with_remote_call_id.not_recently_created.limit(max_calls_to_fetch).find_each do |phone_call|
+    PhoneCall.queued.with_remote_call_id.not_recently_created.limit(num_calls_to_fetch).find_each do |phone_call|
       update_from_remote_call!(phone_call)
     end
   end
@@ -12,6 +12,14 @@ class PhoneCallUpdaterTask < ApplicationTask
     phone_call.remote_status = response.status
     phone_call.remote_response = response.instance_variable_get(:@properties).compact
     phone_call.complete!
+  end
+
+  def somleng_client
+    @somleng_client ||= Somleng::Client.new
+  end
+
+  def num_calls_to_fetch
+    max_calls_to_fetch
   end
 
   def max_calls_to_fetch

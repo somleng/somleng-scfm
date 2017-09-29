@@ -36,100 +36,119 @@ RSpec.describe PhoneNumber do
     end
   end
 
-  describe "scopes relating to phone calls" do
-    let(:callout) { create(:callout) }
-
-    let(:phone_number_with_no_calls) {
-      create(
-        :phone_number, :callout => callout
-      )
-    }
-
-    let(:phone_number_last_attempt_failed) {
-      create_phone_number_last_attempt(
-        :failed,
-        :previous_attempt => :completed,
-        :callout => callout
-      )
-    }
-
-    let(:phone_number_last_attempt_completed) {
-      create_phone_number_last_attempt(
-        :completed,
-        :previous_attempt => :failed,
-        :callout => callout
-      )
-    }
-
-    def setup_scenario
-      phone_number_with_no_calls
-      phone_number_last_attempt_completed
-      phone_number_last_attempt_failed
-    end
-
+  describe "scopes" do
     before do
       setup_scenario
     end
 
-    def create_phone_number_last_attempt(status, options = {})
-      previous_attempt = options.delete(:previous_attempt)
-
-      first_attempt = build(
-        :phone_call,
-        :status => previous_attempt,
-        :phone_number => nil
-      ) if previous_attempt
-
-      last_attempt = build(
-        :phone_call,
-        :status => status,
-        :phone_number => nil
-      )
-
-      create(
-        :phone_number, {
-          :phone_calls => [first_attempt, last_attempt].compact
-        }.merge(options)
-      )
+    def setup_scenario
     end
 
     def assert_scope!
       expect(results).to match_array(asserted_results)
     end
 
-    describe ".last_phone_call_attempt(status)" do
-      let(:results) { described_class.last_phone_call_attempt(status) }
+    describe ".from_running_callout" do
+      let(:running_callout) { create(:callout, :status => :running) }
+      let(:phone_number) { create(factory, :callout => running_callout) }
+      let(:results) { described_class.from_running_callout }
+      let(:asserted_results) { [phone_number] }
 
-      context "failed" do
+      def setup_scenario
+        create(factory)
+        phone_number
+      end
+
+      it { assert_scope! }
+    end
+
+    context "relating to phone calls" do
+      let(:callout) { create(:callout) }
+
+      let(:phone_number_with_no_calls) {
+        create(
+          :phone_number, :callout => callout
+        )
+      }
+
+      let(:phone_number_last_attempt_failed) {
+        create_phone_number_last_attempt(
+          :failed,
+          :previous_attempt => :completed,
+          :callout => callout
+        )
+      }
+
+      let(:phone_number_last_attempt_completed) {
+        create_phone_number_last_attempt(
+          :completed,
+          :previous_attempt => :failed,
+          :callout => callout
+        )
+      }
+
+      def setup_scenario
+        phone_number_with_no_calls
+        phone_number_last_attempt_completed
+        phone_number_last_attempt_failed
+      end
+
+      def create_phone_number_last_attempt(status, options = {})
+        previous_attempt = options.delete(:previous_attempt)
+
+        first_attempt = build(
+          :phone_call,
+          :status => previous_attempt,
+          :phone_number => nil
+        ) if previous_attempt
+
+        last_attempt = build(
+          :phone_call,
+          :status => status,
+          :phone_number => nil
+        )
+
+        create(
+          :phone_number, {
+            :phone_calls => [first_attempt, last_attempt].compact
+          }.merge(options)
+        )
+      end
+
+      describe ".last_phone_call_attempt(status)" do
+        let(:results) { described_class.last_phone_call_attempt(status) }
+
+        context "failed" do
+          let(:status) { :failed }
+          let(:asserted_results) { [phone_number_last_attempt_failed] }
+          it { assert_scope! }
+        end
+
+        context "completed" do
+          let(:status) { :completed }
+          let(:asserted_results) { [phone_number_last_attempt_completed] }
+          it { assert_scope! }
+        end
+
+        context "failed or completed" do
+          let(:status) { [:failed, :completed] }
+          let(:asserted_results) { [phone_number_last_attempt_failed, phone_number_last_attempt_completed] }
+          it { assert_scope! }
+        end
+      end
+
+      describe ".no_phone_calls_or_last_attempt(status)" do
         let(:status) { :failed }
-        let(:asserted_results) { [phone_number_last_attempt_failed] }
+        let(:results) { described_class.no_phone_calls_or_last_attempt(status) }
+        let(:asserted_results) { [phone_number_with_no_calls, phone_number_last_attempt_failed] }
         it { assert_scope! }
       end
 
-      context "completed" do
-        let(:status) { :completed }
-        let(:asserted_results) { [phone_number_last_attempt_completed] }
+      describe ".no_phone_calls" do
+        let(:results) { described_class.no_phone_calls }
+        let(:asserted_results) { [phone_number_with_no_calls] }
         it { assert_scope! }
       end
-
-      context "failed or completed" do
-        let(:status) { [:failed, :completed] }
-        let(:asserted_results) { [phone_number_last_attempt_failed, phone_number_last_attempt_completed] }
-        it { assert_scope! }
-      end
-    end
-
-    describe ".no_phone_calls_or_last_attempt(status)" do
-      let(:status) { :failed }
-      let(:results) { described_class.no_phone_calls_or_last_attempt(status) }
-      let(:asserted_results) { [phone_number_with_no_calls, phone_number_last_attempt_failed] }
-      it { assert_scope! }
-    end
-
-    describe ".no_phone_calls" do
-      let(:results) { described_class.no_phone_calls }
-      let(:asserted_results) { [phone_number_with_no_calls] }
-      it { assert_scope! }
     end
   end
 end

@@ -4,7 +4,7 @@ class StartFlowRapidproTask < ApplicationTask
   RAPIDPRO_FLOW_STARTED_AT_KEY = "rapidpro_flow_started_at"
 
   def run!
-    PhoneCall.completed.metadata_has_value(RAPIDPRO_FLOW_STARTED_AT_KEY, nil).limit(num_flows_to_start).find_each do |phone_call|
+    phone_calls_to_start_flow.includes(:phone_number).limit(num_flows_to_start).find_each do |phone_call|
       begin
         mark_flow_as_started!(phone_call)
         start_flow!(phone_call)
@@ -15,13 +15,23 @@ class StartFlowRapidproTask < ApplicationTask
 
   private
 
+  def phone_calls_to_start_flow
+    PhoneCall.from_running_callout.completed.metadata_has_value(
+      RAPIDPRO_FLOW_STARTED_AT_KEY, nil
+    )
+  end
+
   def mark_flow_as_started!(phone_call)
     phone_call.metadata[RAPIDPRO_FLOW_STARTED_AT_KEY] = Time.now
     phone_call.save!
   end
 
   def start_flow!(phone_call)
-    response = rapidpro_client.start_flow!(start_flow_rapidpro_params)
+    response = rapidpro_client.start_flow!(
+      start_flow_rapidpro_params.merge(
+        {} # Dynamically override default params here
+      )
+    )
     phone_call.metadata[RAPIDPRO_FLOW_ID_KEY] = response["id"]
     phone_call.save!
   end

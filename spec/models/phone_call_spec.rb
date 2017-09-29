@@ -140,17 +140,32 @@ RSpec.describe PhoneCall do
       setup_scenario
     end
 
-    describe ".with_remote_call_id" do
-      let(:phone_call) { create(factory, :remote_call_id => "foo") }
-      let(:results) { described_class.with_remote_call_id }
+    def assert_scope!
+      expect(results).to match_array(asserted_results)
+    end
+
+    describe ".from_running_callout" do
+      let(:running_callout) { create(:callout, :status => :running) }
+      let(:phone_call) { create(factory, :callout => running_callout) }
+      let(:results) { described_class.from_running_callout }
+      let(:asserted_results) { [phone_call] }
 
       def setup_scenario
         create(factory)
         phone_call
       end
 
-      def assert_scope!
-        expect(results).to match_array([phone_call])
+      it { assert_scope! }
+    end
+
+    describe ".with_remote_call_id" do
+      let(:phone_call) { create(factory, :remote_call_id => "foo") }
+      let(:results) { described_class.with_remote_call_id }
+      let(:asserted_results) { [phone_call] }
+
+      def setup_scenario
+        create(factory)
+        phone_call
       end
 
       it { assert_scope! }
@@ -159,20 +174,18 @@ RSpec.describe PhoneCall do
     describe ".not_recently_created" do
       let(:results) { described_class.not_recently_created }
 
-      let(:not_recently_created) {
+      let(:phone_call) {
         create(
           factory,
           :created_at => time_considered_recently_created_seconds.to_i.seconds.ago
         )
       }
 
+      let(:asserted_results) { [phone_call] }
+
       def setup_scenario
         create(factory)
-        not_recently_created
-      end
-
-      def assert_scope!
-        expect(results).to match_array([not_recently_created])
+        phone_call
       end
 
       context "using defaults" do

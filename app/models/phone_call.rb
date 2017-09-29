@@ -104,6 +104,10 @@ class PhoneCall < ApplicationRecord
     queued.or(in_progress)
   end
 
+  def self.from_running_callout
+    joins(:phone_number => :callout).merge(Callout.running)
+  end
+
   def self.time_considered_recently_created_seconds
     (ENV["PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS"] || DEFAULT_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS).to_i
   end

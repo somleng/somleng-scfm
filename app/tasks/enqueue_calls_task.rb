@@ -24,15 +24,11 @@ class EnqueueCallsTask < ApplicationTask
   private
 
   def phone_numbers_to_call
-    with_running_callout(PhoneNumber, :callout).no_phone_calls_or_last_attempt(:failed)
+    PhoneNumber.from_running_callout.no_phone_calls_or_last_attempt(:failed)
   end
 
   def phone_calls_waiting_for_completion
-    with_running_callout(PhoneCall, :phone_number => :callout).waiting_for_completion
-  end
-
-  def with_running_callout(scope, joins)
-    scope.joins(joins).merge(Callout.running)
+    PhoneCall.waiting_for_completion
   end
 
   def schedule_phone_call!(phone_number)

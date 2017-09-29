@@ -11,6 +11,10 @@ class PhoneNumber < ApplicationRecord
 
   before_validation :normalize_msisdn
 
+  def self.from_running_callout
+    joins(:callout).merge(Callout.running)
+  end
+
   def self.no_phone_calls_or_last_attempt(status)
     where(
       :id => no_phone_calls

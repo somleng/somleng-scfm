@@ -12,6 +12,7 @@ RSpec.describe StartFlowRapidproTask do
       phone_call_to_run_flow
       phone_call_not_completed
       phone_call_flow_already_run
+      phone_call_callout_not_running
       subject.run!
     end
 
@@ -44,21 +45,38 @@ RSpec.describe StartFlowRapidproTask do
     let(:rapidpro_flow_id_key) { "rapidpro_flow_id" }
     let(:existing_rapidpro_flow_id) { 99 }
 
+    let(:running_callout) { create(:callout, :status => :running) }
+
     let(:phone_call_to_run_flow) {
-      create(:phone_call, :status => "completed")
+      create(
+        :phone_call,
+        :status => :completed,
+        :callout => running_callout
+      )
     }
 
     let(:phone_call_not_completed) {
-      create(:phone_call)
+      create(
+        :phone_call,
+        :callout => running_callout
+      )
     }
 
     let(:phone_call_flow_already_run) {
       create(
         :phone_call,
-        :status => "completed",
+        :status => :completed,
+        :callout => running_callout,
         :metadata => {
           rapidpro_flow_id_key => existing_rapidpro_flow_id
         }
+      )
+    }
+
+    let(:phone_call_callout_not_running) {
+      create(
+        :phone_call,
+        :status => :completed
       )
     }
 
@@ -111,9 +129,9 @@ RSpec.describe StartFlowRapidproTask do
         phone_call_flow_already_run.metadata[rapidpro_flow_id_key]
       ).to eq(existing_rapidpro_flow_id)
 
-      expect(
-        phone_call_not_completed.metadata[rapidpro_flow_id_key]
-      ).to eq(nil)
+      [phone_call_not_completed, phone_call_callout_not_running].each do |phone_call|
+        expect(phone_call.metadata[rapidpro_flow_id_key]).to eq(nil)
+      end
 
       expect(
         phone_call_to_run_flow.metadata[rapidpro_flow_id_key]

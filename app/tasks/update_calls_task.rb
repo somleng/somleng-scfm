@@ -1,4 +1,4 @@
-class PhoneCallUpdaterTask < ApplicationTask
+class UpdateCallsTask < ApplicationTask
   def run!
     PhoneCall.waiting_for_completion.with_remote_call_id.not_recently_created.limit(num_calls_to_fetch).find_each do |phone_call|
       begin
@@ -31,6 +31,6 @@ class PhoneCallUpdaterTask < ApplicationTask
   end
 
   def max_calls_to_fetch
-    ENV["PHONE_CALL_UPDATER_TASK_MAX_CALLS_TO_FETCH"].to_i if ENV["PHONE_CALL_UPDATER_TASK_MAX_CALLS_TO_FETCH"]
+    ENV["UPDATE_CALLS_TASK_MAX_CALLS_TO_FETCH"].to_i if ENV["UPDATE_CALLS_TASK_MAX_CALLS_TO_FETCH"]
   end
 end

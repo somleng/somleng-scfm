@@ -1,15 +1,15 @@
 namespace :task do
-  namespace :callout do
+  namespace :enqueue_calls do
     desc "Invokes EnqueueCallsTask#run!"
     task :run => :environment do
       EnqueueCallsTask.new.run!
     end
   end
 
-  namespace :phone_call_updater do
-    desc "Invokes PhoneCallUpdaterTask#run!"
+  namespace :update_calls do
+    desc "Invokes UpdateCallsTask#run!"
     task :run => :environment do
-      PhoneCallUpdaterTask.new.run!
+      UpdateCallsTask.new.run!
     end
   end
 

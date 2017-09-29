@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe PhoneCallUpdaterTask do
+RSpec.describe UpdateCallsTask do
   describe "#run!" do
     include SomlengScfm::SpecHelpers::SomlengClientHelpers
 

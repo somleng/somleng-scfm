@@ -58,7 +58,7 @@ RSpec.describe PhoneCall do
       is_expected.to transition_from(current_status).to(asserted_new_status).on_event(event)
     end
 
-    context "schedule!" do
+    describe "#schedule!" do
       let(:current_status) { :created }
       let(:asserted_new_status) { :scheduling }
       let(:event) { :schedule }
@@ -66,7 +66,7 @@ RSpec.describe PhoneCall do
       it { assert_transitions! }
     end
 
-    context "queue!" do
+    describe "#queue!" do
       let(:current_status) { :scheduling }
       let(:event) { :queue }
 
@@ -86,7 +86,7 @@ RSpec.describe PhoneCall do
       end
     end
 
-    context "fetch_status!" do
+    describe "#fetch_status!" do
       let(:current_status) { :queued }
       let(:asserted_new_status) { :fetching_status }
       let(:event) { :fetch_status }
@@ -94,7 +94,7 @@ RSpec.describe PhoneCall do
       it { assert_transitions! }
     end
 
-    context "complete!" do
+    describe "#complete!" do
       let(:event) { :complete }
       let(:current_status) { :fetching_status }
 

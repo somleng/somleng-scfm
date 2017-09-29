@@ -1,4 +1,4 @@
-module HasMetadata
+module MetadataHelpers
   extend ActiveSupport::Concern
   include ConditionalSerialization
 

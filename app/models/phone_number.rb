@@ -1,5 +1,5 @@
 class PhoneNumber < ApplicationRecord
-  include HasMetadata
+  include MetadataHelpers
 
   belongs_to :callout
   has_many :phone_calls

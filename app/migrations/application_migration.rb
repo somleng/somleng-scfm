@@ -8,6 +8,16 @@ class ApplicationMigration < ActiveRecord::Migration[5.1]
   end
 
   def adapter_postgresql?
-    ActiveRecord::Base.connection.adapter_name.downcase == "postgresql"
+    adapter_name == "postgresql"
+  end
+
+  def adapter_sqlite?
+    adapter_name == "sqlite"
+  end
+
+  private
+
+  def adapter_name
+    ActiveRecord::Base.connection.adapter_name.downcase
   end
 end

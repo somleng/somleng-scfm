@@ -1,4 +1,4 @@
-class CalloutTask < ApplicationTask
+class EnqueueCallsTask < ApplicationTask
   DEFAULT_MAX_CALLS_TO_ENQUEUE = 1
   DEFAULT_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE = 1
   DEFAULT_ENQUEUE_STRATEGY = "optimistic"
@@ -51,7 +51,7 @@ class CalloutTask < ApplicationTask
   end
 
   def enqueue_strategy
-    Hash[ENQUEUE_STRATEGIES.map {|k| [k, k] }][ENV["CALLOUT_TASK_ENQUEUE_STRATEGY"]] ||DEFAULT_ENQUEUE_STRATEGY
+    Hash[ENQUEUE_STRATEGIES.map {|k| [k, k] }][ENV["ENQUEUE_CALLS_TASK_ENQUEUE_STRATEGY"]] ||DEFAULT_ENQUEUE_STRATEGY
   end
 
   def num_calls_to_enqueue
@@ -70,14 +70,14 @@ class CalloutTask < ApplicationTask
   end
 
   def max_calls_to_enqueue
-    (ENV["CALLOUT_TASK_MAX_CALLS_TO_ENQUEUE"] || DEFAULT_MAX_CALLS_TO_ENQUEUE).to_i
+    (ENV["ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE"] || DEFAULT_MAX_CALLS_TO_ENQUEUE).to_i
   end
 
   def pessimistic_min_calls_to_enqueue
-    (ENV["CALLOUT_TASK_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE"] || DEFAULT_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE).to_i
+    (ENV["ENQUEUE_CALLS_TASK_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE"] || DEFAULT_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE).to_i
   end
 
   def default_call_params
-    @default_call_params ||= JSON.parse(ENV["CALLOUT_TASK_DEFAULT_CALL_PARAMS"] || "{}").symbolize_keys
+    @default_call_params ||= JSON.parse(ENV["ENQUEUE_CALLS_TASK_DEFAULT_CALL_PARAMS"] || "{}").symbolize_keys
   end
 end

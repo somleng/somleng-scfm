@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CalloutTask do
+RSpec.describe EnqueueCallsTask do
   describe "#run!" do
     include SomlengScfm::SpecHelpers::SomlengClientHelpers
 
@@ -33,7 +33,7 @@ RSpec.describe CalloutTask do
 
     def env
       super.merge(
-        "CALLOUT_TASK_DEFAULT_CALL_PARAMS" => default_call_params
+        "ENQUEUE_CALLS_TASK_DEFAULT_CALL_PARAMS" => default_call_params
       )
     end
 
@@ -103,8 +103,8 @@ RSpec.describe CalloutTask do
 
     def env
       {
-        "CALLOUT_TASK_MAX_CALLS_TO_ENQUEUE" => max_calls_to_enqueue.to_s,
-        "CALLOUT_TASK_ENQUEUE_STRATEGY" => strategy
+        "ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE" => max_calls_to_enqueue.to_s,
+        "ENQUEUE_CALLS_TASK_ENQUEUE_STRATEGY" => strategy
       }
     end
 
@@ -119,7 +119,7 @@ RSpec.describe CalloutTask do
       it { assert_num_calls_to_enqueue! }
     end
 
-    context "CALLOUT_TASK_ENQUEUE_STRATEGY=pessimistic" do
+    context "ENQUEUE_CALLS_TASK_ENQUEUE_STRATEGY=pessimistic" do
       let(:callout) { create(:callout) }
       let(:strategy) { "pessimistic" }
       let(:pessimistic_min_calls_to_enqueue) { 2 }
@@ -132,7 +132,7 @@ RSpec.describe CalloutTask do
 
       def env
         super.merge(
-          "CALLOUT_TASK_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE" => pessimistic_min_calls_to_enqueue.to_s
+          "ENQUEUE_CALLS_TASK_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE" => pessimistic_min_calls_to_enqueue.to_s
         )
       end
 

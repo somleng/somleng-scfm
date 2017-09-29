@@ -1,8 +1,8 @@
 namespace :task do
   namespace :callout do
-    desc "Invokes CalloutTask#run!"
+    desc "Invokes EnqueueCallsTask#run!"
     task :run => :environment do
-      CalloutTask.new.run!
+      EnqueueCallsTask.new.run!
     end
   end
 

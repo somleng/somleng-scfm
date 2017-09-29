@@ -14,7 +14,7 @@ module MetadataHelpers
 
       value_condition = value.nil? ? "IS NULL" : "= ?"
 
-      if ActiveRecord::Base.connection.adapter_name.downcase == "sqlite"
+      if database_adapter_helper.adapter_sqlite?
         sql = "json_extract(\"#{table_name}\".\"metadata\", ?) #{value_condition}"
         key = "$.#{key}"
       else

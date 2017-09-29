@@ -3,7 +3,7 @@ module ConditionalSerialization
 
   module ClassMethods
     def conditionally_serialize(*args)
-      serialize(*args) if ActiveRecord::Base.connection.adapter_name.downcase != "postgresql"
+      serialize(*args) if !database_adapter_helper.adapter_postgresql?
     end
   end
 end

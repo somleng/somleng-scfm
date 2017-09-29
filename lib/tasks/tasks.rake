@@ -3,7 +3,7 @@ namespace :task do
   Dir[Rails.root.join('app/tasks/**/*.rb')].each { |f| require f }
 
   ApplicationTask.descendants.each do |task_class|
-    namespace(task_class.to_s.underscore) do
+    namespace(task_class.to_s.underscore.sub(/_task$/, "")) do
       task_class.rake_tasks.each do |rake_task|
         desc("Invokes #{task_class}##{rake_task}")
 

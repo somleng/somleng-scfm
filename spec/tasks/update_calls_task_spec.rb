@@ -1,6 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe UpdateCallsTask do
+  describe ".rake_tasks" do
+    it { expect(described_class.rake_tasks).to eq([:run!]) }
+  end
+
   describe "#run!" do
     include SomlengScfm::SpecHelpers::SomlengClientHelpers
 

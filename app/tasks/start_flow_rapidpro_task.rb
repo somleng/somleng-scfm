@@ -13,6 +13,10 @@ class StartFlowRapidproTask < ApplicationTask
     end
   end
 
+  def self.rake_tasks
+    [:run!]
+  end
+
   private
 
   def phone_calls_to_start_flow

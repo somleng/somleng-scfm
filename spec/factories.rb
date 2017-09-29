@@ -4,6 +4,20 @@ FactoryGirl.define do
   end
 
   factory :callout do
+    trait :can_start do
+    end
+
+    trait :can_stop do
+      status "running"
+    end
+
+    trait :can_pause do
+      can_stop
+    end
+
+    trait :can_resume do
+      status "paused"
+    end
   end
 
   factory :phone_number do

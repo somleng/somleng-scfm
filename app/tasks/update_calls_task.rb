@@ -9,6 +9,10 @@ class UpdateCallsTask < ApplicationTask
     end
   end
 
+  def self.rake_tasks
+    [:run!]
+  end
+
   private
 
   def mark_as_fetching_status!(phone_call)

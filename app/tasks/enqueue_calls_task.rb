@@ -21,6 +21,10 @@ class EnqueueCallsTask < ApplicationTask
     ].max
   end
 
+  def self.rake_tasks
+    [:run!]
+  end
+
   private
 
   def phone_numbers_to_call

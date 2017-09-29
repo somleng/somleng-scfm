@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe RapidproStartFlowTask do
+RSpec.describe StartFlowRapidproTask do
   describe "#run!" do
     before do
       setup_scenario
@@ -70,24 +70,24 @@ RSpec.describe RapidproStartFlowTask do
     let(:rapidpro_api_version) { "v2" }
     let(:rapidpro_api_token) { "api-token" }
 
-    let(:rapidpro_start_flow_request_params_flow_id) {
+    let(:start_flow_rapidpro_request_params_flow_id) {
       "flow-id"
     }
 
-    let(:rapidpro_start_flow_request_urn_telegram_id) {
+    let(:start_flow_rapidpro_request_urn_telegram_id) {
       "telegram-id"
     }
 
-    let(:rapidpro_start_flow_request_urns) {
-      ["telegram:#{rapidpro_start_flow_request_urn_telegram_id}"]
+    let(:start_flow_rapidpro_request_urns) {
+      ["telegram:#{start_flow_rapidpro_request_urn_telegram_id}"]
     }
 
-    let(:rapidpro_start_flow_request_params) {
+    let(:start_flow_rapidpro_request_params) {
       {
-        "flow" => rapidpro_start_flow_request_params_flow_id,
+        "flow" => start_flow_rapidpro_request_params_flow_id,
         "groups" => [],
         "contacts" => [],
-        "urns" => rapidpro_start_flow_request_urns,
+        "urns" => start_flow_rapidpro_request_urns,
         "extra" => {}
       }
     }
@@ -97,7 +97,7 @@ RSpec.describe RapidproStartFlowTask do
         "RAPIDPRO_BASE_URL" => rapidpro_base_url,
         "RAPIDPRO_API_VERSION" => rapidpro_api_version,
         "RAPIDPRO_API_TOKEN" => rapidpro_api_token,
-        "RAPIDPRO_START_FLOW_TASK_REMOTE_REQUEST_PARAMS" => rapidpro_start_flow_request_params.to_json
+        "START_FLOW_RAPIDPRO_TASK_REMOTE_REQUEST_PARAMS" => start_flow_rapidpro_request_params.to_json
       }
     end
 
@@ -129,7 +129,7 @@ RSpec.describe RapidproStartFlowTask do
 
       expect(request_headers["Content-Type"]).to eq("application/json")
       expect(request_headers["Authorization"]).to eq("Token #{rapidpro_api_token}")
-      expect(request_body).to eq(rapidpro_start_flow_request_params)
+      expect(request_body).to eq(start_flow_rapidpro_request_params)
     end
 
     it { assert_run! }

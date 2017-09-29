@@ -13,10 +13,10 @@ namespace :task do
     end
   end
 
-  namespace :rapidpro_start_flow do
-    desc "Invokes RapidproStartFlowTask#run!"
+  namespace :start_flow_rapidpro do
+    desc "Invokes StartFlowRapidpro#run!"
     task :run => :environment do
-      RapidproStartFlowTask.new.run!
+      StartFlowRapidpro.new.run!
     end
   end
 end

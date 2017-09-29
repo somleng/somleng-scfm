@@ -1,7 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe EnqueueCallsTask do
-  let(:callout) { create(:callout) }
+  let(:callout_status) { :running }
+  let(:callout) { create(:callout, :status => callout_status) }
   let(:max_calls_to_enqueue) { nil }
   let(:num_phone_numbers_to_call) { 2 }
 
@@ -130,6 +131,7 @@ RSpec.describe EnqueueCallsTask do
 
     def setup_scenario
       phone_numbers_to_call
+      create(:phone_number) # callout not running
       create_list(:phone_call, num_queued_calls, :status => :queued, :callout => callout)
       super
     end

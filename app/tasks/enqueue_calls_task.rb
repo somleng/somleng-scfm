@@ -16,7 +16,7 @@ class EnqueueCallsTask < ApplicationTask
 
   def pessimistic_num_calls_to_enqueue
     [
-      ((max_calls_to_enqueue || phone_numbers_to_call.count) - callout.phone_calls.waiting_for_completion.count),
+      ((max_calls_to_enqueue || phone_numbers_to_call.count) - phone_calls_waiting_for_completion.count),
       pessimistic_min_calls_to_enqueue
     ].max
   end
@@ -24,7 +24,15 @@ class EnqueueCallsTask < ApplicationTask
   private
 
   def phone_numbers_to_call
-    callout.phone_numbers.no_phone_calls_or_last_attempt(:failed)
+    with_running_callout(PhoneNumber, :callout).no_phone_calls_or_last_attempt(:failed)
+  end
+
+  def phone_calls_waiting_for_completion
+    with_running_callout(PhoneCall, :phone_number => :callout).waiting_for_completion
+  end
+
+  def with_running_callout(scope, joins)
+    scope.joins(joins).merge(Callout.running)
   end
 
   def schedule_phone_call!(phone_number)
@@ -54,14 +62,6 @@ class EnqueueCallsTask < ApplicationTask
 
   def somleng_client
     @somleng_client ||= Somleng::Client.new
-  end
-
-  def callout
-    @callout ||= find_callout
-  end
-
-  def find_callout
-    Callout.first!
   end
 
   def num_calls_to_enqueue

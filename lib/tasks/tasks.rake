@@ -1,22 +1,16 @@
 namespace :task do
-  namespace :enqueue_calls do
-    desc "Invokes EnqueueCallsTask#run!"
-    task :run => :environment do
-      EnqueueCallsTask.new.run!
-    end
-  end
+  require Rails.root.join('app/tasks/application_task.rb')
+  Dir[Rails.root.join('app/tasks/**/*.rb')].each { |f| require f }
 
-  namespace :update_calls do
-    desc "Invokes UpdateCallsTask#run!"
-    task :run => :environment do
-      UpdateCallsTask.new.run!
-    end
-  end
+  ApplicationTask.descendants.each do |task_class|
+    namespace(task_class.to_s.underscore) do
+      task_class.rake_tasks.each do |rake_task|
+        desc("Invokes #{task_class}##{rake_task}")
 
-  namespace :start_flow_rapidpro do
-    desc "Invokes StartFlowRapidpro#run!"
-    task :run => :environment do
-      StartFlowRapidpro.new.run!
+        task(rake_task => :environment) do
+          task_class.new.public_send(rake_task)
+        end
+      end
     end
   end
 end

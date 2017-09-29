@@ -20,6 +20,8 @@ class PhoneCall < ApplicationRecord
   validates :remote_call_id, :uniqueness => {:case_sensitive => false, :allow_nil => true}
   validates :status, :presence => true
 
+  delegate :msisdn, :to => :phone_number
+
   include AASM
 
   aasm :column => :status, :whiny_transitions => false do

@@ -1,23 +1,32 @@
 require 'rails_helper'
 
 RSpec.describe EnqueueCallsTask do
-  describe "#run!" do
-    include SomlengScfm::SpecHelpers::SomlengClientHelpers
+  let(:callout) { create(:callout) }
+  let(:max_calls_to_enqueue) { nil }
+  let(:num_phone_numbers_to_call) { 2 }
 
-    let(:callout) { create(:callout) }
-    let(:msisdn) { "+85512345678" }
+  let(:phone_numbers_to_call) {
+    create_list(:phone_number, num_phone_numbers_to_call, :callout => callout)
+  }
 
-    let(:asserted_queued_phone_number) {
-      create(
-        :phone_number,
-        :callout => callout,
-        :msisdn => msisdn
+  before do
+    setup_scenario
+  end
+
+  def setup_scenario
+    stub_env(env)
+  end
+
+  def env
+    {
+      "ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE" => (
+        max_calls_to_enqueue && max_calls_to_enqueue.to_s
       )
     }
+  end
 
-    let(:asserted_not_queued_phone_number) {
-      create(:phone_number, :callout => callout)
-    }
+  describe "#run!" do
+    include SomlengScfm::SpecHelpers::SomlengClientHelpers
 
     let(:default_call_params_from) { "1234" }
     let(:default_call_params_url) { "http://demo.twilio.com/docs/voice.xml" }
@@ -42,42 +51,38 @@ RSpec.describe EnqueueCallsTask do
     end
 
     let(:asserted_remote_response_body) { { "sid" => "1234" }.to_json }
-
-    before do
-      setup_scenario
-    end
+    let(:asserted_called_phone_number) { phone_numbers_to_call[0] }
+    let(:asserted_phone_calls_count) { num_phone_numbers_to_call }
+    let(:asserted_remote_error_message) { nil }
 
     def setup_scenario
-      stub_env(env)
+      super
       stub_request(:post, asserted_remote_api_endpoint).to_return(asserted_remote_response)
-      asserted_queued_phone_number
-      asserted_not_queued_phone_number
+      phone_numbers_to_call
       subject.run!
     end
 
     def assert_run!
-      assert_somleng_client_request!
-      expect(callout.phone_calls).to be_present
-      expect(callout.phone_calls.size).to eq(described_class::DEFAULT_MAX_CALLS_TO_ENQUEUE)
-      expect(asserted_queued_phone_number.phone_calls).to be_present
-      expect(asserted_not_queued_phone_number.phone_calls).not_to be_present
+      expect(callout.phone_calls.size).to eq(asserted_phone_calls_count)
       queued_call = callout.phone_calls.first!
-      request = client_requests.last
-      request_body = client_request_body(request)
+
+      assert_somleng_client_request!
+      request = client_requests.first
+        request_body = client_request_body(request)
+
       expect(request_body).to include(
         "From" => default_call_params_from,
-        "To" => msisdn,
+        "To" => queued_call.msisdn,
         "Url" => default_call_params_url,
         "Method" => default_call_params_method
       )
+
       expect(queued_call.remote_error_message).to eq(asserted_remote_error_message)
-      expect(queued_call.status).to eq(asserted_status)
     end
 
     context "remote call was enqueued successfully" do
       let(:asserted_remote_response_status) { 200 }
       let(:asserted_status) { "queued" }
-      let(:asserted_remote_error_message) { nil }
       it { assert_run! }
     end
 
@@ -87,67 +92,81 @@ RSpec.describe EnqueueCallsTask do
       let(:asserted_status) { "errored" }
       it { assert_run! }
     end
+
+    context "ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE=1" do
+      let(:max_calls_to_enqueue) { 1 }
+      let(:asserted_phone_calls_count) { max_calls_to_enqueue }
+      it { assert_run! }
+    end
   end
 
-  describe "#num_calls_to_enqueue" do
-    let(:result) { subject.send(:num_calls_to_enqueue) }
-    let(:max_calls_to_enqueue) { 3 }
+  describe "#optimistic_num_calls_to_enqueue" do
+    let(:result) { subject.optimistic_num_calls_to_enqueue }
+    let(:asserted_result) { max_calls_to_enqueue }
 
-    before do
-      setup_scenario
-    end
-
-    def setup_scenario
-      stub_env(env)
-    end
-
-    def env
-      {
-        "ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE" => max_calls_to_enqueue.to_s,
-        "ENQUEUE_CALLS_TASK_ENQUEUE_STRATEGY" => strategy
-      }
-    end
-
-    def assert_num_calls_to_enqueue!
-      expect(result).to eq(asserted_num_calls_to_enqueue)
+    def assert_result!
+      expect(result).to eq(asserted_result)
     end
 
     context "by default" do
-      let(:strategy) { nil }
-      let(:asserted_num_calls_to_enqueue) { max_calls_to_enqueue }
-
-      it { assert_num_calls_to_enqueue! }
+      it { assert_result! }
     end
 
-    context "ENQUEUE_CALLS_TASK_ENQUEUE_STRATEGY=pessimistic" do
-      let(:callout) { create(:callout) }
-      let(:strategy) { "pessimistic" }
-      let(:pessimistic_min_calls_to_enqueue) { 2 }
-      let(:status) { "queued" }
+    context "ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE=1" do
+      let(:max_calls_to_enqueue) { 1 }
+      it { assert_result! }
+    end
+  end
 
-      def setup_scenario
-        create_list(:phone_call, currently_queued_calls, :status => status, :callout => callout)
-        super
+  describe "#pessimistic_num_calls_to_enqueue" do
+    let(:result) { subject.pessimistic_num_calls_to_enqueue }
+
+    def assert_result!
+      expect(result).to eq(asserted_result)
+    end
+
+    let(:pessimistic_min_calls_to_enqueue) { 1 }
+    let(:num_phone_numbers_to_call) { 3 }
+
+    def setup_scenario
+      phone_numbers_to_call
+      create_list(:phone_call, num_queued_calls, :status => :queued, :callout => callout)
+      super
+    end
+
+    def env
+      super.merge(
+        "ENQUEUE_CALLS_TASK_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE" => pessimistic_min_calls_to_enqueue.to_s
+      )
+    end
+
+    context "by default" do
+      context "no calls are queued" do
+        let(:num_queued_calls) { 0 }
+        let(:asserted_result) { num_phone_numbers_to_call }
+        it { assert_result! }
       end
 
-      def env
-        super.merge(
-          "ENQUEUE_CALLS_TASK_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE" => pessimistic_min_calls_to_enqueue.to_s
-        )
+      context "calls are queued" do
+        let(:num_queued_calls) { num_phone_numbers_to_call }
+        let(:asserted_result) { pessimistic_min_calls_to_enqueue }
+        it { assert_result! }
+      end
+    end
+
+    context "ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE=1" do
+      let(:max_calls_to_enqueue) { 2 }
+
+      context "no calls are queued" do
+        let(:num_queued_calls) { 0 }
+        let(:asserted_result) { max_calls_to_enqueue }
+        it { assert_result! }
       end
 
-      context "max calls are currently queued" do
-        let(:currently_queued_calls) { max_calls_to_enqueue }
-        let(:asserted_num_calls_to_enqueue) { pessimistic_min_calls_to_enqueue }
-
-        it { assert_num_calls_to_enqueue! }
-      end
-
-      context "no calls are currently queued" do
-        let(:currently_queued_calls) { 0 }
-        let(:asserted_num_calls_to_enqueue) { max_calls_to_enqueue }
-
-        it { assert_num_calls_to_enqueue! }
+      context "calls are queued" do
+        let(:num_queued_calls) { num_phone_numbers_to_call }
+        let(:asserted_result) { pessimistic_min_calls_to_enqueue }
+        it { assert_result! }
       end
     end
   end

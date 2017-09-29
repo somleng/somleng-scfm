@@ -16,12 +16,14 @@ module SomlengScfm::SpecHelpers::SomlengClientHelpers
   end
 
   def env
-    {
+    somleng_client_env = {
       "SOMLENG_CLIENT_REST_API_HOST" => somleng_client_rest_api_host,
       "SOMLENG_CLIENT_REST_API_BASE_URL" => somleng_client_rest_api_base_url,
       "SOMLENG_ACCOUNT_SID" => somleng_account_sid,
       "SOMLENG_AUTH_TOKEN" => somleng_auth_token
     }
+    merge_with = defined?(super) ? super : {}
+    merge_with.merge(somleng_client_env)
   end
 
   def asserted_remote_api_endpoint(path)

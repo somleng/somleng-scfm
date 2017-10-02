@@ -17,4 +17,5 @@ test:
 production:
   <<: *default
   <% database_name = ENV.fetch("DATABASE_NAME") { "somleng_scfm_production" } %>
-  database: <%= rails_db_adapter == "sqlite3" ?  "db/#{database_name}.sqlite3" : database_name %>
+  <% database_path = ENV.fetch("DATABASE_PATH") { "db/#{database_name}.sqlite3" } %>
+  database: <%= rails_db_adapter == "sqlite3" ? database_path : database_name %>

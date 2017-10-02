@@ -23,7 +23,7 @@ class InstallTask < ApplicationTask
       task_class::Install.rake_tasks.each do |rake_task|
         output_path = container_path(*dir, task_class::Install.cron_name(rake_task))
         File.write(output_path, cron_entry(task_class::Install, rake_task))
-        FileUtils.chmod("u+x", output_path)
+        FileUtils.chmod(0764, output_path)
       end
     end
   end
@@ -35,7 +35,7 @@ class InstallTask < ApplicationTask
   end
 
   def cron_entry(task_class, rake_task)
-    "# The newline at the end of this file is extremely important. Cron won't run without it.\n* * * * * root #{full_docker_command(task_class, rake_task)}"
+    "# The newline at the end of this file is extremely important. Cron won't run without it.\n* * * * * root #{full_docker_command(task_class, rake_task)}\n"
   end
 
   def full_docker_command(task_class, rake_task)
@@ -55,7 +55,7 @@ class InstallTask < ApplicationTask
   end
 
   def docker_env_flags(task_class, rake_task)
-    ENV["DOCKER_ENV_FLAGS"] ||= default_docker_env_flags(task_class, rake_task)
+    ENV["DOCKER_ENV_FLAGS"] || default_docker_env_flags(task_class, rake_task)
   end
 
   def default_docker_env_flags(task_class, rake_task)

@@ -3,6 +3,7 @@ dist: trusty
 sudo: required
 services:
   - postgresql
+  - docker
 env:
   - START_SIMPLECOV=1 RAILS_DB_ADAPTER=sqlite3
   - START_SIMPLECOV=1 RAILS_DB_ADAPTER=postgresql
@@ -15,6 +16,9 @@ before_install:
   - sudo add-apt-repository ppa:jonathonf/backports -y
   - sudo apt-get update -q
   - sudo apt-get install sqlite3 -y
+  - sudo docker pull dwilkie/somleng-scfm:spec
+  - sudo docker ps -a
+  - sudo docker run --rm dwilkie/somleng-scfm:spec /bin/sh -c "bundle exec rake db:migrate && bundle exec rake db:test:prepare && bundle exec rake"
 before_script:
   - psql -c 'create database somleng_scfm_test;' -U postgres
   - sqlite3 --version

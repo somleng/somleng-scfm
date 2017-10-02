@@ -24,7 +24,7 @@ before_script:
   - psql -c 'create database somleng_scfm_test;' -U postgres
   - sqlite3 --version
 script:
-  - bundle exec rake db:migrate --trace
+  - bundle exec rake db:migrate
   - bundle exec rake db:test:prepare
   - bundle exec rake
 after_success:

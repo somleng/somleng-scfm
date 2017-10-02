@@ -3,12 +3,14 @@ class InstallTask < ApplicationTask
   DEFAULT_HOST_INSTALL_DIR = "/etc/somleng-scfm"
   DEFAULT_DOCKER_RUN_COMMAND = "docker run"
 
-  def self.rake_tasks
-    [:cron]
-  end
+  class Install < ApplicationTask::Install
+    def self.rake_tasks
+      [:cron]
+    end
 
-  def self.install_cron?
-    false
+    def self.install_cron?
+      false
+    end
   end
 
   def cron
@@ -16,10 +18,11 @@ class InstallTask < ApplicationTask
     mk_install_dir(*dir)
 
     ApplicationTask.descendants.each do |task_class|
-      next if !task_class.install_cron?
-      task_class.rake_tasks.each do |rake_task|
-        output_path = container_path(*dir, task_class.cron_name(rake_task))
-        File.write(output_path, cron_entry(task_class, rake_task))
+      next if !task_class::Install.install_cron?
+
+      task_class::Install.rake_tasks.each do |rake_task|
+        output_path = container_path(*dir, task_class::Install.cron_name(rake_task))
+        File.write(output_path, cron_entry(task_class::Install, rake_task))
         FileUtils.chmod("u+x", output_path)
       end
     end
@@ -36,22 +39,33 @@ class InstallTask < ApplicationTask
   end
 
   def full_docker_command(task_class, rake_task)
-    "#{docker_run_command} #{docker_flags} #{docker_image_name} #{docker_command(task_class, rake_task)}"
+    "#{docker_run_command} #{docker_flags(task_class, rake_task)} #{docker_image_name} #{docker_command(task_class, rake_task)}"
   end
 
   def container_path(*args)
     Rails.root.join(*args)
   end
 
-  def default_docker_flags
+  def default_docker_flags(task_class, rake_task)
     [
       "--rm",
-      "-v #{host_database_dir}:#{container_path('db')}"
-    ].join(" ")
+      "-v #{host_database_dir}:#{container_path('db')}",
+      docker_env_flags(task_class, rake_task).presence
+    ].compact.join(" ")
   end
 
-  def docker_flags
-    ENV["DOCKER_FLAGS"] || default_docker_flags
+  def docker_env_flags(task_class, rake_task)
+    ENV["DOCKER_ENV_FLAGS"] ||= default_docker_env_flags(task_class, rake_task)
+  end
+
+  def default_docker_env_flags(task_class, rake_task)
+    task_class.default_env_vars(rake_task).map { |var, value|
+      "-e #{var.upcase}='#{value}'"
+    }.join(" ")
+  end
+
+  def docker_flags(task_class, rake_task)
+    ENV["DOCKER_FLAGS"] || default_docker_flags(task_class, rake_task)
   end
 
   def docker_command(task_class, rake_task)

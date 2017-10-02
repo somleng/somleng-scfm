@@ -1,8 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe InstallTask do
-  describe ".rake_tasks" do
-    it { expect(described_class.rake_tasks).to eq([:cron]) }
+  describe InstallTask::Install do
+    describe ".rake_tasks" do
+      it { expect(described_class.rake_tasks).to eq([:cron]) }
+    end
   end
 
   describe "#cron" do

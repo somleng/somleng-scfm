@@ -1,8 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe EnqueueCallsTask do
-  describe ".rake_tasks" do
-    it { expect(described_class.rake_tasks).to eq([:run!]) }
+  describe EnqueueCallsTask::Install do
+    describe ".rake_tasks" do
+      it { expect(described_class.rake_tasks).to eq([:run!]) }
+    end
   end
 
   describe "InstanceMethods" do

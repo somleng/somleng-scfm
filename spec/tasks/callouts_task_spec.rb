@@ -1,8 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe CalloutsTask do
-  describe ".rake_tasks" do
-    it { expect(described_class.rake_tasks).to eq([:start!, :stop!, :pause!, :resume!]) }
+  describe CalloutsTask::Install do
+    describe ".rake_tasks" do
+      it { expect(described_class.rake_tasks).to eq([:run!]) }
+    end
   end
 
   describe "#callout" do
@@ -20,7 +22,7 @@ RSpec.describe CalloutsTask do
 
     def env
       {
-        "CALLOUT_TASK_CALLOUT_ID" => callout_task_callout_id
+        "CALLOUTS_TASK_CALLOUT_ID" => callout_task_callout_id
       }
     end
 
@@ -85,7 +87,7 @@ RSpec.describe CalloutsTask do
     end
   end
 
-  describe "events" do
+  describe "#run!" do
     let(:callout) { create(:callout, "can_#{callout_event}".gsub(/!$/, "").to_sym) }
 
     before do
@@ -93,18 +95,38 @@ RSpec.describe CalloutsTask do
     end
 
     def setup_scenario
+      stub_env(env)
       callout
     end
 
-    def assert_event!
-      expect(subject.public_send(callout_event)).to eq(true)
+    def env
+      {
+        "CALLOUTS_TASK_ACTION" => callouts_task_action.to_s
+      }
     end
 
-    [:start!, :stop!, :pause!, :resume!].each do |callout_event|
-      describe "##{callout_event}" do
+    def assert_event!
+      expect(subject.run!).to eq(true)
+    end
+
+    [:start, :stop, :pause, :resume].each do |callout_event|
+      context "ENV['CALLOUTS_TASK_ACTION']='#{callout_event}'" do
         let(:callout_event) { callout_event }
+        let(:callouts_task_action) { callout_event }
         it { assert_event! }
       end
+    end
+
+    context "ENV['CALLOUTS_TASK_ACTION']=" do
+      let(:callout_event) { :start }
+      let(:callouts_task_action) { nil }
+      it { expect { subject.run! }.to raise_error(ArgumentError) }
+    end
+
+    context "ENV['CALLOUTS_TASK_ACTION']='delete'" do
+      let(:callout_event) { :start }
+      let(:callouts_task_action) { "delete" }
+      it { expect { subject.run! }.to raise_error(ArgumentError) }
     end
   end
 end

@@ -3,6 +3,9 @@ class EnqueueCallsTask < ApplicationTask
   DEFAULT_ENQUEUE_STRATEGY = "optimistic"
   ENQUEUE_STRATEGIES = [DEFAULT_ENQUEUE_STRATEGY, "pessimistic"]
 
+  class Install < ApplicationTask::Install
+  end
+
   def run!
     phone_numbers_to_call.limit(num_calls_to_enqueue).find_each do |phone_number|
       phone_call = schedule_phone_call!(phone_number)
@@ -19,10 +22,6 @@ class EnqueueCallsTask < ApplicationTask
       ((max_calls_to_enqueue || phone_numbers_to_call.count) - phone_calls_waiting_for_completion.count),
       pessimistic_min_calls_to_enqueue
     ].max
-  end
-
-  def self.rake_tasks
-    [:run!]
   end
 
   private

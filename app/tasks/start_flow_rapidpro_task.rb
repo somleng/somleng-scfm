@@ -3,6 +3,9 @@ class StartFlowRapidproTask < ApplicationTask
   RAPIDPRO_FLOW_ID_KEY = "rapidpro_flow_id"
   RAPIDPRO_FLOW_STARTED_AT_KEY = "rapidpro_flow_started_at"
 
+  class Install < ApplicationTask::Install
+  end
+
   def run!
     phone_calls_to_start_flow.includes(:phone_number).limit(num_flows_to_start).find_each do |phone_call|
       begin
@@ -11,10 +14,6 @@ class StartFlowRapidproTask < ApplicationTask
       rescue ActiveRecord::StaleObjectError
       end
     end
-  end
-
-  def self.rake_tasks
-    [:run!]
   end
 
   private

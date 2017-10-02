@@ -1,4 +1,7 @@
 class UpdateCallsTask < ApplicationTask
+  class Install < ApplicationTask::Install
+  end
+
   def run!
     PhoneCall.waiting_for_completion.with_remote_call_id.not_recently_created.limit(num_calls_to_fetch).find_each do |phone_call|
       begin
@@ -7,10 +10,6 @@ class UpdateCallsTask < ApplicationTask
       rescue ActiveRecord::StaleObjectError
       end
     end
-  end
-
-  def self.rake_tasks
-    [:run!]
   end
 
   private

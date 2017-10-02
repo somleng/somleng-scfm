@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 class MyImporter
   def import!
     header_row = rows.shift if has_header_row?

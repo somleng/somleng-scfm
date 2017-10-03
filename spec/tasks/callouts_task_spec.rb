@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe CalloutsTask do
   describe CalloutsTask::Install do
     describe ".rake_tasks" do
-      it { expect(described_class.rake_tasks).to eq([:run!]) }
+      it { expect(described_class.rake_tasks).to eq([:run!, :statistics]) }
     end
   end
 

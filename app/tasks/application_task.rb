@@ -45,7 +45,7 @@ class ApplicationTask
       [task_namespace, rake_task_name(name)].join("_")
     end
 
-    def self.install_cron?
+    def self.install_cron?(task_name)
       true
     end
 

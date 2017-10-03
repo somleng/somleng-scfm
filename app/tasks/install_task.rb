@@ -8,7 +8,7 @@ class InstallTask < ApplicationTask
       [:cron]
     end
 
-    def self.install_cron?
+    def self.install_cron?(task_name)
       false
     end
   end
@@ -18,9 +18,8 @@ class InstallTask < ApplicationTask
     mk_install_dir(*dir)
 
     ApplicationTask.descendants.each do |task_class|
-      next if !task_class::Install.install_cron?
-
       task_class::Install.rake_tasks.each do |rake_task|
+        next if !task_class::Install.install_cron?(rake_task)
         output_path = container_path(*dir, task_class::Install.cron_name(rake_task))
         File.write(output_path, cron_entry(task_class::Install, rake_task))
         FileUtils.chmod(0764, output_path)

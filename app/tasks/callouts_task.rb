@@ -2,15 +2,21 @@ class CalloutsTask < ApplicationTask
   AVAILABLE_ACTIONS = ["start", "stop", "pause", "resume"]
 
   class Install < ApplicationTask::Install
-    ENV_VARS = {
-      :run! => {
-        :rails_env => "production",
-        :callouts_task_action => AVAILABLE_ACTIONS.join("|")
-      }
+    DEFAULT_ENV_VARS = {
+      :rails_env => "production",
+      :callouts_task_action => AVAILABLE_ACTIONS.join("|")
     }
 
+    def self.rake_tasks
+      super << :statistics
+    end
+
+    def self.install_cron?(task_name)
+      task_name == :run!
+    end
+
     def self.default_env_vars(task_name)
-      ENV_VARS[task_name]
+      super.merge(DEFAULT_ENV_VARS)
     end
   end
 

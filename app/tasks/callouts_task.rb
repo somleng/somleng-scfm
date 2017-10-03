@@ -4,6 +4,7 @@ class CalloutsTask < ApplicationTask
   class Install < ApplicationTask::Install
     ENV_VARS = {
       :run! => {
+        :rails_env => "production",
         :callouts_task_action => AVAILABLE_ACTIONS.join("|")
       }
     }

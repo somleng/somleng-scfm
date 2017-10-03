@@ -4,6 +4,16 @@ class EnqueueCallsTask < ApplicationTask
   ENQUEUE_STRATEGIES = [DEFAULT_ENQUEUE_STRATEGY, "pessimistic"]
 
   class Install < ApplicationTask::Install
+    DEFAULT_ENV_VARS = {
+      :enqueue_calls_task_max_calls_to_enqueue => "30",
+      :enqueue_calls_task_enqueue_strategy => "optimistic",
+      :enqueue_calls_task_pessimistic_min_calls_to_enqueue => "1",
+      :enqueue_calls_task_remote_call_params => '{"from":"1234","url":"http://demo.twilio.com/docs/voice.xml","method":"GET"}'
+    }
+
+    def self.default_env_vars(task_name)
+      super.merge(DEFAULT_ENV_VARS).merge(default_somleng_env_vars(task_name))
+    end
   end
 
   def run!

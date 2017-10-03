@@ -4,6 +4,17 @@ class StartFlowRapidproTask < ApplicationTask
   RAPIDPRO_FLOW_STARTED_AT_KEY = "rapidpro_flow_started_at"
 
   class Install < ApplicationTask::Install
+    DEFAULT_ENV_VARS = {
+      :start_flow_rapidpro_task_max_flows_to_start => "100",
+      :start_flow_rapidpro_task_remote_request_params => '{"flow"=>"flow-id", "groups"=>[], "contacts"=>[], "urns"=>["telegram:telegram-id"], "extra"=>{}}',
+      :rapidpro_base_url => "https://app.rapidpro.io/api",
+      :rapidpro_api_version => "v2",
+      :rapidpro_api_token => "replace-me-rapidpro-api-token"
+    }
+
+    def self.default_env_vars(task_name)
+      super.merge(DEFAULT_ENV_VARS)
+    end
   end
 
   def run!
@@ -44,7 +55,7 @@ class StartFlowRapidproTask < ApplicationTask
   end
 
   def max_flows_to_start
-    (ENV["START_FLOW_RAPIDPRO_TASK_MAX_FLOWS_TO_START"] || DEFAULT_MAX_FLOWS_TO_START).to_i
+    (ENV["START_FLOW_RAPIDPRO_TASK_MAX_FLOWS_TO_START"].presence || DEFAULT_MAX_FLOWS_TO_START).to_i
   end
 
   def start_flow_rapidpro_params

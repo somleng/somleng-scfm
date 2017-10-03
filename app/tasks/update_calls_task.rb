@@ -1,5 +1,12 @@
 class UpdateCallsTask < ApplicationTask
   class Install < ApplicationTask::Install
+    DEFAULT_ENV_VARS = {
+      :update_calls_task_max_calls_to_fetch => nil
+    }
+
+    def self.default_env_vars(task_name)
+      super.merge(DEFAULT_ENV_VARS).merge(default_somleng_env_vars(task_name))
+    end
   end
 
   def run!
@@ -34,6 +41,6 @@ class UpdateCallsTask < ApplicationTask
   end
 
   def max_calls_to_fetch
-    ENV["UPDATE_CALLS_TASK_MAX_CALLS_TO_FETCH"].to_i if ENV["UPDATE_CALLS_TASK_MAX_CALLS_TO_FETCH"]
+    ENV["UPDATE_CALLS_TASK_MAX_CALLS_TO_FETCH"].to_i if ENV["UPDATE_CALLS_TASK_MAX_CALLS_TO_FETCH"].present?
   end
 end

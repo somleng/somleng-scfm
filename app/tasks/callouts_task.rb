@@ -21,11 +21,40 @@ class CalloutsTask < ApplicationTask
     )
   end
 
+  def statistics
+    stats = {
+      :callout_status => callout.status.titleize,
+      :total_phone_numbers => PhoneNumber.count,
+      :phone_numbers_still_to_call => PhoneNumber.no_phone_calls_or_last_attempt(:failed).count,
+      :calls_completed => PhoneCall.completed.count,
+      :calls_initialized => PhoneCall.created.count,
+      :calls_scheduling => PhoneCall.scheduling.count,
+      :calls_fetching_status => PhoneCall.fetching_status.count,
+      :calls_waiting_for_completion => PhoneCall.waiting_for_completion.count,
+      :calls_queued => PhoneCall.queued.count,
+      :calls_in_progress => PhoneCall.in_progress.count,
+      :calls_errored => PhoneCall.errored.count,
+      :calls_failed => PhoneCall.failed.count,
+      :calls_busy => PhoneCall.busy.count,
+      :calls_not_answered => PhoneCall.not_answered.count,
+      :calls_canceled => PhoneCall.canceled.count,
+      :optimistic_num_calls_to_enqueue => enqueue_calls_task.optimistic_num_calls_to_enqueue || enqueue_calls_task.phone_numbers_to_call.count,
+      :pessimistic_num_calls_to_enqueue => enqueue_calls_task.pessimistic_num_calls_to_enqueue
+    }
+
+    padding = stats.keys.map { |name| name.to_s.length }.max + 1
+    puts(stats.map { |name, value| name.to_s.titleize + ":" + (" " * (padding - name.to_s.length)) + value.to_s }.join("\n"))
+  end
+
   def callout
     @callout ||= (!ENV["CALLOUTS_TASK_CALLOUT_ID"] && Callout.count == 1 && Callout.first!) || Callout.find(ENV["CALLOUTS_TASK_CALLOUT_ID"])
   end
 
   private
+
+  def enqueue_calls_task
+    @enqueue_calls_task ||= EnqueueCallsTask.new
+  end
 
   def action
     ENV["CALLOUTS_TASK_ACTION"] && ENV["CALLOUTS_TASK_ACTION"].to_s.sub(/!$/, "")

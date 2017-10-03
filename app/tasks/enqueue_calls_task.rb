@@ -34,11 +34,11 @@ class EnqueueCallsTask < ApplicationTask
     ].max
   end
 
-  private
-
   def phone_numbers_to_call
     PhoneNumber.from_running_callout.no_phone_calls_or_last_attempt(:failed)
   end
+
+  private
 
   def phone_calls_waiting_for_completion
     PhoneCall.waiting_for_completion

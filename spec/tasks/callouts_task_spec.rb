@@ -129,4 +129,25 @@ RSpec.describe CalloutsTask do
       it { expect { subject.run! }.to raise_error(ArgumentError) }
     end
   end
+
+  describe "#statistics" do
+    let(:callout) { create(:callout) }
+
+    before do
+      setup_scenario
+    end
+
+    def setup_scenario
+      callout
+    end
+
+    def assert_statistics!
+      expect(STDOUT).to receive(:puts) do |arg|
+        expect(arg).to include("Callout Status")
+      end
+      subject.statistics
+    end
+
+    it { assert_statistics! }
+  end
 end

@@ -70,7 +70,6 @@ RSpec.describe InstallTask do
     end
 
     def assert_cron!
-
       assertions.each do |filename, assertion_options|
         path = Rails.root.join("install", "cron", filename)
         contents = File.read(path)

@@ -8,16 +8,18 @@ Somleng Simple Call Flow Manager (Somleng SCFM) can be used to enqueue, throttle
 
 ## Architecture
 
-+----------------+     +----------------+     +---------------------+
-|    Callouts    |     |  PhoneNumbers  |     |      PhoneCalls     |
-+----------------+     +----------------+     +---------------------+
-|                |     |                |     |                     |
-| * status       |     | * msisdn       |     |  * status           |
-| * metadata     |-|---> * metadata     |-|--->  * metadata         |
-|                |     | * callout_id   |     |  * phone_number_id  |
-|                |     |                |     |  * ...              |
-|                |     |                |     |                     |
-+----------------+     +----------------+     +---------------------+
+<pre>
++----------------+    +----------------+    +-------------------+
+|    Callouts    |    |  PhoneNumbers  |    |     PhoneCalls    |
++----------------+    +----------------+    +-------------------+
+|                |    |                |    |                   |
+| * status       |    | * msisdn       |    | * status          |
+| * metadata     |-|--> * metadata     |-|--> * metadata        |
+|                |    | * callout_id   |    | * phone_number_id |
+|                |    |                |    | * ...             |
+|                |    |                |    |                   |
++----------------+    +----------------+    +-------------------+
+</pre>
 
 ## Features
 

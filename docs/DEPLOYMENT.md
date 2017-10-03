@@ -36,6 +36,14 @@ Exports cron scripts with sensible defaults to `/etc/somleng-scfm/cron`. Modify 
 $ sudo docker run --rm -v /etc/somleng-scfm/cron:/usr/src/app/install/cron -e RAILS_ENV=production -e HOST_INSTALL_DIR=/etc/somleng-scfm dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake task:install:cron'
 ```
 
+### Prints Callout Statistics
+
+Prints statistics from the callout. Assumes the database is in the directory `/etc/somleng-scfm/db` and there's only one callout. Modify the command below to change these defaults. Remember to set `ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE` and `ENQUEUE_CALLS_TASK_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE` to get the correct values for Optimistic/Pessimistic Num Calls To Enqueue.
+
+```
+$ sudo docker run --rm -v /etc/somleng-scfm/db:/usr/src/app/db:ro -e RAILS_ENV=production dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake task:callouts:statistics'
+```
+
 ### Run the Rails Console
 
 ```

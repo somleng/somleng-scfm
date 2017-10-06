@@ -4,7 +4,7 @@ class MyImporter
   def import!
     header_row = rows.shift if has_header_row?
     rows.each_with_index do |row, index|
-      create_phone_number(
+      create_contact(
         row[4],
         "distribution_area" => row[0],
         "household_name" => row[1],
@@ -37,15 +37,11 @@ class MyImporter
   private
 
   def print_import_summary(rows_completed = nil)
-    puts "#{rows_completed}/#{rows.count} rows read, #{PhoneNumber.count} phone numbers created"
+    puts "#{rows_completed}/#{rows.count} rows read, #{Contact.count} contacts created"
   end
 
-  def callout
-    @callout ||= Callout.first || Callout.create!
-  end
-
-  def create_phone_number(msisdn, metadata = {})
-    callout.phone_numbers.create(
+  def create_contact(msisdn, metadata = {})
+    Contact.create(
       :msisdn => msisdn,
       :metadata => metadata
     )

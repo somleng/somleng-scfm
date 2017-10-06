@@ -30,7 +30,7 @@ This section explains how to get up and running quickly tasks. Please continue r
 
 If you want to follow this guide without installing anything locally, run the docker examples instead.
 
-1. Create the database
+#### 1. Create the database
 
 ```
 $ bundle exec rake db:create && bundle exec rake db:migrate
@@ -42,7 +42,7 @@ or using Docker
 $ sudo docker run --rm -v /tmp/somleng-scfm/db:/tmp/db -e RAILS_ENV=production dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake db:create && bundle exec rake db:migrate && if [ ! -f /tmp/db/somleng_scfm_production.sqlite3 ]; then cp /usr/src/app/db/somleng_scfm_production.sqlite3 /tmp/db; fi'
 ```
 
-2. Import contacts
+#### 2. Import contacts
 
 ```
 $ DUMMY_CONTACT_MSISDN=replace-with-your-phone-number-or-remove-this-env-variable bundle exec rails runner ./examples/import_contacts.rb
@@ -54,7 +54,7 @@ or using Docker
 $ sudo docker run --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -e RAILS_ENV=production -e DUMMY_CONTACT_MSISDN=replace-with-your-phone-number-or-remove-this-env-variable dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails runner /usr/src/app/examples/import_contacts.rb'
 ```
 
-3. Create a callout
+#### 3. Create a callout
 
 ```
 $ bundle exec rake task:callouts:create
@@ -66,7 +66,7 @@ or using Docker
 $ sudo docker run --rm -t -v /tmp/somleng-scfm/db:/usr/src/app/db -e RAILS_ENV=production dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake task:callouts:create'
 ```
 
-4. Populate the callout
+#### 4. Populate the callout
 
 ```
 $ bundle exec rake task:callouts:populate
@@ -78,7 +78,7 @@ or using Docker
 $ sudo docker run --rm -t -v /tmp/somleng-scfm/db:/usr/src/app/db -e RAILS_ENV=production dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake task:callouts:populate'
 ```
 
-5. Print callout statistics
+#### 5. Print callout statistics
 
 ```
 $ bundle exec rake task:callouts:statistics
@@ -90,7 +90,7 @@ or using Docker
 $ sudo docker run --rm -t -v /tmp/somleng-scfm/db:/usr/src/app/db -e RAILS_ENV=production dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake task:callouts:statistics'
 ```
 
-6. Start the callout and print the statistics to see that it's running
+#### 6. Start the callout and print the statistics to see that it's running
 
 ```
 $ CALLOUTS_TASK_ACTION=start bundle exec rake task:callouts:run && bundle exec rake task:callouts:statistics
@@ -102,7 +102,7 @@ or using Docker
 $ sudo docker run --rm -t -v /tmp/somleng-scfm/db:/usr/src/app/db -e RAILS_ENV=production -e CALLOUTS_TASK_ACTION=start dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake task:callouts:run && bundle exec rake task:callouts:statistics'
 ```
 
-7. Pause the callout and print the statistics to see that it's paused (optional)
+#### 7. Pause the callout and print the statistics to see that it's paused (optional)
 
 ```
 $ CALLOUTS_TASK_ACTION=pause bundle exec rake task:callouts:run && bundle exec rake task:callouts:statistics
@@ -114,7 +114,7 @@ or using Docker
 $ sudo docker run --rm -t -v /tmp/somleng-scfm/db:/usr/src/app/db -e RAILS_ENV=production -e CALLOUTS_TASK_ACTION=pause dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake task:callouts:run && bundle exec rake task:callouts:statistics'
 ```
 
-8. Resume the callout and print the statistics to see that it's running (optional)
+#### 8. Resume the callout and print the statistics to see that it's running (optional)
 
 ```
 $ CALLOUTS_TASK_ACTION=resume bundle exec rake task:callouts:run && bundle exec rake task:callouts:statistics
@@ -126,7 +126,7 @@ or using Docker
 $ sudo docker run --rm -t -v /tmp/somleng-scfm/db:/usr/src/app/db -e RAILS_ENV=production -e CALLOUTS_TASK_ACTION=resume dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake task:callouts:run && bundle exec rake task:callouts:statistics'
 ```
 
-9. Stop the callout and print the statistics to see that it's stopped (optional)
+#### 9. Stop the callout and print the statistics to see that it's stopped (optional)
 
 ```
 $ CALLOUTS_TASK_ACTION=stop bundle exec rake task:callouts:run && bundle exec rake task:callouts:statistics
@@ -138,7 +138,7 @@ or using Docker
 $ sudo docker run --rm -t -v /tmp/somleng-scfm/db:/usr/src/app/db -e RAILS_ENV=production -e CALLOUTS_TASK_ACTION=stop dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake task:callouts:run && bundle exec rake task:callouts:statistics'
 ```
 
-10. Resume the callout again and print the statistics to see that it's running (optional)
+#### 10. Resume the callout again and print the statistics to see that it's running (optional)
 
 ```
 $ CALLOUTS_TASK_ACTION=resume bundle exec rake task:callouts:run && bundle exec rake task:callouts:statistics
@@ -150,7 +150,7 @@ or using Docker
 $ sudo docker run --rm -t -v /tmp/somleng-scfm/db:/usr/src/app/db -e RAILS_ENV=production -e CALLOUTS_TASK_ACTION=resume dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake task:callouts:run && bundle exec rake task:callouts:statistics'
 ```
 
-11. Enqueue the calls on Somleng (or Twilio) and print the statistics (your phone should ring)
+#### 11. Enqueue the calls on Somleng (or Twilio) and print the statistics (your phone should ring)
 
 ```
 $ SOMLENG_CLIENT_REST_API_HOST="api.twilio.com" SOMLENG_CLIENT_REST_API_BASE_URL="https://api.twilio.com" SOMLENG_ACCOUNT_SID="replace-with-your-somleng-or-twilio-account-sid" SOMLENG_AUTH_TOKEN="replace-with-your-somleng-or-twilio-auth-token" ENQUEUE_CALLS_TASK_DEFAULT_SOMLENG_REQUEST_PARAMS="{\"from\":\"1234\",\"url\":\"http://demo.twilio.com/docs/voice.xml\",\"method\":\"GET\"}" bundle exec rake task:enqueue_calls:run && bundle exec rake task:callouts:statistics
@@ -162,7 +162,7 @@ or using Docker
 $ sudo docker run --rm -t -v /tmp/somleng-scfm/db:/usr/src/app/db -e RAILS_ENV=production -e SOMLENG_CLIENT_REST_API_HOST="api.twilio.com" -e SOMLENG_CLIENT_REST_API_BASE_URL="https://api.twilio.com" -e SOMLENG_ACCOUNT_SID="replace-with-your-somleng-or-twilio-account-sid" -e SOMLENG_AUTH_TOKEN="replace-with-your-somleng-or-twilio-auth-token" -e ENQUEUE_CALLS_TASK_DEFAULT_SOMLENG_REQUEST_PARAMS="{\"from\":\"1234\",\"url\":\"http://demo.twilio.com/docs/voice.xml\",\"method\":\"GET\"}" dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake task:enqueue_calls:run && bundle exec rake task:callouts:statistics'
 ```
 
-12. Update the call status and print the statistics (run multiple times to watch it change)
+#### 12. Update the call status and print the statistics (run multiple times to watch it change)
 
 ```
 $ SOMLENG_CLIENT_REST_API_HOST="api.twilio.com" SOMLENG_CLIENT_REST_API_BASE_URL="https://api.twilio.com" SOMLENG_ACCOUNT_SID="replace-with-your-somleng-or-twilio-account-sid" SOMLENG_AUTH_TOKEN="replace-with-your-somleng-or-twilio-auth-token" bundle exec rake task:update_calls:run && bundle exec rake task:callouts:statistics
@@ -174,9 +174,9 @@ or using Docker
 $ sudo docker run --rm -t -v /tmp/somleng-scfm/db:/usr/src/app/db -e RAILS_ENV=production -e SOMLENG_CLIENT_REST_API_HOST="api.twilio.com" -e SOMLENG_CLIENT_REST_API_BASE_URL="https://api.twilio.com" -e SOMLENG_ACCOUNT_SID="replace-with-your-somleng-or-twilio-account-sid" -e SOMLENG_AUTH_TOKEN="replace-with-your-somleng-or-twilio-auth-token" dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake task:update_calls:run && bundle exec rake task:callouts:statistics'
 ```
 
-13. Repeat step 11 (optional). This time your phone should not ring
+Optionally repeat step 11, this time your phone should not ring
 
-14. Boot the Rails Console (optional)
+#### 13. Boot the Rails Console (optional)
 
 ```
 $ bundle exec rails c
@@ -188,7 +188,7 @@ or using Docker
 $ sudo docker run --rm -it -v /tmp/somleng-scfm/db:/usr/src/app/db -e RAILS_ENV=production dwilkie/somleng-scfm bundle exec rails c
 ```
 
-15. Boot the Database Console (optional)
+#### 14. Boot the Database Console (optional)
 
 ```
 $ bundle exec rails dbconsole

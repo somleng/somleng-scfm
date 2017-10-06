@@ -19,6 +19,12 @@ ActiveRecord::Schema.define(version: 20170926070754) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "contacts", force: :cascade do |t|
+    t.text "metadata", default: "{}", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "phone_calls", force: :cascade do |t|
     t.integer "phone_number_id", null: false
     t.string "status", null: false
@@ -36,12 +42,14 @@ ActiveRecord::Schema.define(version: 20170926070754) do
 
   create_table "phone_numbers", force: :cascade do |t|
     t.integer "callout_id", null: false
+    t.integer "contact_id", null: false
     t.string "msisdn", null: false
     t.text "metadata", default: "{}", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["callout_id", "msisdn"], name: "index_phone_numbers_on_callout_id_and_msisdn", unique: true
     t.index ["callout_id"], name: "index_phone_numbers_on_callout_id"
+    t.index ["contact_id"], name: "index_phone_numbers_on_contact_id"
   end
 
 end

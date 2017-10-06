@@ -20,8 +20,12 @@ FactoryGirl.define do
     end
   end
 
+  factory :contact do
+  end
+
   factory :phone_number do
     callout
+    contact
     msisdn { generate(:somali_msisdn) }
   end
 

@@ -2,6 +2,7 @@ class PhoneNumber < ApplicationRecord
   include MetadataHelpers
 
   belongs_to :callout
+  belongs_to :contact
   has_many :phone_calls
 
   validates :msisdn,

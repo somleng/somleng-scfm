@@ -26,7 +26,7 @@ Somleng SCFM Tasks are stand alone rake tasks that can be run manually, from cro
 
 ### Quickstart
 
-This section explains how to get up and running quickly tasks. Please continue reading the sections below for detailed information on tasks.
+This section explains how to get up and running quickly using tasks. Please continue reading the sections below for detailed information on tasks.
 
 If you want to follow this guide without installing anything locally, run the docker examples instead (assumes you have Docker installed).
 

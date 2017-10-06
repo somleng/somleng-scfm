@@ -3,6 +3,7 @@ class Callout < ApplicationRecord
 
   has_many :phone_numbers
   has_many :phone_calls, :through => :phone_numbers
+  has_many :contacts, :through => :phone_numbers
 
   validates :status, :presence => true
 

@@ -8,7 +8,7 @@ class CalloutsTask < ApplicationTask
     }
 
     def self.rake_tasks
-      super + [:create!, :statistics]
+      super + [:create!, :populate!, :statistics]
     end
 
     def self.install_cron?(task_name)
@@ -28,9 +28,22 @@ class CalloutsTask < ApplicationTask
   end
 
   def create!
-    new_callout = Callout.create!(:metadata => create_callout_metadata)
+    new_callout = Callout.create!(
+      :metadata => default_create_metadata.merge(create_metadata)
+    )
     puts(new_callout.id)
     new_callout
+  end
+
+  def populate!
+    contacts_to_populate_with.find_each do |contact|
+      PhoneNumber.create(
+        :callout => callout,
+        :contact => contact,
+        :msisdn => contact.msisdn,
+        :metadata => default_populate_metadata.merge(populate_metadata(contact))
+      )
+    end
   end
 
   def statistics
@@ -59,17 +72,29 @@ class CalloutsTask < ApplicationTask
   end
 
   def callout
-    @callout ||= (!ENV["CALLOUTS_TASK_CALLOUT_ID"] && Callout.count == 1 && Callout.first!) || Callout.find(ENV["CALLOUTS_TASK_CALLOUT_ID"])
+    @callout ||= (!ENV["CALLOUTS_TASK_CALLOUT_ID"].present? && Callout.count == 1 && Callout.first!) || Callout.find(ENV["CALLOUTS_TASK_CALLOUT_ID"])
   end
 
   private
 
-  def create_callout_metadata
-    JSON.parse(ENV["CALLOUTS_TASK_CREATE_METADATA"] || "{}")
+  def contacts_to_populate_with
+    Contact.all
   end
 
-  def force_create?
-    ENV["CALLOUTS_TASK_FORCE_CREATE"].to_i == 1
+  def populate_metadata(contact)
+    {}
+  end
+
+  def default_populate_metadata
+    JSON.parse(ENV["CALLOUTS_TASK_POPULATE_METADATA"] || "{}")
+  end
+
+  def create_metadata
+    {}
+  end
+
+  def default_create_metadata
+    JSON.parse(ENV["CALLOUTS_TASK_CREATE_METADATA"] || "{}")
   end
 
   def enqueue_calls_task

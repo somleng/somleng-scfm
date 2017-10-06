@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe CalloutsTask do
   describe CalloutsTask::Install do
     describe ".rake_tasks" do
-      it { expect(described_class.rake_tasks).to eq([:run!, :create!, :statistics]) }
+      it { expect(described_class.rake_tasks).to eq([:run!, :create!, :populate!, :statistics]) }
     end
   end
 
@@ -163,6 +163,45 @@ RSpec.describe CalloutsTask do
       let(:asserted_metadata) { metadata }
 
       it { assert_create! }
+    end
+  end
+
+  describe "#populate!" do
+    let(:metadata) { nil }
+    let(:callout) { create(:callout) }
+    let(:asserted_metadata) { {} }
+    let(:contact) { create(:contact) }
+
+    before do
+      setup_scenario
+    end
+
+    def setup_scenario
+      callout
+      contact
+      stub_env(env)
+    end
+
+    def env
+      {
+        "CALLOUTS_TASK_POPULATE_METADATA" => metadata && metadata.to_json
+      }
+    end
+
+    def assert_populate!
+      subject.populate!
+      expect(callout.contacts).to match_array([contact])
+      phone_number = callout.phone_numbers.last!
+      expect(phone_number.metadata).to eq(asserted_metadata)
+    end
+
+    it { assert_populate! }
+
+    context "specifying metadata" do
+      let(:metadata) { { "foo" => "bar" } }
+      let(:asserted_metadata) { metadata }
+
+      it { assert_populate! }
     end
   end
 

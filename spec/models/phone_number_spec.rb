@@ -22,6 +22,18 @@ RSpec.describe PhoneNumber do
     it { assert_associations! }
   end
 
+  describe "validations" do
+    context "persisted" do
+      subject { create(factory) }
+
+      def assert_validations!
+        is_expected.to validate_uniqueness_of(:contact_id).scoped_to(:callout_id)
+      end
+
+      it { assert_validations! }
+    end
+  end
+
   describe "scopes" do
     before do
       setup_scenario

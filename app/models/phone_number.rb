@@ -10,6 +10,9 @@ class PhoneNumber < ApplicationRecord
   belongs_to :contact
   has_many :phone_calls
 
+  validates :contact_id,
+            :uniqueness => {:scope => :callout_id}
+
   validates :msisdn,
             :uniqueness => {:scope => :callout_id}
 

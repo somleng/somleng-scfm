@@ -50,6 +50,7 @@ ActiveRecord::Schema.define(version: 20170926070754) do
     t.text "metadata", default: "{}", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["callout_id", "contact_id"], name: "index_phone_numbers_on_callout_id_and_contact_id", unique: true
     t.index ["callout_id", "msisdn"], name: "index_phone_numbers_on_callout_id_and_msisdn", unique: true
     t.index ["callout_id"], name: "index_phone_numbers_on_callout_id"
     t.index ["contact_id"], name: "index_phone_numbers_on_contact_id"

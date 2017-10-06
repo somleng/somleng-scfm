@@ -206,7 +206,7 @@ Each task has it's own specific configuration which is documented below. Some ta
 
 #### Scopes
 
-`PHONE_NUMBER_RETRY_STATUSES` configures the phone call statuses in which to retry (defaults to `failed`). Used in the [PhoneCall.remaining scope](https://github.com/somleng/somleng-scfm/blob/master/app/models/phone_number.rb)
+`PHONE_NUMBER_RETRY_STATUSES` configures the phone call statuses in which to retry (defaults to `failed`). Used in the [PhoneNumber.remaining scope](https://github.com/somleng/somleng-scfm/blob/master/app/models/phone_number.rb)
 
 `PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS` configures the age in seconds in which a phone call is considered recently created (defaults to `60`). Used in the [not_recently_created scope](https://github.com/somleng/somleng-scfm/blob/master/app/models/phone_call.rb)
 

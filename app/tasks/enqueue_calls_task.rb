@@ -63,10 +63,14 @@ class EnqueueCallsTask < ApplicationTask
 
   def queue_remote_call!(phone_number)
     somleng_client.api.account.calls.create(
-      {
-        :to => phone_number.msisdn
-      }.merge(default_call_params)
+      default_call_params.merge(call_params(phone_number))
     )
+  end
+
+  def call_params(phone_number)
+    {
+      :to => phone_number.msisdn
+    }
   end
 
   def somleng_client

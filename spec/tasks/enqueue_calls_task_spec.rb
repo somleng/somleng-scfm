@@ -39,9 +39,11 @@ RSpec.describe EnqueueCallsTask do
       let(:default_call_params_from) { "1234" }
       let(:default_call_params_url) { "http://demo.twilio.com/docs/voice.xml" }
       let(:default_call_params_method) { "GET" }
+      let(:default_call_params_to) { "dummy" }
 
       let(:default_call_params) {
         {
+          "to" => default_call_params_to,
           "from" => default_call_params_from,
           "url" => default_call_params_url,
           "method" => default_call_params_method

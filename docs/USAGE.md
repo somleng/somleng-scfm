@@ -20,7 +20,29 @@ A [phone number](https://github.com/somleng/somleng-scfm/blob/master/app/models/
 
 A [phone call](https://github.com/somleng/somleng-scfm/blob/master/app/models/phone_call.rb) represents a single attempt at a phone call. A phone call has a status which represents the outcome of the phone call. There may be muliple phone calls for single phone number on a callout.
 
-## Rake Tasks
+## Tasks
+
+Somleng SCFM Tasks are stand alone rake tasks that can be run manually, from cron or from another application.
+
+### Global Task Configuration
+
+Each task has it's own specific configuration which is documented below. Some tasks make use of global configuration which is described here.
+
+#### Scopes
+
+`PHONE_NUMBER_RETRY_STATUSES` configures the phone call statuses in which to retry (defaults to `failed`). Used in the [PhoneCall.remaining scope](https://github.com/somleng/somleng-scfm/blob/master/app/models/phone_number.rb)
+
+`PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS` configures the age in seconds in which a phone call is considered recently created (defaults to `60`). Used in the [not_recently_created scope](https://github.com/somleng/somleng-scfm/blob/master/app/models/phone_call.rb)
+
+#### Somleng Configuration
+
+`SOMLENG_CLIENT_REST_API_HOST` configures the REST API host to connect to Somleng (or Twilio) (defaults to `api.twilio.com`).
+
+`SOMLENG_CLIENT_REST_API_BASE_URL` configures the REST API base url to connect to Somleng (or Twilio) (defaults to `https://api.twilio.com`).
+
+`SOMLENG_ACCOUNT_SID` configures the Account SID for Somleng (or Twilio) (defaults to nil).
+
+`SOMLENG_AUTH_TOKEN` configures the Auth Token for Somleng (or Twilio) (defaults to nil).
 
 ### Callouts
 
@@ -28,7 +50,13 @@ The [callouts task](https://github.com/somleng/somleng-scfm/blob/master/app/task
 
 #### task:callouts:create
 
-Creates a new callout and prints the callout id. If `CALLOUTS_TASK_CREATE_METADATA` is set to a JSON string the callout will be created with the specified metadata.
+Creates a new callout and prints the callout id.
+
+##### Task Configuration
+
+`CALLOUTS_TASK_CREATE_METADATA` configures the default metadata to be set when creating a callout (defaults to nil). For example, setting `CALLOUTS_TASK_CREATE_METADATA="{'foo':'bar'}"` will create the callout with the specified metadata. The metadata is default metadata only and can be overriden in [the task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/callouts_task.rb).
+
+##### Example
 
 ```
 $ CALLOUTS_TASK_CREATE_METADATA='{}' bundle exec rake task:callouts:create
@@ -36,9 +64,17 @@ $ CALLOUTS_TASK_CREATE_METADATA='{}' bundle exec rake task:callouts:create
 
 #### task:callouts:populate
 
-Populates a callout with phone numbers. If `CALLOUTS_TASK_POPULATE_METADATA` is set to a JSON string the resulting phone numbers will be created with the specified metadata. If `CALLOUTS_TASK_CALLOUT_ID` is specified then the callout with the specified id will be populated. If `CALLOUTS_TASK_CALLOUT_ID` is not specified it's assumed there is only one callout in the database. If there are multiple an exception is raised.
+Populates a callout with phone numbers to call.
 
-By default callouts are populated with all the contacts in the Contacts table. Override the `contacts_to_populate_with` in the [callouts task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/callouts_task.rb) to modify this behavior.
+##### Task Configuration
+
+`CALLOUTS_TASK_POPULATE_METADATA` configures the default metadata to be set on the phone numbers when populating the callout (defaults to nil). For example, setting `CALLOUTS_TASK_POPULATE_METADATA="{'foo':'bar'}"` will populate the callout with phone numbers containg the specified metadata. The metadata is default metadata only and can be overriden in [the task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/callouts_task.rb).
+
+`CALLOUTS_TASK_CALLOUT_ID` tells the task which callout to populate. If `CALLOUTS_TASK_CALLOUT_ID` is not specified it's assumed there is only one callout in the database. If there are multiple an exception is raised.
+
+By default callouts are populated with all the contacts in the Contacts table. Override the `contacts_to_populate_with` in the [task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/callouts_task.rb) to modify this behavior.
+
+##### Example
 
 ```
 $ CALLOUTS_TASK_POPULATE_METADATA='{}' CALLOUTS_TASK_CALLOUT_ID= bundle exec rake task:callouts:populate
@@ -46,7 +82,15 @@ $ CALLOUTS_TASK_POPULATE_METADATA='{}' CALLOUTS_TASK_CALLOUT_ID= bundle exec rak
 
 #### task:callouts:run
 
-*start*, *stop*, *pause* or *resume* a callout given a valid `CALLOUTS_TASK_ACTION`. If `CALLOUTS_TASK_CALLOUT_ID` is specified then the callout with the specified id will be actioned. If `CALLOUTS_TASK_CALLOUT_ID` is not specified then it's assumed there is only one callout in the database. If there are multiple an exception is raised.
+*start*, *stop*, *pause* or *resume* a callout
+
+##### Task Configuration
+
+`CALLOUTS_TASK_ACTION` tells the script which action to perform. `CALLOUTS_TASK_ACTION` can be one of either `start`, `stop`, `pause` or `resume`.
+
+`CALLOUTS_TASK_CALLOUT_ID` tells the task which callout to perform the action on. If `CALLOUTS_TASK_CALLOUT_ID` is not specified then it's assumed there is only one callout in the database. If there are multiple an exception is raised.
+
+##### Example
 
 ```
 $ CALLOUTS_TASK_ACTION='start|stop|pause|resume' CALLOUTS_TASK_CALLOUT_ID= bundle exec rake task:callouts:run
@@ -68,7 +112,7 @@ The [enqueue calls task](https://github.com/somleng/somleng-scfm/blob/master/app
 
 Remotely enqueues phone calls on [Somleng](https://github.com/somleng/twilreapi) or [Twilio](https://www.twilio.com/)
 
-##### Configuration
+##### Task Configuration
 
 `ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE` configures the maximum number of calls to enqueue (defaults to nil). If `ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE=30` the maximum number of calls that will be enqueued by running this task will be 30. If `ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE` is not specified then there is no maximum (the task will try to enqueue as many as it can).
 
@@ -81,9 +125,55 @@ If `ENQUEUE_CALLS_TASK_ENQUEUE_STRATEGY=pessimistic` the maximum number of calls
 `ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD` configures the maximum number of calls to enqueue in a given period (defaults to nil). Where the period is configured by `ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD_HOURS` (or is 24 hours by default). For example suppose you set `ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD=1000`. This would set a maximum number of calls to be enqueued to 1000 per 24 hour period. Setting `ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD_HOURS=36` would apply this maximum to a 3 day period instead.
 
 `ENQUEUE_CALLS_TASK_REMOTE_CALL_PARAMS` configures the default request params that will be sent to Somleng (or Twilio) when enqueuing a call (defaults to nil). Setting `ENQUEUE_CALLS_TASK_REMOTE_CALL_PARAMS="{'from':'1234','url':'http://demo.twilio.com/docs/voice.xml','method':'GET'}"` would send these params to Somleng (or Twilio) when enqueuing a phone call. These params are default params only and can be overriden in [the task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/enqueue_calls_task.rb).
-```
+
+##### Somleng (Twilio) Configuration
+
+See [Somleng Configuration](#somleng-configuration)
+
+##### Example
 
 ```
 $ ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE=30 ENQUEUE_CALLS_TASK_ENQUEUE_STRATEGY=optimistic ENQUEUE_CALLS_TASK_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE=1 ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD= ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD_HOURS=24 ENQUEUE_CALLS_TASK_REMOTE_CALL_PARAMS="{'from':'1234','url':'http://demo.twilio.com/docs/voice.xml','method':'GET'}" bundle exec rake task:enqueue_calls:run
 ```
 
+### Update Calls
+
+The [update calls task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/update_calls_task.rb) handles updating phone call statuses from Somleng or Twilio.
+
+#### task:update_calls:run
+
+##### Task Configuration
+
+`UPDATE_CALLS_TASK_MAX_CALLS_TO_FETCH` configures the maximum number of calls to fetch when running this task (defaults to nil). Setting `UPDATE_CALLS_TASK_MAX_CALLS_TO_FETCH=1000` would limit the task to fetching at most 1000 call statuses.
+
+##### Somleng (Twilio) Configuration
+
+See [Somleng Configuration](#somleng-configuration)
+
+##### Example
+
+```
+$ UPDATE_CALLS_TASK_MAX_CALLS_TO_FETCH=1000 bundle exec rake task:update_calls:run
+```
+
+#### rake task:start_flow_rapidpro:run
+
+The [start flow rapidpro task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/start_flow_rapidpro_task.rb) triggers a remote flow on [RapidPro](https://community.rapidpro.io/).
+
+##### Task Configuration
+
+`START_FLOW_RAPIDPRO_TASK_MAX_FLOWS_TO_START` configures the maximum number of flows to trigger when running this task (defaults to nil).
+
+`START_FLOW_RAPIDPRO_TASK_REMOTE_REQUEST_PARAMS` configures the default request parameters that will be sent to RapidPro for each remote request (defaults to nil). For example, setting `START_FLOW_RAPIDPRO_TASK_REMOTE_REQUEST_PARAMS="{'flow'=>'flow-id', 'groups'=>[], 'contacts'=>[], 'urns'=>['telegram:telegram-id'], 'extra'=>{}}"` would send these parameters to the the start flow remote request on RapidPro. These params are default params only and can be overriden in [the task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/start_flow_rapidpro_task.rb).
+
+`RAPIDPRO_BASE_URL` configures the base url to send RapidPro requests (defaults to `https://app.rapidpro.io/api`)
+
+`RAPIDPRO_API_VERSION` configures the API version for RapidPro (defaults to `v2`)
+
+`RAPIDPRO_API_TOKEN` configures the API token needed to authenticate with RapidPro (defaults to nil)
+
+##### Example
+
+```
+$ RAPIDPRO_BASE_URL="https://app.rapidpro.io/api" RAPIDPRO_API_VERSION="v2" RAPIDPRO_API_TOKEN="rapidpro-api-token" START_FLOW_RAPIDPRO_TASK_MAX_FLOWS_TO_START=1000 START_FLOW_RAPIDPRO_TASK_REMOTE_REQUEST_PARAMS=="{'flow'=>'flow-id', 'groups'=>[], 'contacts'=>[], 'urns'=>['telegram:telegram-id'], 'extra'=>{}}" bundle exec rake task:start_flow_rapidpro:run
+```

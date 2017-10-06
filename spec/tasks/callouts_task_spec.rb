@@ -131,9 +131,8 @@ RSpec.describe CalloutsTask do
   end
 
   describe "#create!" do
-    let(:existing_callout) { create(:callout) }
-    let(:force_create) { nil }
     let(:metadata) { nil }
+    let(:asserted_metadata) { {} }
     let(:result) { subject.create! }
 
     before do
@@ -147,62 +146,23 @@ RSpec.describe CalloutsTask do
 
     def env
       {
-        "CALLOUTS_TASK_FORCE_CREATE" => force_create && force_create.to_s,
         "CALLOUTS_TASK_CREATE_METADATA" => metadata && metadata.to_json
       }
     end
 
     def assert_create!
-      expect(STDOUT).to receive(:puts) do |arg|
-        assert_callout_id!(arg)
-      end
+      expect(STDOUT).to receive(:puts).with(Integer)
       expect(result).to eq(Callout.last!)
+      expect(result.metadata).to eq(asserted_metadata)
     end
 
-    context "given a callout does not yet exist" do
-      def assert_callout_id!(arg)
-      end
+    it { assert_create! }
+
+    context "specifying metadata" do
+      let(:metadata) { { "foo" => "bar" } }
+      let(:asserted_metadata) { metadata }
 
       it { assert_create! }
-
-      context "specifying metadata" do
-        let(:metadata) { { "foo" => "bar" } }
-
-        def assert_create!
-
-          expect(result.metadata).to eq(metadata)
-        end
-
-        it { assert_create! }
-      end
-    end
-
-    context "given a callout already exists" do
-      def setup_scenario
-        super
-        existing_callout
-      end
-
-      context "by default" do
-        let(:asserted_callout) { existing_callout }
-
-        def assert_callout_id!(id)
-          expect(id).to eq(existing_callout.id)
-        end
-
-        it { assert_create! }
-      end
-
-      context "CALLOUTS_TASK_FORCE_CREATE=1" do
-        let(:force_create) { 1 }
-        let(:asserted_callout) { Callout.where.not(:id => existing_callout.id).last! }
-
-        def assert_callout_id!(id)
-          expect(id).not_to eq(existing_callout.id)
-        end
-
-        it { assert_create! }
-      end
     end
   end
 

@@ -28,15 +28,9 @@ class CalloutsTask < ApplicationTask
   end
 
   def create!
-    if (!find_callout || force_create?)
-      new_callout = Callout.create!(
-        :metadata => create_callout_metadata
-      )
-    end
-
-    returned_callout = new_callout || callout
-    puts(returned_callout.id)
-    returned_callout
+    new_callout = Callout.create!(:metadata => create_callout_metadata)
+    puts(new_callout.id)
+    new_callout
   end
 
   def statistics
@@ -65,23 +59,10 @@ class CalloutsTask < ApplicationTask
   end
 
   def callout
-    find_callout!
+    @callout ||= (!ENV["CALLOUTS_TASK_CALLOUT_ID"] && Callout.count == 1 && Callout.first!) || Callout.find(ENV["CALLOUTS_TASK_CALLOUT_ID"])
   end
 
   private
-
-  def find_callout!
-    find_callout_scope.first!
-  end
-
-  def find_callout
-    find_callout_scope.first
-  end
-
-  def find_callout_scope
-    callout_id = ENV["CALLOUTS_TASK_CALLOUT_ID"] || (Callout.count == 1 && Callout.first.id)
-    Callout.where(:id => callout_id)
-  end
 
   def create_callout_metadata
     JSON.parse(ENV["CALLOUTS_TASK_CREATE_METADATA"] || "{}")

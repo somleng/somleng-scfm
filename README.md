@@ -28,6 +28,10 @@ Somleng Simple Call Flow Manager (Somleng SCFM) can be used to enqueue, throttle
 * Add your own metadata as JSON to *callouts*, *phone_numbers* and *phone_calls*
 * Extend with your own [tasks](https://github.com/somleng/somleng-scfm/tree/master/app/tasks)
 
+## Usage
+
+See [USAGE](https://github.com/somleng/somleng-scfm/blob/master/docs/USAGE.md)
+
 ## Deployment
 
 See [DEPLOYMENT](https://github.com/somleng/somleng-scfm/blob/master/docs/DEPLOYMENT.md)

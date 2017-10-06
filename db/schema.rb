@@ -20,9 +20,11 @@ ActiveRecord::Schema.define(version: 20170926070754) do
   end
 
   create_table "contacts", force: :cascade do |t|
+    t.string "msisdn", null: false
     t.text "metadata", default: "{}", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["msisdn"], name: "index_contacts_on_msisdn", unique: true
   end
 
   create_table "phone_calls", force: :cascade do |t|

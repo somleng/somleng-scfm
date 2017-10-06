@@ -21,12 +21,13 @@ FactoryGirl.define do
   end
 
   factory :contact do
+    msisdn { generate(:somali_msisdn) }
   end
 
   factory :phone_number do
     callout
     contact
-    msisdn { generate(:somali_msisdn) }
+    msisdn { contact.msisdn }
   end
 
   factory :phone_call do

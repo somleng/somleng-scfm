@@ -1,4 +1,5 @@
 class PhoneNumber < ApplicationRecord
+  include MsisdnHelpers
   include MetadataHelpers
 
   belongs_to :callout
@@ -6,11 +7,7 @@ class PhoneNumber < ApplicationRecord
   has_many :phone_calls
 
   validates :msisdn,
-            :presence => true,
-            :uniqueness => {:scope => :callout_id},
-            :phony_plausible => true
-
-  before_validation :normalize_msisdn
+            :uniqueness => {:scope => :callout_id}
 
   def self.from_running_callout
     joins(:callout).merge(Callout.running)
@@ -49,11 +46,5 @@ class PhoneNumber < ApplicationRecord
         :status => [status]
       }
     )
-  end
-
-  private
-
-  def normalize_msisdn
-    self.msisdn = PhonyRails.normalize_number(msisdn)
   end
 end

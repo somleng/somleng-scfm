@@ -36,13 +36,16 @@ class CalloutsTask < ApplicationTask
   end
 
   def populate!
-    contacts_to_populate_with.find_each do |contact|
+    population = contacts_to_populate_with.count
+    contacts_to_populate_with.find_each.with_index do |contact, index|
       PhoneNumber.create(
         :callout => callout,
         :contact => contact,
         :msisdn => contact.msisdn,
         :metadata => default_populate_metadata.merge(populate_metadata(contact))
       )
+
+      puts("Populated callout with #{index + 1}/#{population} phone numbers") if (index % 1000) == 0
     end
   end
 

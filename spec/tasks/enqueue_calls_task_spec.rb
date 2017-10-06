@@ -60,7 +60,7 @@ RSpec.describe EnqueueCallsTask do
 
       def env
         super.merge(
-          "ENQUEUE_CALLS_TASK_DEFAULT_CALL_PARAMS" => default_call_params
+          "ENQUEUE_CALLS_TASK_DEFAULT_SOMLENG_REQUEST_PARAMS" => default_call_params
         )
       end
 

@@ -13,7 +13,7 @@ class UpdateCallsTask < ApplicationTask
     PhoneCall.waiting_for_completion.with_remote_call_id.not_recently_created.limit(num_calls_to_fetch).find_each do |phone_call|
       begin
         mark_as_fetching_status!(phone_call)
-        fetch_remote!(phone_call)
+        fetch_remote!(phone_call.reload)
       rescue ActiveRecord::StaleObjectError
       end
     end

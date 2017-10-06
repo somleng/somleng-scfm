@@ -24,6 +24,88 @@ A [phone call](https://github.com/somleng/somleng-scfm/blob/master/app/models/ph
 
 Somleng SCFM Tasks are stand alone rake tasks that can be run manually, from cron or from another application.
 
+### Quickstart
+
+This section explains how to get up and running quickly tasks. Please continue reading the sections below for detailed information on tasks.
+
+1. Create the database
+
+```
+$ bundle exec rake db:create && bundle exec rake db:migrate
+```
+
+2. Import contacts
+
+```
+$ DUMMY_CONTACT_MSISDN=replace-with-your-phone-number-or-remove-this-env-variable bundle exec rails runner ./examples/import_contacts.rb
+```
+
+3. Create a callout
+
+```
+$ bundle exec rake task:callouts:create
+```
+
+4. Populate the callout
+
+```
+$ bundle exec rake task:callouts:populate
+```
+
+5. Print callout statistics
+
+```
+$ bundle exec rake task:callouts:statistics
+```
+
+6. Start the callout and print the statistics to see that it's running
+
+```
+$ CALLOUTS_TASK_ACTION=start bundle exec rake task:callouts:run && bundle exec rake task:callouts:statistics
+```
+
+7. Pause the callout and print the statistics to see that it's paused (optional)
+
+```
+$ CALLOUTS_TASK_ACTION=pause bundle exec rake task:callouts:run && bundle exec rake task:callouts:statistics
+```
+
+8. Resume the callout and print the statistics to see that it's running (optional)
+
+```
+$ CALLOUTS_TASK_ACTION=resume bundle exec rake task:callouts:run && bundle exec rake task:callouts:statistics
+```
+
+9. Stop the callout and print the statistics to see that it's stopped (optional)
+
+```
+$ CALLOUTS_TASK_ACTION=stop bundle exec rake task:callouts:run && bundle exec rake task:callouts:statistics
+```
+
+10. Resume the callout again and print the statistics to see that it's running (optional)
+
+```
+$ CALLOUTS_TASK_ACTION=resume bundle exec rake task:callouts:run && bundle exec rake task:callouts:statistics
+```
+
+11. Enqueue the calls on Somleng (or Twilio) and print the statistics (your phone should ring)
+
+```
+$ SOMLENG_CLIENT_REST_API_HOST="api.twilio.com" SOMLENG_CLIENT_REST_API_BASE_URL="https://api.twilio.com" SOMLENG_ACCOUNT_SID="replace-with-your-somleng-or-twilio-account-sid" SOMLENG_AUTH_TOKEN="replace-with-your-somleng-or-twilio-auth-token" ENQUEUE_CALLS_TASK_DEFAULT_SOMLENG_REQUEST_PARAMS="{'from':'1234','url':'http://demo.twilio.com/docs/voice.xml','method':'GET'}" bundle exec rake task:enqueue_calls:run && bundle exec rake task:callouts:statistics
+```
+
+12. Update the call status and print the statistics (run multiple times to watch it change)
+
+```
+$ SOMLENG_CLIENT_REST_API_HOST="api.twilio.com" SOMLENG_CLIENT_REST_API_BASE_URL="https://api.twilio.com" SOMLENG_ACCOUNT_SID="replace-with-your-somleng-or-twilio-account-sid" SOMLENG_AUTH_TOKEN="replace-with-your-somleng-or-twilio-auth-token" bundle exec rake task:update_calls:run && bundle exec rake task:callouts:statistics
+```
+
+13. Enqueue he calls on Somleng (or Twilio) again and print the statistics. This time your phone should not ring. (optional)
+
+```
+$ SOMLENG_CLIENT_REST_API_HOST="api.twilio.com" SOMLENG_CLIENT_REST_API_BASE_URL="https://api.twilio.com" SOMLENG_ACCOUNT_SID="replace-with-your-somleng-or-twilio-account-sid" SOMLENG_AUTH_TOKEN="replace-with-your-somleng-or-twilio-auth-token" ENQUEUE_CALLS_TASK_DEFAULT_SOMLENG_REQUEST_PARAMS="{'from':'1234','url':'http://demo.twilio.com/docs/voice.xml','method':'GET'}" bundle exec rake task:enqueue_calls:run && bundle exec rake task:callouts:statistics
+```
+
 ### Global Task Configuration
 
 Each task has it's own specific configuration which is documented below. Some tasks make use of global configuration which is described here.
@@ -124,7 +206,7 @@ If `ENQUEUE_CALLS_TASK_ENQUEUE_STRATEGY=pessimistic` the maximum number of calls
 
 `ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD` configures the maximum number of calls to enqueue in a given period (defaults to nil). Where the period is configured by `ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD_HOURS` (or is 24 hours by default). For example suppose you set `ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD=1000`. This would set a maximum number of calls to be enqueued to 1000 per 24 hour period. Setting `ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD_HOURS=36` would apply this maximum to a 3 day period instead.
 
-`ENQUEUE_CALLS_TASK_REMOTE_CALL_PARAMS` configures the default request params that will be sent to Somleng (or Twilio) when enqueuing a call (defaults to nil). Setting `ENQUEUE_CALLS_TASK_REMOTE_CALL_PARAMS="{'from':'1234','url':'http://demo.twilio.com/docs/voice.xml','method':'GET'}"` would send these params to Somleng (or Twilio) when enqueuing a phone call. These params are default params only and can be overriden in [the task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/enqueue_calls_task.rb).
+`ENQUEUE_CALLS_TASK_DEFAULT_SOMLENG_REQUEST_PARAMS` configures the default request params that will be sent to Somleng (or Twilio) when enqueuing a call (defaults to nil). Setting `ENQUEUE_CALLS_TASK_DEFAULT_SOMLENG_REQUEST_PARAMS="{'from':'1234','url':'http://demo.twilio.com/docs/voice.xml','method':'GET'}"` would send these params to Somleng (or Twilio) when enqueuing a phone call. These params are default params only and can be overriden in [the task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/enqueue_calls_task.rb).
 
 ##### Somleng (Twilio) Configuration
 
@@ -133,7 +215,7 @@ See [Somleng Configuration](#somleng-configuration)
 ##### Example
 
 ```
-$ ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE=30 ENQUEUE_CALLS_TASK_ENQUEUE_STRATEGY=optimistic ENQUEUE_CALLS_TASK_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE=1 ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD= ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD_HOURS=24 ENQUEUE_CALLS_TASK_REMOTE_CALL_PARAMS="{'from':'1234','url':'http://demo.twilio.com/docs/voice.xml','method':'GET'}" bundle exec rake task:enqueue_calls:run
+$ ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE=30 ENQUEUE_CALLS_TASK_ENQUEUE_STRATEGY=optimistic ENQUEUE_CALLS_TASK_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE=1 ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD= ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD_HOURS=24 ENQUEUE_CALLS_TASK_DEFAULT_SOMLENG_REQUEST_PARAMS="{'from':'1234','url':'http://demo.twilio.com/docs/voice.xml','method':'GET'}" bundle exec rake task:enqueue_calls:run
 ```
 
 ### Update Calls
@@ -164,7 +246,7 @@ The [start flow rapidpro task](https://github.com/somleng/somleng-scfm/blob/mast
 
 `START_FLOW_RAPIDPRO_TASK_MAX_FLOWS_TO_START` configures the maximum number of flows to trigger when running this task (defaults to nil).
 
-`START_FLOW_RAPIDPRO_TASK_REMOTE_REQUEST_PARAMS` configures the default request parameters that will be sent to RapidPro for each remote request (defaults to nil). For example, setting `START_FLOW_RAPIDPRO_TASK_REMOTE_REQUEST_PARAMS="{'flow'=>'flow-id', 'groups'=>[], 'contacts'=>[], 'urns'=>['telegram:telegram-id'], 'extra'=>{}}"` would send these parameters to the the start flow remote request on RapidPro. These params are default params only and can be overriden in [the task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/start_flow_rapidpro_task.rb).
+`START_FLOW_RAPIDPRO_TASK_REMOTE_REQUEST_PARAMS` configures the default request parameters that will be sent to RapidPro for each remote request (defaults to nil). For example, setting `START_FLOW_RAPIDPRO_TASK_REMOTE_REQUEST_PARAMS="{\"flow\"=>\"flow-id\", \"groups\"=>[], \"contacts\"=>[], \"urns\"=>[\"telegram:telegram-id\"], \"extra\"=>{}}"` would send these parameters to the the start flow remote request on RapidPro. These params are default params only and can be overriden in [the task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/start_flow_rapidpro_task.rb).
 
 `RAPIDPRO_BASE_URL` configures the base url to send RapidPro requests (defaults to `https://app.rapidpro.io/api`)
 
@@ -175,5 +257,5 @@ The [start flow rapidpro task](https://github.com/somleng/somleng-scfm/blob/mast
 ##### Example
 
 ```
-$ RAPIDPRO_BASE_URL="https://app.rapidpro.io/api" RAPIDPRO_API_VERSION="v2" RAPIDPRO_API_TOKEN="rapidpro-api-token" START_FLOW_RAPIDPRO_TASK_MAX_FLOWS_TO_START=1000 START_FLOW_RAPIDPRO_TASK_REMOTE_REQUEST_PARAMS=="{'flow'=>'flow-id', 'groups'=>[], 'contacts'=>[], 'urns'=>['telegram:telegram-id'], 'extra'=>{}}" bundle exec rake task:start_flow_rapidpro:run
+$ RAPIDPRO_BASE_URL="https://app.rapidpro.io/api" RAPIDPRO_API_VERSION="v2" RAPIDPRO_API_TOKEN="rapidpro-api-token" START_FLOW_RAPIDPRO_TASK_MAX_FLOWS_TO_START=1000 START_FLOW_RAPIDPRO_TASK_REMOTE_REQUEST_PARAMS="{\"flow\"=>\"flow-id\", \"groups\"=>[], \"contacts\"=>[], \"urns\"=>[\"telegram:telegram-id\"], \"extra\"=>{}}" bundle exec rake task:start_flow_rapidpro:run
 ```

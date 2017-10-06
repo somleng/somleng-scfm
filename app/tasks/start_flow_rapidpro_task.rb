@@ -6,7 +6,7 @@ class StartFlowRapidproTask < ApplicationTask
   class Install < ApplicationTask::Install
     DEFAULT_ENV_VARS = {
       :start_flow_rapidpro_task_max_flows_to_start => "100",
-      :start_flow_rapidpro_task_remote_request_params => '{"flow"=>"flow-id", "groups"=>[], "contacts"=>[], "urns"=>["telegram:telegram-id"], "extra"=>{}}',
+      :start_flow_rapidpro_task_remote_request_params => "{\"flow\"=>\"flow-id\", \"groups\"=>[], \"contacts\"=>[], \"urns\"=>[\"telegram:telegram-id\"], \"extra\"=>{}}",
       :rapidpro_base_url => "https://app.rapidpro.io/api",
       :rapidpro_api_version => "v2",
       :rapidpro_api_token => "replace-me-rapidpro-api-token"

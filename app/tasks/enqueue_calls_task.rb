@@ -9,7 +9,7 @@ class EnqueueCallsTask < ApplicationTask
       :enqueue_calls_task_max_calls_to_enqueue => "30",
       :enqueue_calls_task_enqueue_strategy => "optimistic",
       :enqueue_calls_task_pessimistic_min_calls_to_enqueue => "1",
-      :enqueue_calls_task_remote_call_params => '{"from":"1234","url":"http://demo.twilio.com/docs/voice.xml","method":"GET"}'
+      :enqueue_calls_task_default_somleng_request_params => "{\"from\":\"1234\",\"url\":\"http://demo.twilio.com/docs/voice.xml\",\"method\":\"GET\"}"
     }
 
     def self.default_env_vars(task_name)
@@ -71,11 +71,11 @@ class EnqueueCallsTask < ApplicationTask
 
   def queue_remote_call!(phone_number)
     somleng_client.api.account.calls.create(
-      default_call_params.merge(call_params(phone_number))
+      default_somleng_request_params.merge(somleng_request_params(phone_number))
     )
   end
 
-  def call_params(phone_number)
+  def somleng_request_params(phone_number)
     {
       :to => phone_number.msisdn
     }
@@ -113,7 +113,7 @@ class EnqueueCallsTask < ApplicationTask
     (ENV["ENQUEUE_CALLS_TASK_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE"].presence || DEFAULT_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE).to_i
   end
 
-  def default_call_params
-    @default_call_params ||= JSON.parse(ENV["ENQUEUE_CALLS_TASK_DEFAULT_CALL_PARAMS"].presence || "{}").symbolize_keys
+  def default_somleng_request_params
+    @default_somleng_request_params ||= JSON.parse(ENV["ENQUEUE_CALLS_TASK_DEFAULT_SOMLENG_REQUEST_PARAMS"].presence || "{}").symbolize_keys
   end
 end

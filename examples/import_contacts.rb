@@ -1,7 +1,15 @@
 #!/usr/bin/env ruby
 
 class MyImporter
+  DEFAULT_DUMMY_CONTACT_MSISDN = "+85512234567"
+
   def import!
+    import_file.present? ? import_from_file : dummy_import
+  end
+
+  private
+
+  def import_from_file
     header_row = rows.shift if has_header_row?
     rows.each_with_index do |row, index|
       create_contact(
@@ -34,7 +42,13 @@ class MyImporter
     print_import_summary(rows.count)
   end
 
-  private
+  def dummy_import
+    create_contact(dummy_contact_msisdn, :name => "Joe Blogs")
+  end
+
+  def dummy_contact_msisdn
+    ENV["DUMMY_CONTACT_MSISDN"].presence || DEFAULT_DUMMY_CONTACT_MSISDN
+  end
 
   def print_import_summary(rows_completed = nil)
     puts "#{rows_completed}/#{rows.count} rows read, #{Contact.count} contacts created"

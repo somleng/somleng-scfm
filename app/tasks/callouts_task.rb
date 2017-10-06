@@ -8,7 +8,7 @@ class CalloutsTask < ApplicationTask
     }
 
     def self.rake_tasks
-      super << :statistics
+      super + [:create!, :statistics]
     end
 
     def self.install_cron?(task_name)
@@ -25,6 +25,18 @@ class CalloutsTask < ApplicationTask
       ArgumentError,
       "Action: '#{action}' not recognized. Please specify one of #{AVAILABLE_ACTIONS} in ENV['CALLOUTS_TASK_ACTION']"
     )
+  end
+
+  def create!
+    if (!find_callout || force_create?)
+      new_callout = Callout.create!(
+        :metadata => create_callout_metadata
+      )
+    end
+
+    returned_callout = new_callout || callout
+    puts(returned_callout.id)
+    returned_callout
   end
 
   def statistics
@@ -53,10 +65,31 @@ class CalloutsTask < ApplicationTask
   end
 
   def callout
-    @callout ||= (!ENV["CALLOUTS_TASK_CALLOUT_ID"] && Callout.count == 1 && Callout.first!) || Callout.find(ENV["CALLOUTS_TASK_CALLOUT_ID"])
+    find_callout!
   end
 
   private
+
+  def find_callout!
+    find_callout_scope.first!
+  end
+
+  def find_callout
+    find_callout_scope.first
+  end
+
+  def find_callout_scope
+    callout_id = ENV["CALLOUTS_TASK_CALLOUT_ID"] || (Callout.count == 1 && Callout.first.id)
+    Callout.where(:id => callout_id)
+  end
+
+  def create_callout_metadata
+    JSON.parse(ENV["CALLOUTS_TASK_CREATE_METADATA"] || "{}")
+  end
+
+  def force_create?
+    ENV["CALLOUTS_TASK_FORCE_CREATE"].to_i == 1
+  end
 
   def enqueue_calls_task
     @enqueue_calls_task ||= EnqueueCallsTask.new

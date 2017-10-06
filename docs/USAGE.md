@@ -30,7 +30,6 @@ This section explains how to get up and running quickly tasks. Please continue r
 
 If you want to follow this guide without installing anything locally, run the docker examples instead.
 
-```
 1. Create the database
 
 ```

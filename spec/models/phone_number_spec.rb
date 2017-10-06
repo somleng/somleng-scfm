@@ -74,6 +74,7 @@ RSpec.describe PhoneNumber do
       }
 
       def setup_scenario
+        super
         phone_number_with_no_calls
         phone_number_last_attempt_completed
         phone_number_last_attempt_failed
@@ -99,6 +100,33 @@ RSpec.describe PhoneNumber do
             :phone_calls => [first_attempt, last_attempt].compact
           }.merge(options)
         )
+      end
+
+      describe ".remaining" do
+        let(:results) { described_class.remaining }
+
+        def setup_scenario
+          stub_env(env)
+          super
+        end
+
+        def env
+          {
+            "PHONE_NUMBER_RETRY_STATUSES" => retry_statuses
+          }
+        end
+
+        context "by default" do
+          let(:retry_statuses) { nil }
+          let(:asserted_results) { [phone_number_with_no_calls, phone_number_last_attempt_failed] }
+          it { assert_scope! }
+        end
+
+        context "PHONE_NUMBER_RETRY_STATUSES='failed,completed'" do
+          let(:retry_statuses) { "failed,completed" }
+          let(:asserted_results) { [phone_number_with_no_calls, phone_number_last_attempt_failed, phone_number_last_attempt_completed] }
+          it { assert_scope! }
+        end
       end
 
       describe ".last_phone_call_attempt(status)" do

@@ -2,6 +2,10 @@ class PhoneNumber < ApplicationRecord
   include MsisdnHelpers
   include MetadataHelpers
 
+  DEFAULT_RETRY_STATUSES = [
+    "failed"
+  ]
+
   belongs_to :callout
   belongs_to :contact
   has_many :phone_calls
@@ -21,6 +25,10 @@ class PhoneNumber < ApplicationRecord
         :id => last_phone_call_attempt(status)
       )
     )
+  end
+
+  def self.remaining
+    no_phone_calls_or_last_attempt(retry_statuses)
   end
 
   def self.no_phone_calls
@@ -46,5 +54,13 @@ class PhoneNumber < ApplicationRecord
         :status => [status]
       }
     )
+  end
+
+  def self.default_retry_statuses
+    DEFAULT_RETRY_STATUSES
+  end
+
+  def self.retry_statuses
+    ENV["PHONE_NUMBER_RETRY_STATUSES"].present? ? ENV["PHONE_NUMBER_RETRY_STATUSES"].to_s.split(",") : default_retry_statuses
   end
 end

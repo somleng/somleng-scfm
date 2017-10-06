@@ -207,18 +207,29 @@ RSpec.describe CalloutsTask do
 
   describe "#statistics" do
     let(:callout) { create(:callout) }
+    let(:phone_number) { create(:phone_number, :callout => callout) }
+    let(:callout_id) { callout.id }
 
     before do
       setup_scenario
     end
 
     def setup_scenario
-      callout
+      stub_env(env)
+      phone_number
+      create(:phone_number)
+    end
+
+    def env
+      {
+        "CALLOUTS_TASK_CALLOUT_ID" => callout_id
+      }
     end
 
     def assert_statistics!
       expect(STDOUT).to receive(:puts) do |arg|
         expect(arg).to include("Callout Status")
+        expect(arg).to match(/Total Phone Numbers:\s+1/)
       end
       subject.statistics
     end

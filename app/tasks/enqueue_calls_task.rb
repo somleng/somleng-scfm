@@ -35,7 +35,7 @@ class EnqueueCallsTask < ApplicationTask
   end
 
   def phone_numbers_to_call
-    PhoneNumber.from_running_callout.no_phone_calls_or_last_attempt(:failed)
+    PhoneNumber.from_running_callout.remaining
   end
 
   private

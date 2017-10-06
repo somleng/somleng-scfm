@@ -2,6 +2,7 @@ class EnqueueCallsTask < ApplicationTask
   DEFAULT_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE = 1
   DEFAULT_ENQUEUE_STRATEGY = "optimistic"
   ENQUEUE_STRATEGIES = [DEFAULT_ENQUEUE_STRATEGY, "pessimistic"]
+  DEFAULT_MAX_CALLS_PER_PERIOD_HOURS = 24
 
   class Install < ApplicationTask::Install
     DEFAULT_ENV_VARS = {
@@ -17,17 +18,24 @@ class EnqueueCallsTask < ApplicationTask
   end
 
   def run!
-    phone_numbers_to_call.limit(num_calls_to_enqueue).find_each do |phone_number|
+    phone_numbers_to_call.limit(max_num_calls_to_enqueue).find_each do |phone_number|
       phone_call = schedule_phone_call!(phone_number)
       enqueue_phone_call!(phone_call)
     end
   end
 
-  def optimistic_num_calls_to_enqueue
+  def max_num_calls_to_enqueue
+    [
+      send("#{enqueue_strategy}_max_num_calls_to_enqueue"),
+      max_calls_per_period && calls_remaining_in_period
+    ].compact.min
+  end
+
+  def optimistic_max_num_calls_to_enqueue
     max_calls_to_enqueue
   end
 
-  def pessimistic_num_calls_to_enqueue
+  def pessimistic_max_num_calls_to_enqueue
     [
       ((max_calls_to_enqueue || phone_numbers_to_call.count) - phone_calls_waiting_for_completion.count),
       pessimistic_min_calls_to_enqueue
@@ -77,23 +85,35 @@ class EnqueueCallsTask < ApplicationTask
     @somleng_client ||= Somleng::Client.new
   end
 
-  def num_calls_to_enqueue
-    send("#{enqueue_strategy}_num_calls_to_enqueue")
+  def calls_remaining_in_period
+    [(max_calls_per_period - calls_queued_in_period.count), 0].max
+  end
+
+  def calls_queued_in_period
+    PhoneCall.in_last_hours(max_calls_per_period_hours, :queued_at)
   end
 
   def enqueue_strategy
-    Hash[ENQUEUE_STRATEGIES.map {|k| [k, k] }][ENV["ENQUEUE_CALLS_TASK_ENQUEUE_STRATEGY"]] ||DEFAULT_ENQUEUE_STRATEGY
+    Hash[ENQUEUE_STRATEGIES.map {|k| [k, k] }][ENV["ENQUEUE_CALLS_TASK_ENQUEUE_STRATEGY"].presence] ||DEFAULT_ENQUEUE_STRATEGY
   end
 
   def max_calls_to_enqueue
-    ENV["ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE"].to_i if ENV["ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE"]
+    ENV["ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE"].to_i if ENV["ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE"].present?
+  end
+
+  def max_calls_per_period
+    ENV["ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD"].to_i if ENV["ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD"].present?
+  end
+
+  def max_calls_per_period_hours
+    (ENV["ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD_HOURS"].presence || DEFAULT_MAX_CALLS_PER_PERIOD_HOURS).to_i
   end
 
   def pessimistic_min_calls_to_enqueue
-    (ENV["ENQUEUE_CALLS_TASK_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE"] || DEFAULT_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE).to_i
+    (ENV["ENQUEUE_CALLS_TASK_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE"].presence || DEFAULT_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE).to_i
   end
 
   def default_call_params
-    @default_call_params ||= JSON.parse(ENV["ENQUEUE_CALLS_TASK_DEFAULT_CALL_PARAMS"] || "{}").symbolize_keys
+    @default_call_params ||= JSON.parse(ENV["ENQUEUE_CALLS_TASK_DEFAULT_CALL_PARAMS"].presence || "{}").symbolize_keys
   end
 end

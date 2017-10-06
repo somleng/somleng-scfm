@@ -36,6 +36,7 @@ ActiveRecord::Schema.define(version: 20170926070754) do
     t.integer "lock_version"
     t.text "metadata", default: "{}", null: false
     t.text "remote_response", default: "{}", null: false
+    t.datetime "queued_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["phone_number_id"], name: "index_phone_calls_on_phone_number_id"

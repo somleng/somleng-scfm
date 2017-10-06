@@ -44,7 +44,7 @@ class PhoneCall < ApplicationRecord
       )
     end
 
-    event :queue do
+    event :queue, :after => :touch_queued_at do
       transitions(
         :from => :scheduling,
         :to => :queued,
@@ -91,7 +91,6 @@ class PhoneCall < ApplicationRecord
     end
   end
 
-
   def self.with_remote_call_id
     where.not(:remote_call_id => nil)
   end
@@ -108,11 +107,19 @@ class PhoneCall < ApplicationRecord
     joins(:phone_number => :callout).merge(Callout.running)
   end
 
+  def self.in_last_hours(hours, timestamp_column = :created_at)
+    where(arel_table[timestamp_column].gt(hours.hours.ago))
+  end
+
   def self.time_considered_recently_created_seconds
     (ENV["PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS"] || DEFAULT_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS).to_i
   end
 
   private
+
+  def touch_queued_at
+    self.queued_at = Time.now
+  end
 
   def remote_status_in_progress?
     [

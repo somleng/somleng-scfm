@@ -70,6 +70,11 @@ RSpec.describe PhoneCall do
       let(:current_status) { :scheduling }
       let(:event) { :queue }
 
+      def assert_transitions!
+        super
+        expect(subject.queued_at).to be_present
+      end
+
       context "by default" do
         let(:asserted_new_status) { :errored }
         it { assert_transitions! }
@@ -142,6 +147,65 @@ RSpec.describe PhoneCall do
 
     def assert_scope!
       expect(results).to match_array(asserted_results)
+    end
+
+    describe ".in_last_hours(hours, timestamp_column = :created_at)" do
+      let(:queued_at) { nil }
+      let(:created_at) { nil }
+
+      def create_phone_call(*args)
+        options = args.extract_options!
+        create(factory, *args, factory_attributes.merge(options))
+      end
+
+      def factory_attributes
+        {
+          :created_at => created_at
+        }
+      end
+
+      let(:phone_call) { create_phone_call }
+      let(:queued_phone_call) { create_phone_call(:queued_at => queued_at) }
+
+      let(:hours) { 1 }
+      let(:timestamp_column) { nil }
+      let(:args) { [hours, timestamp_column].compact }
+      let(:results) { described_class.in_last_hours(*args) }
+
+      def setup_scenario
+        queued_phone_call
+        phone_call
+      end
+
+      context "by default" do
+        context "was created at more than specified hours ago" do
+          let(:created_at) { hours.hours.ago }
+          let(:asserted_results) { [] }
+          it { assert_scope! }
+        end
+
+        context "was recently created" do
+          let(:asserted_results) { [phone_call, queued_phone_call] }
+          it { assert_scope! }
+        end
+      end
+
+      context "passing timestamp_column = :queued_at" do
+        let(:timestamp_column) { :queued_at }
+
+        let(:asserted_results) { [queued_phone_call] }
+
+        context "was recently queued" do
+          let(:queued_at) { Time.now }
+          it { assert_scope! }
+        end
+
+        context "was queued at more than specified hours ago" do
+          let(:queued_at) { hours.hours.ago }
+          let(:asserted_results) { [] }
+          it { assert_scope! }
+        end
+      end
     end
 
     describe ".from_running_callout" do

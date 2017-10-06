@@ -11,6 +11,8 @@ RSpec.describe EnqueueCallsTask do
     let(:callout_status) { :running }
     let(:callout) { create(:callout, :status => callout_status) }
     let(:max_calls_to_enqueue) { nil }
+    let(:max_calls_per_period) { nil }
+    let(:max_calls_per_period_hours) { nil }
     let(:num_phone_numbers_to_call) { 2 }
 
     let(:phone_numbers_to_call) {
@@ -29,6 +31,12 @@ RSpec.describe EnqueueCallsTask do
       {
         "ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE" => (
           max_calls_to_enqueue && max_calls_to_enqueue.to_s
+        ),
+        "ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD" => (
+          max_calls_per_period && max_calls_per_period.to_s
+        ),
+        "ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD_HOURS" => (
+          max_calls_per_period_hours && max_calls_per_period_hours.to_s
         )
       }
     end
@@ -110,74 +118,118 @@ RSpec.describe EnqueueCallsTask do
       end
     end
 
-    describe "#optimistic_num_calls_to_enqueue" do
-      let(:result) { subject.optimistic_num_calls_to_enqueue }
-      let(:asserted_result) { max_calls_to_enqueue }
-
+    describe "limits" do
       def assert_result!
         expect(result).to eq(asserted_result)
       end
 
-      context "by default" do
-        it { assert_result! }
-      end
+      describe "#optimistic_max_num_calls_to_enqueue" do
+        let(:result) { subject.optimistic_max_num_calls_to_enqueue }
+        let(:asserted_result) { max_calls_to_enqueue }
 
-      context "ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE=1" do
-        let(:max_calls_to_enqueue) { 1 }
-        it { assert_result! }
-      end
-    end
-
-    describe "#pessimistic_num_calls_to_enqueue" do
-      let(:result) { subject.pessimistic_num_calls_to_enqueue }
-
-      def assert_result!
-        expect(result).to eq(asserted_result)
-      end
-
-      let(:pessimistic_min_calls_to_enqueue) { 1 }
-      let(:num_phone_numbers_to_call) { 3 }
-
-      def setup_scenario
-        phone_numbers_to_call
-        create(:phone_number) # callout not running
-        create_list(:phone_call, num_queued_calls, :status => :queued, :callout => callout)
-        super
-      end
-
-      def env
-        super.merge(
-          "ENQUEUE_CALLS_TASK_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE" => pessimistic_min_calls_to_enqueue.to_s
-        )
-      end
-
-      context "by default" do
-        context "no calls are queued" do
-          let(:num_queued_calls) { 0 }
-          let(:asserted_result) { num_phone_numbers_to_call }
+        context "by default" do
           it { assert_result! }
         end
 
-        context "calls are queued" do
-          let(:num_queued_calls) { num_phone_numbers_to_call }
-          let(:asserted_result) { pessimistic_min_calls_to_enqueue }
+        context "ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE=1" do
+          let(:max_calls_to_enqueue) { 1 }
           it { assert_result! }
         end
       end
 
-      context "ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE=1" do
-        let(:max_calls_to_enqueue) { 2 }
+      describe "#max_num_calls_to_enqueue" do
+        let(:result) { subject.max_num_calls_to_enqueue }
 
-        context "no calls are queued" do
-          let(:num_queued_calls) { 0 }
-          let(:asserted_result) { max_calls_to_enqueue }
-          it { assert_result! }
+        context "ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD=100" do
+          let(:max_calls_per_period) { 100 }
+          let(:asserted_result) { 100 }
+          let(:queued_at) { nil }
+          let(:hours) { 1 }
+
+          def setup_scenario
+            super
+            create(:phone_call, :queued_at => queued_at)
+          end
+
+          context "by default" do
+            context "calls have been queued in the last 24 hours" do
+              let(:asserted_result) { 99 }
+              let(:queued_at) { 23.hour.ago }
+              it { assert_result! }
+            end
+
+            context "no calls have been queued in the last 24 hours" do
+              let(:asserted_result) { 100 }
+              let(:queued_at) { 24.hour.ago }
+              it { assert_result! }
+            end
+          end
+
+          context "ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD_HOURS=1" do
+            let(:max_calls_per_period_hours) { 1 }
+
+            context "calls have been queued in the last 1 hour" do
+              let(:asserted_result) { 99 }
+              let(:queued_at) { Time.now }
+              it { assert_result! }
+            end
+
+            context "no calls have been queued in the last 1 hour" do
+              let(:asserted_result) { 100 }
+              let(:queued_at) { 1.hour.ago }
+              it { assert_result! }
+            end
+          end
+        end
+      end
+
+      describe "#pessimistic_max_num_calls_to_enqueue" do
+        let(:result) { subject.pessimistic_max_num_calls_to_enqueue }
+
+        let(:pessimistic_min_calls_to_enqueue) { 1 }
+        let(:num_phone_numbers_to_call) { 3 }
+
+        def setup_scenario
+          phone_numbers_to_call
+          create(:phone_number) # callout not running
+          create_list(:phone_call, num_queued_calls, :status => :queued, :callout => callout)
+          super
         end
 
-        context "calls are queued" do
-          let(:num_queued_calls) { num_phone_numbers_to_call }
-          let(:asserted_result) { pessimistic_min_calls_to_enqueue }
-          it { assert_result! }
+        def env
+          super.merge(
+            "ENQUEUE_CALLS_TASK_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE" => pessimistic_min_calls_to_enqueue.to_s
+          )
+        end
+
+        context "by default" do
+          context "no calls are queued" do
+            let(:num_queued_calls) { 0 }
+            let(:asserted_result) { num_phone_numbers_to_call }
+            it { assert_result! }
+          end
+
+          context "calls are queued" do
+            let(:num_queued_calls) { num_phone_numbers_to_call }
+            let(:asserted_result) { pessimistic_min_calls_to_enqueue }
+            it { assert_result! }
+          end
+        end
+
+        context "ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE=1" do
+          let(:max_calls_to_enqueue) { 2 }
+
+          context "no calls are queued" do
+            let(:num_queued_calls) { 0 }
+            let(:asserted_result) { max_calls_to_enqueue }
+            it { assert_result! }
+          end
+
+          context "calls are queued" do
+            let(:num_queued_calls) { num_phone_numbers_to_call }
+            let(:asserted_result) { pessimistic_min_calls_to_enqueue }
+            it { assert_result! }
+          end
         end
       end
     end

@@ -28,7 +28,7 @@ class MyImporter
         "no_hh_males" => row[22]
       )
 
-      print_import_summary(index + 1) if ((index + 1 % 1000) == 0)
+      print_import_summary(index + 1) if ((index % 1000) == 0)
     end
 
     print_import_summary(rows.count)

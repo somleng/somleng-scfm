@@ -42,12 +42,16 @@ class StartFlowRapidproTask < ApplicationTask
 
   def start_flow!(phone_call)
     response = rapidpro_client.start_flow!(
-      start_flow_rapidpro_params.merge(
-        {} # Dynamically override default params here
+      default_start_flow_rapidpro_request_params.merge(
+        start_flow_rapidpro_request_params(phone_call)
       )
     )
     phone_call.metadata[RAPIDPRO_FLOW_ID_KEY] = response["id"]
     phone_call.save!
+  end
+
+  def start_flow_rapidpro_request_params(phone_call)
+    {} # Dynamically override default params here
   end
 
   def num_flows_to_start
@@ -58,8 +62,8 @@ class StartFlowRapidproTask < ApplicationTask
     (ENV["START_FLOW_RAPIDPRO_TASK_MAX_FLOWS_TO_START"].presence || DEFAULT_MAX_FLOWS_TO_START).to_i
   end
 
-  def start_flow_rapidpro_params
-    @start_flow_rapidpro_params ||= JSON.parse(ENV["START_FLOW_RAPIDPRO_TASK_REMOTE_REQUEST_PARAMS"] || "{}")
+  def default_start_flow_rapidpro_request_params
+    @default_start_flow_rapidpro_request_params ||= JSON.parse(ENV["START_FLOW_RAPIDPRO_TASK_REMOTE_REQUEST_PARAMS"] || "{}")
   end
 
   def rapidpro_client

@@ -62,9 +62,7 @@ class CalloutsTask < ApplicationTask
       :calls_failed => callout.phone_calls.failed.count,
       :calls_busy => callout.phone_calls.busy.count,
       :calls_not_answered => callout.phone_calls.not_answered.count,
-      :calls_canceled => callout.phone_calls.canceled.count,
-      :optimistic_num_calls_to_enqueue => enqueue_calls_task.optimistic_num_calls_to_enqueue || enqueue_calls_task.phone_numbers_to_call.count,
-      :pessimistic_num_calls_to_enqueue => enqueue_calls_task.pessimistic_num_calls_to_enqueue
+      :calls_canceled => callout.phone_calls.canceled.count
     }
 
     padding = stats.keys.map { |name| name.to_s.length }.max + 1
@@ -95,10 +93,6 @@ class CalloutsTask < ApplicationTask
 
   def default_create_metadata
     JSON.parse(ENV["CALLOUTS_TASK_CREATE_METADATA"] || "{}")
-  end
-
-  def enqueue_calls_task
-    @enqueue_calls_task ||= EnqueueCallsTask.new
   end
 
   def action

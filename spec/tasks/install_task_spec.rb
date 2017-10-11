@@ -51,13 +51,6 @@ RSpec.describe InstallTask do
             "UPDATE_CALLS_TASK_MAX_CALLS_TO_FETCH",
             "PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS"
           ] + somleng_assertions
-        },
-        "start_flow_rapidpro_task_run" => {
-          :assertions => [
-            "RAPIDPRO_BASE_URL",
-            "RAPIDPRO_API_VERSION",
-            "RAPIDPRO_API_TOKEN"
-          ]
         }
       }
     end

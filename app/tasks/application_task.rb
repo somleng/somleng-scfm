@@ -15,12 +15,6 @@ class ApplicationTask
       :somleng_auth_token =>"replace-me-auth-token"
     }
 
-    DEFAULT_RAPIDPRO_ENV_VARS = {
-      :rapidpro_base_url => "https://app.rapidpro.io/api",
-      :rapidpro_api_version => "v2",
-      :rapidpro_api_token => "change-me-rapidpro-api-token"
-    }
-
     def self.rake_tasks
       [:run!]
     end

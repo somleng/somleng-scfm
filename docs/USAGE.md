@@ -331,25 +331,3 @@ See [Somleng Configuration](#somleng-configuration)
 ```
 $ UPDATE_CALLS_TASK_MAX_CALLS_TO_FETCH=1000 bundle exec rake task:update_calls:run
 ```
-
-#### rake task:start_flow_rapidpro:run
-
-The [start flow rapidpro task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/start_flow_rapidpro_task.rb) triggers a remote flow on [RapidPro](https://community.rapidpro.io/).
-
-##### Task Configuration
-
-`START_FLOW_RAPIDPRO_TASK_MAX_FLOWS_TO_START` configures the maximum number of flows to trigger when running this task (defaults to nil).
-
-`START_FLOW_RAPIDPRO_TASK_REMOTE_REQUEST_PARAMS` configures the default request parameters that will be sent to RapidPro for each remote request (defaults to nil). For example, setting `START_FLOW_RAPIDPRO_TASK_REMOTE_REQUEST_PARAMS="{\"flow\"=>\"flow-id\", \"groups\"=>[], \"contacts\"=>[], \"urns\"=>[\"telegram:telegram-id\"], \"extra\"=>{}}"` would send these parameters to the the start flow remote request on RapidPro. These params are default params only and can be overriden in [the task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/start_flow_rapidpro_task.rb).
-
-`RAPIDPRO_BASE_URL` configures the base url to send RapidPro requests (defaults to `https://app.rapidpro.io/api`)
-
-`RAPIDPRO_API_VERSION` configures the API version for RapidPro (defaults to `v2`)
-
-`RAPIDPRO_API_TOKEN` configures the API token needed to authenticate with RapidPro (defaults to nil)
-
-##### Example
-
-```
-$ RAPIDPRO_BASE_URL="https://app.rapidpro.io/api" RAPIDPRO_API_VERSION="v2" RAPIDPRO_API_TOKEN="rapidpro-api-token" START_FLOW_RAPIDPRO_TASK_MAX_FLOWS_TO_START=1000 START_FLOW_RAPIDPRO_TASK_REMOTE_REQUEST_PARAMS="{\"flow\"=>\"flow-id\", \"groups\"=>[], \"contacts\"=>[], \"urns\"=>[\"telegram:telegram-id\"], \"extra\"=>{}}" bundle exec rake task:start_flow_rapidpro:run
-```

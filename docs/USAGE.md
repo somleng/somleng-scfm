@@ -6,19 +6,19 @@ Somleng SCFM is build around the following key concepts.
 
 ### Contacts
 
-A [contact](https://github.com/somleng/somleng-scfm/blob/master/app/models/contact.rb) represents a person who has a [msisdn (aka: phone number)](https://en.wikipedia.org/wiki/MSISDN). A Phone Number has another meaning within the context of Somleng SCFM so we'll refer to a contact's phone number as their msisdn from now on to avoid confusion. Contacts are uniquely indexed by their msisdn. You cannot create two contacts with the same msisdn.
+A [contact](https://github.com/somleng/somleng-scfm/blob/master/app/models/contact.rb) represents a person who has a [msisdn (aka: phone number)](https://en.wikipedia.org/wiki/MSISDN). Contacts are uniquely indexed by their msisdn. You cannot create two contacts with the same msisdn.
 
 ### Callouts
 
 A [callout](https://github.com/somleng/somleng-scfm/blob/master/app/models/callout.rb) represents a collection of phone numbers that need to be called for a particular purpose. A callout has a status and can be *started*, *stopped*, *paused* or *resumed*.
 
-### Phone Numbers
+### Callout Participations
 
-A [phone number](https://github.com/somleng/somleng-scfm/blob/master/app/models/phone_number.rb) (not to be confused with a msisdn) represents a contact who needs to be called for a particular callout. Phone numbers have multiple phone calls. Phone numbers are uniquely indexed by the callout and contact. You cannot create two phone numbers with the same callout and contact.
+A [callout participation](https://github.com/somleng/somleng-scfm/blob/master/app/models/callout_participation.rb) represents a contact who needs to be called for a particular callout. One callout participation may have have multiple phone calls. Callout participations are uniquely indexed by the callout and contact. You cannot create two callout participations with the same callout and contact.
 
 ### Phone Calls
 
-A [phone call](https://github.com/somleng/somleng-scfm/blob/master/app/models/phone_call.rb) represents a single attempt at a phone call. A phone call has a status which represents the outcome of the phone call. There may be muliple phone calls for single phone number on a callout.
+A [phone call](https://github.com/somleng/somleng-scfm/blob/master/app/models/phone_call.rb) represents a single attempt at a phone call. A phone call has a status which represents the outcome of the phone call. There may be muliple phone calls for single participation on a callout.
 
 ## Tasks
 
@@ -206,7 +206,7 @@ Each task has it's own specific configuration which is documented below. Some ta
 
 #### Scopes
 
-`PHONE_NUMBER_RETRY_STATUSES` configures the phone call statuses in which to retry (defaults to `failed`). Used in the [PhoneNumber.remaining scope](https://github.com/somleng/somleng-scfm/blob/master/app/models/phone_number.rb)
+`CALLOUT_PARTICIPATION_RETRY_STATUSES` configures the phone call statuses in which to retry (defaults to `failed`). Used in the [CalloutParticipation.remaining scope](https://github.com/somleng/somleng-scfm/blob/master/app/models/callout_participation.rb)
 
 `PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS` configures the age in seconds in which a phone call is considered recently created (defaults to `60`). Used in the [PhoneCall.not_recently_created scope](https://github.com/somleng/somleng-scfm/blob/master/app/models/phone_call.rb)
 
@@ -240,11 +240,11 @@ $ CALLOUTS_TASK_CREATE_METADATA='{}' bundle exec rake task:callouts:create
 
 #### task:callouts:populate
 
-Populates a callout with phone numbers to call.
+Populates a callout with participations to call.
 
 ##### Task Configuration
 
-`CALLOUTS_TASK_POPULATE_METADATA` configures the default metadata to be set on the phone numbers when populating the callout (defaults to nil). For example, setting `CALLOUTS_TASK_POPULATE_METADATA="{'foo':'bar'}"` will populate the callout with phone numbers containg the specified metadata. The metadata is default metadata only and can be overriden in [the task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/callouts_task.rb).
+`CALLOUTS_TASK_POPULATE_METADATA` configures the default metadata to be set on the callout participation when populating the callout (defaults to nil). For example, setting `CALLOUTS_TASK_POPULATE_METADATA="{'foo':'bar'}"` will populate the callout with participations containing the specified metadata. The metadata is default metadata only and can be overriden in [the task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/callouts_task.rb).
 
 `CALLOUTS_TASK_CALLOUT_ID` tells the task which callout to populate. If `CALLOUTS_TASK_CALLOUT_ID` is not specified it's assumed there is only one callout in the database. If there are multiple an exception is raised.
 

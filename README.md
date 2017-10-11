@@ -9,32 +9,54 @@ Somleng Simple Call Flow Manager (Somleng SCFM) can be used to enqueue, throttle
 ## Architecture
 
 <pre>
-+----------------+
-|   Contacts     |
-+----------------+
-| * msisdn       |-|-
-| * metadata     |  |
-|                |  |
-+----------------+  |
-                    |
-+----------------+  | +----------------+    +-------------------+
-|    Callouts    |  | |  PhoneNumbers  |    |     PhoneCalls    |
-+----------------+  | +----------------+    +-------------------+
-| * status       |  --> * msisdn       |    | * status          |
-| * metadata     |-|--> * metadata     |-|--> * metadata        |
-|                |    | * contact_id   |    | * phone_number_id |
-|                |    | * callout_id   |    | * ...             |
-|                |    |                |    |                   |
-+----------------+    +----------------+    +-------------------+
+    +----------------+
+    |   Contacts     |
+    +----------------+
+ +--| * id           |---+
+ |  | * msisdn       |   |
+ |  | * metadata     |   |
+ |  |                |   |
+ |  +----------------+   |
+ |                       |
+ |  +----------------+   |  +-----------------------+
+ |  |    Callouts    |   |  | CalloutParticipations |
+ |  +----------------+   |  +-----------------------+
+ |  | * id           |-+ |  | * id                  |-+
+ |  | * status       | | |  | * msisdn              | |
+ |  | * metadata     | | |  | * metadata            | |
+ |  |                | | +->| * contact_id          | |
+ |  |                | +--->| * callout_id          | |
+ |  |                |      |                       | |
+ |  +----------------+      +---------------------- + |
+ |                                                    |
+ |  +----------------------------+                    |
+ |  |         PhoneCalls         |                    |
+ |  +----------------------------+                    |
+ |  | * id                       |--+                 |
+ |  | * status                   |  |                 |
+ |  | * callout_participation_id |<-+-----------------+
+ +->| * contact_id               |  |
+    | * ...                      |  |
+    +----------------------------+  |
+                                    |
+    +----------------------------+  |
+    |     PhoneCallEvents        |  |
+    +----------------------------+  |
+    | * id                       |  |
+    | * metadata                 |  |
+    | * phone_call_id            |<-+
+    | * ...                      |
+    +----------------------------+
 </pre>
 
 ## Features
 
 * Create contacts with custom metadata
-* Create callouts from your contacts
+* Use participations to populate callouts with your contacts
 * *start*, *stop*, *pause* and *resume* callouts
-* Add your own metadata as JSON to *contacts*, *callouts*, *phone_numbers* and *phone_calls*
 * Extend with your own [tasks](https://github.com/somleng/somleng-scfm/tree/master/app/tasks)
+* Add your own metadata as JSON to all objects
+* Create dynamic call flows with *phone call events*
 
 ## Usage
 

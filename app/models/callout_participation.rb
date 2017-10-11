@@ -1,4 +1,4 @@
-class CalloutParticipant < ApplicationRecord
+class CalloutParticipation < ApplicationRecord
   include MsisdnHelpers
   include MetadataHelpers
 
@@ -49,7 +49,7 @@ class CalloutParticipant < ApplicationRecord
     # then phone_call is the most recent phone_call for that callout_participation.
 
     joins(:phone_calls).joins(
-      "LEFT OUTER JOIN \"phone_calls\" \"future_phone_calls\" ON (\"future_phone_calls\".\"callout_participant_id\" = \"callout_participants\".\"id\" AND \"phone_calls\".\"created_at\" < \"future_phone_calls\".\"created_at\")"
+      "LEFT OUTER JOIN \"phone_calls\" \"future_phone_calls\" ON (\"future_phone_calls\".\"callout_participation_id\" = \"callout_participations\".\"id\" AND \"phone_calls\".\"created_at\" < \"future_phone_calls\".\"created_at\")"
     ).where(
       :future_phone_calls => {:id => nil}
     ).where(

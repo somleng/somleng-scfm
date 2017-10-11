@@ -12,17 +12,17 @@
 
 ActiveRecord::Schema.define(version: 20170926070754) do
 
-  create_table "callout_participants", force: :cascade do |t|
+  create_table "callout_participations", force: :cascade do |t|
     t.integer "callout_id", null: false
     t.integer "contact_id", null: false
     t.string "msisdn", null: false
     t.text "metadata", default: "{}", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["callout_id", "contact_id"], name: "index_callout_participants_on_callout_id_and_contact_id", unique: true
-    t.index ["callout_id", "msisdn"], name: "index_callout_participants_on_callout_id_and_msisdn", unique: true
-    t.index ["callout_id"], name: "index_callout_participants_on_callout_id"
-    t.index ["contact_id"], name: "index_callout_participants_on_contact_id"
+    t.index ["callout_id", "contact_id"], name: "index_callout_participations_on_callout_id_and_contact_id", unique: true
+    t.index ["callout_id", "msisdn"], name: "index_callout_participations_on_callout_id_and_msisdn", unique: true
+    t.index ["callout_id"], name: "index_callout_participations_on_callout_id"
+    t.index ["contact_id"], name: "index_callout_participations_on_contact_id"
   end
 
   create_table "callouts", force: :cascade do |t|
@@ -41,7 +41,7 @@ ActiveRecord::Schema.define(version: 20170926070754) do
   end
 
   create_table "phone_calls", force: :cascade do |t|
-    t.integer "callout_participant_id", null: false
+    t.integer "callout_participation_id", null: false
     t.string "status", null: false
     t.string "remote_call_id"
     t.string "remote_status"
@@ -52,7 +52,7 @@ ActiveRecord::Schema.define(version: 20170926070754) do
     t.datetime "queued_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["callout_participant_id"], name: "index_phone_calls_on_callout_participant_id"
+    t.index ["callout_participation_id"], name: "index_phone_calls_on_callout_participation_id"
     t.index ["remote_call_id"], name: "index_phone_calls_on_remote_call_id", unique: true
   end
 

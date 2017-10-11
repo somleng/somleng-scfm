@@ -1,6 +1,6 @@
-class CreateCalloutParticipants < ApplicationMigration
+class CreateCalloutParticipations < ApplicationMigration
   def change
-    create_table :callout_participants do |t|
+    create_table :callout_participations do |t|
       t.references(:callout, :foreign_key => true, :index => true, :null => false)
       t.references(:contact, :foreign_key => true, :index => true, :null => false)
       t.string(:msisdn, :null => false)

@@ -24,7 +24,7 @@ FactoryGirl.define do
     msisdn { generate(:somali_msisdn) }
   end
 
-  factory :callout_participant do
+  factory :callout_participation do
     callout
     contact
     msisdn { contact.msisdn }
@@ -36,8 +36,8 @@ FactoryGirl.define do
     end
 
     after(:build) do |phone_call, evaluator|
-      phone_call.callout_participant ||= build(
-        :callout_participant,
+      phone_call.callout_participation ||= build(
+        :callout_participation,
         {
           :callout => evaluator.callout
         }.compact

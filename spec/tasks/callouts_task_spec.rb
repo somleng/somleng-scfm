@@ -191,8 +191,8 @@ RSpec.describe CalloutsTask do
     def assert_populate!
       subject.populate!
       expect(callout.contacts).to match_array([contact])
-      callout_participant = callout.callout_participants.last!
-      expect(callout_participant.metadata).to eq(asserted_metadata)
+      callout_participation = callout.callout_participations.last!
+      expect(callout_participation.metadata).to eq(asserted_metadata)
     end
 
     it { assert_populate! }
@@ -207,7 +207,7 @@ RSpec.describe CalloutsTask do
 
   describe "#statistics" do
     let(:callout) { create(:callout) }
-    let(:callout_participant) { create(:callout_participant, :callout => callout) }
+    let(:callout_participation) { create(:callout_participation, :callout => callout) }
     let(:callout_id) { callout.id }
 
     before do
@@ -216,8 +216,8 @@ RSpec.describe CalloutsTask do
 
     def setup_scenario
       stub_env(env)
-      callout_participant
-      create(:callout_participant)
+      callout_participation
+      create(:callout_participation)
     end
 
     def env
@@ -229,7 +229,7 @@ RSpec.describe CalloutsTask do
     def assert_statistics!
       expect(STDOUT).to receive(:puts) do |arg|
         expect(arg).to include("Callout Status")
-        expect(arg).to match(/Callout Participants:\s+1/)
+        expect(arg).to match(/Callout Participations:\s+1/)
       end
       subject.statistics
     end

@@ -18,8 +18,8 @@ class EnqueueCallsTask < ApplicationTask
   end
 
   def run!
-    callout_participants_to_call.limit(max_num_calls_to_enqueue).find_each do |callout_participant|
-      phone_call = schedule_phone_call!(callout_participant)
+    callout_participations_to_call.limit(max_num_calls_to_enqueue).find_each do |callout_participation|
+      phone_call = schedule_phone_call!(callout_participation)
       enqueue_phone_call!(phone_call)
     end
   end
@@ -37,13 +37,13 @@ class EnqueueCallsTask < ApplicationTask
 
   def pessimistic_max_num_calls_to_enqueue
     [
-      ((max_calls_to_enqueue || callout_participants_to_call.count) - phone_calls_waiting_for_completion.count),
+      ((max_calls_to_enqueue || callout_participations_to_call.count) - phone_calls_waiting_for_completion.count),
       pessimistic_min_calls_to_enqueue
     ].max
   end
 
-  def callout_participants_to_call
-    CalloutParticipant.from_running_callout.remaining
+  def callout_participations_to_call
+    CalloutParticipation.from_running_callout.remaining
   end
 
   private
@@ -52,15 +52,15 @@ class EnqueueCallsTask < ApplicationTask
     PhoneCall.waiting_for_completion
   end
 
-  def schedule_phone_call!(callout_participant)
-    phone_call = callout_participant.phone_calls.new
+  def schedule_phone_call!(callout_participation)
+    phone_call = callout_participation.phone_calls.new
     phone_call.schedule!
     phone_call
   end
 
   def enqueue_phone_call!(phone_call)
     begin
-      response = queue_remote_call!(phone_call.callout_participant)
+      response = queue_remote_call!(phone_call.callout_participation)
       phone_call.remote_call_id = response.sid
     rescue Twilio::REST::RestError => e
       phone_call.remote_error_message = e.message
@@ -69,15 +69,15 @@ class EnqueueCallsTask < ApplicationTask
     phone_call.queue!
   end
 
-  def queue_remote_call!(callout_participant)
+  def queue_remote_call!(callout_participation)
     somleng_client.api.account.calls.create(
-      default_somleng_request_params.merge(somleng_request_params(callout_participant))
+      default_somleng_request_params.merge(somleng_request_params(callout_participation))
     )
   end
 
-  def somleng_request_params(callout_participant)
+  def somleng_request_params(callout_participation)
     {
-      :to => callout_participant.msisdn
+      :to => callout_participation.msisdn
     }
   end
 

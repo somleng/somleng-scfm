@@ -38,7 +38,7 @@ class CalloutsTask < ApplicationTask
   def populate!
     population = contacts_to_populate_with.count
     contacts_to_populate_with.find_each.with_index do |contact, index|
-      CalloutParticipant.create(
+      CalloutParticipation.create(
         :callout => callout,
         :contact => contact,
         :msisdn => contact.msisdn,
@@ -52,8 +52,8 @@ class CalloutsTask < ApplicationTask
   def statistics
     stats = {
       :callout_status => callout.status.titleize,
-      :callout_participants => callout.callout_participants.count,
-      :callout_participants_still_to_call => callout.callout_participants.remaining.count,
+      :callout_participations => callout.callout_participations.count,
+      :callout_participations_still_to_call => callout.callout_participations.remaining.count,
       :calls_completed => callout.phone_calls.completed.count,
       :calls_initialized => callout.phone_calls.created.count,
       :calls_scheduling => callout.phone_calls.scheduling.count,

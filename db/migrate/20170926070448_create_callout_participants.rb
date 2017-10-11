@@ -1,6 +1,6 @@
-class CreatePhoneNumbers < ApplicationMigration
+class CreateCalloutParticipants < ApplicationMigration
   def change
-    create_table :phone_numbers do |t|
+    create_table :callout_participants do |t|
       t.references(:callout, :foreign_key => true, :index => true, :null => false)
       t.references(:contact, :foreign_key => true, :index => true, :null => false)
       t.string(:msisdn, :null => false)

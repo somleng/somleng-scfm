@@ -13,10 +13,10 @@ RSpec.describe EnqueueCallsTask do
     let(:max_calls_to_enqueue) { nil }
     let(:max_calls_per_period) { nil }
     let(:max_calls_per_period_hours) { nil }
-    let(:num_phone_numbers_to_call) { 2 }
+    let(:num_callout_participants_to_call) { 2 }
 
-    let(:phone_numbers_to_call) {
-      create_list(:phone_number, num_phone_numbers_to_call, :callout => callout)
+    let(:callout_participants_to_call) {
+      create_list(:callout_participant, num_callout_participants_to_call, :callout => callout)
     }
 
     before do
@@ -69,14 +69,13 @@ RSpec.describe EnqueueCallsTask do
       end
 
       let(:asserted_remote_response_body) { { "sid" => "1234" }.to_json }
-      let(:asserted_called_phone_number) { phone_numbers_to_call[0] }
-      let(:asserted_phone_calls_count) { num_phone_numbers_to_call }
+      let(:asserted_phone_calls_count) { num_callout_participants_to_call }
       let(:asserted_remote_error_message) { nil }
 
       def setup_scenario
         super
         stub_request(:post, asserted_remote_api_endpoint).to_return(asserted_remote_response)
-        phone_numbers_to_call
+        callout_participants_to_call
         subject.run!
       end
 
@@ -187,11 +186,11 @@ RSpec.describe EnqueueCallsTask do
         let(:result) { subject.pessimistic_max_num_calls_to_enqueue }
 
         let(:pessimistic_min_calls_to_enqueue) { 1 }
-        let(:num_phone_numbers_to_call) { 3 }
+        let(:num_callout_participants_to_call) { 3 }
 
         def setup_scenario
-          phone_numbers_to_call
-          create(:phone_number) # callout not running
+          callout_participants_to_call
+          create(:callout_participant) # callout not running
           create_list(:phone_call, num_queued_calls, :status => :queued, :callout => callout)
           super
         end
@@ -205,12 +204,12 @@ RSpec.describe EnqueueCallsTask do
         context "by default" do
           context "no calls are queued" do
             let(:num_queued_calls) { 0 }
-            let(:asserted_result) { num_phone_numbers_to_call }
+            let(:asserted_result) { num_callout_participants_to_call }
             it { assert_result! }
           end
 
           context "calls are queued" do
-            let(:num_queued_calls) { num_phone_numbers_to_call }
+            let(:num_queued_calls) { num_callout_participants_to_call }
             let(:asserted_result) { pessimistic_min_calls_to_enqueue }
             it { assert_result! }
           end
@@ -226,7 +225,7 @@ RSpec.describe EnqueueCallsTask do
           end
 
           context "calls are queued" do
-            let(:num_queued_calls) { num_phone_numbers_to_call }
+            let(:num_queued_calls) { num_callout_participants_to_call }
             let(:asserted_result) { pessimistic_min_calls_to_enqueue }
             it { assert_result! }
           end

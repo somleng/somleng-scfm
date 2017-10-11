@@ -24,7 +24,7 @@ FactoryGirl.define do
     msisdn { generate(:somali_msisdn) }
   end
 
-  factory :phone_number do
+  factory :callout_participant do
     callout
     contact
     msisdn { contact.msisdn }
@@ -36,7 +36,12 @@ FactoryGirl.define do
     end
 
     after(:build) do |phone_call, evaluator|
-      phone_call.phone_number ||= build(:phone_number, {:callout => evaluator.callout}.compact)
+      phone_call.callout_participant ||= build(
+        :callout_participant,
+        {
+          :callout => evaluator.callout
+        }.compact
+      )
     end
 
     trait :not_recently_created do

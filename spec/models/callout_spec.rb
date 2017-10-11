@@ -6,7 +6,7 @@ RSpec.describe Callout do
 
   describe "associations" do
     def assert_associations!
-      is_expected.to have_many(:phone_numbers)
+      is_expected.to have_many(:callout_participants)
       is_expected.to have_many(:contacts)
       is_expected.to have_many(:phone_calls)
     end

@@ -12,7 +12,7 @@ class PhoneCall < ApplicationRecord
     :not_answered => "no-answer"
   }
 
-  belongs_to :phone_number
+  belongs_to :callout_participant
 
   include MetadataHelpers
   conditionally_serialize(:remote_response, JSON)
@@ -20,7 +20,7 @@ class PhoneCall < ApplicationRecord
   validates :remote_call_id, :uniqueness => {:case_sensitive => false, :allow_nil => true}
   validates :status, :presence => true
 
-  delegate :msisdn, :to => :phone_number
+  delegate :msisdn, :to => :callout_participant
 
   include AASM
 
@@ -104,7 +104,7 @@ class PhoneCall < ApplicationRecord
   end
 
   def self.from_running_callout
-    joins(:phone_number => :callout).merge(Callout.running)
+    joins(:callout_participant => :callout).merge(Callout.running)
   end
 
   def self.in_last_hours(hours, timestamp_column = :created_at)

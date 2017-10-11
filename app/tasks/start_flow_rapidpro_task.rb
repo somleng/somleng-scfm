@@ -18,7 +18,7 @@ class StartFlowRapidproTask < ApplicationTask
   end
 
   def run!
-    phone_calls_to_start_flow.includes(:phone_number).limit(num_flows_to_start).find_each do |phone_call|
+    phone_calls_to_start_flow.includes(:callout_participant).limit(num_flows_to_start).find_each do |phone_call|
       begin
         mark_flow_as_started!(phone_call)
         start_flow!(phone_call)

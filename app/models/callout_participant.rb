@@ -1,4 +1,4 @@
-class PhoneNumber < ApplicationRecord
+class CalloutParticipant < ApplicationRecord
   include MsisdnHelpers
   include MetadataHelpers
 
@@ -44,12 +44,12 @@ class PhoneNumber < ApplicationRecord
 
     # Explanation:
     # given a row phone_call, there should be no row future_phone_calls with
-    # the same phone number and a later timestamp.
+    # the same callout_participation and a later timestamp.
     # When we find that to be true,
-    # then phone_call is the most recent phone_call for that phone_number.
+    # then phone_call is the most recent phone_call for that callout_participation.
 
     joins(:phone_calls).joins(
-      "LEFT OUTER JOIN \"phone_calls\" \"future_phone_calls\" ON (\"future_phone_calls\".\"phone_number_id\" = \"phone_numbers\".\"id\" AND \"phone_calls\".\"created_at\" < \"future_phone_calls\".\"created_at\")"
+      "LEFT OUTER JOIN \"phone_calls\" \"future_phone_calls\" ON (\"future_phone_calls\".\"callout_participant_id\" = \"callout_participants\".\"id\" AND \"phone_calls\".\"created_at\" < \"future_phone_calls\".\"created_at\")"
     ).where(
       :future_phone_calls => {:id => nil}
     ).where(
@@ -64,6 +64,6 @@ class PhoneNumber < ApplicationRecord
   end
 
   def self.retry_statuses
-    ENV["PHONE_NUMBER_RETRY_STATUSES"].present? ? ENV["PHONE_NUMBER_RETRY_STATUSES"].to_s.split(",") : default_retry_statuses
+    ENV["CALLOUT_PARTICIPATION_RETRY_STATUSES"].present? ? ENV["CALLOUT_PARTICIPATION_RETRY_STATUSES"].to_s.split(",") : default_retry_statuses
   end
 end

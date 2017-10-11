@@ -1,9 +1,9 @@
 class Callout < ApplicationRecord
   include MetadataHelpers
 
-  has_many :phone_numbers
-  has_many :phone_calls, :through => :phone_numbers
-  has_many :contacts, :through => :phone_numbers
+  has_many :callout_participants
+  has_many :phone_calls, :through => :callout_participants
+  has_many :contacts, :through => :callout_participants
 
   validates :status, :presence => true
 

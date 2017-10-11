@@ -13,6 +13,7 @@ class PhoneCall < ApplicationRecord
   }
 
   belongs_to :callout_participation
+  belongs_to :contact
 
   include MetadataHelpers
   conditionally_serialize(:remote_response, JSON)

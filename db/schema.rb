@@ -42,9 +42,11 @@ ActiveRecord::Schema.define(version: 20170926070754) do
 
   create_table "phone_calls", force: :cascade do |t|
     t.integer "callout_participation_id", null: false
+    t.integer "contact_id", null: false
     t.string "status", null: false
     t.string "remote_call_id"
     t.string "remote_status"
+    t.string "remote_direction"
     t.text "remote_error_message"
     t.integer "lock_version"
     t.text "metadata", default: "{}", null: false
@@ -53,6 +55,7 @@ ActiveRecord::Schema.define(version: 20170926070754) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["callout_participation_id"], name: "index_phone_calls_on_callout_participation_id"
+    t.index ["contact_id"], name: "index_phone_calls_on_contact_id"
     t.index ["remote_call_id"], name: "index_phone_calls_on_remote_call_id", unique: true
   end
 

@@ -54,6 +54,7 @@ class EnqueueCallsTask < ApplicationTask
 
   def schedule_phone_call!(callout_participation)
     phone_call = callout_participation.phone_calls.new
+    phone_call.contact_id = callout_participation.contact_id
     phone_call.schedule!
     phone_call
   end
@@ -62,6 +63,7 @@ class EnqueueCallsTask < ApplicationTask
     begin
       response = queue_remote_call!(phone_call.callout_participation)
       phone_call.remote_call_id = response.sid
+      phone_call.remote_direction = response.direction
     rescue Twilio::REST::RestError => e
       phone_call.remote_error_message = e.message
     end

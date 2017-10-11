@@ -12,6 +12,7 @@ RSpec.describe Contact do
     def assert_associations!
       is_expected.to have_many(:callout_participations)
       is_expected.to have_many(:callouts)
+      is_expected.to have_many(:phone_calls)
     end
 
     it { assert_associations! }

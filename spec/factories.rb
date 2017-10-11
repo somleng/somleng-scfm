@@ -31,6 +31,8 @@ FactoryGirl.define do
   end
 
   factory :phone_call do
+    contact
+
     transient do
       callout nil
     end
@@ -39,7 +41,8 @@ FactoryGirl.define do
       phone_call.callout_participation ||= build(
         :callout_participation,
         {
-          :callout => evaluator.callout
+          :callout => evaluator.callout,
+          :msisdn => phone_call.contact.msisdn,
         }.compact
       )
     end

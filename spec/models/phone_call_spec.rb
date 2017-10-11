@@ -7,6 +7,7 @@ RSpec.describe PhoneCall do
   describe "associations" do
     def assert_associations!
       is_expected.to belong_to(:callout_participation)
+      is_expected.to belong_to(:contact)
     end
 
     it { assert_associations! }

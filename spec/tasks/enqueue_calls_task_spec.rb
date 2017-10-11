@@ -68,9 +68,20 @@ RSpec.describe EnqueueCallsTask do
         super("Calls")
       end
 
-      let(:asserted_remote_response_body) { { "sid" => "1234" }.to_json }
+      let(:remote_response_body_sid) { "1234" }
+      let(:remote_response_body_direction) { "outbound-api" }
+
+      let(:asserted_remote_response_body) {
+        {
+          "sid" => remote_response_body_sid,
+          "direction" => remote_response_body_direction
+        }.to_json
+      }
+
       let(:asserted_phone_calls_count) { num_callout_participations_to_call }
       let(:asserted_remote_error_message) { nil }
+      let(:asserted_remote_call_id) { remote_response_body_sid }
+      let(:asserted_remote_direction) { remote_response_body_direction }
 
       def setup_scenario
         super
@@ -85,7 +96,7 @@ RSpec.describe EnqueueCallsTask do
 
         assert_somleng_client_request!
         request = client_requests.first
-          request_body = client_request_body(request)
+        request_body = client_request_body(request)
 
         expect(request_body).to include(
           "From" => default_call_params_from,
@@ -94,7 +105,10 @@ RSpec.describe EnqueueCallsTask do
           "Method" => default_call_params_method
         )
 
+        expect(queued_call.remote_call_id).to eq(asserted_remote_call_id)
+        expect(queued_call.remote_direction).to eq(asserted_remote_direction)
         expect(queued_call.remote_error_message).to eq(asserted_remote_error_message)
+        expect(queued_call.contact).to eq(queued_call.callout_participation.contact)
       end
 
       context "remote call was enqueued successfully" do
@@ -105,6 +119,8 @@ RSpec.describe EnqueueCallsTask do
 
       context "call was not enqueued successfully" do
         let(:asserted_remote_response_status) { 422 }
+        let(:asserted_remote_call_id) { nil }
+        let(:asserted_remote_direction) { nil }
         let(:asserted_remote_error_message) { "Unable to create record" }
         let(:asserted_status) { "errored" }
         it { assert_run! }

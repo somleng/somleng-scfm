@@ -200,6 +200,18 @@ or using Docker
 $ sudo docker run --rm -it -v /tmp/somleng-scfm/db:/usr/src/app/db -e RAILS_ENV=production dwilkie/somleng-scfm bundle exec rails dbconsole
 ```
 
+#### 15. List available rake tasks (optional)
+
+```
+$ bundle exec rake -T
+```
+
+or using Docker
+
+```
+$ sudo docker run --rm -t -e RAILS_ENV=production dwilkie/somleng-scfm bundle exec rake -T
+```
+
 ### Global Task Configuration
 
 Each task has it's own specific configuration which is documented below. Some tasks make use of global configuration which is described here.

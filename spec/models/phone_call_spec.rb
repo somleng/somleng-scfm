@@ -100,6 +100,14 @@ RSpec.describe PhoneCall do
       it { assert_transitions! }
     end
 
+    describe "#finish_fetching_status!" do
+      let(:current_status) { :fetching_status }
+      let(:asserted_new_status) { :queued }
+      let(:event) { :finish_fetching_status }
+
+      it { assert_transitions! }
+    end
+
     describe "#complete!" do
       let(:event) { :complete }
       let(:current_status) { :fetching_status }

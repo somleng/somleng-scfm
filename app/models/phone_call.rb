@@ -65,6 +65,13 @@ class PhoneCall < ApplicationRecord
       )
     end
 
+    event :finish_fetching_status do
+      transitions(
+        :from => :fetching_status,
+        :to => :queued
+      )
+    end
+
     event :complete do
       transitions :from => :fetching_status,
                   :to => :in_progress,

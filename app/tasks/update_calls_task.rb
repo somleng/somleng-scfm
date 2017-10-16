@@ -15,6 +15,8 @@ class UpdateCallsTask < ApplicationTask
         mark_as_fetching_status!(phone_call)
         fetch_remote!(phone_call.reload)
       rescue ActiveRecord::StaleObjectError
+      ensure
+        phone_call.finish_fetching_status!
       end
     end
   end

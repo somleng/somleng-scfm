@@ -42,7 +42,7 @@ RSpec.describe InstallTask do
             "ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE",
             "ENQUEUE_CALLS_TASK_ENQUEUE_STRATEGY",
             "ENQUEUE_CALLS_TASK_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE",
-            "ENQUEUE_CALLS_TASK_DEFAULT_SOMLENG_REQUEST_PARAMS"
+            "ENQUEUE_CALLS_TASK_DEFAULT_SOMLENG_REQUEST_PARAMS=\"{\\\"from\\\""
           ] + somleng_assertions
         },
         "update_calls_task_run" => {

@@ -9,7 +9,7 @@ class EnqueueCallsTask < ApplicationTask
       :enqueue_calls_task_max_calls_to_enqueue => "30",
       :enqueue_calls_task_enqueue_strategy => "optimistic",
       :enqueue_calls_task_pessimistic_min_calls_to_enqueue => "1",
-      :enqueue_calls_task_default_somleng_request_params => "{\"from\":\"1234\",\"url\":\"http://demo.twilio.com/docs/voice.xml\",\"method\":\"GET\"}"
+      :enqueue_calls_task_default_somleng_request_params => "{\\\"from\\\":\\\"1234\\\",\\\"url\\\":\\\"http://demo.twilio.com/docs/voice.xml\\\",\\\"method\\\":\\\"GET\\\"}"
     }
 
     def self.default_env_vars(task_name)

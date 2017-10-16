@@ -242,12 +242,12 @@ Creates a new callout and prints the callout id.
 
 ##### Task Configuration
 
-`CALLOUTS_TASK_CREATE_METADATA` configures the default metadata to be set when creating a callout (defaults to nil). For example, setting `CALLOUTS_TASK_CREATE_METADATA="{'foo':'bar'}"` will create the callout with the specified metadata. The metadata is default metadata only and can be overriden in [the task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/callouts_task.rb).
+`CALLOUTS_TASK_CREATE_METADATA` configures the default metadata to be set when creating a callout (defaults to nil). For example, setting `CALLOUTS_TASK_CREATE_METADATA="{\"foo\":\"bar\"}"` will create the callout with the specified metadata. The metadata is default metadata only and can be overriden in [the task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/callouts_task.rb).
 
 ##### Example
 
 ```
-$ CALLOUTS_TASK_CREATE_METADATA='{}' bundle exec rake task:callouts:create
+$ CALLOUTS_TASK_CREATE_METADATA="{}" bundle exec rake task:callouts:create
 ```
 
 #### task:callouts:populate
@@ -256,7 +256,7 @@ Populates a callout with participations to call.
 
 ##### Task Configuration
 
-`CALLOUTS_TASK_POPULATE_METADATA` configures the default metadata to be set on the callout participation when populating the callout (defaults to nil). For example, setting `CALLOUTS_TASK_POPULATE_METADATA="{'foo':'bar'}"` will populate the callout with participations containing the specified metadata. The metadata is default metadata only and can be overriden in [the task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/callouts_task.rb).
+`CALLOUTS_TASK_POPULATE_METADATA` configures the default metadata to be set on the callout participation when populating the callout (defaults to nil). For example, setting `CALLOUTS_TASK_POPULATE_METADATA="{\"foo\":\"bar\"}"` will populate the callout with participations containing the specified metadata. The metadata is default metadata only and can be overriden in [the task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/callouts_task.rb).
 
 `CALLOUTS_TASK_CALLOUT_ID` tells the task which callout to populate. If `CALLOUTS_TASK_CALLOUT_ID` is not specified it's assumed there is only one callout in the database. If there are multiple an exception is raised.
 
@@ -265,7 +265,7 @@ By default callouts are populated with all the contacts in the Contacts table. O
 ##### Example
 
 ```
-$ CALLOUTS_TASK_POPULATE_METADATA='{}' CALLOUTS_TASK_CALLOUT_ID= bundle exec rake task:callouts:populate
+$ CALLOUTS_TASK_POPULATE_METADATA="{}" CALLOUTS_TASK_CALLOUT_ID= bundle exec rake task:callouts:populate
 ```
 
 #### task:callouts:run
@@ -281,7 +281,7 @@ $ CALLOUTS_TASK_POPULATE_METADATA='{}' CALLOUTS_TASK_CALLOUT_ID= bundle exec rak
 ##### Example
 
 ```
-$ CALLOUTS_TASK_ACTION='start|stop|pause|resume' CALLOUTS_TASK_CALLOUT_ID= bundle exec rake task:callouts:run
+$ CALLOUTS_TASK_ACTION="start|stop|pause|resume" CALLOUTS_TASK_CALLOUT_ID= bundle exec rake task:callouts:run
 ```
 
 #### task:callouts:statistics
@@ -312,7 +312,7 @@ If `ENQUEUE_CALLS_TASK_ENQUEUE_STRATEGY=pessimistic` the maximum number of calls
 
 `ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD` configures the maximum number of calls to enqueue in a given period (defaults to nil). Where the period is configured by `ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD_HOURS` (or is 24 hours by default). For example suppose you set `ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD=1000`. This would set a maximum number of calls to be enqueued to 1000 per 24 hour period. Setting `ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD_HOURS=36` would apply this maximum to a 3 day period instead.
 
-`ENQUEUE_CALLS_TASK_DEFAULT_SOMLENG_REQUEST_PARAMS` configures the default request params that will be sent to Somleng (or Twilio) when enqueuing a call (defaults to nil). Setting `ENQUEUE_CALLS_TASK_DEFAULT_SOMLENG_REQUEST_PARAMS="{'from':'1234','url':'http://demo.twilio.com/docs/voice.xml','method':'GET'}"` would send these params to Somleng (or Twilio) when enqueuing a phone call. These params are default params only and can be overriden in [the task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/enqueue_calls_task.rb).
+`ENQUEUE_CALLS_TASK_DEFAULT_SOMLENG_REQUEST_PARAMS` configures the default request params that will be sent to Somleng (or Twilio) when enqueuing a call (defaults to nil). Setting `ENQUEUE_CALLS_TASK_DEFAULT_SOMLENG_REQUEST_PARAMS="{\"from\":\"1234\",\"url\":\"http://demo.twilio.com/docs/voice.xml\",\"method\":\"GET\"}"` would send these params to Somleng (or Twilio) when enqueuing a phone call. These params are default params only and can be overriden in [the task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/enqueue_calls_task.rb).
 
 ##### Somleng (Twilio) Configuration
 
@@ -321,7 +321,7 @@ See [Somleng Configuration](#somleng-configuration)
 ##### Example
 
 ```
-$ ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE=30 ENQUEUE_CALLS_TASK_ENQUEUE_STRATEGY=optimistic ENQUEUE_CALLS_TASK_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE=1 ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD= ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD_HOURS=24 ENQUEUE_CALLS_TASK_DEFAULT_SOMLENG_REQUEST_PARAMS="{'from':'1234','url':'http://demo.twilio.com/docs/voice.xml','method':'GET'}" bundle exec rake task:enqueue_calls:run
+$ ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE=30 ENQUEUE_CALLS_TASK_ENQUEUE_STRATEGY=optimistic ENQUEUE_CALLS_TASK_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE=1 ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD= ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD_HOURS=24 ENQUEUE_CALLS_TASK_DEFAULT_SOMLENG_REQUEST_PARAMS="{\"from\":\"1234\",\"url\":\"http://demo.twilio.com/docs/voice.xml\",\"method\":\"GET\"}" bundle exec rake task:enqueue_calls:run
 ```
 
 ### Update Calls

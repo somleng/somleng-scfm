@@ -4,7 +4,7 @@ class CalloutsTask < ApplicationTask
   class Install < ApplicationTask::Install
     DEFAULT_ENV_VARS = {
       :rails_env => "production",
-      :callouts_task_action => AVAILABLE_ACTIONS.join("|")
+      :callouts_task_action => "stop|pause|resume"
     }
 
     def self.rake_tasks

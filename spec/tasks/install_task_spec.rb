@@ -34,7 +34,6 @@ RSpec.describe InstallTask do
         "callouts_task_run" => {
           :global_assertions => [],
           :assertions => [
-            "RAILS_ENV='production'",
             "CALLOUTS_TASK_ACTION"
           ]
         },
@@ -57,7 +56,7 @@ RSpec.describe InstallTask do
 
     def default_global_assertions
       [
-        "RAILS_ENV='production'",
+        "RAILS_ENV=\"production\"",
         "PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS"
       ]
     end

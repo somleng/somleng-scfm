@@ -59,7 +59,7 @@ class InstallTask < ApplicationTask
 
   def default_docker_env_flags(task_class, rake_task)
     task_class.default_env_vars(rake_task).map { |var, value|
-      "-e #{var.upcase}='#{value}'"
+      "-e #{var.upcase}=\"#{value}\""
     }.join(" ")
   end
 

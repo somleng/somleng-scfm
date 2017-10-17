@@ -218,7 +218,7 @@ Each task has it's own specific configuration which is documented below. Some ta
 
 #### Scopes
 
-`CALLOUT_PARTICIPATION_RETRY_STATUSES` configures the phone call statuses in which to retry (defaults to `failed`). Used in the [CalloutParticipation.remaining scope](https://github.com/somleng/somleng-scfm/blob/master/app/models/callout_participation.rb)
+`CALLOUT_PARTICIPATION_RETRY_STATUSES` configures the phone call statuses in which to retry (defaults to `failed`). Used in the [CalloutParticipation.remaining scope](https://github.com/somleng/somleng-scfm/blob/master/app/models/callout_participation.rb), possible values are statuses defined in [PhoneCall](https://github.com/somleng/somleng-scfm/blob/master/app/models/phone_call.rb).
 
 `PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS` configures the age in seconds in which a phone call is considered recently created (defaults to `60`). Used in the [PhoneCall.not_recently_created scope](https://github.com/somleng/somleng-scfm/blob/master/app/models/phone_call.rb)
 

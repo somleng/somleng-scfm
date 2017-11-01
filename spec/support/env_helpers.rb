@@ -1,4 +1,8 @@
+require_relative "setup_scenario"
+
 module EnvHelpers
+  include SetupScenario
+
   private
 
   def stub_env(env)
@@ -7,6 +11,15 @@ module EnvHelpers
     env.each do |key, value|
       allow(ENV).to receive(:[]).with(key.to_s.upcase).and_return(value)
     end
+  end
+
+  def env
+    {}
+  end
+
+  def setup_scenario
+    super
+    stub_env(env)
   end
 end
 

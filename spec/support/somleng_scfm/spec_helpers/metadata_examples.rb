@@ -19,10 +19,6 @@ RSpec.shared_examples_for "has_metadata" do
     let(:record_with_metadata) { create(factory, :metadata => metadata) }
     let(:record_without_metadata) { create(factory) }
 
-    before do
-      setup_scenario
-    end
-
     def setup_scenario
       record_with_metadata
       record_without_metadata

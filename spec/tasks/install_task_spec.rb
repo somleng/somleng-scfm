@@ -7,16 +7,11 @@ RSpec.describe InstallTask do
     end
   end
 
-  describe "#cron" do
-    include FakeFS::SpecHelpers
-
+  describe "#cron", :fakefs do
     Dir[Rails.root.join('app/tasks/**/*.rb')].each { |f| require f }
 
-    before do
-      setup_scenario
-    end
-
     def setup_scenario
+      super
       subject.cron
     end
 
@@ -64,7 +59,7 @@ RSpec.describe InstallTask do
     def assert_cron!
       assertions.each do |filename, assertion_options|
         path = Rails.root.join("install", "cron", filename)
-        contents = File.read(path)
+        contents = File.read(path.to_s)
 
         assertions = assertion_options[:assertions] || []
         assertions.each do |assertion|

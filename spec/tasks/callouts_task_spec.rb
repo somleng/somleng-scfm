@@ -8,17 +8,9 @@ RSpec.describe CalloutsTask do
   end
 
   describe "#callout" do
-    before do
-      setup_scenario
-    end
-
     let(:callout_task_callout_id) { nil }
     let(:callout) { create(:callout) }
     let(:result) { subject.callout }
-
-    def setup_scenario
-      stub_env(env)
-    end
 
     def env
       {
@@ -90,12 +82,8 @@ RSpec.describe CalloutsTask do
   describe "#run!" do
     let(:callout) { create(:callout, "can_#{callout_event}".gsub(/!$/, "").to_sym) }
 
-    before do
-      setup_scenario
-    end
-
     def setup_scenario
-      stub_env(env)
+      super
       callout
     end
 
@@ -135,13 +123,9 @@ RSpec.describe CalloutsTask do
     let(:asserted_metadata) { {} }
     let(:result) { subject.create! }
 
-    before do
-      setup_scenario
-    end
-
     def setup_scenario
+      super
       allow(STDOUT).to receive(:puts)
-      stub_env(env)
     end
 
     def env
@@ -172,14 +156,10 @@ RSpec.describe CalloutsTask do
     let(:asserted_metadata) { {} }
     let(:contact) { create(:contact) }
 
-    before do
-      setup_scenario
-    end
-
     def setup_scenario
+      super
       callout
       contact
-      stub_env(env)
     end
 
     def env
@@ -210,12 +190,8 @@ RSpec.describe CalloutsTask do
     let(:callout_participation) { create(:callout_participation, :callout => callout) }
     let(:callout_id) { callout.id }
 
-    before do
-      setup_scenario
-    end
-
     def setup_scenario
-      stub_env(env)
+      super
       callout_participation
       create(:callout_participation)
     end

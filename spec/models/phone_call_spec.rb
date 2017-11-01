@@ -150,10 +150,6 @@ RSpec.describe PhoneCall do
   end
 
   describe "scopes" do
-    before do
-      setup_scenario
-    end
-
     def assert_scope!
       expect(results).to match_array(asserted_results)
     end
@@ -271,11 +267,10 @@ RSpec.describe PhoneCall do
       context "setting PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS" do
         let(:time_considered_recently_created_seconds) { "120" }
 
-        def setup_scenario
-          stub_env(
+        def env
+          super.merge(
             "PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS" => time_considered_recently_created_seconds
           )
-          super
         end
 
         it { assert_scope! }

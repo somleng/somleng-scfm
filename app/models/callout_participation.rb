@@ -30,6 +30,10 @@ class CalloutParticipation < ApplicationRecord
     )
   end
 
+  def self.will_not_retry
+    last_phone_call_attempt()
+  end
+
   def self.remaining
     no_phone_calls_or_last_attempt(retry_statuses)
   end

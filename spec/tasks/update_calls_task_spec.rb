@@ -27,12 +27,8 @@ RSpec.describe UpdateCallsTask do
     let(:asserted_remote_response_body) { { "status" => "completed" }.to_json }
     let(:asserted_status) { "completed" }
 
-    before do
-      setup_scenario
-    end
-
     def setup_scenario
-      stub_env(env)
+      super
       stub_request(:get, asserted_remote_api_endpoint).to_return(asserted_remote_response)
       queued_phone_call
       create(:phone_call)

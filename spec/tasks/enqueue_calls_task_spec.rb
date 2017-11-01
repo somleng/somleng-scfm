@@ -19,14 +19,6 @@ RSpec.describe EnqueueCallsTask do
       create_list(:callout_participation, num_callout_participations_to_call, :callout => callout)
     }
 
-    before do
-      setup_scenario
-    end
-
-    def setup_scenario
-      stub_env(env)
-    end
-
     def env
       {
         "ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE" => (

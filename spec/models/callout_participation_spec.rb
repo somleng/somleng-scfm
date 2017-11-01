@@ -35,13 +35,6 @@ RSpec.describe CalloutParticipation do
   end
 
   describe "scopes" do
-    before do
-      setup_scenario
-    end
-
-    def setup_scenario
-    end
-
     def assert_scope!
       expect(results).to match_array(asserted_results)
     end
@@ -116,11 +109,6 @@ RSpec.describe CalloutParticipation do
 
       describe ".remaining" do
         let(:results) { described_class.remaining }
-
-        def setup_scenario
-          stub_env(env)
-          super
-        end
 
         def env
           {

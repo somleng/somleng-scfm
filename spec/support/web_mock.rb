@@ -1,4 +1,5 @@
 require 'webmock/rspec'
+require_relative 'setup_scenario'
 
 # From: https://gist.github.com/2596158
 # Thankyou Bartosz Blimke!
@@ -25,8 +26,16 @@ WebMock.after_request do |request_signature, response|
   WebMock.last_request = request_signature
 end
 
-RSpec.configure do |config|
-  config.before do
+module WebMockHelpers
+  include SetupScenario
+
+  def setup_scenario
+    super
     WebMock.clear_requests!
   end
 end
+
+RSpec.configure do |config|
+  config.include(WebMockHelpers)
+end
+

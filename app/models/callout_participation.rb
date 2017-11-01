@@ -31,7 +31,7 @@ class CalloutParticipation < ApplicationRecord
   end
 
   def self.will_not_retry
-    last_phone_call_attempt()
+    last_phone_call_attempt(PhoneCall.aasm.states.map(&:to_s) - retry_statuses)
   end
 
   def self.remaining
@@ -61,6 +61,10 @@ class CalloutParticipation < ApplicationRecord
         :status => [status]
       }
     )
+  end
+
+  def self.last_phone_call_attempt_not(status)
+    status_scope = PhoneCall.where.not(:status => [status])
   end
 
   def self.default_retry_statuses

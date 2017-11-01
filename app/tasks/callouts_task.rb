@@ -54,6 +54,7 @@ class CalloutsTask < ApplicationTask
       :callout_status => callout.status.titleize,
       :callout_participations => callout.callout_participations.count,
       :callout_participations_still_to_call => callout.callout_participations.remaining.count,
+      :callout_participations_completed => callout.callout_participations.completed.count,
       :calls_completed => callout.phone_calls.completed.count,
       :calls_initialized => callout.phone_calls.created.count,
       :calls_scheduling => callout.phone_calls.scheduling.count,

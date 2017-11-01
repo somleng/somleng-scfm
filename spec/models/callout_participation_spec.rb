@@ -130,8 +130,8 @@ RSpec.describe CalloutParticipation do
         end
       end
 
-      describe ".will_not_retry" do
-        let(:results) { described_class.will_not_retry }
+      describe ".completed" do
+        let(:results) { described_class.completed }
 
         context "by default" do
           let(:asserted_results) { [callout_participation_last_attempt_completed] }

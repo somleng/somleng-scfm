@@ -30,7 +30,7 @@ class CalloutParticipation < ApplicationRecord
     )
   end
 
-  def self.will_not_retry
+  def self.completed
     last_phone_call_attempt(PhoneCall.aasm.states.map(&:to_s) - retry_statuses)
   end
 

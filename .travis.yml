@@ -22,4 +22,4 @@ before_script:
 script:
   - bash -c 'if [[ "${DOCKER}" = "1" ]]; then sudo docker run --rm dwilkie/somleng-scfm:spec /bin/sh -c "bundle exec rake db:migrate && bundle exec rake db:test:prepare && bundle exec rake"; else bundle exec rake db:migrate && bundle exec rake db:test:prepare && bundle exec rake; fi'
 after_success:
-  - bundle exec codeclimate-testss-reporter
+  - bundle exec codeclimate-test-reporter

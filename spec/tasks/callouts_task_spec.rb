@@ -206,7 +206,7 @@ RSpec.describe CalloutsTask do
       expect(STDOUT).to receive(:puts) do |arg|
         expect(arg).to include("Callout Status")
         expect(arg).to match(/Callout Participations:\s+1/)
-        expect(arg).to match(/Callout Participations Completed:\s+1/)
+        expect(arg).to match(/Callout Participations Completed:/)
       end
       subject.statistics
     end

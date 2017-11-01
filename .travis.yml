@@ -1,11 +1,12 @@
 language: ruby
-dist: trusty
+dist: "$DIST"
 sudo: required
 services:
   - postgresql
 env:
   global:
     - START_SIMPLECOV=1
+    - DIST=trusty
   matrix:
     - RAILS_DB_ADAPTER=sqlite3
     - RAILS_DB_ADAPTER=postgresql

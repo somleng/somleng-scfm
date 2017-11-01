@@ -3,11 +3,13 @@ dist: trusty
 sudo: required
 services:
   - postgresql
-  - docker
 env:
-  - START_SIMPLECOV=1 RAILS_DB_ADAPTER=sqlite3
-  - START_SIMPLECOV=1 RAILS_DB_ADAPTER=postgresql
-  - TRAVIS=1 RAILS_DB_ADAPTER=sqlite3
+  global:
+    - START_SIMPLECOV=1
+  matrix:
+    - RAILS_DB_ADAPTER=sqlite3
+    - RAILS_DB_ADAPTER=postgresql
+    - DOCKER=1 RAILS_DB_ADAPTER=sqlite3
 addons:
   postgresql: '9.6'
   code_climate:
@@ -17,9 +19,9 @@ before_install:
   - sudo add-apt-repository ppa:jonathonf/backports -y
   - sudo apt-get update -q
   - sudo apt-get install sqlite3 -y
-  - bash -c 'if [[ "${TRAVIS}" == "1" ]]; then sudo docker pull dwilkie/somleng-scfm:spec; fi'
-  - bash -c 'if [[ "${TRAVIS}" == "1" ]]; then sudo docker ps -a; fi'
-  - bash -c 'if [[ "${TRAVIS}" == "1" ]]; then sudo docker run --rm dwilkie/somleng-scfm:spec /bin/sh -c "bundle exec rake db:migrate && bundle exec rake db:test:prepare && bundle exec rake"; fi'
+  - bash -c 'if [[ "${DOCKER}" == "1" ]]; then sudo docker pull dwilkie/somleng-scfm:spec; fi'
+  - bash -c 'if [[ "${DOCKER}" == "1" ]]; then sudo docker ps -a; fi'
+  - bash -c 'if [[ "${DOCKER}" == "1" ]]; then sudo docker run --rm dwilkie/somleng-scfm:spec /bin/sh -c "bundle exec rake db:migrate && bundle exec rake db:test:prepare && bundle exec rake"; fi'
 before_script:
   - psql -c 'create database somleng_scfm_test;' -U postgres
   - sqlite3 --version

@@ -8,6 +8,7 @@ RSpec.describe PhoneCall do
     def assert_associations!
       is_expected.to belong_to(:callout_participation)
       is_expected.to belong_to(:contact)
+      is_expected.to have_many(:phone_call_events)
     end
 
     it { assert_associations! }
@@ -17,6 +18,15 @@ RSpec.describe PhoneCall do
     context "new record" do
       def assert_validations!
         is_expected.to validate_presence_of(:status)
+      end
+
+      context "for an inbound call" do
+        subject { build(factory, :inbound) }
+        it { is_expected.not_to validate_presence_of(:callout_participation) }
+      end
+
+      context "for an outbound call" do
+        it { is_expected.to validate_presence_of(:callout_participation) }
       end
 
       it { assert_validations! }

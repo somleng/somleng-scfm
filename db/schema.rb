@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170926070754) do
+ActiveRecord::Schema.define(version: 20171101092942) do
 
   create_table "callout_participations", force: :cascade do |t|
     t.integer "callout_id", null: false
@@ -40,8 +40,16 @@ ActiveRecord::Schema.define(version: 20170926070754) do
     t.index ["msisdn"], name: "index_contacts_on_msisdn", unique: true
   end
 
+  create_table "phone_call_events", force: :cascade do |t|
+    t.integer "phone_call_id", null: false
+    t.text "details", default: "{}", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["phone_call_id"], name: "index_phone_call_events_on_phone_call_id"
+  end
+
   create_table "phone_calls", force: :cascade do |t|
-    t.integer "callout_participation_id", null: false
+    t.integer "callout_participation_id"
     t.integer "contact_id", null: false
     t.string "status", null: false
     t.string "remote_call_id"

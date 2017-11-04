@@ -12,16 +12,24 @@ class PhoneCall < ApplicationRecord
     :not_answered => "no-answer"
   }
 
-  belongs_to :callout_participation
+  # https://www.twilio.com/docs/api/voice/call#resource-properties
+  TWILIO_DIRECTIONS = {
+    :inbound => "inbound"
+  }
+
+  belongs_to :callout_participation, :optional => true
   belongs_to :contact
+  has_many   :phone_call_events
 
   include MetadataHelpers
   conditionally_serialize(:remote_response, JSON)
 
   validates :remote_call_id, :uniqueness => {:case_sensitive => false, :allow_nil => true}
   validates :status, :presence => true
+  validates :callout_participation, :presence => true, :unless => :inbound?
 
   delegate :msisdn, :to => :callout_participation
+  delegate :call_flow_logic, :to => :callout_participation, :prefix => true, :allow_nil => true
 
   include AASM
 
@@ -123,6 +131,10 @@ class PhoneCall < ApplicationRecord
     (ENV["PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS"] || DEFAULT_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS).to_i
   end
 
+  def call_flow_logic
+    super || callout_participation_call_flow_logic
+  end
+
   private
 
   def touch_queued_at
@@ -144,5 +156,9 @@ class PhoneCall < ApplicationRecord
 
   def has_remote_call_id?
     remote_call_id?
+  end
+
+  def inbound?
+    remote_direction == TWILIO_DIRECTIONS[:inbound]
   end
 end

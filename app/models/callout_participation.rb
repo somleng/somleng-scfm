@@ -16,6 +16,12 @@ class CalloutParticipation < ApplicationRecord
   validates :msisdn,
             :uniqueness => {:scope => :callout_id}
 
+  delegate :call_flow_logic, :to => :callout, :prefix => true
+
+  def call_flow_logic
+    super || callout_call_flow_logic
+  end
+
   def self.from_running_callout
     joins(:callout).merge(Callout.running)
   end

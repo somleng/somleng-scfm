@@ -23,7 +23,11 @@ class Api::PhoneCallEventsController < Api::BaseController
   end
 
   def respond_with_create_resource
-    respond_with(call_flow_logic, :location => nil)
+    if resource.persisted?
+      respond_with(call_flow_logic, :location => nil)
+    else
+      respond_with(resource)
+    end
   end
 
   def call_flow_logic

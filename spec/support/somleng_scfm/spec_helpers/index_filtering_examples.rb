@@ -17,7 +17,6 @@ RSpec.shared_examples_for("index_filtering") do
     let(:resource_without_matching_metadata) { create(filter_on_factory) }
     let(:asserted_count) { asserted_resources.count }
     let(:asserted_resources) { [resource_with_matching_metadata] }
-    let(:asserted_body) { asserted_resources.to_json }
     let(:url_params) { { "metadata" => metadata } }
 
     def setup_scenario

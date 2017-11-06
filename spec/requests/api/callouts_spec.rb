@@ -7,7 +7,7 @@ RSpec.describe "'/api/callouts'" do
     let(:url) { api_callouts_path(url_params) }
     let(:asserted_resources) { [] }
     let(:asserted_count) { asserted_resources.count }
-    let(:asserted_body) { asserted_resources.to_json }
+    let(:asserted_body) { JSON.parse(asserted_resources.to_json) }
     let(:url_params) { {} }
 
     def setup_scenario
@@ -18,7 +18,7 @@ RSpec.describe "'/api/callouts'" do
     def assert_index!
       super
       expect(response.headers["Total"]).to eq(asserted_count.to_s)
-      expect(response.body).to eq(asserted_body)
+      expect(JSON.parse(response.body)).to eq(asserted_body)
     end
 
     it_behaves_like "authorization"

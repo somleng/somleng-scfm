@@ -8,7 +8,20 @@ class Api::BaseController < ApplicationController
     respond_with_create_resource
   end
 
+  def show
+    find_resource
+    respond_with_show_resource
+  end
+
   private
+
+  def respond_with_show_resource
+    respond_with(resource)
+  end
+
+  def find_resource
+    @resource = association_chain.find(params[:id])
+  end
 
   def build_resource
     @resource = association_chain.new(permitted_params)

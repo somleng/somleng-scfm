@@ -18,6 +18,10 @@ FactoryGirl.define do
     trait :can_resume do
       status "paused"
     end
+
+    trait :running do
+      status Callout::STATE_RUNNING
+    end
   end
 
   factory :contact do

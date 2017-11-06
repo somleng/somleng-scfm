@@ -27,5 +27,13 @@ module MetadataHelpers
 
       where(sql, *[key, value].compact)
     end
+
+    def metadata_has_values(hash)
+      scope = all
+      hash.each do |k, v|
+        scope = scope.metadata_has_value(k, v)
+      end
+      scope
+    end
   end
 end

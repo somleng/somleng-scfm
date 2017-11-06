@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe "POST '/api/phone_call_events'" do
+  include SomlengScfm::SpecHelpers::RequestHelpers
+
   let(:call_sid) { "ff792674-48c9-4146-a953-ffa99a79c14c" }
   let(:from) { nil }
   let(:to) { nil }
@@ -8,12 +10,18 @@ RSpec.describe "POST '/api/phone_call_events'" do
 
   let(:twilio_request_auth_token) { "abcdefg" }
   let(:twilio_request_validator) { Twilio::Security::RequestValidator.new(twilio_request_auth_token) }
-  let(:url) { api_phone_call_events_url}
+  let(:url_options) { {} }
+  let(:url) { api_phone_call_events_url(url_options) }
   let(:twilio_request_signature) { twilio_request_validator.build_signature_for(url, params) }
+  let(:execute_request) { true }
+
+  def do_post!
+    do_request(:post, url, params, headers)
+  end
 
   def setup_scenario
     super
-    do_request(:post, url, params, headers)
+    do_post! if execute_request
   end
 
   def env
@@ -37,8 +45,11 @@ RSpec.describe "POST '/api/phone_call_events'" do
     }
   end
 
-  def do_request(method, path, body = {}, headers = {}, options = {})
-    public_send(method, path, {:params => body, :headers => headers}.merge(options))
+  context "requesting json" do
+    let(:url_options) { {:format => :json} }
+    let(:execute_request) { false }
+    let(:asserted_response_body) { asserted_phone_call_event.to_json }
+    it { expect { do_post! }.to raise_error(ActionController::UnknownFormat) }
   end
 
   context "unauthorized request" do
@@ -62,9 +73,10 @@ RSpec.describe "POST '/api/phone_call_events'" do
   end
 
   context "valid request" do
-    let(:asserted_phone_call_event) { PhoneCallEvent.last }
     let(:application_twiml) { CallFlowLogic::Application.new(asserted_phone_call_event).to_xml }
     let(:asserted_twiml) { application_twiml }
+    let(:asserted_response_body) { asserted_twiml }
+    let(:asserted_phone_call_event) { PhoneCallEvent.last }
 
     def assert_created!
       expect(response.code).to eq("201")
@@ -75,7 +87,7 @@ RSpec.describe "POST '/api/phone_call_events'" do
       expect(asserted_phone_call.remote_direction).to eq(direction)
       expect(asserted_contact).to be_present
       expect(asserted_contact.msisdn).to eq(asserted_contact_msisdn)
-      expect(response.body).to eq(asserted_twiml)
+      expect(response.body).to eq(asserted_response_body)
     end
 
     context "for an inbound call" do
@@ -104,6 +116,7 @@ RSpec.describe "POST '/api/phone_call_events'" do
       let(:direction) { "outbound-api" }
 
       let(:contact) { create(:contact) }
+      let(:call_flow_logic) { nil }
       let(:callout) { create(:callout, :metadata => {:call_flow_logic => call_flow_logic.to_s}) }
 
       let(:phone_call) {
@@ -137,7 +150,6 @@ RSpec.describe "POST '/api/phone_call_events'" do
       end
 
       context "Not setting the call_flow_logic" do
-        let(:call_flow_logic) { nil }
         it { assert_created! }
       end
     end

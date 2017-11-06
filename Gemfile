@@ -20,7 +20,9 @@ gem 'phony_rails'
 gem 'phony'
 gem 'twilio-ruby'
 gem 'httparty'
-gem "responders"
+gem 'responders'
+gem 'kaminari'
+gem 'api-pagination'
 
 group :development, :test do
   gem 'pry'

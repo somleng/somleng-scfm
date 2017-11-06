@@ -8,7 +8,4 @@ RSpec.describe PhoneCallEvent do
 
     it { assert_associations! }
   end
-
-  describe "validations" do
-  end
 end

@@ -42,6 +42,7 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
+    api-pagination (4.6.3)
     arel (8.0.0)
     bindex (0.5.0)
     builder (3.2.3)
@@ -82,6 +83,18 @@ GEM
       activesupport (>= 4.2.0)
       multi_json (>= 1.2)
     jwt (1.5.6)
+    kaminari (1.1.1)
+      activesupport (>= 4.1.0)
+      kaminari-actionview (= 1.1.1)
+      kaminari-activerecord (= 1.1.1)
+      kaminari-core (= 1.1.1)
+    kaminari-actionview (1.1.1)
+      actionview
+      kaminari-core (= 1.1.1)
+    kaminari-activerecord (1.1.1)
+      activerecord
+      kaminari-core (= 1.1.1)
+    kaminari-core (1.1.1)
     libxml-ruby (3.0.0)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
@@ -231,12 +244,14 @@ PLATFORMS
 
 DEPENDENCIES
   aasm
+  api-pagination
   codeclimate-test-reporter (~> 1.0.0)
   coffee-rails (~> 4.2)
   factory_girl_rails
   fakefs
   httparty
   jbuilder (~> 2.5)
+  kaminari
   listen (>= 3.0.5, < 3.2)
   pg
   phony

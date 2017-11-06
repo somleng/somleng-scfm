@@ -6,10 +6,7 @@ RSpec.describe "GET '/api/callouts'" do
   let(:asserted_resources) { [] }
   let(:asserted_count) { asserted_resources.count }
   let(:asserted_body) { asserted_resources.to_json }
-
-  def url_params
-    {}
-  end
+  let(:url_params) { {} }
 
   def setup_scenario
     super
@@ -22,19 +19,8 @@ RSpec.describe "GET '/api/callouts'" do
     expect(response.body).to eq(asserted_body)
   end
 
-  context "no filtering" do
-    let(:callout) { create(:callout) }
-    let(:asserted_resources) { [callout] }
-
-    def setup_scenario
-      callout
-      super
-    end
-
-    it { assert_index! }
-  end
-
-  it_behaves_like "metadata_filtering" do
+  it_behaves_like "authorization"
+  it_behaves_like "index_filtering" do
     let(:filter_on_factory) { :callout }
   end
 end

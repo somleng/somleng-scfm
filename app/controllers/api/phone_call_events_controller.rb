@@ -1,5 +1,4 @@
 class Api::PhoneCallEventsController < Api::BaseController
-  clear_respond_to
   respond_to :xml
 
   private

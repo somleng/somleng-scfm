@@ -14,6 +14,8 @@ RSpec.describe "POST '/api/phone_call_events'" do
   let(:url) { api_phone_call_events_url(url_options) }
   let(:twilio_request_signature) { twilio_request_validator.build_signature_for(url, params) }
   let(:execute_request) { true }
+  let(:authorization_user) { nil }
+  let(:authorization_password) { nil }
 
   def do_post!
     do_request(:post, url, params, headers)

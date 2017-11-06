@@ -1,4 +1,4 @@
-class Api::CalloutsController < Api::BaseController
+class Api::CalloutsController < Api::FilteredController
   private
 
   def association_chain

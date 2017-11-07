@@ -5,7 +5,9 @@ class CalloutEvent
   validates :callout, :presence => true
 
   validates :event,
-            :inclusion => { :in => Proc.new { Callout.aasm.events.map { |event| event.name.to_s } } }
+            :inclusion => {
+              :in => :valid_events
+            }
 
   def initialize(options = {})
     self.callout = options[:callout]
@@ -18,5 +20,11 @@ class CalloutEvent
     else
       false
     end
+  end
+
+  private
+
+  def valid_events
+    callout && callout.aasm.events.map { |event| event.name.to_s } || []
   end
 end

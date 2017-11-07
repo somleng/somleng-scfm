@@ -2,12 +2,20 @@ require 'rails_helper'
 
 RSpec.describe CalloutEvent do
   describe "validations" do
-    def assert_validations!
-      is_expected.to validate_inclusion_of(:event).in_array(Callout.aasm.events.map { |event| event.name.to_s })
-      is_expected.to validate_presence_of(:callout)
+    describe "callout" do
+      it { is_expected.to validate_presence_of(:callout) }
     end
 
-    it { assert_validations! }
+    describe "event" do
+      let(:callout) { create(:callout) }
+      subject { described_class.new(:callout => callout) }
+
+      it {
+        is_expected.to validate_inclusion_of(:event).in_array(
+          callout.aasm.events.map { |event| event.name.to_s }
+        )
+      }
+    end
   end
 
   describe "#save" do
@@ -15,7 +23,7 @@ RSpec.describe CalloutEvent do
     subject { described_class.new(:callout => callback, :event => event) }
 
     context "invalid" do
-      let(:event) { "foo" }
+      let(:event) { "stop" }
 
       it {
         expect(subject.save).to eq(false)

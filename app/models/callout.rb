@@ -5,6 +5,8 @@ class Callout < ApplicationRecord
   has_many :phone_calls, :through => :callout_participations
   has_many :contacts, :through => :callout_participations
 
+  alias_attribute :calls, :phone_calls
+
   validates :status, :presence => true
 
   include AASM

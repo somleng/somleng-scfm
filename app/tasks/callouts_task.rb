@@ -50,25 +50,7 @@ class CalloutsTask < ApplicationTask
   end
 
   def statistics
-    stats = {
-      :callout_status => callout.status.titleize,
-      :callout_participations => callout.callout_participations.count,
-      :callout_participations_still_to_call => callout.callout_participations.remaining.count,
-      :callout_participations_completed => callout.callout_participations.completed.count,
-      :calls_completed => callout.phone_calls.completed.count,
-      :calls_initialized => callout.phone_calls.created.count,
-      :calls_scheduling => callout.phone_calls.scheduling.count,
-      :calls_fetching_status => callout.phone_calls.fetching_status.count,
-      :calls_waiting_for_completion => callout.phone_calls.waiting_for_completion.count,
-      :calls_queued => callout.phone_calls.queued.count,
-      :calls_in_progress => callout.phone_calls.in_progress.count,
-      :calls_errored => callout.phone_calls.errored.count,
-      :calls_failed => callout.phone_calls.failed.count,
-      :calls_busy => callout.phone_calls.busy.count,
-      :calls_not_answered => callout.phone_calls.not_answered.count,
-      :calls_canceled => callout.phone_calls.canceled.count
-    }
-
+    stats = CalloutStatistics.new(:callout => callout).as_json
     padding = stats.keys.map { |name| name.to_s.length }.max + 1
     puts(stats.map { |name, value| name.to_s.titleize + ":" + (" " * (padding - name.to_s.length)) + value.to_s }.join("\n"))
   end

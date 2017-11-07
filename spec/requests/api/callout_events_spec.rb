@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "POST '/callouts/:id/callout_events'" do
+RSpec.describe "POST '/callouts/:callout_id/callout_events'" do
   include SomlengScfm::SpecHelpers::RequestHelpers
 
   let(:callout) { create(:callout) }

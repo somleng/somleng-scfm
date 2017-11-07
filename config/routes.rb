@@ -3,6 +3,7 @@ Rails.application.routes.draw do
     resources :phone_call_events, :only => [:create], :defaults => { :format => "xml" }
     resources :callouts, :except => [:new, :edit] do
       resources :callout_events, :only => :create
+      resource :callout_statistics, :only => :show
     end
   end
 end

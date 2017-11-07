@@ -267,6 +267,35 @@ Sample Response:
 }
 ```
 
+#### Get Callout Statistics
+
+```
+$ curl http://localhost:3000/api/callouts/1/callout_statistics
+```
+
+Sample Response:
+
+```json
+{
+  "callout_status": "initialized",
+  "callout_participations": 0,
+  "callout_participations_remaining": 0,
+  "callout_participations_completed": 0,
+  "calls_completed": 0,
+  "calls_initialized": 0,
+  "calls_scheduling": 0,
+  "calls_fetching_status": 0,
+  "calls_waiting_for_completion": 0,
+  "calls_queued": 0,
+  "calls_in_progress": 0,
+  "calls_errored": 0,
+  "calls_failed": 0,
+  "calls_busy": 0,
+  "calls_not_answered": 0,
+  "calls_canceled": 0
+}
+```
+
 #### Delete a Callout
 
 Note the response is `204 No Content`

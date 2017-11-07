@@ -13,9 +13,25 @@ class Api::BaseController < ApplicationController
     respond_with_show_resource
   end
 
+  def update
+    find_resource
+    update_resource
+    respond_with_resource
+  end
+
+  def destroy
+    find_resource
+    destroy_resource
+    respond_with_resource
+  end
+
   private
 
   def respond_with_show_resource
+    respond_with_resource
+  end
+
+  def respond_with_resource
     respond_with(resource)
   end
 
@@ -32,6 +48,14 @@ class Api::BaseController < ApplicationController
 
   def save_resource
     resource.save
+  end
+
+  def update_resource
+    resource.update_attributes(permitted_params)
+  end
+
+  def destroy_resource
+    resource.destroy
   end
 
   def resource

@@ -1,7 +1,7 @@
 class Callout < ApplicationRecord
   include MetadataHelpers
 
-  has_many :callout_participations
+  has_many :callout_participations, :dependent => :restrict_with_error
   has_many :phone_calls, :through => :callout_participations
   has_many :contacts, :through => :callout_participations
 

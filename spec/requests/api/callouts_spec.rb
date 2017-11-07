@@ -3,44 +3,105 @@ require 'rails_helper'
 RSpec.describe "'/api/callouts'" do
   include SomlengScfm::SpecHelpers::RequestHelpers
 
-  describe "GET '/'" do
-    let(:url) { api_callouts_path(url_params) }
-    let(:asserted_resources) { [] }
-    let(:asserted_count) { asserted_resources.count }
-    let(:asserted_body) { JSON.parse(asserted_resources.to_json) }
+  let(:body) { {} }
+  let(:metadata) { { "foo" => "bar" } }
+
+  def setup_scenario
+    super
+    do_request(method, url, body)
+  end
+
+  describe "'/'" do
     let(:url_params) { {} }
+    let(:url) { api_callouts_path(url_params) }
 
-    def setup_scenario
-      super
-      do_request(:get, url)
+    describe "GET" do
+      let(:method) { :get }
+      let(:asserted_resources) { [] }
+      let(:asserted_count) { asserted_resources.count }
+      let(:asserted_body) { JSON.parse(asserted_resources.to_json) }
+
+      def assert_index!
+        super
+        expect(response.headers["Total"]).to eq(asserted_count.to_s)
+        expect(JSON.parse(response.body)).to eq(asserted_body)
+      end
+
+      it_behaves_like "authorization"
+      it_behaves_like "index_filtering" do
+        let(:filter_on_factory) { :callout }
+      end
     end
 
-    def assert_index!
-      super
-      expect(response.headers["Total"]).to eq(asserted_count.to_s)
-      expect(JSON.parse(response.body)).to eq(asserted_body)
-    end
+    describe "POST" do
+      let(:method) { :post }
+      let(:body) { { :metadata => metadata } }
+      let(:asserted_created_callout) { Callout.last }
+      let(:parsed_response) { JSON.parse(response.body) }
 
-    it_behaves_like "authorization"
-    it_behaves_like "index_filtering" do
-      let(:filter_on_factory) { :callout }
+      def assert_create!
+        expect(response.code).to eq("201")
+        expect(parsed_response).to eq(JSON.parse(asserted_created_callout.to_json))
+        expect(parsed_response["metadata"]).to eq(metadata)
+      end
+
+      it { assert_create! }
     end
   end
 
-  describe "GET '/:id'" do
+  describe "'/:id'" do
     let(:callout) { create(:callout) }
     let(:url) { api_callout_path(callout) }
 
-    def setup_scenario
-      super
-      do_request(:get, url)
+    describe "GET" do
+      let(:method) { :get }
+
+      def assert_show!
+        expect(response.code).to eq("200")
+        expect(response.body).to eq(callout.to_json)
+      end
+
+      it { assert_show! }
     end
 
-    def assert_show!
-      expect(response.code).to eq("200")
-      expect(response.body).to eq(callout.to_json)
+    describe "PUT" do
+      let(:method) { :patch }
+      let(:body) { { :metadata => metadata } }
+
+      def assert_update!
+        expect(response.code).to eq("204")
+        expect(callout.reload.metadata).to eq(metadata)
+      end
+
+      it { assert_update! }
     end
 
-    it { assert_show! }
+    describe "DELETE" do
+      let(:method) { :delete }
+
+      context "valid request" do
+        def assert_destroy!
+          expect(response.code).to eq("204")
+          expect(Callout.find_by_id(callout.id)).to eq(nil)
+        end
+
+        it { assert_destroy! }
+      end
+
+      context "invalid request" do
+        let(:callout_participation) { create(:callout_participation, :callout => callout) }
+
+        def setup_scenario
+          callout_participation
+          super
+        end
+
+        def assert_invalid!
+          expect(response.code).to eq("422")
+        end
+
+        it { assert_invalid! }
+      end
+    end
   end
 end

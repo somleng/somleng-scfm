@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171101092942) do
+ActiveRecord::Schema.define(version: 20171107101725) do
 
   create_table "callout_participations", force: :cascade do |t|
     t.integer "callout_id", null: false
@@ -23,6 +23,15 @@ ActiveRecord::Schema.define(version: 20171101092942) do
     t.index ["callout_id", "msisdn"], name: "index_callout_participations_on_callout_id_and_msisdn", unique: true
     t.index ["callout_id"], name: "index_callout_participations_on_callout_id"
     t.index ["contact_id"], name: "index_callout_participations_on_contact_id"
+  end
+
+  create_table "callout_populations", force: :cascade do |t|
+    t.integer "callout_id", null: false
+    t.text "contact_filter_params", default: "{}", null: false
+    t.text "metadata", default: "{}", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["callout_id"], name: "index_callout_populations_on_callout_id"
   end
 
   create_table "callouts", force: :cascade do |t|

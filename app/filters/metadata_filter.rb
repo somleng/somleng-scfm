@@ -4,6 +4,6 @@ class MetadataFilter < ApplicationFilter
   end
 
   def metadata
-    params["metadata"] || {}
+    params[:metadata] || {}
   end
 end

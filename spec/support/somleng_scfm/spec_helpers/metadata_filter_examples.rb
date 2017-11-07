@@ -3,7 +3,7 @@ RSpec.shared_examples_for "metadata_filter" do
     context "filtering by metadata" do
       def filter_params
         super.merge(
-          "metadata" => {
+          :metadata => {
             "foo" => "bar",
             "bar" => "foo"
           }

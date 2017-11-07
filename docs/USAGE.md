@@ -6,11 +6,15 @@ Somleng SCFM is build around the following key concepts.
 
 ### Contacts
 
-A [contact](https://github.com/somleng/somleng-scfm/blob/master/app/models/contact.rb) represents a person who has a [msisdn (aka: phone number)](https://en.wikipedia.org/wiki/MSISDN). Contacts are uniquely indexed by their msisdn. You cannot create two contacts with the same msisdn.
+A [contact](https://github.com/somleng/somleng-scfm/blob/master/app/models/contact.rb) represents a person who has a [msisdn (aka: phone number)](https://en.wikipedia.org/wiki/MSISDN). Contacts are uniquely indexed by their msisdn. You cannot create two contacts with the same msisdn. Contacts can be created with custom metadata.
 
 ### Callouts
 
-A [callout](https://github.com/somleng/somleng-scfm/blob/master/app/models/callout.rb) represents a collection of phone numbers that need to be called for a particular purpose. A callout has a status and can be *started*, *stopped*, *paused* or *resumed*.
+A [callout](https://github.com/somleng/somleng-scfm/blob/master/app/models/callout.rb) represents a collection of contacts that need to be called for a particular purpose. For example, you might create a callout to notify your customers of a new product. A callout has a status and can be *started*, *stopped*, *paused* or *resumed*.
+
+### Callout Populations
+
+A [callout population](https://github.com/somleng/somleng-scfm/blob/master/app/models/callout_population.rb) represents the population of a callout with participants. For example, you might create a callout population for only a subset of your customers that live in a certain area. You can inspect the callout population to see who will be called before populating it. A callout population has a status and can be *preview*, *populated*.
 
 ### Callout Participations
 
@@ -455,6 +459,194 @@ Note the response is `204 No Content`
 
 ```
 $ curl -v -XDELETE http://localhost:3000/api/callouts/1
+```
+
+Sample Response:
+
+```
+< HTTP/1.1 204 No Content
+```
+
+### Callout Populations
+
+#### Create a Callout Population
+
+```
+$ curl -XPOST http://localhost:3000/api/callouts/1/callout_populations \
+  -d "metadata[foo]=bar" \
+  -d "metadata[bar]=baz" \
+  -d "contact_filter_params[location]=phnom+penh"
+```
+
+Sample Response:
+
+```json
+{
+  "id": 1,
+  "callout_id": 1,
+  "contact_filter_params": {
+    "location": "phnom penh"
+  },
+  "metadata": {
+    "foo": "bar",
+    "bar": "baz"
+  },
+  "created_at": "2017-11-07T12:05:24.240Z",
+  "updated_at": "2017-11-07T12:05:24.240Z"
+}
+```
+
+#### List all Callout Populations for a given callout
+
+```
+$ curl http://localhost:3000/api/callouts/1/callout_populations
+```
+
+Sample Response:
+
+```json
+[
+  {
+    "id": 1,
+    "callout_id": 1,
+    "contact_filter_params": {
+      "location": "phnom penh"
+    },
+    "metadata": {
+      "foo": "bar",
+      "bar": "baz"
+    },
+    "created_at": "2017-11-07T12:04:59.470Z",
+    "updated_at": "2017-11-07T12:04:59.470Z"
+  }
+]
+```
+
+#### List all Callout Populations
+
+```
+$ curl http://localhost:3000/api/callout_populations
+```
+
+Sample Response:
+
+```json
+[
+  {
+    "id": 1,
+    "callout_id": 1,
+    "contact_filter_params": {
+      "location": "phnom penh"
+    },
+    "metadata": {
+      "foo": "bar",
+      "bar": "baz"
+    },
+    "created_at": "2017-11-07T12:04:59.470Z",
+    "updated_at": "2017-11-07T12:04:59.470Z"
+  }
+]
+```
+
+#### List all Callout Populations (filtering by metadata)
+
+```
+$ curl -g "http://localhost:3000/api/callout_populations?metadata[foo]=bar"
+```
+
+Sample Response:
+
+```json
+[
+  {
+    "id": 1,
+    "callout_id": 1,
+    "contact_filter_params": {
+      "location": "phnom penh"
+    },
+    "metadata": {
+      "foo": "bar",
+      "bar": "baz"
+    },
+    "created_at": "2017-11-07T12:04:59.470Z",
+    "updated_at": "2017-11-07T12:04:59.470Z"
+  }
+]
+```
+
+#### List all Callout Populations (filtering by contact_filter_params)
+
+```
+$ curl -g "http://localhost:3000/api/callout_populations?contact_filter_params[location]=phnom+penh"
+```
+
+Sample Response:
+
+```json
+[
+  {
+    "id": 1,
+    "callout_id": 1,
+    "contact_filter_params": {
+      "location": "phnom penh"
+    },
+    "metadata": {
+      "foo": "bar",
+      "bar": "baz"
+    },
+    "created_at": "2017-11-07T12:04:59.470Z",
+    "updated_at": "2017-11-07T12:04:59.470Z"
+  }
+]
+```
+
+#### Get a Callout Population
+
+```
+$ curl http://localhost:3000/api/callout_populations/1
+```
+
+Sample Response:
+
+```json
+{
+  "id": 1,
+  "callout_id": 1,
+  "contact_filter_params": {
+    "location": "phnom penh"
+  },
+  "metadata": {
+    "foo": "bar",
+    "bar": "baz"
+  },
+  "created_at": "2017-11-07T12:04:59.470Z",
+  "updated_at": "2017-11-07T12:04:59.470Z"
+}
+```
+
+#### Update a Callout Population
+
+Note the response is `204 No Content`
+
+```
+$ curl -v -XPUT http://localhost:3000/api/callout_populations/1 \
+  -d "metadata[foo]=baz" \
+  -d "metadata[baz]=foo" \
+  -d "contact_filter_params[location]=battambang"
+```
+
+Sample Response:
+
+```
+< HTTP/1.1 204 No Content
+```
+
+#### Delete a Callout Population
+
+Note the response is `204 No Content`
+
+```
+$ curl -v -XDELETE http://localhost:3000/api/callout_populations/1
 ```
 
 Sample Response:

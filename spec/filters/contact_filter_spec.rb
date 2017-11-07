@@ -32,7 +32,7 @@ RSpec.describe ContactFilter do
         it { assert_filter! }
       end
 
-      context "does not match" do
+      context "msisdn does not match" do
         let(:msisdn) { "wrong" }
         let(:asserted_results) { [] }
         it { assert_filter! }

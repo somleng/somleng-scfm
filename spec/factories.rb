@@ -28,6 +28,10 @@ FactoryGirl.define do
     msisdn { generate(:somali_msisdn) }
   end
 
+  factory :callout_population do
+    callout
+  end
+
   factory :callout_participation do
     callout
     contact

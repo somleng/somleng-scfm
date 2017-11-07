@@ -96,6 +96,52 @@ Sample Response:
 ]
 ```
 
+#### List all Callouts (filtering by metadata)
+
+```
+$ curl -g "http://localhost:3000/api/callouts?metadata[foo]=bar&metadata[bar]=baz"
+```
+
+Sample Response:
+
+```json
+[
+  {
+    "id": 1,
+    "status": "initialized",
+    "metadata": {
+      "foo": "bar",
+      "bar": "baz"
+    },
+    "created_at": "2017-11-07T05:53:03.370Z",
+    "updated_at": "2017-11-07T05:53:03.370Z"
+  }
+]
+```
+
+#### List all Callouts (filtering by status)
+
+```
+$ curl -g "http://localhost:3000/api/callouts?status=initialized"
+```
+
+Sample Response:
+
+```json
+[
+  {
+    "id": 1,
+    "status": "initialized",
+    "metadata": {
+      "foo": "bar",
+      "bar": "baz"
+    },
+    "created_at": "2017-11-07T05:53:03.370Z",
+    "updated_at": "2017-11-07T05:53:03.370Z"
+  }
+]
+```
+
 #### Get a Callout
 
 ```

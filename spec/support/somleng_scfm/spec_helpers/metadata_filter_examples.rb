@@ -1,4 +1,4 @@
-RSpec.shared_examples_for "filter" do
+RSpec.shared_examples_for "metadata_filter" do
   describe "#resources" do
     context "filtering by metadata" do
       def filter_params

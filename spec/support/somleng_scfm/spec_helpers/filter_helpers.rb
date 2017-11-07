@@ -5,7 +5,7 @@ module SomlengScfm::SpecHelpers::FilterHelpers
 
   def filter_options
     @filter_options ||= {
-      :association_chain => Callout.all
+      :association_chain => association_chain
     }
   end
 

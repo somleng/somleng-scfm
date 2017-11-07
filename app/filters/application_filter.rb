@@ -7,7 +7,7 @@ class ApplicationFilter
   end
 
   def resources
-    association_chain.where(filter_params).metadata_has_values(metadata)
+    association_chain.where(filter_params).merge(metadata_filter.resources)
   end
 
   private
@@ -20,7 +20,7 @@ class ApplicationFilter
     options[:association_chain]
   end
 
-  def metadata
-    params["metadata"] || {}
+  def metadata_filter
+    @metdata_filter ||= MetadataFilter.new(options, params)
   end
 end

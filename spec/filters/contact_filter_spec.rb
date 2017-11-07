@@ -1,37 +1,39 @@
 require 'rails_helper'
 
-RSpec.describe CalloutFilter do
+RSpec.describe ContactFilter do
   include SomlengScfm::SpecHelpers::FilterHelpers
 
-  let(:factory) { :callout }
-  let(:association_chain) { Callout }
+  let(:factory) { :contact }
+  let(:association_chain) { Contact }
 
   it_behaves_like "metadata_filter"
 
   describe "#resources" do
-    let(:callout) { create(factory, :running) }
+    let(:somali_msisdn) { generate(:somali_msisdn) }
+    let(:contact) { create(factory, :msisdn => somali_msisdn) }
 
     def setup_scenario
-      callout
+      super
+      contact
     end
 
-    context "filtering by status" do
+    context "filtering by msisdn" do
       def filter_params
-        super.merge(:status => status)
+        super.merge(:msisdn => msisdn)
       end
 
       def assert_filter!
         expect(subject.resources).to match_array(asserted_results)
       end
 
-      context "status matches" do
-        let(:status) { "running" }
-        let(:asserted_results) { [callout] }
+      context "msisdn matches" do
+        let(:msisdn) { somali_msisdn }
+        let(:asserted_results) { [contact] }
         it { assert_filter! }
       end
 
       context "does not match" do
-        let(:status) { "stopped" }
+        let(:msisdn) { "wrong" }
         let(:asserted_results) { [] }
         it { assert_filter! }
       end

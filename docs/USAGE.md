@@ -40,9 +40,162 @@ Optionally you can set `HTTP_BASIC_AUTH_PASSWORD` to enable username and passwor
 
 ### Contacts
 
+#### Create a Contact
+
+```
+$ curl -XPOST http://localhost:3000/api/contacts \
+  --data-urlencode "msisdn=+85510202101" \
+  -d "metadata[foo]=bar" \
+  -d "metadata[bar]=baz"
+```
+
+Sample Response:
+
+```json
+{
+  "id": 1,
+  "msisdn": "+85510202101",
+  "metadata": {
+    "foo": "bar",
+    "bar": "baz"
+  },
+  "created_at": "2017-11-07T08:34:25.880Z",
+  "updated_at": "2017-11-07T08:34:25.880Z"
+}
+```
+
+#### List all Contacts
+
+Note that the response is paginated.
+
+```
+$ curl -v http://localhost:3000/api/contacts
+```
+
+Sample Response:
+
+```
+< HTTP/1.1 200 OK
+< Per-Page: 25
+< Total: 1
+```
+
+```json
+[
+  {
+    "id": 1,
+    "msisdn": "+85510202101",
+    "metadata": {
+      "foo": "bar",
+      "bar": "baz"
+    },
+    "created_at": "2017-11-07T08:34:25.880Z",
+    "updated_at": "2017-11-07T08:34:25.880Z"
+  }
+]
+```
+
+#### List all Contacts (fitering by metadata)
+
+```
+$ curl -g "http://localhost:3000/api/contacts?metadata[foo]=bar&metadata[bar]=baz"
+```
+
+Sample Response:
+
+```json
+[
+  {
+    "id": 1,
+    "msisdn": "+85510202101",
+    "metadata": {
+      "foo": "bar",
+      "bar": "baz"
+    },
+    "created_at": "2017-11-07T08:34:25.880Z",
+    "updated_at": "2017-11-07T08:34:25.880Z"
+  }
+]
+```
+
+#### List all Contacts (fitering by msisdn)
+
+```
+$ curl -g "http://localhost:3000/api/contacts?msisdn=85510202101"
+```
+
+Sample Response:
+
+```json
+[
+  {
+    "id": 1,
+    "msisdn": "+85510202101",
+    "metadata": {
+      "foo": "bar",
+      "bar": "baz"
+    },
+    "created_at": "2017-11-07T08:34:25.880Z",
+    "updated_at": "2017-11-07T08:34:25.880Z"
+  }
+]
+```
+
+#### Get a Contact
+
+```
+$ curl http://localhost:3000/api/contacts/1
+```
+
+Sample Response:
+
+```json
+{
+  "id": 1,
+  "msisdn": "+85510202101",
+  "metadata": {
+    "foo": "bar",
+    "bar": "baz"
+  },
+  "created_at": "2017-11-07T08:34:25.880Z",
+  "updated_at": "2017-11-07T08:34:25.880Z"
+}
+```
+
+#### Update a Contact
+
+Note the response is `204 No Content`
+
+```
+$ curl -v -XPUT http://localhost:3000/api/contacts/1 \
+  --data-urlencode "msisdn=+85510202102" \
+  -d "metadata[foo]=baz" \
+  -d "metadata[baz]=foo"
+```
+
+Sample Response:
+
+```
+< HTTP/1.1 204 No Content
+```
+
+#### Delete a Contact
+
+Note the response is `204 No Content`
+
+```
+$ curl -v -XDELETE http://localhost:3000/api/contacts/1
+```
+
+Sample Response:
+
+```
+< HTTP/1.1 204 No Content
+```
+
 ### Callouts
 
-#### Create a callout
+#### Create a Callout
 
 ```
 $ curl -XPOST http://localhost:3000/api/callouts \

@@ -17,7 +17,7 @@ class Api::CalloutsController < Api::FilteredController
     params.permit(:metadata => {})
   end
 
-  def respond_with_create_resource
-    respond_with(resource, :location => api_callout_path(resource))
+  def resource_location
+    api_callout_path(resource)
   end
 end

@@ -10,7 +10,7 @@ class Api::BaseController < ApplicationController
 
   def show
     find_resource
-    respond_with_show_resource
+    respond_with_resource
   end
 
   def update
@@ -27,12 +27,16 @@ class Api::BaseController < ApplicationController
 
   private
 
-  def respond_with_show_resource
-    respond_with_resource
-  end
-
   def respond_with_resource
     respond_with(resource)
+  end
+
+  def respond_with_create_resource
+    respond_with(resource, respond_with_create_resource_options)
+  end
+
+  def respond_with_create_resource_options
+    resource.persisted? ? {:location => resource_location} : {}
   end
 
   def find_resource

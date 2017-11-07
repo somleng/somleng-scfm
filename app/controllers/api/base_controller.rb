@@ -65,4 +65,8 @@ class Api::BaseController < ApplicationController
   def resources
     @resources
   end
+
+  def protect_from_forgery?
+    false
+  end
 end

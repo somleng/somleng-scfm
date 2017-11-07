@@ -20,6 +20,221 @@ A [callout participation](https://github.com/somleng/somleng-scfm/blob/master/ap
 
 A [phone call](https://github.com/somleng/somleng-scfm/blob/master/app/models/phone_call.rb) represents a single attempt at a phone call. A phone call has a status which represents the outcome of the phone call. There may be muliple phone calls for single participation on a callout.
 
+## Databases
+
+Somleng SCFM currently supports [SQLite](https://www.sqlite.org/) and [PostgreSQL](https://www.postgresql.org/). If you want to test things out locally using Docker feel free to use the SQLite. For production we recommend using PostgreSQL.
+
+## REST API
+
+Somleng SCFM provides a REST API for managing the core resources listed above. Below is the documentation for the REST API.
+
+### Authentication
+
+HTTP Basic Authentication is supported out of the box. To enable HTTP Basic Authentication set the following environment variable:
+
+```
+HTTP_BASIC_AUTH_USER=api-user
+```
+
+Optionally you can set `HTTP_BASIC_AUTH_PASSWORD` to enable username and password authentication.
+
+### Contacts
+
+### Callouts
+
+#### Create a callout
+
+```
+$ curl -XPOST http://localhost:3000/api/callouts \
+  -d "metadata[foo]=bar" \
+  -d "metadata[bar]=baz"
+```
+
+Sample Response:
+
+```json
+{
+  "id": 1,
+  "status": "initialized",
+  "metadata": {
+    "foo": "bar",
+    "bar": "baz"
+  },
+  "created_at": "2017-11-07T05:11:24.772Z",
+  "updated_at": "2017-11-07T05:11:24.772Z"
+}
+```
+
+#### List all Callouts
+
+Note that the response is paginated.
+
+```
+$ curl -v http://localhost:3000/api/callouts
+```
+
+Sample Response:
+
+```
+< HTTP/1.1 200 OK
+< Per-Page: 25
+< Total: 1
+```
+
+```json
+[
+  {
+    "id": 1,
+    "status": "initialized",
+    "metadata": {
+      "foo": "bar",
+      "bar": "baz"
+    },
+    "created_at": "2017-11-07T05:29:13.935Z",
+    "updated_at": "2017-11-07T05:29:13.935Z"
+  }
+]
+```
+
+#### Get a Callout
+
+```
+$ curl http://localhost:3000/api/callouts/1
+```
+
+Sample Response:
+
+```json
+{
+  "id": 1,
+  "status": "initialized",
+  "metadata": {
+    "foo": "bar",
+    "bar": "baz"
+  },
+  "created_at": "2017-11-07T05:29:13.935Z",
+  "updated_at": "2017-11-07T05:29:13.935Z"
+}
+```
+
+#### Update a Callout
+
+Note the response is `204 No Content`
+
+```
+$ curl -v -XPUT http://localhost:3000/api/callouts/1 \
+  -d "metadata[foo]=baz" \
+  -d "metadata[baz]=foo"
+```
+
+Sample Response:
+
+```
+< HTTP/1.1 204 No Content
+```
+
+#### Start a Callout
+
+```
+$ curl -XPOST http://localhost:3000/api/callouts/1/callout_events \
+  -d "event=start"
+```
+
+Sample Response:
+
+```json
+{
+  "id": 1,
+  "status": "running",
+  "metadata": {
+    "foo": "baz",
+    "baz": "foo"
+  },
+  "created_at": "2017-11-07T05:11:24.772Z",
+  "updated_at": "2017-11-07T05:17:33.823Z"
+}
+```
+
+#### Pause a Callout
+
+```
+$ curl -XPOST http://localhost:3000/api/callouts/1/callout_events \
+  -d "event=pause"
+```
+
+Sample Response:
+
+```json
+{
+  "id": 1,
+  "status": "paused",
+  "metadata": {
+    "foo": "baz",
+    "baz": "foo"
+  },
+  "created_at": "2017-11-07T05:29:13.935Z",
+  "updated_at": "2017-11-07T05:31:31.297Z"
+}
+```
+
+#### Resume a Callout
+
+```
+$ curl -XPOST http://localhost:3000/api/callouts/1/callout_events \
+  -d "event=resume"
+```
+
+Sample Response:
+
+```json
+{
+  "id": 1,
+  "status": "running",
+  "metadata": {
+    "foo": "baz",
+    "baz": "foo"
+  },
+  "created_at": "2017-11-07T05:29:13.935Z",
+  "updated_at": "2017-11-07T05:31:49.596Z"
+}
+```
+
+#### Stop a Callout
+
+```
+$ curl -XPOST http://localhost:3000/api/callouts/1/callout_events \
+  -d "event=stop"
+```
+
+Sample Response:
+
+```json
+{
+  "id": 1,
+  "status": "stopped",
+  "metadata": {
+    "foo": "baz",
+    "baz": "foo"
+  },
+  "created_at": "2017-11-07T05:29:13.935Z",
+  "updated_at": "2017-11-07T05:32:02.503Z"
+}
+```
+
+#### Delete a Callout
+
+Note the response is `204 No Content`
+
+```
+$ curl -v -XDELETE http://localhost:3000/api/callouts/1
+```
+
+Sample Response:
+
+```
+< HTTP/1.1 204 No Content
+```
+
 ## Tasks
 
 Somleng SCFM Tasks are stand alone rake tasks that can be run manually, from cron or from another application.

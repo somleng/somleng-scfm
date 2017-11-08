@@ -6,49 +6,6 @@
 
 Somleng Simple Call Flow Manager (Somleng SCFM) can be used to enqueue, throttle, update, and process calls through [Somleng](https://github.com/somleng/twilreapi) (or [Twilio](https://www.twilio.com/))
 
-## Architecture
-
-<pre>
-    +----------------+
-    |   Contacts     |
-    +----------------+
- +--| * id           |---+
- |  | * msisdn       |   |
- |  | * metadata     |   |
- |  |                |   |
- |  +----------------+   |
- |                       |
- |  +----------------+   |  +-----------------------+
- |  |    Callouts    |   |  | CalloutParticipations |
- |  +----------------+   |  +-----------------------+
- |  | * id           |-+ |  | * id                  |-+
- |  | * status       | | |  | * msisdn              | |
- |  | * metadata     | | |  | * metadata            | |
- |  |                | | +->| * contact_id          | |
- |  |                | +--->| * callout_id          | |
- |  |                |      |                       | |
- |  +----------------+      +---------------------- + |
- |                                                    |
- |  +----------------------------+                    |
- |  |         PhoneCalls         |                    |
- |  +----------------------------+                    |
- |  | * id                       |--+                 |
- |  | * status                   |  |                 |
- |  | * callout_participation_id |<-+-----------------+
- +->| * contact_id               |  |
-    | * ...                      |  |
-    +----------------------------+  |
-                                    |
-    +----------------------------+  |
-    |     PhoneCallEvents        |  |
-    +----------------------------+  |
-    | * id                       |  |
-    | * metadata                 |  |
-    | * phone_call_id            |<-+
-    | * ...                      |
-    +----------------------------+
-</pre>
-
 ## Features
 
 * Create contacts with custom metadata

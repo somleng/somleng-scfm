@@ -23,6 +23,7 @@ gem 'httparty'
 gem 'responders'
 gem 'kaminari'
 gem 'api-pagination'
+gem 'wisper', :github => "krisleech/wisper"
 
 group :development, :test do
   gem 'pry'
@@ -44,4 +45,5 @@ group :test do
   gem 'simplecov', :require => false
   gem 'codeclimate-test-reporter', '~> 1.0.0'
   gem "fakefs", :require => 'fakefs/safe'
+  gem 'wisper-rspec'
 end

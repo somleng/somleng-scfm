@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 20171107101725) do
     t.integer "callout_id", null: false
     t.text "contact_filter_params", default: "{}", null: false
     t.text "metadata", default: "{}", null: false
+    t.string "status", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["callout_id"], name: "index_callout_populations_on_callout_id"

@@ -1,0 +1,2 @@
+class CalloutPopulationEvent < ResourceEvent
+end

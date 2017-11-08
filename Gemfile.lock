@@ -5,6 +5,12 @@ GIT
     aasm (4.12.3)
       concurrent-ruby (~> 1.0)
 
+GIT
+  remote: https://github.com/krisleech/wisper.git
+  revision: b5cecbbff4651eb620fe87b561c3674f72d70393
+  specs:
+    wisper (2.0.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -243,6 +249,7 @@ GEM
     websocket-driver (0.6.5)
       websocket-extensions (>= 0.1.0)
     websocket-extensions (0.1.2)
+    wisper-rspec (1.0.0)
 
 PLATFORMS
   ruby
@@ -278,6 +285,8 @@ DEPENDENCIES
   uglifier (>= 1.3.0)
   web-console (>= 3.3.0)
   webmock
+  wisper!
+  wisper-rspec
 
 BUNDLED WITH
    1.16.0.pre.3

@@ -1,43 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe CalloutEvent do
-  describe "validations" do
-    describe "callout" do
-      it { is_expected.to validate_presence_of(:callout) }
-    end
+  let(:eventable_factory) { :callout }
 
-    describe "event" do
-      let(:callout) { create(:callout) }
-      subject { described_class.new(:callout => callout) }
-
-      it {
-        is_expected.to validate_inclusion_of(:event).in_array(
-          callout.aasm.events.map { |event| event.name.to_s }
-        )
-      }
-    end
-  end
-
-  describe "#save" do
-    let(:callback) { create(:callout) }
-    subject { described_class.new(:callout => callback, :event => event) }
-
-    context "invalid" do
-      let(:event) { "stop" }
-
-      it {
-        expect(subject.save).to eq(false)
-        expect(subject.callout).to be_initialized
-      }
-    end
-
-    context "valid" do
-      let(:event) { "start" }
-
-      it {
-        expect(subject.save).to eq(true)
-        expect(subject.callout).to be_running
-      }
-    end
+  it_behaves_like("resource_event") do
+    let(:event) { "start" }
+    let(:asserted_current_status) { Callout::STATE_INITIALIZED }
+    let(:asserted_new_status) { Callout::STATE_RUNNING }
   end
 end

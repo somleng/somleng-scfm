@@ -8,7 +8,9 @@ Rails.application.routes.draw do
       resource :callout_statistics, :only => :show
     end
 
-    resources :callout_populations, :except => [:new, :edit, :create]
+    resources :callout_populations, :except => [:new, :edit, :create] do
+      resources :callout_population_events, :only => :create
+    end
     resources :contacts, :except => [:new, :edit]
   end
 end

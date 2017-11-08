@@ -3,6 +3,9 @@ class CalloutPopulation < ApplicationRecord
   include Wisper::Publisher
 
   conditionally_serialize(:contact_filter_params, JSON)
+
+  has_many :callout_participations, :dependent => :restrict_with_error
+  has_many :contacts, :through => :callout_participations
   belongs_to :callout
 
   include AASM

@@ -4,6 +4,16 @@ RSpec.describe CalloutPopulation do
   let(:factory) { :callout_population }
   include_examples "has_metadata"
 
+  describe "associations" do
+    def assert_associations!
+      is_expected.to belong_to(:callout)
+      is_expected.to have_many(:callout_participations).dependent(:restrict_with_error)
+      is_expected.to have_many(:contacts)
+    end
+
+    it { assert_associations! }
+  end
+
   describe "state_machine" do
     subject { create(factory, factory_attributes) }
 
@@ -26,14 +36,6 @@ RSpec.describe CalloutPopulation do
 
       it { assert_transitions! }
     end
-  end
-
-  describe "associations" do
-    def assert_associations!
-      is_expected.to belong_to(:callout)
-    end
-
-    it { assert_associations! }
   end
 
   describe "#contact_filter_params" do

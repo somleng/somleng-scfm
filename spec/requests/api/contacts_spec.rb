@@ -11,6 +11,34 @@ RSpec.describe "'/api/contacts'" do
     do_request(method, url, body)
   end
 
+  describe "GET '/api/callout_populations/contacts'" do
+    let(:method) { :get }
+    let(:url) { api_callout_population_contacts_path(callout_population) }
+    let(:contact) { create(:contact) }
+    let(:callout_population) { create(:callout_population) }
+
+    let(:callout_participation) {
+      create(
+        :callout_participation,
+        :callout_population => callout_population,
+        :contact => contact
+      )
+    }
+
+    def setup_scenario
+      create(:contact)
+      callout_participation
+      super
+    end
+
+    def assert_index!
+      super
+      expect(JSON.parse(response.body)).to eq(JSON.parse([contact].to_json))
+    end
+
+    it { assert_index! }
+  end
+
   describe "'/'" do
     let(:url_params) { {} }
     let(:url) { api_contacts_path(url_params) }

@@ -8,6 +8,7 @@ class CalloutParticipation < ApplicationRecord
 
   belongs_to :callout
   belongs_to :contact
+  belongs_to :callout_population, :optional => true
   has_many :phone_calls
 
   validates :contact_id,

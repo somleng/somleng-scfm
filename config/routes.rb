@@ -10,6 +10,7 @@ Rails.application.routes.draw do
 
     resources :callout_populations, :except => [:new, :edit, :create] do
       resources :callout_population_events, :only => :create
+      resources :contacts, :only => :index
     end
     resources :contacts, :except => [:new, :edit]
   end

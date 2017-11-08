@@ -1,5 +1,9 @@
 # Deployment
 
+## Databases
+
+Somleng SCFM currently supports [SQLite](https://www.sqlite.org/) and [PostgreSQL](https://www.postgresql.org/). If you want to test things out locally using Docker feel free to use the SQLite. For production we recommend using PostgreSQL.
+
 ## Docker
 
 The following section decribes how to deploy Somleng Simple Call Flow Manager with Docker using and SQLite database.

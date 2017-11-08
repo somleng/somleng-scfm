@@ -41,4 +41,71 @@ RSpec.describe CalloutPopulation do
   describe "#contact_filter_params" do
     it { expect(subject.contact_filter_params).to eq({}) }
   end
+
+  describe ".contact_filter_params_has_values(hash)" do
+    let(:callout_population) {
+      create(
+        :callout_population,
+        :contact_filter_params => {
+          :metadata => {
+            :foo => {
+              :bar => {
+                :baz => "foo"
+              }
+            }
+          },
+          :test => :bar
+        }
+      )
+    }
+
+    def setup_scenario
+      super
+      callout_population
+    end
+
+    let(:result) { described_class.contact_filter_params_has_values(hash) }
+    let(:asserted_results) { [callout_population] }
+
+    def assert_results!
+      expect(result).to match_array(asserted_results)
+    end
+
+    context "filtering with deeply nested hash" do
+      let(:hash) {
+        {
+          :metadata => {
+            :foo => {
+              :bar => {
+                :baz => "foo"
+              }
+            }
+          }
+        }
+      }
+
+      it { assert_results! }
+    end
+
+    context "filtering with shallow hash" do
+      let(:hash) {
+        {
+          :test => "bar"
+        }
+      }
+
+      it { assert_results! }
+    end
+
+    context "not returning any results" do
+      let(:hash) {
+        {
+          :test => "baz"
+        }
+      }
+
+      let(:asserted_results) { [] }
+      it { assert_results! }
+    end
+  end
 end

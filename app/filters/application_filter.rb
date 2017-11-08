@@ -7,7 +7,9 @@ class ApplicationFilter
   end
 
   def resources
-    association_chain.where(filter_params).merge(metadata_filter.resources)
+    scope = association_chain
+    scope = scope.merge(metadata_filter.resources) if !metadata_filter.metadata.empty?
+    scope.where(filter_params)
   end
 
   private

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "'/api/contacts'" do
+RSpec.describe "Contacts" do
   include SomlengScfm::SpecHelpers::RequestHelpers
 
   let(:body) { {} }
@@ -11,35 +11,66 @@ RSpec.describe "'/api/contacts'" do
     do_request(method, url, body)
   end
 
-  describe "GET '/api/callout_populations/contacts'" do
+  describe "'/api/callout_population/:callout_population_id'" do
+    let(:callout_population_factory_options) { {} }
+    let(:callout_population) { create(:callout_population, callout_population_factory_options) }
     let(:method) { :get }
-    let(:url) { api_callout_population_contacts_path(callout_population) }
-    let(:contact) { create(:contact) }
-    let(:callout_population) { create(:callout_population) }
-
-    let(:callout_participation) {
-      create(
-        :callout_participation,
-        :callout_population => callout_population,
-        :contact => contact
-      )
-    }
-
-    def setup_scenario
-      create(:contact)
-      callout_participation
-      super
-    end
+    let(:asserted_parsed_body) { JSON.parse([contact].to_json) }
+    let(:parsed_body) { JSON.parse(response.body) }
 
     def assert_index!
       super
-      expect(JSON.parse(response.body)).to eq(JSON.parse([contact].to_json))
+      expect(parsed_body).to eq(asserted_parsed_body)
     end
 
-    it { assert_index! }
+    describe "GET '/contacts'" do
+      let(:url) { api_callout_population_contacts_path(callout_population) }
+      let(:contact) { create(:contact) }
+
+      def setup_scenario
+        create(:contact)
+        create(
+          :callout_participation,
+          :callout_population => callout_population,
+          :contact => contact
+        )
+        super
+      end
+
+      it { assert_index! }
+    end
+
+    describe  "GET '/preview/contacts'" do
+      let(:url) { api_callout_population_preview_contacts_path(callout_population) }
+      let(:contact_metadata) {
+        {
+          "province" => "Phnom Penh",
+          "commune" => "Chhbar Ambov"
+        }
+      }
+
+      let(:contact) { create(:contact, :metadata => contact_metadata) }
+      let(:callout_population_factory_options) {
+        {
+          :contact_filter_params => {
+            :metadata => {
+              "province" => "Phnom Penh"
+            }
+          }
+        }
+      }
+
+      def setup_scenario
+        contact
+        create(:contact)
+        super
+      end
+
+      it { assert_index! }
+    end
   end
 
-  describe "'/'" do
+  describe "'/api/contacts'" do
     let(:url_params) { {} }
     let(:url) { api_contacts_path(url_params) }
 
@@ -107,7 +138,7 @@ RSpec.describe "'/api/contacts'" do
     end
   end
 
-  describe "'/:id'" do
+  describe "'/api/contacts/:id'" do
     let(:contact) { create(:contact) }
     let(:url) { api_contact_path(contact) }
 

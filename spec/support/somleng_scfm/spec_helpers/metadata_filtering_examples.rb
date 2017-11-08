@@ -12,7 +12,15 @@ RSpec.shared_examples_for("metadata_filtering") do
   end
 
   context "filtering" do
-    let(:metadata) { {"foo" => "bar", "bar" => "baz"} }
+    let(:metadata) {
+      {
+        "foo" => "bar",
+        "bar" => {
+          "baz" => "foo"
+        }
+      }
+    }
+
     let(:resource_with_matching_metadata) { create(filter_on_factory, :metadata => metadata) }
     let(:resource_without_matching_metadata) { create(filter_on_factory) }
     let(:asserted_count) { asserted_resources.count }

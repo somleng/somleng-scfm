@@ -114,8 +114,10 @@ RSpec.describe "'/callout_populations'" do
     context "filtering" do
       let(:persisted_contact_filter_params) {
         {
-          "bar" => "baz",
-          "foo" => "bar"
+          "metadata" => {
+            "bar" => "baz",
+            "foo" => "bar"
+          }
         }
       }
 
@@ -140,14 +142,27 @@ RSpec.describe "'/callout_populations'" do
       end
 
       context "including" do
-        let(:contact_filter_params) { { "bar" => "baz" } }
+        let(:contact_filter_params) {
+          {
+            "metadata" => {
+              "bar" => "baz"
+            }
+          }
+        }
+
         let(:asserted_returned_resources) { [callout_population] }
         it { assert_index! }
       end
 
       context "excluding" do
         let(:asserted_returned_resources) { [] }
-        let(:contact_filter_params) { { "bar" => "bar" } }
+        let(:contact_filter_params) {
+          {
+            "metadata" => {
+              "bar" => "bar"
+            }
+          }
+        }
         it { assert_index! }
       end
     end

@@ -445,7 +445,7 @@ Sample Response:
 $ curl -XPOST http://localhost:3000/api/callouts/1/callout_populations \
   -d "metadata[foo]=bar" \
   -d "metadata[bar]=baz" \
-  -d "contact_filter_params[location]=phnom+penh"
+  -d "contact_filter_params[metadata][location]=phnom+penh"
 ```
 
 Sample Response:
@@ -455,15 +455,19 @@ Sample Response:
   "id": 1,
   "callout_id": 1,
   "contact_filter_params": {
-    "location": "phnom penh"
+    "metadata": {
+      "location": "phnom penh"
+    }
   },
   "metadata": {
     "foo": "bar",
     "bar": "baz"
   },
-  "created_at": "2017-11-07T12:05:24.240Z",
-  "updated_at": "2017-11-07T12:05:24.240Z"
+  "status": "preview",
+  "created_at": "2017-11-08T09:04:02.346Z",
+  "updated_at": "2017-11-08T09:04:02.346Z"
 }
+
 ```
 
 ### List all Callout Populations for a given callout
@@ -480,19 +484,22 @@ Sample Response:
     "id": 1,
     "callout_id": 1,
     "contact_filter_params": {
-      "location": "phnom penh"
+      "metadata": {
+        "location": "phnom penh"
+      }
     },
     "metadata": {
       "foo": "bar",
       "bar": "baz"
     },
-    "created_at": "2017-11-07T12:04:59.470Z",
-    "updated_at": "2017-11-07T12:04:59.470Z"
+    "status": "preview",
+    "created_at": "2017-11-08T09:04:02.346Z",
+    "updated_at": "2017-11-08T09:04:02.346Z"
   }
 ]
 ```
 
-### List all Callout Populations
+### List all Callout Populations (across all callouts)
 
 ```
 $ curl http://localhost:3000/api/callout_populations
@@ -506,14 +513,17 @@ Sample Response:
     "id": 1,
     "callout_id": 1,
     "contact_filter_params": {
-      "location": "phnom penh"
+      "metadata": {
+        "location": "phnom penh"
+      }
     },
     "metadata": {
       "foo": "bar",
       "bar": "baz"
     },
-    "created_at": "2017-11-07T12:04:59.470Z",
-    "updated_at": "2017-11-07T12:04:59.470Z"
+    "status": "preview",
+    "created_at": "2017-11-08T09:04:02.346Z",
+    "updated_at": "2017-11-08T09:04:02.346Z"
   }
 ]
 ```
@@ -532,14 +542,17 @@ Sample Response:
     "id": 1,
     "callout_id": 1,
     "contact_filter_params": {
-      "location": "phnom penh"
+      "metadata": {
+        "location": "phnom penh"
+      }
     },
     "metadata": {
       "foo": "bar",
       "bar": "baz"
     },
-    "created_at": "2017-11-07T12:04:59.470Z",
-    "updated_at": "2017-11-07T12:04:59.470Z"
+    "status": "preview",
+    "created_at": "2017-11-08T09:04:02.346Z",
+    "updated_at": "2017-11-08T09:04:02.346Z"
   }
 ]
 ```
@@ -547,7 +560,7 @@ Sample Response:
 ### List all Callout Populations (filtering by contact_filter_params)
 
 ```
-$ curl -g "http://localhost:3000/api/callout_populations?contact_filter_params[location]=phnom+penh"
+$ curl -g "http://localhost:3000/api/callout_populations?contact_filter_params[metadata][location]=phnom+penh"
 ```
 
 Sample Response:
@@ -594,6 +607,35 @@ Sample Response:
 }
 ```
 
+### Preview the contacts that will be participating in the callout if populated now
+
+Note that the response is paginated.
+
+```
+$ curl -v  http://localhost:3000/api/callout_populations/1/preview/contacts
+```
+
+Sample Response:
+
+```
+< HTTP/1.1 200 OK
+< Per-Page: 25
+< Total: 1
+
+```json
+[
+  {
+    "id": 1,
+    "msisdn": "+85510202101",
+    "metadata": {
+      "location": "phnom penh"
+    },
+    "created_at": "2017-11-08T08:55:51.477Z",
+    "updated_at": "2017-11-08T08:56:23.752Z"
+  }
+]
+```
+
 ### Update a Callout Population
 
 Note the response is `204 No Content`
@@ -602,7 +644,7 @@ Note the response is `204 No Content`
 $ curl -v -XPUT http://localhost:3000/api/callout_populations/1 \
   -d "metadata[foo]=baz" \
   -d "metadata[baz]=foo" \
-  -d "contact_filter_params[location]=battambang"
+  -d "contact_filter_params[metadata][location]=battambang"
 ```
 
 Sample Response:
@@ -653,3 +695,33 @@ Sample Response:
 }
 ```
 
+### List the contacts in the callout population
+
+Note that the response is paginated.
+
+```
+$ curl http://localhost:3000/api/callout_populations/1/contacts
+```
+
+Sample Response:
+
+```
+< HTTP/1.1 200 OK
+< Per-Page: 25
+< Total: 1
+```
+
+```json
+[
+  {
+    "id": 1,
+    "msisdn": "+85510202101",
+    "metadata": {
+      "foo": "bar",
+      "bar": "baz"
+    },
+    "created_at": "2017-11-07T08:34:25.880Z",
+    "updated_at": "2017-11-07T08:34:25.880Z"
+  }
+]
+```

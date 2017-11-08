@@ -208,41 +208,7 @@ This section explains how to get up and running quickly using tasks. Please cont
 
 If you want to follow this guide without installing anything locally, run the docker examples instead (assumes you have Docker installed).
 
-#### 1. Create the database
-
-```
-$ bundle exec rake db:create && bundle exec rake db:migrate
-```
-
-or using Docker
-
-```
-$ docker run --rm -v /tmp/somleng-scfm/db:/tmp/db -e RAILS_ENV=production dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake db:create && bundle exec rake db:migrate && if [ ! -f /tmp/db/somleng_scfm_production.sqlite3 ]; then cp /usr/src/app/db/somleng_scfm_production.sqlite3 /tmp/db; fi'
-```
-
-#### 2. Import contacts
-
-```
-$ DUMMY_CONTACT_MSISDN=replace-with-your-phone-number-or-remove-this-env-variable bundle exec rails runner ./examples/import_contacts.rb
-```
-
-or using Docker
-
-```
-$ docker run --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -e RAILS_ENV=production -e DUMMY_CONTACT_MSISDN=replace-with-your-phone-number-or-remove-this-env-variable dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails runner /usr/src/app/examples/import_contacts.rb'
-```
-
-#### 3. Create a callout
-
-```
-$ bundle exec rake task:callouts:create
-```
-
-or using Docker
-
-```
-$ docker run --rm -t -v /tmp/somleng-scfm/db:/usr/src/app/db -e RAILS_ENV=production dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake task:callouts:create'
-```
+DEPRECATED:
 
 #### 4. Populate the callout
 
@@ -413,20 +379,6 @@ Each task has it's own specific configuration which is documented below. Some ta
 ### Callouts
 
 The [callouts task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/callouts_task.rb) performs various operations on callouts.
-
-#### task:callouts:create
-
-Creates a new callout and prints the callout id.
-
-##### Task Configuration
-
-`CALLOUTS_TASK_CREATE_METADATA` configures the default metadata to be set when creating a callout (defaults to nil). For example, setting `CALLOUTS_TASK_CREATE_METADATA="{\"foo\":\"bar\"}"` will create the callout with the specified metadata. The metadata is default metadata only and can be overriden in [the task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/callouts_task.rb).
-
-##### Example
-
-```
-$ CALLOUTS_TASK_CREATE_METADATA="{}" bundle exec rake task:callouts:create
-```
 
 #### task:callouts:populate
 

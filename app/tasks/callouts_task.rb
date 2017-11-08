@@ -8,7 +8,7 @@ class CalloutsTask < ApplicationTask
     }
 
     def self.rake_tasks
-      super + [:create!, :populate!, :statistics]
+      super + [:populate!, :statistics]
     end
 
     def self.install_cron?(task_name)
@@ -25,14 +25,6 @@ class CalloutsTask < ApplicationTask
       ArgumentError,
       "Action: '#{action}' not recognized. Please specify one of #{AVAILABLE_ACTIONS} in ENV['CALLOUTS_TASK_ACTION']"
     )
-  end
-
-  def create!
-    new_callout = Callout.create!(
-      :metadata => default_create_metadata.merge(create_metadata)
-    )
-    puts(new_callout.id)
-    new_callout
   end
 
   def populate!
@@ -71,14 +63,6 @@ class CalloutsTask < ApplicationTask
 
   def default_populate_metadata
     JSON.parse(ENV["CALLOUTS_TASK_POPULATE_METADATA"] || "{}")
-  end
-
-  def create_metadata
-    {}
-  end
-
-  def default_create_metadata
-    JSON.parse(ENV["CALLOUTS_TASK_CREATE_METADATA"] || "{}")
   end
 
   def action

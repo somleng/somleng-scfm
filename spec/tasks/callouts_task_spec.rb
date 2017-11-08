@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe CalloutsTask do
   describe CalloutsTask::Install do
     describe ".rake_tasks" do
-      it { expect(described_class.rake_tasks).to eq([:run!, :create!, :populate!, :statistics]) }
+      it { expect(described_class.rake_tasks).to eq([:run!, :populate!, :statistics]) }
     end
   end
 
@@ -115,38 +115,6 @@ RSpec.describe CalloutsTask do
       let(:callout_event) { :start }
       let(:callouts_task_action) { "delete" }
       it { expect { subject.run! }.to raise_error(ArgumentError) }
-    end
-  end
-
-  describe "#create!" do
-    let(:metadata) { nil }
-    let(:asserted_metadata) { {} }
-    let(:result) { subject.create! }
-
-    def setup_scenario
-      super
-      allow(STDOUT).to receive(:puts)
-    end
-
-    def env
-      {
-        "CALLOUTS_TASK_CREATE_METADATA" => metadata && metadata.to_json
-      }
-    end
-
-    def assert_create!
-      expect(STDOUT).to receive(:puts).with(Integer)
-      expect(result).to eq(Callout.last!)
-      expect(result.metadata).to eq(asserted_metadata)
-    end
-
-    it { assert_create! }
-
-    context "specifying metadata" do
-      let(:metadata) { { "foo" => "bar" } }
-      let(:asserted_metadata) { metadata }
-
-      it { assert_create! }
     end
   end
 

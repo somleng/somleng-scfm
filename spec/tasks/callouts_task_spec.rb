@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe CalloutsTask do
   describe CalloutsTask::Install do
     describe ".rake_tasks" do
-      it { expect(described_class.rake_tasks).to eq([:run!, :populate!, :statistics]) }
+      it { expect(described_class.rake_tasks).to eq([:run!]) }
     end
   end
 
@@ -116,69 +116,5 @@ RSpec.describe CalloutsTask do
       let(:callouts_task_action) { "delete" }
       it { expect { subject.run! }.to raise_error(ArgumentError) }
     end
-  end
-
-  describe "#populate!" do
-    let(:metadata) { nil }
-    let(:callout) { create(:callout) }
-    let(:asserted_metadata) { {} }
-    let(:contact) { create(:contact) }
-
-    def setup_scenario
-      super
-      callout
-      contact
-    end
-
-    def env
-      {
-        "CALLOUTS_TASK_POPULATE_METADATA" => metadata && metadata.to_json
-      }
-    end
-
-    def assert_populate!
-      subject.populate!
-      expect(callout.contacts).to match_array([contact])
-      callout_participation = callout.callout_participations.last!
-      expect(callout_participation.metadata).to eq(asserted_metadata)
-    end
-
-    it { assert_populate! }
-
-    context "specifying metadata" do
-      let(:metadata) { { "foo" => "bar" } }
-      let(:asserted_metadata) { metadata }
-
-      it { assert_populate! }
-    end
-  end
-
-  describe "#statistics" do
-    let(:callout) { create(:callout) }
-    let(:callout_participation) { create(:callout_participation, :callout => callout) }
-    let(:callout_id) { callout.id }
-
-    def setup_scenario
-      super
-      callout_participation
-      create(:callout_participation)
-    end
-
-    def env
-      {
-        "CALLOUTS_TASK_CALLOUT_ID" => callout_id
-      }
-    end
-
-    def assert_statistics!
-      expect(STDOUT).to receive(:puts) do |arg|
-        expect(arg).to include("Callout Status")
-        expect(arg).to match(/Callout Participations:\s+1/)
-        expect(arg).to match(/Callout Participations Completed:/)
-      end
-      subject.statistics
-    end
-
-    it { assert_statistics! }
   end
 end

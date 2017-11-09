@@ -1,30 +1,5 @@
 # Usage
 
-DEPRECATED:
-
-#### 4. Populate the callout
-
-```
-$ bundle exec rake task:callouts:populate
-```
-
-or using Docker
-
-```
-$ docker run --rm -t -v /tmp/somleng-scfm/db:/usr/src/app/db -e RAILS_ENV=production dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake task:callouts:populate'
-```
-
-#### 5. Print callout statistics
-
-```
-$ bundle exec rake task:callouts:statistics
-```
-
-or using Docker
-
-```
-$ docker run --rm -t -v /tmp/somleng-scfm/db:/usr/src/app/db -e RAILS_ENV=production dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake task:callouts:statistics'
-```
 
 #### 6. Start the callout and print the statistics to see that it's running
 
@@ -172,24 +147,6 @@ Each task has it's own specific configuration which is documented below. Some ta
 
 The [callouts task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/callouts_task.rb) performs various operations on callouts.
 
-#### task:callouts:populate
-
-Populates a callout with participations to call.
-
-##### Task Configuration
-
-`CALLOUTS_TASK_POPULATE_METADATA` configures the default metadata to be set on the callout participation when populating the callout (defaults to nil). For example, setting `CALLOUTS_TASK_POPULATE_METADATA="{\"foo\":\"bar\"}"` will populate the callout with participations containing the specified metadata. The metadata is default metadata only and can be overriden in [the task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/callouts_task.rb).
-
-`CALLOUTS_TASK_CALLOUT_ID` tells the task which callout to populate. If `CALLOUTS_TASK_CALLOUT_ID` is not specified it's assumed there is only one callout in the database. If there are multiple an exception is raised.
-
-By default callouts are populated with all the contacts in the Contacts table. Override the `contacts_to_populate_with` in the [task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/callouts_task.rb) to modify this behavior.
-
-##### Example
-
-```
-$ CALLOUTS_TASK_POPULATE_METADATA="{}" CALLOUTS_TASK_CALLOUT_ID= bundle exec rake task:callouts:populate
-```
-
 #### task:callouts:run
 
 *start*, *stop*, *pause* or *resume* a callout
@@ -204,14 +161,6 @@ $ CALLOUTS_TASK_POPULATE_METADATA="{}" CALLOUTS_TASK_CALLOUT_ID= bundle exec rak
 
 ```
 $ CALLOUTS_TASK_ACTION="start|stop|pause|resume" CALLOUTS_TASK_CALLOUT_ID= bundle exec rake task:callouts:run
-```
-
-#### task:callouts:statistics
-
-Prints statistics for a given callout. If `CALLOUTS_TASK_CALLOUT_ID` is specified then statistics for the callout with the specified id will be printed. If `CALLOUTS_TASK_CALLOUT_ID` is not specified then it's assumed there is only one callout in the database. If there are multiple an exception is raised.
-
-```
-$ CALLOUTS_TASK_CALLOUT_ID= bundle exec rake task:callouts:statistics
 ```
 
 ### Enqueue Calls

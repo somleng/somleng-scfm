@@ -74,8 +74,8 @@ RSpec.describe "'/callout_populations'" do
       it { assert_show! }
     end
 
-    describe "PUT" do
-      let(:method) { :put }
+    describe "PATCH" do
+      let(:method) { :patch }
       let(:body) {
         {
           :metadata => metadata,

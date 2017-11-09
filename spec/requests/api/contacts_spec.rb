@@ -153,8 +153,8 @@ RSpec.describe "Contacts" do
       it { assert_show! }
     end
 
-    describe "PUT" do
-      let(:method) { :put }
+    describe "PATCH" do
+      let(:method) { :patch }
       let(:body) { { :metadata => metadata } }
 
       def assert_update!

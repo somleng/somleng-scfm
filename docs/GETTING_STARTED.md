@@ -115,14 +115,14 @@ Note that the only required field for a contact is a msisdn (aka phone number) w
 Our contact is a bit hard to identify, so let's give her a name and a gender.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -XPUT -v http://scfm:3000/api/contacts/1 -d "[metadata][name]=Alice" -d "[metadata][gender]=f"'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -XPATCH -v http://scfm:3000/api/contacts/1 -d "[metadata][name]=Alice" -d "[metadata][gender]=f"'
 ```
 
 You should see something like:
 
 ```
 ...
-> PUT /api/contacts/1 HTTP/1.1
+> PATCH /api/contacts/1 HTTP/1.1
 > Host: scfm:3000
 > User-Agent: curl/7.51.0
 > Accept: */*
@@ -367,9 +367,11 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 
 Note that the response header is `404 Not Found`
 
-## Create a Callout
+## Managing Callouts
 
-Now that we have some contacts in our database let's create a callout. In Somleng SCFM a callout represents a collection of contacts that need to be called for a particular purpose. In this example the callout represents the disaster alert. A callout can be *started*, *stopped*, *paused* or *resumed* using the REST API.
+Now that we have some contacts in our database let's create a callout. A callout represents a collection of contacts to be called for a specific purpose.
+
+### Creating
 
 Let's go ahead and create a callout:
 
@@ -389,21 +391,23 @@ Sample Response:
 }
 ```
 
-Note that the callout has been initialized, but not yet started. We could start the callout now, but it has not yet been populated so it wouldn't initiate any calls. So before we do that let's go and populate the callout first.
-
-Note you can also list, show, update, filter and delete callouts similar to contacts. See the [REST API Reference](https://github.com/somleng/somleng-scfm/blob/master/docs/REST_API_REFERENCE.md) for more details
+Note that the callout's status is initialized. This is the initial state for a callout. Callouts can be either initialized, running, paused or stopped. More on this later.
 
 ## Populating a Callout
 
-In order to populate a callout we create a callout population. This will allow us to preview the contacts that will be called before actually queuing the population process. Let's go ahead and do that using the [REST API](https://github.com/somleng/somleng-scfm/blob/master/docs/REST_API_REFERENCE.md)
+Right now our callout isn't very interesting. Let's change that by populating our callout with contacts.
 
-Note the url in the command below `/api/callouts/1/callout_populations`. Here `1` is the id of the callout created in the previous step.
+### Create a Callout Population
+
+In order to populate a callout we create what's called callout population. This will allow us to preview the contacts that will be called before actually queuing the population process.
+
+Take notice of the url in the command below `/api/callouts/1/callout_populations`. Here `1` is the id of the callout created in the previous step. We are creating a callout population for the callout with the id `1`.
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_populations | jq'
 ```
 
-Sample Response:
+You should see something like:
 
 ```json
 {
@@ -412,74 +416,81 @@ Sample Response:
   "contact_filter_params": {},
   "metadata": {},
   "status": "preview",
-  "created_at": "2017-11-08T11:12:20.820Z",
-  "updated_at": "2017-11-08T11:12:20.820Z"
+  "created_at": "2017-11-09T09:22:52.895Z",
+  "updated_at": "2017-11-09T09:22:52.895Z"
 }
 ```
 
-Ok, now that we have our callout population let's preview what contacts will be called.
+Now that we have our callout population we can preview which contacts will participate in our callout.
 
-Again, note the url in the following command. `/api/callout_populations/1/preview/contacts`, where `1` is the id of the callout population created in the previous step.
+Again, take notice of the url in the command below `/api/callout_populations/1/preview/contacts`. Here `1` is the id of the callout population created in the previous step. We are previewing the contacts in the callout population.
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/callout_populations/1/preview/contacts | jq'
 ```
 
-Sample Response:
+You should see something like:
 
 ```
+...
 < Per-Page: 25
 < Total: 2
+...
 ```
 
 ```json
 [
   {
+    "id": 1,
+    "msisdn": "+85510202101",
+    "metadata": {
+      "name": "Alice",
+      "gender": "f"
+    },
+    "created_at": "2017-11-09T04:58:03.684Z",
+    "updated_at": "2017-11-09T05:13:49.414Z"
+  },
+  {
     "id": 2,
     "msisdn": "+85510202102",
     "metadata": {
-      "zip_code": "90049",
-      "city": "Los Angeles"
+      "name": "Bob",
+      "gender": "m"
     },
-    "created_at": "2017-11-08T05:14:21.833Z",
-    "updated_at": "2017-11-08T05:14:21.833Z"
-  },
-  {
-    "id": 3,
-    "msisdn": "+85510202101",
-    "metadata": {
-      "zip_code": "90210",
-      "city": "Beverly Hills"
-    },
-    "created_at": "2017-11-08T11:24:28.574Z",
-    "updated_at": "2017-11-08T11:24:28.574Z"
+    "created_at": "2017-11-09T05:18:59.858Z",
+    "updated_at": "2017-11-09T05:27:17.381Z"
   }
 ]
 ```
 
-We can see from the response headers that there's `Total` of `2` contacts in the preview. This means that if we were to populate this now, these two contacts would participate in the callout.
 
-Folowing our example, suppose that we wanted to restict the callout to contacts that live in the Zip Code 90210.
+We can see from the response that there's `Total` of `2` contacts in the preview. This means that if we were to populate this callout now, these two contacts would be participants in the callout. Incidentally these two contacts are all of our contacts in our contacts table. This is because by default, populating a callout without a contact filter will add all contacts to the callout.
 
-To do this let's update the callout population specifying some `contact_filter_params` which will limit our population of the callout.
+### Limiting the contacts who will participate in the callout
+
+Typically you don't want to call everyone in your contacts table. Let's say for this example that we only want to call females.
+
+To do this let's update the callout population specifying the `contact_filter_params` which will limit our population of the callout.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -XPUT http://scfm:3000/api/callout_populations/1 -d contact_filter_params[metadata][zip_code]=90210'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callout_populations/1 -d contact_filter_params[metadata][gender]=f'
 ```
 
-Sample Reponse:
+Again since we're updating a record, a successful response will return `No Content`.
 
 ```
 < HTTP/1.1 204 No Content
 ```
 
-When updating or deleting a resource successfully we should get a response of `204 No Content`. We can check that callout population was updated successfully by fetching it.
+### Inspecting a callout population
+
+Let's double check that our callout population was updated.
 
 ```
 docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/callout_populations/1 | jq'
 ```
 
-Sample Response:
+You should see something like;
 
 ```json
 {
@@ -487,17 +498,17 @@ Sample Response:
   "callout_id": 1,
   "contact_filter_params": {
     "metadata": {
-      "zip_code": "90210"
+      "gender": "f"
     }
   },
   "metadata": {},
   "status": "preview",
-  "created_at": "2017-11-08T11:12:20.820Z",
-  "updated_at": "2017-11-08T11:35:08.116Z"
+  "created_at": "2017-11-09T09:22:52.895Z",
+  "updated_at": "2017-11-09T09:37:09.053Z"
 }
 ```
 
-We can see that the `contact_filter_params` are now set.
+We can see now that the `contact_filter_params` are populated with the paramters required to restrict the contacts to females only
 
 Let's try the preview again.
 
@@ -513,19 +524,21 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
 ```json
 [
   {
-    "id": 3,
+    "id": 1,
     "msisdn": "+85510202101",
     "metadata": {
-      "zip_code": "90210",
-      "city": "Beverly Hills"
+      "name": "Alice",
+      "gender": "f"
     },
-    "created_at": "2017-11-08T11:24:28.574Z",
-    "updated_at": "2017-11-08T11:24:28.574Z"
+    "created_at": "2017-11-09T04:58:03.684Z",
+    "updated_at": "2017-11-09T05:13:49.414Z"
   }
 ]
 ```
 
-Now we can see from the response headers that there's `Total` of `1` contacts in the preview.
+Now we can see from the response that there's `Total` of `1` contacts in the preview, and that that contact is in-fact female.
+
+### Queuing the callout for population
 
 Once we're happy with our callout population we can queue it for population. This will take some time depending on how many participations need to be created.
 
@@ -533,9 +546,22 @@ Once we're happy with our callout population we can queue it for population. Thi
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callout_populations/1/calout_population_events -d "event=queue" | jq'
 ```
 
-Sample Response:
+You should see something like:
 
 ```json
+{
+  "id": 1,
+  "callout_id": 1,
+  "contact_filter_params": {
+    "metadata": {
+      "gender": "f"
+    }
+  },
+  "metadata": {},
+  "status": "queued",
+  "created_at": "2017-11-09T09:22:52.895Z",
+  "updated_at": "2017-11-09T09:52:56.070Z"
+}
 ```
 
 ## Tasks

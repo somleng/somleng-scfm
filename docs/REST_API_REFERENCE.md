@@ -141,7 +141,7 @@ Sample Response:
 Note the response is `204 No Content`
 
 ```
-$ curl -v -XPUT http://localhost:3000/api/contacts/1 \
+$ curl -v -XPATCH http://localhost:3000/api/contacts/1 \
   --data-urlencode "msisdn=+85510202102" \
   -d "metadata[foo]=baz" \
   -d "metadata[baz]=foo"
@@ -295,7 +295,7 @@ Sample Response:
 Note the response is `204 No Content`
 
 ```
-$ curl -v -XPUT http://localhost:3000/api/callouts/1 \
+$ curl -v -XPATCH http://localhost:3000/api/callouts/1 \
   -d "metadata[foo]=baz" \
   -d "metadata[baz]=foo"
 ```
@@ -642,7 +642,7 @@ Sample Response:
 Note the response is `204 No Content`
 
 ```
-$ curl -v -XPUT http://localhost:3000/api/callout_populations/1 \
+$ curl -v -XPATCH http://localhost:3000/api/callout_populations/1 \
   -d "metadata[foo]=baz" \
   -d "metadata[baz]=foo" \
   -d "contact_filter_params[metadata][location]=battambang"

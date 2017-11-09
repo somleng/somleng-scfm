@@ -25,6 +25,10 @@ module SomlengScfm
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
 
+    if Rails.env.production? && ENV["ACTIVE_JOB_ADAPTER"] == "active_elastic_job"
+      config.active_job.queue_adapter = :active_elastic_job
+    end
+
     # Don't generate system test files.
     config.generators.system_tests = nil
   end

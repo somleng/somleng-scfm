@@ -24,6 +24,7 @@ gem 'responders'
 gem 'kaminari'
 gem 'api-pagination'
 gem 'wisper', :github => "krisleech/wisper"
+gem 'active_elastic_job', :github => 'tawan/active-elastic-job'
 
 group :development, :test do
   gem 'pry'

@@ -36,6 +36,34 @@ RSpec.describe CalloutPopulation do
 
       it { assert_transitions! }
     end
+
+    describe "#start!" do
+      let(:current_status) { :queued }
+      let(:asserted_new_status) { :populating }
+      let(:event) { :start }
+
+      it { assert_transitions! }
+    end
+
+    describe "#finish!" do
+      let(:current_status) { :populating }
+      let(:asserted_new_status) { :populated }
+      let(:event) { :finish }
+
+      it { assert_transitions! }
+    end
+
+    describe "#requeue!" do
+      let(:current_status) { :populated }
+      let(:asserted_new_status) { :queued }
+      let(:event) { :requeue }
+
+      it("should broadcast") {
+        assert_broadcasted!(:callout_population_queued) { subject.requeue! }
+      }
+
+      it { assert_transitions! }
+    end
   end
 
   describe "#contact_filter_params" do

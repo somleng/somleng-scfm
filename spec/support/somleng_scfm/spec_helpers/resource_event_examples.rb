@@ -7,7 +7,6 @@ RSpec.shared_examples_for("resource_event") do
     end
 
     describe "event" do
-
       subject { described_class.new(:eventable => eventable) }
 
       it {

@@ -22,6 +22,27 @@ class CalloutPopulation < ApplicationRecord
         :to => :queued
       )
     end
+
+    event :start do
+      transitions(
+        :from => :queued,
+        :to => :populating
+      )
+    end
+
+    event :finish do
+      transitions(
+        :from => :populating,
+        :to => :populated
+      )
+    end
+
+    event :requeue, :after_commit => :publish_queued do
+      transitions(
+        :from => :populated,
+        :to => :queued
+      )
+    end
   end
 
   def self.contact_filter_params_has_values(hash)

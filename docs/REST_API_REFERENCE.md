@@ -226,7 +226,7 @@ Sample Response:
 ### List all Callouts (filtering by metadata)
 
 ```
-$ curl -g "http://localhost:3000/api/callouts?metadata[foo]=bar&metadata[bar]=baz"
+$ curl -g "http://localhost:3000/api/callouts?q[metadata][foo]=bar&q[metadata][bar]=baz"
 ```
 
 Sample Response:
@@ -249,7 +249,7 @@ Sample Response:
 ### List all Callouts (filtering by status)
 
 ```
-$ curl -g "http://localhost:3000/api/callouts?status=initialized"
+$ curl -g "http://localhost:3000/api/callouts?q[status]=initialized"
 ```
 
 Sample Response:
@@ -531,7 +531,7 @@ Sample Response:
 ### List all Callout Populations (filtering by metadata)
 
 ```
-$ curl -g "http://localhost:3000/api/callout_populations?metadata[foo]=bar"
+$ curl -g "http://localhost:3000/api/callout_populations?q[metadata][foo]=bar"
 ```
 
 Sample Response:
@@ -560,7 +560,7 @@ Sample Response:
 ### List all Callout Populations (filtering by contact_filter_params)
 
 ```
-$ curl -g "http://localhost:3000/api/callout_populations?contact_filter_params[metadata][location]=phnom+penh"
+$ curl -g "http://localhost:3000/api/callout_populations?q[contact_filter_params][metadata][location]=phnom+penh"
 ```
 
 Sample Response:

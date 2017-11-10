@@ -281,7 +281,7 @@ Note that again we specified the `-v` flag to curl in order to get the headers. 
 What if we only wanted to only return the contacts who are female?
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?metadata[gender]=f" | jq'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[metadata][gender]=f" | jq'
 ```
 
 ```

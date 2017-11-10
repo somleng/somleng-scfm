@@ -11,7 +11,15 @@ class Api::CalloutPopulationsController < Api::FilteredController
     Filter::Resource::CalloutPopulation
   end
 
-  def association_chain
+  def build_resource_association_chain
+    callout.callout_populations
+  end
+
+  def find_resource_association_chain
+    CalloutPopulation.all
+  end
+
+  def find_resources_association_chain
     if params[:callout_id]
       callout.callout_populations
     else

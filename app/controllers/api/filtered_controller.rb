@@ -25,8 +25,12 @@ class Api::FilteredController < Api::AuthenticatedController
     if filter_class
       filter_class.new(filter_options, filter_params).resources
     else
-      association_chain
+      find_resources_association_chain
     end
+  end
+
+  def find_resources_association_chain
+    association_chain
   end
 
   def filter_params
@@ -41,6 +45,6 @@ class Api::FilteredController < Api::AuthenticatedController
   end
 
   def filter_options
-    {:association_chain => association_chain}
+    {:association_chain => find_resources_association_chain}
   end
 end

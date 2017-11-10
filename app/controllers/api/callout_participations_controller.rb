@@ -1,7 +1,11 @@
 class Api::CalloutParticipationsController < Api::FilteredController
   private
 
-  def association_chain
+  def build_resource_association_chain
+    callout.callout_participations
+  end
+
+  def find_resources_association_chain
     if params[:callout_id]
       callout.callout_participations
     elsif params[:contact_id]
@@ -9,8 +13,12 @@ class Api::CalloutParticipationsController < Api::FilteredController
     elsif params[:callout_population_id]
       callout_population.callout_participations
     else
-      CalloutParticipation.all
+      association_chain
     end
+  end
+
+  def association_chain
+    CalloutParticipation.all
   end
 
   def filter_class
@@ -29,8 +37,12 @@ class Api::CalloutParticipationsController < Api::FilteredController
     @callout_population ||= CalloutPopulation.find(params[:callout_population_id])
   end
 
-  def permitted_params
+  def permitted_build_params
     params.permit(:contact_id, :metadata => {})
+  end
+
+  def permitted_update_params
+    params.permit(:metadata => {})
   end
 
   def resource_location

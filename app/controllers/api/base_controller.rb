@@ -40,11 +40,23 @@ class Api::BaseController < ApplicationController
   end
 
   def find_resource
-    @resource = association_chain.find(params[:id])
+    @resource = find_resource_association_chain.find(params[:id])
+  end
+
+  def find_resource_association_chain
+    association_chain
   end
 
   def build_resource
-    @resource = association_chain.new(permitted_params)
+    @resource = build_resource_association_chain.new(permitted_build_params)
+  end
+
+  def permitted_build_params
+    permitted_params
+  end
+
+  def build_resource_association_chain
+    association_chain
   end
 
   def setup_resource
@@ -55,7 +67,11 @@ class Api::BaseController < ApplicationController
   end
 
   def update_resource
-    resource.update_attributes(permitted_params)
+    resource.update_attributes(permitted_update_params)
+  end
+
+  def permitted_update_params
+    permitted_params
   end
 
   def destroy_resource

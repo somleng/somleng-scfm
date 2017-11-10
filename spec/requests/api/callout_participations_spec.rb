@@ -67,48 +67,86 @@ RSpec.describe "Callout Participations" do
     end
   end
 
-  describe "'/api/callout/:callout_id/callout_participations'" do
+  describe "POST '/api/callout/:callout_id/callout_participations'" do
     let(:url) { api_callout_callout_participations_path(callout) }
+    let(:method) { :post }
 
-    describe "POST" do
-      let(:method) { :post }
-
-      context "invalid request" do
-        def assert_invalid!
-          expect(response.code).to eq("422")
-        end
-
-        it { assert_invalid! }
+    context "invalid request" do
+      def assert_invalid!
+        expect(response.code).to eq("422")
       end
 
-      context "valid request" do
-        let(:metadata) { { "foo" => "bar" } }
-        let(:contact) { create(:contact) }
+      it { assert_invalid! }
+    end
 
-        let(:body) {
-          {
-            :metadata => metadata,
-            :contact_id => contact.id
-          }
+    context "valid request" do
+      let(:metadata) { { "foo" => "bar" } }
+      let(:contact) { create(:contact) }
+
+      let(:body) {
+        {
+          :metadata => metadata,
+          :contact_id => contact.id
         }
+      }
 
-        let(:created_callout_participation) { callout.callout_participations.last }
+      let(:created_callout_participation) { callout.callout_participations.last }
 
-        def setup_scenario
-          contact
-          super
-        end
-
-        def assert_created!
-          expect(response.code).to eq("201")
-          expect(response.headers["Location"]).to eq(api_callout_participation_path(created_callout_participation))
-          expect(created_callout_participation.callout).to eq(callout)
-          expect(created_callout_participation.contact).to eq(contact)
-          expect(created_callout_participation.metadata).to eq(metadata)
-        end
-
-        it { assert_created! }
+      def setup_scenario
+        contact
+        super
       end
+
+      def assert_created!
+        expect(response.code).to eq("201")
+        expect(response.headers["Location"]).to eq(api_callout_participation_path(created_callout_participation))
+        expect(created_callout_participation.callout).to eq(callout)
+        expect(created_callout_participation.contact).to eq(contact)
+        expect(created_callout_participation.metadata).to eq(metadata)
+      end
+
+      it { assert_created! }
+    end
+  end
+
+  describe "'/callout_participations/:id'" do
+    let(:url) { api_callout_participation_path(callout_participation) }
+
+    describe "GET" do
+      let(:method) { :get }
+
+      def assert_show!
+        expect(response.code).to eq("200")
+        expect(response.body).to eq(callout_participation.to_json)
+      end
+
+      it { assert_show! }
+    end
+
+    describe "PATCH" do
+      let(:method) { :patch }
+      let(:contact) { create(:contact) }
+      let(:metadata) { {"foo" => "bar"} }
+      let(:body) { {:metadata => metadata, :contact_id => contact.id} }
+
+      def assert_update!
+        expect(response.code).to eq("204")
+        expect(callout_participation.reload.metadata).to eq(metadata)
+        expect(callout_participation.contact).not_to eq(contact)
+      end
+
+      it { assert_update! }
+    end
+
+    describe "DELETE" do
+      let(:method) { :delete }
+
+      def assert_destroy!
+        expect(response.code).to eq("204")
+        expect(CalloutParticipation.find_by_id(callout_participation.id)).to eq(nil)
+      end
+
+      it { assert_destroy! }
     end
   end
 end

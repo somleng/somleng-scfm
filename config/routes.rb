@@ -24,6 +24,6 @@ Rails.application.routes.draw do
       resources :callout_participations, :only => :index
     end
 
-    resources :callout_participations, :only => [:index, :show]
+    resources :callout_participations, :except => [:new, :edit, :create]
   end
 end

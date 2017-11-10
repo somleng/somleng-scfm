@@ -1,15 +1,15 @@
 require 'rails_helper'
 
-RSpec.describe CalloutFilter do
+RSpec.describe Filter::Resource::Callout do
   include SomlengScfm::SpecHelpers::FilterHelpers
 
-  let(:factory) { :callout }
+  let(:filterable_factory) { :callout }
   let(:association_chain) { Callout }
 
-  it_behaves_like "metadata_filter"
+  it_behaves_like "metadata_attribute_filter"
 
   describe "#resources" do
-    let(:callout) { create(factory, :running) }
+    let(:callout) { create(filterable_factory, :running) }
 
     def setup_scenario
       callout

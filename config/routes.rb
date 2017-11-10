@@ -2,9 +2,14 @@ Rails.application.routes.draw do
   namespace "api", :defaults => { :format => "json" } do
     resources :phone_call_events, :only => [:create], :defaults => { :format => "xml" }
 
+    resources :contacts, :except => [:new, :edit] do
+      resources :callout_participations, :only => :index
+    end
+
     resources :callouts, :except => [:new, :edit] do
       resources :callout_events, :only => :create
       resources :callout_populations, :only => [:create, :index]
+      resources :callout_participations, :only => [:index]
       resource :callout_statistics, :only => :show
     end
 
@@ -15,7 +20,10 @@ Rails.application.routes.draw do
       namespace :preview, :module => "callout_population_previews" do
         resources :contacts, :only => :index
       end
+
+      resources :callout_participations, :only => :index
     end
-    resources :contacts, :except => [:new, :edit]
+
+    resources :callout_participations, :only => :index
   end
 end

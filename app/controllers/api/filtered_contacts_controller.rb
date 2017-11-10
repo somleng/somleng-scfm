@@ -2,7 +2,7 @@ class Api::FilteredContactsController < Api::FilteredController
   private
 
   def filter_class
-    ContactFilter
+    Filter::Resource::Contact
   end
 
   def permitted_filter_params_args

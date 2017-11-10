@@ -1,12 +1,12 @@
 require 'rails_helper'
 
-RSpec.describe CalloutPopulationFilter do
+RSpec.describe Filter::Resource::CalloutPopulation do
   include SomlengScfm::SpecHelpers::FilterHelpers
 
-  let(:factory) { :callout_population }
+  let(:filterable_factory) { :callout_population }
   let(:association_chain) { CalloutPopulation }
 
-  it_behaves_like "metadata_filter"
+  it_behaves_like "metadata_attribute_filter"
 
   describe "#resources" do
     let(:persisted_contact_filter_params) {
@@ -18,7 +18,7 @@ RSpec.describe CalloutPopulationFilter do
 
     let(:callout_population) {
       create(
-        factory,
+        filterable_factory,
         :contact_filter_params => persisted_contact_filter_params
       )
     }

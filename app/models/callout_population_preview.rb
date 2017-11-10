@@ -12,7 +12,7 @@ class CalloutPopulationPreview
   private
 
   def contact_filter
-    @contact_filter ||= ContactFilter.new(
+    @contact_filter ||= Filter::Resource::Contact.new(
       {
         :association_chain => Contact
       },

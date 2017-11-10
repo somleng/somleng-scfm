@@ -1,4 +1,4 @@
-class CalloutFilter < ApplicationFilter
+class Filter::Resource::Callout < Filter::Resource::Base
   private
 
   def filter_params

@@ -8,7 +8,7 @@ class Api::CalloutPopulationsController < Api::FilteredController
   end
 
   def filter_class
-    CalloutPopulationFilter
+    Filter::Resource::CalloutPopulation
   end
 
   def association_chain

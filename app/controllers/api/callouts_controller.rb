@@ -6,7 +6,7 @@ class Api::CalloutsController < Api::FilteredController
   end
 
   def filter_class
-    CalloutFilter
+    Filter::Resource::Callout
   end
 
   def permitted_filter_params_args

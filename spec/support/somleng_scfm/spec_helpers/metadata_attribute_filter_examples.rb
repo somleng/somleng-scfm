@@ -1,4 +1,4 @@
-RSpec.shared_examples_for "metadata_filter" do
+RSpec.shared_examples_for "metadata_attribute_filter" do
   describe "#resources" do
     context "filtering by metadata" do
       def filter_params
@@ -18,7 +18,7 @@ RSpec.shared_examples_for "metadata_filter" do
       }
 
       let(:metadata_value_1) { "bar" }
-      let(:resource) { create(factory, :metadata => factory_metadata) }
+      let(:resource) { create(filterable_factory, :metadata => factory_metadata) }
 
       def setup_scenario
         super

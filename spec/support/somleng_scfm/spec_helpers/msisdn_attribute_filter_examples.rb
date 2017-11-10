@@ -1,20 +1,11 @@
-require 'rails_helper'
-
-RSpec.describe ContactFilter do
-  include SomlengScfm::SpecHelpers::FilterHelpers
-
-  let(:factory) { :contact }
-  let(:association_chain) { Contact }
-
-  it_behaves_like "metadata_filter"
-
+RSpec.shared_examples_for "msisdn_attribute_filter" do
   describe "#resources" do
     let(:somali_msisdn) { generate(:somali_msisdn) }
-    let(:contact) { create(factory, :msisdn => somali_msisdn) }
+    let(:filterable) { create(filterable_factory, :msisdn => somali_msisdn) }
 
     def setup_scenario
       super
-      contact
+      filterable
     end
 
     context "filtering by msisdn" do
@@ -28,7 +19,7 @@ RSpec.describe ContactFilter do
 
       context "msisdn matches" do
         let(:msisdn) { somali_msisdn }
-        let(:asserted_results) { [contact] }
+        let(:asserted_results) { [filterable] }
         it { assert_filter! }
       end
 

@@ -52,14 +52,6 @@ ActiveRecord::Schema.define(version: 20171101092942) do
     t.index ["msisdn"], name: "index_contacts_on_msisdn", unique: true
   end
 
-  create_table "phone_call_events", force: :cascade do |t|
-    t.integer "phone_call_id", null: false
-    t.text "details", default: "{}", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["phone_call_id"], name: "index_phone_call_events_on_phone_call_id"
-  end
-
   create_table "phone_calls", force: :cascade do |t|
     t.integer "callout_participation_id"
     t.integer "contact_id", null: false
@@ -77,6 +69,14 @@ ActiveRecord::Schema.define(version: 20171101092942) do
     t.index ["callout_participation_id"], name: "index_phone_calls_on_callout_participation_id"
     t.index ["contact_id"], name: "index_phone_calls_on_contact_id"
     t.index ["remote_call_id"], name: "index_phone_calls_on_remote_call_id", unique: true
+  end
+
+  create_table "remote_phone_call_events", force: :cascade do |t|
+    t.integer "phone_call_id", null: false
+    t.text "details", default: "{}", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["phone_call_id"], name: "index_remote_phone_call_events_on_phone_call_id"
   end
 
 end

@@ -1,4 +1,4 @@
-class PhoneCallEvent < ApplicationRecord
+class RemotePhoneCallEvent < ApplicationRecord
   include ConditionalSerialization
   conditionally_serialize(:details, JSON)
 

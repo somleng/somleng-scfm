@@ -8,7 +8,7 @@ RSpec.describe PhoneCall do
     def assert_associations!
       is_expected.to belong_to(:callout_participation)
       is_expected.to belong_to(:contact).validate(true)
-      is_expected.to have_many(:phone_call_events)
+      is_expected.to have_many(:remote_phone_call_events)
     end
 
     it { assert_associations! }

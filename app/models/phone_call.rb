@@ -19,7 +19,7 @@ class PhoneCall < ApplicationRecord
 
   belongs_to :callout_participation, :optional => true
   belongs_to :contact, :validate => true
-  has_many   :phone_call_events
+  has_many   :remote_phone_call_events
 
   include MetadataHelpers
   conditionally_serialize(:remote_response, JSON)

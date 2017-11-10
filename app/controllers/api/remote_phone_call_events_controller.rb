@@ -1,10 +1,10 @@
-class Api::PhoneCallEventsController < Api::BaseController
+class Api::RemotePhoneCallEventsController < Api::BaseController
   respond_to :xml
 
   private
 
   def build_resource
-    @resource = phone_call.phone_call_events.new(:details => permitted_params)
+    @resource = phone_call.remote_phone_call_events.new(:details => permitted_params)
   end
 
   def phone_call

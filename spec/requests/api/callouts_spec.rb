@@ -18,25 +18,7 @@ RSpec.describe "'/api/callouts'" do
     describe "GET" do
       let(:method) { :get }
 
-      context "filtering" do
-        let(:callout) { create(:callout, :running) }
-        let(:status) { "stopped" }
-        let(:url_params) { { :status => status } }
-
-        def setup_scenario
-          callout
-          super
-        end
-
-        def assert_index!
-          super
-          expect(JSON.parse(response.body)).to eq([])
-        end
-
-        it { assert_index! }
-      end
-
-      it_behaves_like "metadata_filtering" do
+      it_behaves_like "resource_filtering" do
         let(:filter_on_factory) { :callout }
       end
 

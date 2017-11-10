@@ -111,63 +111,7 @@ RSpec.describe "'/callout_populations'" do
     let(:url_params) { {} }
     let(:url) { api_callout_populations_path(url_params) }
 
-    context "filtering" do
-      let(:persisted_contact_filter_params) {
-        {
-          "metadata" => {
-            "bar" => "baz",
-            "foo" => "bar"
-          }
-        }
-      }
-
-      let(:callout_population) {
-        create(:callout_population, :contact_filter_params => persisted_contact_filter_params)
-      }
-
-      let(:url_params) {
-        {
-          "contact_filter_params" => contact_filter_params
-        }
-      }
-
-      def setup_scenario
-        callout_population
-        super
-      end
-
-      def assert_index!
-        super
-        expect(JSON.parse(response.body)).to eq(JSON.parse(asserted_returned_resources.to_json))
-      end
-
-      context "including" do
-        let(:contact_filter_params) {
-          {
-            "metadata" => {
-              "bar" => "baz"
-            }
-          }
-        }
-
-        let(:asserted_returned_resources) { [callout_population] }
-        it { assert_index! }
-      end
-
-      context "excluding" do
-        let(:asserted_returned_resources) { [] }
-        let(:contact_filter_params) {
-          {
-            "metadata" => {
-              "bar" => "bar"
-            }
-          }
-        }
-        it { assert_index! }
-      end
-    end
-
-    it_behaves_like "metadata_filtering" do
+    it_behaves_like "resource_filtering" do
       let(:filter_on_factory) { :callout_population }
     end
 

@@ -77,25 +77,7 @@ RSpec.describe "Contacts" do
     describe "GET" do
       let(:method) { :get }
 
-      context "filtering" do
-        let(:msisdn) { generate(:somali_msisdn) }
-        let(:contact) { create(:contact, :msisdn => msisdn) }
-        let(:url_params) { { :msisdn => msisdn } }
-
-        def setup_scenario
-          contact
-          super
-        end
-
-        def assert_index!
-          super
-          expect(JSON.parse(response.body)).to eq(JSON.parse([contact].to_json))
-        end
-
-        it { assert_index! }
-      end
-
-      it_behaves_like "metadata_filtering" do
+      it_behaves_like "resource_filtering" do
         let(:filter_on_factory) { :contact }
       end
 

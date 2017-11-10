@@ -23,18 +23,18 @@ class Api::FilteredController < Api::AuthenticatedController
 
   def find_filtered_resources
     if filter_class
-      filter_class.new(filter_options, permitted_filter_params).resources
+      filter_class.new(filter_options, filter_params).resources
     else
       association_chain
     end
   end
 
-  def permitted_filter_params_args
-    [{:metadata => {}}]
+  def filter_params
+    permitted_query_params[:q] || {}
   end
 
-  def permitted_filter_params
-    params.permit(*permitted_filter_params_args)
+  def permitted_query_params
+    params.permit(:q => {})
   end
 
   def filter_class

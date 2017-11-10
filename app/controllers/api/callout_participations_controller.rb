@@ -13,10 +13,6 @@ class Api::CalloutParticipationsController < Api::FilteredController
     end
   end
 
-  def permitted_filter_params_args
-    super.prepend(:msisdn)
-  end
-
   def filter_class
     Filter::Resource::CalloutParticipation
   end

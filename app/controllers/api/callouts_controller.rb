@@ -9,10 +9,6 @@ class Api::CalloutsController < Api::FilteredController
     Filter::Resource::Callout
   end
 
-  def permitted_filter_params_args
-    super.prepend(:status)
-  end
-
   def permitted_params
     params.permit(:metadata => {})
   end

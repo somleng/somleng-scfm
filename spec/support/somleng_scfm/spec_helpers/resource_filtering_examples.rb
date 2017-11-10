@@ -1,4 +1,4 @@
-RSpec.shared_examples_for("metadata_filtering") do
+RSpec.shared_examples_for("resource_filtering") do
   context "not filtering" do
     let(:resource) { create(filter_on_factory) }
     let(:asserted_resources) { [resource] }
@@ -11,7 +11,7 @@ RSpec.shared_examples_for("metadata_filtering") do
     it { assert_index! }
   end
 
-  context "filtering" do
+  context "filtering", :focus do
     let(:metadata) {
       {
         "foo" => "bar",
@@ -26,7 +26,8 @@ RSpec.shared_examples_for("metadata_filtering") do
     let(:asserted_count) { asserted_resources.count }
     let(:asserted_resources) { [resource_with_matching_metadata] }
     let(:asserted_parsed_json) { JSON.parse(asserted_resources.to_json) }
-    let(:url_params) { { "metadata" => metadata } }
+    let(:query_params) { { "metadata" => metadata } }
+    let(:url_params) { { :q => query_params } }
 
     def setup_scenario
       resource_with_matching_metadata

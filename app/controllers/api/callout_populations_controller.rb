@@ -27,10 +27,6 @@ class Api::CalloutPopulationsController < Api::FilteredController
     params.permit(:metadata => {}, :contact_filter_params => {})
   end
 
-  def permitted_filter_params_args
-    super.prepend({:contact_filter_params => {}})
-  end
-
   def resource_location
     api_callout_population_path(resource)
   end

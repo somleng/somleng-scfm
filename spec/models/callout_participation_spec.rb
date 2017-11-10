@@ -35,6 +35,18 @@ RSpec.describe CalloutParticipation do
     end
   end
 
+  describe "defaults" do
+    let(:contact) { create(:contact) }
+    subject { build(factory, :contact => contact) }
+
+    def setup_scenario
+      super
+      subject.valid?
+    end
+
+    it { expect(subject.msisdn).to eq(contact.msisdn) }
+  end
+
   describe "scopes" do
     def assert_scope!
       expect(results).to match_array(asserted_results)

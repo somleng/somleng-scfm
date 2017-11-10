@@ -18,6 +18,10 @@ class CalloutParticipation < ApplicationRecord
             :uniqueness => {:scope => :callout_id}
 
   delegate :call_flow_logic, :to => :callout, :prefix => true
+  delegate :msisdn, :to => :contact, :prefix => true, :allow_nil => true
+
+  before_validation :set_msisdn_from_contact,
+                    :on => :create
 
   def call_flow_logic
     super || callout_call_flow_logic
@@ -80,5 +84,11 @@ class CalloutParticipation < ApplicationRecord
 
   def self.retry_statuses
     ENV["CALLOUT_PARTICIPATION_RETRY_STATUSES"].present? ? ENV["CALLOUT_PARTICIPATION_RETRY_STATUSES"].to_s.split(",") : default_retry_statuses
+  end
+
+  private
+
+  def set_msisdn_from_contact
+    self.msisdn ||= contact_msisdn
   end
 end

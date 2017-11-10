@@ -28,4 +28,12 @@ class Api::CalloutParticipationsController < Api::FilteredController
   def callout_population
     @callout_population ||= CalloutPopulation.find(params[:callout_population_id])
   end
+
+  def permitted_params
+    params.permit(:contact_id, :metadata => {})
+  end
+
+  def resource_location
+    api_callout_participation_path(resource)
+  end
 end

@@ -9,7 +9,7 @@ Rails.application.routes.draw do
     resources :callouts, :except => [:new, :edit] do
       resources :callout_events, :only => :create
       resources :callout_populations, :only => [:create, :index]
-      resources :callout_participations, :only => [:index]
+      resources :callout_participations, :only => [:index, :create]
       resource :callout_statistics, :only => :show
     end
 
@@ -24,6 +24,6 @@ Rails.application.routes.draw do
       resources :callout_participations, :only => :index
     end
 
-    resources :callout_participations, :only => :index
+    resources :callout_participations, :only => [:index, :show]
   end
 end

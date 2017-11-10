@@ -11,7 +11,7 @@ RSpec.shared_examples_for("resource_filtering") do
     it { assert_index! }
   end
 
-  context "filtering", :focus do
+  context "filtering" do
     let(:metadata) {
       {
         "foo" => "bar",

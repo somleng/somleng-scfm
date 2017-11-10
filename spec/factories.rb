@@ -35,7 +35,6 @@ FactoryGirl.define do
   factory :callout_participation do
     callout
     contact
-    msisdn { contact.msisdn }
   end
 
   factory :phone_call do

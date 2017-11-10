@@ -17,8 +17,7 @@ class PopulateCalloutJob < ApplicationJob
     CalloutParticipation.new(
       :contact => contact,
       :callout => callout_population.callout,
-      :callout_population => callout_population,
-      :msisdn => contact.msisdn
+      :callout_population => callout_population
     )
   end
 

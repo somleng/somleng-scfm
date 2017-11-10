@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       resources :callout_events, :only => :create
       resources :callout_populations, :only => [:create, :index]
       resources :callout_participations, :only => [:index, :create]
+      resources :contacts, :only => :index
       resource :callout_statistics, :only => :show
     end
 

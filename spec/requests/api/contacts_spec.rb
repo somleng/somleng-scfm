@@ -11,65 +11,6 @@ RSpec.describe "Contacts" do
     do_request(method, url, body)
   end
 
-  describe "'/api/callout_population/:callout_population_id'" do
-    let(:callout_population_factory_options) { {} }
-    let(:callout_population) { create(:callout_population, callout_population_factory_options) }
-    let(:method) { :get }
-    let(:asserted_parsed_body) { JSON.parse([contact].to_json) }
-    let(:parsed_body) { JSON.parse(response.body) }
-
-    def assert_index!
-      super
-      expect(parsed_body).to eq(asserted_parsed_body)
-    end
-
-    describe "GET '/contacts'" do
-      let(:url) { api_callout_population_contacts_path(callout_population) }
-      let(:contact) { create(:contact) }
-
-      def setup_scenario
-        create(:contact)
-        create(
-          :callout_participation,
-          :callout_population => callout_population,
-          :contact => contact
-        )
-        super
-      end
-
-      it { assert_index! }
-    end
-
-    describe  "GET '/preview/contacts'" do
-      let(:url) { api_callout_population_preview_contacts_path(callout_population) }
-      let(:contact_metadata) {
-        {
-          "province" => "Phnom Penh",
-          "commune" => "Chhbar Ambov"
-        }
-      }
-
-      let(:contact) { create(:contact, :metadata => contact_metadata) }
-      let(:callout_population_factory_options) {
-        {
-          :contact_filter_params => {
-            :metadata => {
-              "province" => "Phnom Penh"
-            }
-          }
-        }
-      }
-
-      def setup_scenario
-        contact
-        create(:contact)
-        super
-      end
-
-      it { assert_index! }
-    end
-  end
-
   describe "'/api/contacts'" do
     let(:url_params) { {} }
     let(:url) { api_contacts_path(url_params) }
@@ -172,6 +113,93 @@ RSpec.describe "Contacts" do
         end
 
         it { assert_invalid! }
+      end
+    end
+  end
+
+  describe "nested indexes" do
+    let(:method) { :get }
+    let(:contact_factory_attributes) { {} }
+    let(:contact) { create(:contact, contact_factory_attributes) }
+
+    def callout_participation_factory_attributes
+      {:contact => contact}
+    end
+
+    let(:callout_participation) {
+      create(:callout_participation, callout_participation_factory_attributes)
+    }
+
+    def setup_scenario
+      contact
+      create(:contact)
+      super
+    end
+
+    def assert_filtered!
+      assert_index!
+      expect(JSON.parse(response.body)).to eq(JSON.parse([contact].to_json))
+    end
+
+    describe "GET '/api/callouts/:callout_id/contacts'" do
+      let(:callout) { create(:callout) }
+      let(:url) { api_callout_contacts_path(callout) }
+
+      def callout_participation_factory_attributes
+        super.merge(:callout => callout)
+      end
+
+      def setup_scenario
+        callout_participation
+        super
+      end
+
+      it { assert_filtered! }
+    end
+
+    describe "'/api/callout_population/:callout_population_id'" do
+      let(:callout_population_factory_attributes) { {} }
+      let(:callout_population) {
+        create(:callout_population, callout_population_factory_attributes)
+      }
+
+      describe "GET '/contacts'" do
+        let(:url) { api_callout_population_contacts_path(callout_population) }
+
+        def callout_participation_factory_attributes
+          super.merge(:callout_population => callout_population)
+        end
+
+        def setup_scenario
+          callout_participation
+          super
+        end
+
+        it { assert_filtered! }
+      end
+
+      describe  "GET '/preview/contacts'" do
+        let(:url) { api_callout_population_preview_contacts_path(callout_population) }
+
+        let(:contact_metadata) {
+          {
+            "province" => "Phnom Penh",
+            "commune" => "Chhbar Ambov"
+          }
+        }
+
+        let(:contact_factory_attributes) { { :metadata => contact_metadata } }
+        let(:callout_population_factory_attributes) {
+          {
+            :contact_filter_params => {
+              :metadata => {
+                "province" => "Phnom Penh"
+              }
+            }
+          }
+        }
+
+        it { assert_filtered! }
       end
     end
   end

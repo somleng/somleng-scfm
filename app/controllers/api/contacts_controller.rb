@@ -4,6 +4,8 @@ class Api::ContactsController < Api::FilteredContactsController
   def find_resources_association_chain
     if params[:callout_population_id]
       callout_population.contacts
+    elsif params[:callout_id]
+      callout.contacts
     else
       association_chain
     end
@@ -19,5 +21,9 @@ class Api::ContactsController < Api::FilteredContactsController
 
   def resource_location
     api_contact_path(resource)
+  end
+
+  def callout
+    @callout ||= Callout.find(params[:callout_id])
   end
 end

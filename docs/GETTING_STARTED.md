@@ -463,7 +463,6 @@ You should see something like:
 ]
 ```
 
-
 We can see from the response that there's `Total` of `2` contacts in the preview. This means that if we were to populate this callout now, these two contacts would be participants in the callout. Incidentally these two contacts are all of our contacts in our contacts table. This is because by default, populating a callout without a contact filter will add all contacts to the callout.
 
 ### Limiting the contacts who will participate in the callout
@@ -487,7 +486,7 @@ Again since we're updating a record, a successful response will return `No Conte
 Let's double check that our callout population was updated.
 
 ```
-docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/callout_populations/1 | jq'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/callout_populations/1 | jq'
 ```
 
 You should see something like;
@@ -543,7 +542,7 @@ Now we can see from the response that there's `Total` of `1` contacts in the pre
 Once we're happy with our callout population we can queue it for population. This will take some time depending on how many participations need to be created.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callout_populations/1/calout_population_events -d "event=queue" | jq'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callout_populations/1/callout_population_events -d "event=queue" | jq'
 ```
 
 You should see something like:
@@ -562,4 +561,156 @@ You should see something like:
   "created_at": "2017-11-09T09:22:52.895Z",
   "updated_at": "2017-11-09T09:52:56.070Z"
 }
+```
+
+Notice that the status is now `queued`. In the background, Somleng SCFM is now busy populating your callout with callout participations. You can check the status of the population by fetching it again.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/callout_populations/1 | jq'
+```
+
+You should see something like this:
+
+```json
+{
+  "id": 1,
+  "callout_id": 1,
+  "contact_filter_params": {
+    "metadata": {
+      "gender": "f"
+    }
+  },
+  "metadata": {},
+  "status": "populated",
+  "created_at": "2017-11-09T09:22:52.895Z",
+  "updated_at": "2017-11-09T09:52:56.070Z"
+}
+```
+
+Notice that the status is now `populated`. This means that the population has finished and you should now have participations in your callout.
+
+## Managing Callout Participations
+
+Now that we have populated our callout we should have a bunch of callout participations. A callout participation represents one contact that will participate in the callout.
+
+Let's see what callout participations we have in our callout.
+
+Take notice of the url in the command below `/api/callouts/1/callout_participations`. Here `1` is the id of the callout, *not* the callout population (although the callout population also has the ID of `1`). Here we are fetching the participations in the callout.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/callout_participations | jq'
+```
+
+You should see something like:
+
+```
+< Per-Page: 25
+< Total: 1
+```
+
+```json
+[
+  {
+    "id": 1,
+    "callout_id": 1,
+    "contact_id": 1,
+    "callout_population_id": 2,
+    "msisdn": "+85510202101",
+    "metadata": {},
+    "created_at": "2017-11-10T07:36:56.560Z",
+    "updated_at": "2017-11-10T07:36:56.560Z"
+  }
+]
+```
+
+As you can see we have just the one participation in the callout, which has the `contact_id: 2` (Alice).
+
+### Listing Contacts
+
+If we want to see exactly who will be participating in our callout we can check that too:
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/contacts | jq'
+```
+
+```
+< Per-Page: 25
+< Total: 1
+```
+
+```json
+[
+  {
+    "id": 1,
+    "msisdn": "+85510202101",
+    "metadata": {
+      "name": "Alice",
+      "gender": "f"
+    },
+    "created_at": "2017-11-09T04:58:03.684Z",
+    "updated_at": "2017-11-09T05:13:49.414Z"
+  }
+]
+```
+
+### Creating additional participations
+
+Let's say that we changed our mind from before and we now want to include Bob into our callout. We can add Bob, by creating a callout participation directly.
+
+In the command below we specify `contact_id=2` which is Bob's contact_id
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -XPOST -s http://scfm:3000/api/callouts/1/callout_participations -d contact_id=2 | jq'
+```
+
+You should see something like:
+
+```json
+{
+  "id": 2,
+  "callout_id": 1,
+  "contact_id": 2,
+  "callout_population_id": null,
+  "msisdn": "+85510202102",
+  "metadata": {},
+  "created_at": "2017-11-10T08:01:41.430Z",
+  "updated_at": "2017-11-10T08:01:41.430Z"
+}
+```
+
+Bob is now the second participant in the callout. Once again we can check all the participants with:
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/contacts | jq'
+```
+
+```json
+```
+< Per-Page: 25
+< Total: 2
+```
+
+```json
+[
+  {
+    "id": 1,
+    "msisdn": "+85510202101",
+    "metadata": {
+      "name": "Alice",
+      "gender": "f"
+    },
+    "created_at": "2017-11-09T04:58:03.684Z",
+    "updated_at": "2017-11-09T05:13:49.414Z"
+  },
+  {
+    "id": 2,
+    "msisdn": "+85510202102",
+    "metadata": {
+      "name": "Bob",
+      "gender": "m"
+    },
+    "created_at": "2017-11-09T05:18:59.858Z",
+    "updated_at": "2017-11-09T05:27:17.381Z"
+  }
+]
 ```

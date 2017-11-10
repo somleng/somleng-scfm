@@ -14,19 +14,32 @@ RSpec.describe CalloutPopulationEvent do
     let(:event) { eventable.aasm.events.map { |event| event.name.to_s }.first }
     subject { described_class.new(:eventable => eventable, :event => event) }
 
-    def assert_validations!
+    def assert_invalid!
       is_expected.not_to be_valid
       expect(subject.errors[:event]).not_to be_empty
     end
 
     context "is queued" do
       let(:status) { CalloutPopulation::STATE_QUEUED }
-      it { assert_validations! }
+      it { assert_invalid! }
     end
 
     context "is populating" do
       let(:status) { CalloutPopulation::STATE_POPULATING }
-      it { assert_validations! }
+      it { assert_invalid! }
+    end
+
+    context "is populated" do
+      let(:status) { CalloutPopulation::STATE_POPULATED }
+
+      context "can transition" do
+        it { is_expected.to be_valid }
+      end
+
+      context "can't transition" do
+        let(:event) { "queue" }
+        it { assert_invalid! }
+      end
     end
   end
 end

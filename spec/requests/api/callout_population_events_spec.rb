@@ -35,10 +35,22 @@ RSpec.describe "POST '/api/callout_populations/:id/events'" do
       expect(callout_population.contacts).to match_array([contact])
     end
 
+    def assert_invalid!
+      expect(response.code).to eq("422")
+    end
+
     context "event=queue" do
-      let(:status) { CalloutPopulation::STATE_PREVIEW }
       let(:event) { "queue" }
-      it { assert_populated! }
+
+      context "invalid request" do
+        let(:status) { CalloutPopulation::STATE_POPULATED }
+        it { assert_invalid! }
+      end
+
+      context "valid request" do
+        let(:status) { CalloutPopulation::STATE_PREVIEW }
+        it { assert_populated! }
+      end
     end
 
     context "event=requeue" do

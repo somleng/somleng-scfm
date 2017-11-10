@@ -711,7 +711,6 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 ```
 
 ```json
-```
 < Per-Page: 25
 < Total: 2
 ```
@@ -745,7 +744,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 
 Let's say we no longer want to call Alice. We can remove Alice by deleting her participation from the callout. In order to do this we need Alice's callout participation id. We can filter the callout participations by her contact id to find her.
 
-Notice in the command below we specify Alice's contact_id as a query parameter.
+Notice in the command below we specify Alice's `contact_id` as a query parameter.
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts/1/callout_participations?q[contact_id]=1" | jq'
@@ -869,9 +868,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
 
 Ok so we can see from the preview that Alice will added as a participant to the callout.
 
-Finally let's go ahead and repopulate the callout
-
-Notice that the `event` in the command below is `requeue`. We're requeuing the callout population.
+Finally let's go ahead and repopulate the callout. Notice that the `event` in the command below is `requeue`. We're requeuing the callout population.
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callout_populations/1/callout_population_events -d "event=requeue" | jq'

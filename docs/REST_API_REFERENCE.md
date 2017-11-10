@@ -14,7 +14,7 @@ Optionally you can set `HTTP_BASIC_AUTH_PASSWORD` to enable username and passwor
 
 ## Contacts
 
-### Create a Contact
+### Create
 
 ```
 $ curl -XPOST http://localhost:3000/api/contacts \
@@ -38,7 +38,7 @@ Sample Response:
 }
 ```
 
-### List all Contacts
+### List
 
 Note that the response is paginated.
 
@@ -69,7 +69,7 @@ Sample Response:
 ]
 ```
 
-### List all Contacts (fitering by metadata)
+### Filter by metadata
 
 ```
 $ curl -g "http://localhost:3000/api/contacts?metadata[foo]=bar&metadata[bar]=baz"
@@ -92,10 +92,10 @@ Sample Response:
 ]
 ```
 
-### List all Contacts (fitering by msisdn)
+### Filter by msisdn
 
 ```
-$ curl -g "http://localhost:3000/api/contacts?msisdn=85510202101"
+$ curl -g "http://localhost:3000/api/contacts?q[msisdn]=85510202101"
 ```
 
 Sample Response:
@@ -115,7 +115,7 @@ Sample Response:
 ]
 ```
 
-### Get a Contact
+### Fetch
 
 ```
 $ curl http://localhost:3000/api/contacts/1
@@ -136,9 +136,9 @@ Sample Response:
 }
 ```
 
-### Update a Contact
+### Update
 
-Note the response is `204 No Content`
+Note that the response is `204 No Content`
 
 ```
 $ curl -v -XPATCH http://localhost:3000/api/contacts/1 \
@@ -153,9 +153,9 @@ Sample Response:
 < HTTP/1.1 204 No Content
 ```
 
-### Delete a Contact
+### Delete
 
-Note the response is `204 No Content`
+Note that the the response is `204 No Content`
 
 ```
 $ curl -v -XDELETE http://localhost:3000/api/contacts/1
@@ -169,7 +169,7 @@ Sample Response:
 
 ## Callouts
 
-### Create a Callout
+### Create
 
 ```
 $ curl -XPOST http://localhost:3000/api/callouts \
@@ -192,7 +192,7 @@ Sample Response:
 }
 ```
 
-### List all Callouts
+### List
 
 Note that the response is paginated.
 
@@ -223,7 +223,7 @@ Sample Response:
 ]
 ```
 
-### List all Callouts (filtering by metadata)
+### Filter by metadata
 
 ```
 $ curl -g "http://localhost:3000/api/callouts?q[metadata][foo]=bar&q[metadata][bar]=baz"
@@ -246,7 +246,7 @@ Sample Response:
 ]
 ```
 
-### List all Callouts (filtering by status)
+### Filter by status
 
 ```
 $ curl -g "http://localhost:3000/api/callouts?q[status]=initialized"
@@ -269,7 +269,7 @@ Sample Response:
 ]
 ```
 
-### Get a Callout
+### Fetch
 
 ```
 $ curl http://localhost:3000/api/callouts/1
@@ -290,9 +290,9 @@ Sample Response:
 }
 ```
 
-### Update a Callout
+### Update
 
-Note the response is `204 No Content`
+Note that the response is `204 No Content`
 
 ```
 $ curl -v -XPATCH http://localhost:3000/api/callouts/1 \
@@ -306,7 +306,7 @@ Sample Response:
 < HTTP/1.1 204 No Content
 ```
 
-### Start a Callout
+### Start
 
 ```
 $ curl -XPOST http://localhost:3000/api/callouts/1/callout_events \
@@ -328,7 +328,7 @@ Sample Response:
 }
 ```
 
-### Pause a Callout
+### Pause
 
 ```
 $ curl -XPOST http://localhost:3000/api/callouts/1/callout_events \
@@ -350,7 +350,7 @@ Sample Response:
 }
 ```
 
-### Resume a Callout
+### Resume
 
 ```
 $ curl -XPOST http://localhost:3000/api/callouts/1/callout_events \
@@ -372,7 +372,7 @@ Sample Response:
 }
 ```
 
-### Stop a Callout
+### Stop
 
 ```
 $ curl -XPOST http://localhost:3000/api/callouts/1/callout_events \
@@ -394,7 +394,47 @@ Sample Response:
 }
 ```
 
-### Get Callout Statistics
+### List Participants
+
+Note that the response is paginated.
+
+```
+$ curl -v /http://localhost:3000/api/callouts/1/contacts
+```
+
+Sample Response:
+
+```
+< Per-Page: 25
+< Total: 2
+```
+
+```json
+[
+  {
+    "id": 1,
+    "msisdn": "+85510202101",
+    "metadata": {
+      "name": "Alice",
+      "gender": "f"
+    },
+    "created_at": "2017-11-10T09:50:15.301Z",
+    "updated_at": "2017-11-10T09:50:27.928Z"
+  },
+  {
+    "id": 2,
+    "msisdn": "+85510202102",
+    "metadata": {
+      "name": "Bob",
+      "gender": "m"
+    },
+    "created_at": "2017-11-10T09:50:46.118Z",
+    "updated_at": "2017-11-10T09:50:46.118Z"
+  }
+]
+```
+
+### Get Statistics (Deprecated)
 
 ```
 $ curl http://localhost:3000/api/callouts/1/callout_statistics
@@ -423,9 +463,9 @@ Sample Response:
 }
 ```
 
-### Delete a Callout
+### Delete
 
-Note the response is `204 No Content`
+Note that the response is `204 No Content`
 
 ```
 $ curl -v -XDELETE http://localhost:3000/api/callouts/1
@@ -439,7 +479,7 @@ Sample Response:
 
 ## Callout Populations
 
-### Create a Callout Population
+### Create
 
 ```
 $ curl -XPOST http://localhost:3000/api/callouts/1/callout_populations \
@@ -467,39 +507,11 @@ Sample Response:
   "created_at": "2017-11-08T09:04:02.346Z",
   "updated_at": "2017-11-08T09:04:02.346Z"
 }
-
 ```
 
-### List all Callout Populations for a given callout
+### List
 
-```
-$ curl http://localhost:3000/api/callouts/1/callout_populations
-```
-
-Sample Response:
-
-```json
-[
-  {
-    "id": 1,
-    "callout_id": 1,
-    "contact_filter_params": {
-      "metadata": {
-        "location": "phnom penh"
-      }
-    },
-    "metadata": {
-      "foo": "bar",
-      "bar": "baz"
-    },
-    "status": "preview",
-    "created_at": "2017-11-08T09:04:02.346Z",
-    "updated_at": "2017-11-08T09:04:02.346Z"
-  }
-]
-```
-
-### List all Callout Populations (across all callouts)
+Note that the response is paginated.
 
 ```
 $ curl http://localhost:3000/api/callout_populations
@@ -528,7 +540,38 @@ Sample Response:
 ]
 ```
 
-### List all Callout Populations (filtering by metadata)
+### List for a Callout
+
+Note that the response is paginated.
+
+```
+$ curl http://localhost:3000/api/callouts/1/callout_populations
+```
+
+Sample Response:
+
+```json
+[
+  {
+    "id": 1,
+    "callout_id": 1,
+    "contact_filter_params": {
+      "metadata": {
+        "location": "phnom penh"
+      }
+    },
+    "metadata": {
+      "foo": "bar",
+      "bar": "baz"
+    },
+    "status": "preview",
+    "created_at": "2017-11-08T09:04:02.346Z",
+    "updated_at": "2017-11-08T09:04:02.346Z"
+  }
+]
+```
+
+### Filter by metadata
 
 ```
 $ curl -g "http://localhost:3000/api/callout_populations?q[metadata][foo]=bar"
@@ -557,7 +600,7 @@ Sample Response:
 ]
 ```
 
-### List all Callout Populations (filtering by contact_filter_params)
+### Filter by contact_filter_params
 
 ```
 $ curl -g "http://localhost:3000/api/callout_populations?q[contact_filter_params][metadata][location]=phnom+penh"
@@ -583,7 +626,7 @@ Sample Response:
 ]
 ```
 
-### Get a Callout Population
+### Fetch
 
 ```
 $ curl http://localhost:3000/api/callout_populations/1
@@ -596,18 +639,18 @@ Sample Response:
   "id": 1,
   "callout_id": 1,
   "contact_filter_params": {
-    "location": "phnom penh"
+    "metadata": {
+      "gender": "f"
+    }
   },
-  "metadata": {
-    "foo": "bar",
-    "bar": "baz"
-  },
-  "created_at": "2017-11-07T12:04:59.470Z",
-  "updated_at": "2017-11-07T12:04:59.470Z"
+  "metadata": {},
+  "status": "populated",
+  "created_at": "2017-11-10T09:52:10.116Z",
+  "updated_at": "2017-11-10T10:40:29.097Z"
 }
 ```
 
-### Preview the contacts that will be participating in the callout if populated now
+### Preview Population
 
 Note that the response is paginated.
 
@@ -637,9 +680,9 @@ Sample Response:
 ]
 ```
 
-### Update a Callout Population
+### Update
 
-Note the response is `204 No Content`
+Note that the response is `204 No Content`
 
 ```
 $ curl -v -XPATCH http://localhost:3000/api/callout_populations/1 \
@@ -654,7 +697,7 @@ Sample Response:
 < HTTP/1.1 204 No Content
 ```
 
-### Delete a Callout Population
+### Delete
 
 Note the response is `204 No Content`
 
@@ -668,7 +711,7 @@ Sample Response:
 < HTTP/1.1 204 No Content
 ```
 
-### Enqueue a Callout Population for populating with callout participants
+### Populate
 
 This enqueues a callout population to be populated with callout participations
 
@@ -696,7 +739,32 @@ Sample Response:
 }
 ```
 
-### List the contacts in the callout population
+### Repopulate
+
+This requeues a callout population to be populated with callout participations
+
+```
+$ curl -XPOST http://localhost:3000/api/callout_populations/1/callout_population_events \
+  -d "event=requeue"
+```
+
+```json
+{
+  "id": 1,
+  "callout_id": 1,
+  "contact_filter_params": {
+    "metadata": {
+      "gender": "f"
+    }
+  },
+  "metadata": {},
+  "status": "queued",
+  "created_at": "2017-11-10T09:52:10.116Z",
+  "updated_at": "2017-11-10T11:06:10.964Z"
+}
+```
+
+### List the contacts populated
 
 Note that the response is paginated.
 
@@ -725,4 +793,178 @@ Sample Response:
     "updated_at": "2017-11-07T08:34:25.880Z"
   }
 ]
+```
+
+## Callout Participations
+
+### Create
+
+```
+$ curl -XPOST http://localhost:3000/api/callouts/1/callout_participations \
+  -d "contact_id=1"
+```
+
+Sample Response:
+
+```json
+{
+  "id": 3,
+  "callout_id": 1,
+  "contact_id": 1,
+  "callout_population_id": 1,
+  "msisdn": "+85510202101",
+  "metadata": {},
+  "created_at": "2017-11-10T10:40:29.083Z",
+  "updated_at": "2017-11-10T10:40:29.083Z"
+}
+```
+
+### List
+
+Note that the response is paginated.
+
+```
+$ curl -v http://localhost:3000/api/callouts/1/callout_participations
+```
+
+Sample Response:
+
+```
+< Per-Page: 25
+< Total: 2
+```
+
+```
+[
+  {
+    "id": 3,
+    "callout_id": 1,
+    "contact_id": 1,
+    "callout_population_id": 1,
+    "msisdn": "+85510202101",
+    "metadata": {},
+    "created_at": "2017-11-10T10:40:29.083Z",
+    "updated_at": "2017-11-10T10:40:29.083Z"
+  },
+  {
+    "id": 2,
+    "callout_id": 1,
+    "contact_id": 2,
+    "callout_population_id": null,
+    "msisdn": "+85510202102",
+    "metadata": {},
+    "created_at": "2017-11-10T10:21:24.395Z",
+    "updated_at": "2017-11-10T10:21:24.395Z"
+  }
+]
+```
+
+### Filter by metadata
+
+Note that the response is paginated.
+
+```
+$ curl -v -g "http://localhost:3000/api/callouts/1/callout_participations?q[metadata][foo]=baz"
+```
+
+Sample Response:
+
+```
+< Per-Page: 25
+< Total: 1
+```
+
+```json
+[
+  {
+    "id": 2,
+    "callout_id": 1,
+    "contact_id": 2,
+    "callout_population_id": null,
+    "msisdn": "+85510202102",
+    "metadata": {
+      "foo": "baz",
+      "baz": "foo"
+    },
+    "created_at": "2017-11-10T10:21:24.395Z",
+    "updated_at": "2017-11-10T11:24:47.143Z"
+  }
+]
+```
+
+### Filter by contact_id
+
+Note that the response is paginated.
+
+```
+$ curl -v -g "http://localhost:3000/api/callouts/1/callout_participations?q[contact_id]=2"
+```
+
+Sample Response:
+
+```
+< Per-Page: 25
+< Total: 1
+```
+
+```json
+[
+  {
+    "id": 2,
+    "callout_id": 1,
+    "contact_id": 2,
+    "callout_population_id": null,
+    "msisdn": "+85510202102",
+    "metadata": {},
+    "created_at": "2017-11-10T10:21:24.395Z",
+    "updated_at": "2017-11-10T10:21:24.395Z"
+  }
+]
+```
+
+### Fetch
+
+```
+$ curl http://localhost:3000/api/callout_participations/2
+```
+
+Sample Response:
+
+```
+{
+  "id": 2,
+  "callout_id": 1,
+  "contact_id": 2,
+  "callout_population_id": null,
+  "msisdn": "+85510202102",
+  "metadata": {},
+  "created_at": "2017-11-10T10:21:24.395Z",
+  "updated_at": "2017-11-10T10:21:24.395Z"
+}
+```
+
+### Update
+
+Note that the response is `204 No Content`
+
+```
+$ curl -v -XPATCH http://localhost:3000/api/callout_participations/2 \
+  -d "metadata[foo]=baz" \
+  -d "metadata[baz]=foo"
+```
+
+```
+< HTTP/1.1 204 No Content
+```
+
+### Delete
+
+Note that the response is `204 No Content`
+
+```
+$ curl -v -XDELETE http://localhost:3000/api/callout_participations/2
+```
+
+```
+< HTTP/1.1 204 No Content
 ```

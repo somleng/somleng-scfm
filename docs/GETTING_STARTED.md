@@ -589,13 +589,39 @@ You should see something like this:
 
 Notice that the status is now `populated`. This means that the population has finished and you should now have participations in your callout.
 
+Let's check the contacts in our callout population.
+
+```
+< Per-Page: 25
+< Total: 1
+```
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callout_populations/1/contacts | jq'
+```
+
+```json
+[
+  {
+    "id": 1,
+    "msisdn": "+85510202101",
+    "metadata": {
+      "name": "Alice",
+      "gender": "f"
+    },
+    "created_at": "2017-11-10T09:50:15.301Z",
+    "updated_at": "2017-11-10T09:50:27.928Z"
+  }
+]
+```
+
 ## Managing Callout Participations
 
 Now that we have populated our callout we should have a bunch of callout participations. A callout participation represents one contact that will participate in the callout.
 
 Let's see what callout participations we have in our callout.
 
-Take notice of the url in the command below `/api/callouts/1/callout_participations`. Here `1` is the id of the callout, *not* the callout population (although the callout population also has the ID of `1`). Here we are fetching the participations in the callout.
+Take notice of the url in the command below `/api/callouts/1/callout_participations`. Here `1` is the id of the callout, *not* the callout population (although in this case the callout population may also have an id of `1`). Here we are fetching the participations in the callout.
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/callout_participations | jq'
@@ -653,7 +679,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 ]
 ```
 
-### Creating additional participations
+### Creating
 
 Let's say that we changed our mind from before and we now want to include Bob into our callout. We can add Bob, by creating a callout participation directly.
 
@@ -711,6 +737,246 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
     },
     "created_at": "2017-11-09T05:18:59.858Z",
     "updated_at": "2017-11-09T05:27:17.381Z"
+  }
+]
+```
+
+### Filtering
+
+Let's say we no longer want to call Alice. We can remove Alice by deleting her participation from the callout. In order to do this we need Alice's callout participation id. We can filter the callout participations by her contact id to find her.
+
+Notice in the command below we specify Alice's contact_id as a query parameter.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts/1/callout_participations?q[contact_id]=1" | jq'
+```
+
+```
+< Per-Page: 25
+< Total: 1
+```
+
+```json
+[
+  {
+    "id": 1,
+    "callout_id": 1,
+    "contact_id": 1,
+    "callout_population_id": 1,
+    "msisdn": "+85510202101",
+    "metadata": {},
+    "created_at": "2017-11-10T09:53:08.427Z",
+    "updated_at": "2017-11-10T09:53:08.427Z"
+  }
+]
+```
+
+The `id` field in the response above is Alice's callout participation id
+
+### Deleting
+
+Once we have Alice's callout participation id we can delete her from the callout. Note that this doesn't delete her from the contacts table. It simply removes her from the callout.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/callout_participations/1'
+```
+
+As before, when deleting a resource successfully we should get a `No Content` reponse.
+
+```
+< HTTP/1.1 204 No Content
+```
+
+For our own piece of mind let's make sure she's actually been removed from the callout.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/contacts | jq'
+```
+
+```
+< Per-Page: 25
+< Total: 1
+```
+
+```json
+[
+  {
+    "id": 2,
+    "msisdn": "+85510202102",
+    "metadata": {
+      "name": "Bob",
+      "gender": "m"
+    },
+    "created_at": "2017-11-10T09:50:46.118Z",
+    "updated_at": "2017-11-10T09:50:46.118Z"
+  }
+]
+```
+
+### Repopulating
+
+Let's say that we really do want Alice in the callout after all. We could just re-add her to the callout as we did for Bob, but let's add her back by repopulating the callout.
+
+First let's check our callout population again:
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/callout_populations/1 | jq'
+```
+
+```json
+{
+  "id": 1,
+  "callout_id": 1,
+  "contact_filter_params": {
+    "metadata": {
+      "gender": "f"
+    }
+  },
+  "metadata": {},
+  "status": "populated",
+  "created_at": "2017-11-10T09:52:10.116Z",
+  "updated_at": "2017-11-10T09:53:08.435Z"
+}
+```
+
+As you can see from the response above the status of the callout population is already `populated`. But we can repopulate it again.
+
+First let's make sure that Alice will be added again if we repopulate by previewing the contacts.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/callout_populations/1/preview/contacts | jq'
+```
+
+```
+< Per-Page: 25
+< Total: 1
+```
+
+```json
+[
+  {
+    "id": 1,
+    "msisdn": "+85510202101",
+    "metadata": {
+      "name": "Alice",
+      "gender": "f"
+    },
+    "created_at": "2017-11-10T09:50:15.301Z",
+    "updated_at": "2017-11-10T09:50:27.928Z"
+  }
+]
+```
+
+Ok so we can see from the preview that Alice will added as a participant to the callout.
+
+Finally let's go ahead and repopulate the callout
+
+Notice that the `event` in the command below is `requeue`. We're requeuing the callout population.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callout_populations/1/callout_population_events -d "event=requeue" | jq'
+```
+
+```json
+{
+  "id": 1,
+  "callout_id": 1,
+  "contact_filter_params": {
+    "metadata": {
+      "gender": "f"
+    }
+  },
+  "metadata": {},
+  "status": "queued",
+  "created_at": "2017-11-10T09:52:10.116Z",
+  "updated_at": "2017-11-10T10:40:29.051Z"
+}
+```
+
+Now we see that the callout population has been queued again.
+
+Let's check again to see if it's done.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/callout_populations/1 | jq'
+```
+
+```json
+{
+  "id": 1,
+  "callout_id": 1,
+  "contact_filter_params": {
+    "metadata": {
+      "gender": "f"
+    }
+  },
+  "metadata": {},
+  "status": "populated",
+  "created_at": "2017-11-10T09:52:10.116Z",
+  "updated_at": "2017-11-10T10:40:29.097Z"
+}
+```
+
+Looks good. Now let's check to see if Alice is was populated in our callout.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callout_populations/1/contacts | jq'
+```
+
+```
+< Per-Page: 25
+< Total: 1
+```
+
+```json
+[
+  {
+    "id": 1,
+    "msisdn": "+85510202101",
+    "metadata": {
+      "name": "Alice",
+      "gender": "f"
+    },
+    "created_at": "2017-11-10T09:50:15.301Z",
+    "updated_at": "2017-11-10T09:50:27.928Z"
+  }
+]
+```
+
+Ok, we see that Alice is has been populated but what happened to Bob? If we take a closer look at the previous command notice that the URL is `api/callout_populations/1/contacts`. This command lists all the contacts which have been populated by the callout population.
+
+What we really want to see is who is now in our callout.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/contacts | jq'
+```
+
+```
+< Per-Page: 25
+< Total: 2
+```
+
+```json
+[
+  {
+    "id": 1,
+    "msisdn": "+85510202101",
+    "metadata": {
+      "name": "Alice",
+      "gender": "f"
+    },
+    "created_at": "2017-11-10T09:50:15.301Z",
+    "updated_at": "2017-11-10T09:50:27.928Z"
+  },
+  {
+    "id": 2,
+    "msisdn": "+85510202102",
+    "metadata": {
+      "name": "Bob",
+      "gender": "m"
+    },
+    "created_at": "2017-11-10T09:50:46.118Z",
+    "updated_at": "2017-11-10T09:50:46.118Z"
   }
 ]
 ```

@@ -3,6 +3,10 @@ FactoryGirl.define do
     n.to_s
   end
 
+  sequence :twilio_request_params do
+    Hash[Somleng::Client.new.api.account.calls.method(:create).parameters.map { |param| [param[1].to_s, param[1].to_s] }]
+  end
+
   factory :callout do
     trait :can_start do
     end

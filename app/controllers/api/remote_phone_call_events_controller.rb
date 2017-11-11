@@ -14,8 +14,10 @@ class Api::RemotePhoneCallEventsController < Api::BaseController
   def find_or_initialize_phone_call
     phone_call = PhoneCall.where(
       :remote_call_id => params["CallSid"],
-      :remote_direction => params["Direction"]
+      :remote_direction => params["Direction"],
     ).first_or_initialize
+
+    phone_call.msisdn ||= params["From"] if phone_call.new_record? && phone_call.inbound?
 
     phone_call.contact ||= Contact.where(
       :msisdn => params["From"]

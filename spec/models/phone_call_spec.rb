@@ -29,6 +29,11 @@ RSpec.describe PhoneCall do
         it { is_expected.to validate_presence_of(:callout_participation) }
       end
 
+      context "remote_request_params" do
+        subject { build(factory, :remote_request_params => {"foo" => "bar"}) }
+        it { is_expected.not_to be_valid }
+      end
+
       it { assert_validations! }
     end
 
@@ -229,13 +234,6 @@ RSpec.describe PhoneCall do
       expect(results).to match_array(asserted_results)
     end
 
-    describe ".remote_response_has_values(hash)" do
-      include_examples "json_has_values" do
-        let(:scope) { :remote_response_has_values }
-        let(:json_column) { :remote_response }
-      end
-    end
-
     describe ".in_last_hours(hours, timestamp_column = :created_at)" do
       let(:remotely_queued_at) { nil }
       let(:created_at) { nil }
@@ -297,7 +295,8 @@ RSpec.describe PhoneCall do
 
     describe ".from_running_callout" do
       let(:running_callout) { create(:callout, :status => :running) }
-      let(:phone_call) { create(factory, :callout => running_callout) }
+      let(:callout_participation) { create(:callout_participation, :callout => running_callout) }
+      let(:phone_call) { create(factory, :callout_participation => callout_participation) }
       let(:results) { described_class.from_running_callout }
       let(:asserted_results) { [phone_call] }
 

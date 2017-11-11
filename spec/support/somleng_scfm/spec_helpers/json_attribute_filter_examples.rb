@@ -1,11 +1,7 @@
 RSpec.shared_examples_for "json_attribute_filter" do
-
-  let(:json_data) {
-    {
-      "foo" => "bar",
-      "bar" => "foo"
-    }
-  }
+  def json_data
+    defined?(super) ? super : {"foo" => "bar", "bar" => "foo"}
+  end
 
   let(:resource) { create(filterable_factory, filterable_attribute => json_data) }
 
@@ -23,7 +19,7 @@ RSpec.shared_examples_for "json_attribute_filter" do
   end
 
   context "finding" do
-    let(:json_params) { {"foo" => "bar"} }
+    let(:json_params) { Hash[[json_data.first]] }
     let(:asserted_results) { [resource] }
     it { assert_filter! }
   end

@@ -27,19 +27,38 @@ RSpec.describe "Phone Calls" do
   describe "POST '/api/callout_participation/:callout_participation_id/phone_calls'" do
     let(:method) { :post }
     let(:url) { api_callout_participation_phone_calls_path(callout_participation) }
-    let(:metadata) { { "foo" => "bar"} }
-    let(:body) { { :metadata => metadata } }
-    let(:created_phone_call) { callout_participation.phone_calls.last }
-    let(:parsed_response_body) { JSON.parse(response.body) }
+    let(:metadata) { nil }
+    let(:remote_request_params) { nil }
+    let(:body) { { :metadata => metadata, :remote_request_params => remote_request_params } }
 
-    def assert_created!
-      expect(response.code).to eq("201")
-      expect(response.headers["Location"]).to eq(api_phone_call_path(created_phone_call))
-      expect(parsed_response_body).to eq(JSON.parse(created_phone_call.to_json))
-      expect(parsed_response_body["metadata"]).to eq(metadata)
+    context "valid request" do
+      let(:metadata) { { "foo" => "bar"} }
+      let(:remote_request_params) { generate(:twilio_request_params) }
+
+      let(:created_phone_call) { callout_participation.phone_calls.last }
+      let(:parsed_response_body) { JSON.parse(response.body) }
+
+      def assert_created!
+        expect(response.code).to eq("201")
+        expect(response.headers["Location"]).to eq(api_phone_call_path(created_phone_call))
+        expect(parsed_response_body).to eq(JSON.parse(created_phone_call.to_json))
+        expect(parsed_response_body["metadata"]).to eq(metadata)
+        expect(parsed_response_body["remote_request_params"]).to eq(remote_request_params)
+      end
+
+      it { assert_created! }
     end
 
-    it { assert_created! }
+    context "invalid request" do
+      let(:remote_request_params) { { "foo" => "bar" } }
+
+      def assert_invalid!
+        p response.body
+        expect(response.code).to eq("422")
+      end
+
+      it { assert_invalid! }
+    end
   end
 
   describe "'/api/phone_calls/:id'" do
@@ -113,9 +132,9 @@ RSpec.describe "Phone Calls" do
     end
 
     describe "GET '/api/callout/:callout_id/phone_calls'" do
-      let(:callout) { create(:callout) }
+      let(:callout) { callout_participation.callout }
       let(:url) { api_callout_phone_calls_path(callout) }
-      let(:factory_attributes) { { :callout => callout } }
+      let(:factory_attributes) { { :callout_participation => callout_participation } }
       it { assert_filtered! }
     end
 

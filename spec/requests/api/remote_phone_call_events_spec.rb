@@ -120,6 +120,7 @@ RSpec.describe "POST '/api/remote_phone_call_events'" do
       let(:contact) { create(:contact) }
       let(:call_flow_logic) { nil }
       let(:callout) { create(:callout, :metadata => {:call_flow_logic => call_flow_logic.to_s}) }
+      let(:callout_participation) { create(:callout_participation, :callout => callout) }
 
       let(:phone_call) {
         create(
@@ -127,7 +128,7 @@ RSpec.describe "POST '/api/remote_phone_call_events'" do
           :remote_call_id => call_sid,
           :remote_direction => direction,
           :contact => contact,
-          :callout => callout
+          :callout_participation => callout_participation
         )
       }
 

@@ -69,11 +69,4 @@ RSpec.describe CalloutPopulation do
   describe "#contact_filter_params" do
     it { expect(subject.contact_filter_params).to eq({}) }
   end
-
-  describe ".contact_filter_params_has_values(hash)" do
-    include_examples "json_has_values" do
-      let(:scope) { :contact_filter_params_has_values }
-      let(:json_column) { :contact_filter_params }
-    end
-  end
 end

@@ -32,6 +32,7 @@ class PhoneCall < ApplicationRecord
   validates :remote_call_id, :uniqueness => {:case_sensitive => false, :allow_nil => true}
   validates :status, :presence => true
   validates :callout_participation, :presence => true, :unless => :inbound?
+  validates :remote_request_params, :twilio_request_params => true
 
   delegate :call_flow_logic, :to => :callout_participation, :prefix => true, :allow_nil => true
 
@@ -120,10 +121,6 @@ class PhoneCall < ApplicationRecord
     end
   end
 
-  def self.remote_response_has_values(hash)
-    json_has_values(hash, :remote_response)
-  end
-
   def self.with_remote_call_id
     where.not(:remote_call_id => nil)
   end
@@ -152,6 +149,10 @@ class PhoneCall < ApplicationRecord
     super || callout_participation_call_flow_logic
   end
 
+  def inbound?
+    remote_direction == TWILIO_DIRECTIONS[:inbound]
+  end
+
   private
 
   def touch_remotely_queued_at
@@ -173,10 +174,6 @@ class PhoneCall < ApplicationRecord
 
   def has_remote_call_id?
     remote_call_id?
-  end
-
-  def inbound?
-    remote_direction == TWILIO_DIRECTIONS[:inbound]
   end
 
   def set_defaults

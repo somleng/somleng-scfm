@@ -22,6 +22,7 @@ RSpec.describe Filter::Resource::PhoneCall do
 
     context "filtering by remote_request_params" do
       let(:filterable_attribute) { :remote_request_params }
+      let(:json_data) { generate(:twilio_request_params) }
       include_examples "json_attribute_filter"
     end
 

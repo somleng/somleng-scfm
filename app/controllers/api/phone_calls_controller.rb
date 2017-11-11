@@ -22,7 +22,7 @@ class Api::PhoneCallsController < Api::FilteredController
   end
 
   def permitted_params
-    params.permit(:metadata => {})
+    params.permit(:metadata => {}, :remote_request_params => {})
   end
 
   def resource_location

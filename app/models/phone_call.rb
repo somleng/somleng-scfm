@@ -39,8 +39,8 @@ class PhoneCall < ApplicationRecord
 
   aasm :column => :status, :whiny_transitions => false do
     state :created, :initial => true
-    state :scheduling
     state :queued
+    state :remotely_queued
     state :errored
     state :fetching_status
     state :failed
@@ -50,22 +50,22 @@ class PhoneCall < ApplicationRecord
     state :canceled
     state :completed
 
-    event :schedule do
+    event :queue do
       transitions(
         :from => :created,
-        :to => :scheduling
+        :to => :queued
       )
     end
 
-    event :queue, :after => :touch_queued_at do
+    event :queue_remote, :after => :touch_remotely_queued_at do
       transitions(
-        :from => :scheduling,
-        :to => :queued,
+        :from => :queued,
+        :to => :remotely_queued,
         :guard => :has_remote_call_id?
       )
 
       transitions(
-        :from => :scheduling,
+        :from => :queued,
         :to => :errored
       )
     end
@@ -145,8 +145,8 @@ class PhoneCall < ApplicationRecord
 
   private
 
-  def touch_queued_at
-    self.queued_at = Time.now
+  def touch_remotely_queued_at
+    self.remotely_queued_at = Time.now
   end
 
   def remote_status_in_progress?

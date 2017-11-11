@@ -11,7 +11,7 @@ class CreatePhoneCalls < ApplicationMigration
       t.integer(:lock_version)
       t.public_send(json_column_type, :metadata, :null => false, :default => json_column_default)
       t.public_send(json_column_type, :remote_response, :null => false, :default => json_column_default)
-      t.datetime "queued_at"
+      t.datetime "remotely_queued_at"
       t.timestamps
     end
   end

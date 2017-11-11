@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe CalloutPopulationEvent do
+RSpec.describe Event::CalloutPopulation do
   let(:eventable_factory) { :callout_population }
 
   it_behaves_like("resource_event") do

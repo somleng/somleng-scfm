@@ -1,4 +1,4 @@
-class ResourceEvent
+class Event::Base
   include ActiveModel::Validations
   attr_accessor :eventable, :event
 

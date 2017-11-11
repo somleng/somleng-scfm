@@ -1,4 +1,4 @@
-class CalloutPopulationEvent < ResourceEvent
+class Event::CalloutPopulation < Event::Base
   private
 
   def valid_events

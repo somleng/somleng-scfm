@@ -31,6 +31,8 @@ Rails.application.routes.draw do
       resources :phone_calls, :only => [:index, :create]
     end
 
-    resources :phone_calls, :except => [:new, :edit, :create]
+    resources :phone_calls, :except => [:new, :edit, :create] do
+      resources :phone_call_events, :only => :create
+    end
   end
 end

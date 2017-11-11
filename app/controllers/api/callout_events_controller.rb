@@ -14,6 +14,6 @@ class Api::CalloutEventsController < Api::ResourceEventsController
   end
 
   def event_class
-    CalloutEvent
+    Event::Callout
   end
 end

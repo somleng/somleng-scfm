@@ -53,10 +53,7 @@ class EnqueueCallsTask < ApplicationTask
   end
 
   def schedule_phone_call!(callout_participation)
-    phone_call = callout_participation.phone_calls.new
-    phone_call.contact_id = callout_participation.contact_id
-    phone_call.schedule!
-    phone_call
+    callout_participation.phone_calls.new
   end
 
   def enqueue_phone_call!(phone_call)
@@ -92,7 +89,7 @@ class EnqueueCallsTask < ApplicationTask
   end
 
   def calls_queued_in_period
-    PhoneCall.in_last_hours(max_calls_per_period_hours, :queued_at)
+    PhoneCall.in_last_hours(max_calls_per_period_hours, :remotely_queued_at)
   end
 
   def enqueue_strategy

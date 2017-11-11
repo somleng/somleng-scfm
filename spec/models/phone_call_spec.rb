@@ -118,21 +118,21 @@ RSpec.describe PhoneCall do
       is_expected.to transition_from(current_status).to(asserted_new_status).on_event(event)
     end
 
-    describe "#schedule!" do
+    describe "#queue!" do
       let(:current_status) { :created }
-      let(:asserted_new_status) { :scheduling }
-      let(:event) { :schedule }
+      let(:asserted_new_status) { :queued }
+      let(:event) { :queue }
 
       it { assert_transitions! }
     end
 
-    describe "#queue!" do
-      let(:current_status) { :scheduling }
-      let(:event) { :queue }
+    describe "#queue_remote!" do
+      let(:current_status) { :queued }
+      let(:event) { :queue_remote }
 
       def assert_transitions!
         super
-        expect(subject.queued_at).to be_present
+        expect(subject.remotely_queued_at).to be_present
       end
 
       context "by default" do
@@ -141,7 +141,7 @@ RSpec.describe PhoneCall do
       end
 
       context "remote_call_id is present" do
-        let(:asserted_new_status) { :queued }
+        let(:asserted_new_status) { :remotely_queued }
 
         def factory_attributes
           super.merge(:remote_call_id => "1234")
@@ -221,7 +221,7 @@ RSpec.describe PhoneCall do
     end
 
     describe ".in_last_hours(hours, timestamp_column = :created_at)" do
-      let(:queued_at) { nil }
+      let(:remotely_queued_at) { nil }
       let(:created_at) { nil }
 
       def create_phone_call(*args)
@@ -236,7 +236,7 @@ RSpec.describe PhoneCall do
       end
 
       let(:phone_call) { create_phone_call }
-      let(:queued_phone_call) { create_phone_call(:queued_at => queued_at) }
+      let(:queued_phone_call) { create_phone_call(:remotely_queued_at => remotely_queued_at) }
 
       let(:hours) { 1 }
       let(:timestamp_column) { nil }
@@ -261,18 +261,18 @@ RSpec.describe PhoneCall do
         end
       end
 
-      context "passing timestamp_column = :queued_at" do
-        let(:timestamp_column) { :queued_at }
+      context "passing timestamp_column = :remotely_queued_at" do
+        let(:timestamp_column) { :remotely_queued_at }
 
         let(:asserted_results) { [queued_phone_call] }
 
         context "was recently queued" do
-          let(:queued_at) { Time.now }
+          let(:remotely_queued_at) { Time.now }
           it { assert_scope! }
         end
 
         context "was queued at more than specified hours ago" do
-          let(:queued_at) { hours.hours.ago }
+          let(:remotely_queued_at) { hours.hours.ago }
           let(:asserted_results) { [] }
           it { assert_scope! }
         end

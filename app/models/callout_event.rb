@@ -1,2 +1,0 @@
-class CalloutEvent < ResourceEvent
-end

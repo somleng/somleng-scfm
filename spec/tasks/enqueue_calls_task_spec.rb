@@ -150,24 +150,24 @@ RSpec.describe EnqueueCallsTask do
         context "ENQUEUE_CALLS_TASK_MAX_CALLS_PER_PERIOD=100" do
           let(:max_calls_per_period) { 100 }
           let(:asserted_result) { 100 }
-          let(:queued_at) { nil }
+          let(:remotely_queued_at) { nil }
           let(:hours) { 1 }
 
           def setup_scenario
             super
-            create(:phone_call, :queued_at => queued_at)
+            create(:phone_call, :remotely_queued_at => remotely_queued_at)
           end
 
           context "by default" do
             context "calls have been queued in the last 24 hours" do
               let(:asserted_result) { 99 }
-              let(:queued_at) { 23.hour.ago }
+              let(:remotely_queued_at) { 23.hour.ago }
               it { assert_result! }
             end
 
             context "no calls have been queued in the last 24 hours" do
               let(:asserted_result) { 100 }
-              let(:queued_at) { 24.hour.ago }
+              let(:remotely_queued_at) { 24.hour.ago }
               it { assert_result! }
             end
           end
@@ -177,13 +177,13 @@ RSpec.describe EnqueueCallsTask do
 
             context "calls have been queued in the last 1 hour" do
               let(:asserted_result) { 99 }
-              let(:queued_at) { Time.now }
+              let(:remotely_queued_at) { Time.now }
               it { assert_result! }
             end
 
             context "no calls have been queued in the last 1 hour" do
               let(:asserted_result) { 100 }
-              let(:queued_at) { 1.hour.ago }
+              let(:remotely_queued_at) { 1.hour.ago }
               it { assert_result! }
             end
           end

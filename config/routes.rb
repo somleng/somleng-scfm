@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
     resources :contacts, :except => [:new, :edit] do
       resources :callout_participations, :only => :index
+      resources :phone_calls, :only => :index
     end
 
     resources :callouts, :except => [:new, :edit] do
@@ -11,6 +12,7 @@ Rails.application.routes.draw do
       resources :callout_populations, :only => [:create, :index]
       resources :callout_participations, :only => [:index, :create]
       resources :contacts, :only => :index
+      resources :phone_calls, :only => :index
       resource :callout_statistics, :only => :show
     end
 
@@ -25,6 +27,10 @@ Rails.application.routes.draw do
       resources :callout_participations, :only => :index
     end
 
-    resources :callout_participations, :except => [:new, :edit, :create]
+    resources :callout_participations, :except => [:new, :edit, :create] do
+      resources :phone_calls, :only => [:index, :create]
+    end
+
+    resources :phone_calls, :except => [:new, :edit, :create]
   end
 end

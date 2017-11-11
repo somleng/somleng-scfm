@@ -8,7 +8,7 @@ RSpec.describe PhoneCall do
     def assert_associations!
       is_expected.to belong_to(:callout_participation)
       is_expected.to belong_to(:contact).validate(true)
-      is_expected.to have_many(:remote_phone_call_events)
+      is_expected.to have_many(:remote_phone_call_events).dependent(:restrict_with_error)
     end
 
     it { assert_associations! }
@@ -40,6 +40,55 @@ RSpec.describe PhoneCall do
       end
 
       it { assert_validations! }
+    end
+  end
+
+  describe "defaults" do
+    subject { build(factory) }
+
+    def setup_scenario
+      super
+      subject.valid?
+    end
+
+    def assert_defaults!
+      expect(subject.contact).to eq(subject.callout_participation.contact)
+    end
+
+    it { assert_defaults! }
+  end
+
+  describe "destroying" do
+    let(:factory_attributes) { {} }
+    subject { create(factory, factory_attributes) }
+
+    def setup_scenario
+      super
+      subject.destroy
+    end
+
+    context "allowed to destroy" do
+      it {
+        expect(described_class.find_by_id(subject.id)).to eq(nil)
+      }
+    end
+
+    context "not allowed to destroy" do
+      let(:status) { described_class::STATE_QUEUED }
+      let(:factory_attributes) { { :status => status } }
+
+      it {
+        expect(described_class.find_by_id(subject.id)).to be_present
+        expect(subject.errors[:base]).not_to be_empty
+        expect(
+          subject.errors[:base].first
+        ).to eq(
+          I18n.t!(
+            "activerecord.errors.models.phone_call.attributes.base.restrict_destroy_status",
+            :status => status
+          )
+        )
+      }
     end
   end
 
@@ -162,6 +211,13 @@ RSpec.describe PhoneCall do
   describe "scopes" do
     def assert_scope!
       expect(results).to match_array(asserted_results)
+    end
+
+    describe ".remote_response_has_values(hash)" do
+      include_examples "json_has_values" do
+        let(:scope) { :remote_response_has_values }
+        let(:json_column) { :remote_response }
+      end
     end
 
     describe ".in_last_hours(hours, timestamp_column = :created_at)" do

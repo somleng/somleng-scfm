@@ -19,7 +19,7 @@ class PhoneCall < ApplicationRecord
 
   belongs_to :callout_participation, :optional => true
   belongs_to :contact, :validate => true
-  has_many   :remote_phone_call_events
+  has_many   :remote_phone_call_events, :dependent => :restrict_with_error
 
   include MetadataHelpers
   conditionally_serialize(:remote_response, JSON)
@@ -30,6 +30,10 @@ class PhoneCall < ApplicationRecord
 
   delegate :msisdn, :to => :callout_participation
   delegate :call_flow_logic, :to => :callout_participation, :prefix => true, :allow_nil => true
+  delegate :contact, :to => :callout_participation, :prefix => true, :allow_nil => true
+
+  before_validation :set_defaults, :on => :create
+  before_destroy    :validate_destroy
 
   include AASM
 
@@ -107,6 +111,10 @@ class PhoneCall < ApplicationRecord
     end
   end
 
+  def self.remote_response_has_values(hash)
+    json_has_values(hash, :remote_response)
+  end
+
   def self.with_remote_call_id
     where.not(:remote_call_id => nil)
   end
@@ -160,5 +168,15 @@ class PhoneCall < ApplicationRecord
 
   def inbound?
     remote_direction == TWILIO_DIRECTIONS[:inbound]
+  end
+
+  def set_defaults
+    self.contact ||= callout_participation_contact
+  end
+
+  def validate_destroy
+    return true if created?
+    errors.add(:base, :restrict_destroy_status, :status => status)
+    throw(:abort)
   end
 end

@@ -103,6 +103,19 @@ RSpec.describe "'/callout_populations'" do
 
         it { assert_destroy! }
       end
+
+      context "invalid request" do
+        def setup_scenario
+          create(:callout_participation, :callout_population => callout_population)
+          super
+        end
+
+        def assert_invalid!
+          expect(response.code).to eq("422")
+        end
+
+        it { assert_invalid! }
+      end
     end
   end
 

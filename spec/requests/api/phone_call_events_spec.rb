@@ -10,20 +10,35 @@ RSpec.describe "POST '/api/phone_calls/:phone_call_id/phone_call_events'" do
   let(:event) { nil }
   let(:body) { { :event => event } }
 
-  def setup_scenario
-    super
-    do_request(method, url, body)
-  end
+  context "event=queue" do
+    include SomlengScfm::SpecHelpers::SomlengClientHelpers
 
-  context "valid request" do
     let(:event) { :queue }
-    let(:body) { { :event => event } }
+
+    def asserted_remote_api_endpoint
+      super("Calls")
+    end
+
+    let(:remote_response_params) {
+      {
+        "sid" => "1234",
+      }
+    }
+
+    let(:asserted_remote_response_body) { remote_response_params.to_json }
+
+    def setup_scenario
+      super
+      stub_request(:post, asserted_remote_api_endpoint).to_return(asserted_remote_response)
+      perform_enqueued_jobs { do_request(method, url, body) }
+    end
 
     def assert_created!
       expect(response.code).to eq("201")
       expect(response.headers["Location"]).to eq(api_phone_call_path(phone_call))
-      expect(JSON.parse(response.body)).to eq(JSON.parse(phone_call.reload.to_json))
-      expect(phone_call).to be_queued
+      expect(JSON.parse(response.body)["status"]).to eq("queued")
+      expect(phone_call.reload).to be_remotely_queued
+      expect(phone_call.remotely_queued_at).to be_present
     end
 
     it { assert_created! }
@@ -32,6 +47,11 @@ RSpec.describe "POST '/api/phone_calls/:phone_call_id/phone_call_events'" do
   context "invalid request" do
     let(:event) { :queue_remote }
     let(:factory_attributes) { {:status => PhoneCall::STATE_QUEUED} }
+
+    def setup_scenario
+      super
+      do_request(method, url, body)
+    end
 
     def assert_invalid!
       expect(response.code).to eq("422")

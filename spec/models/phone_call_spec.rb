@@ -37,6 +37,7 @@ RSpec.describe PhoneCall do
 
       def assert_validations!
         is_expected.to validate_uniqueness_of(:remote_call_id).case_insensitive
+        is_expected.to validate_presence_of(:msisdn)
       end
 
       it { assert_validations! }
@@ -52,7 +53,10 @@ RSpec.describe PhoneCall do
     end
 
     def assert_defaults!
+      expect(subject.contact).to be_present
       expect(subject.contact).to eq(subject.callout_participation.contact)
+      expect(subject.msisdn).to be_present
+      expect(subject.msisdn).to eq(subject.callout_participation.msisdn)
     end
 
     it { assert_defaults! }
@@ -124,15 +128,23 @@ RSpec.describe PhoneCall do
       let(:event) { :queue }
 
       it { assert_transitions! }
+
+      it("should broadcast") {
+        assert_broadcasted!(:phone_call_queued) { subject.queue! }
+      }
     end
 
     describe "#queue_remote!" do
       let(:current_status) { :queued }
       let(:event) { :queue_remote }
 
-      def assert_transitions!
-        super
-        expect(subject.remotely_queued_at).to be_present
+      context "touching timestamp" do
+        def setup_scenario
+          super
+          subject.queue_remote!
+        end
+
+        it { expect(subject.remotely_queued_at).to be_present }
       end
 
       context "by default" do
@@ -201,11 +213,15 @@ RSpec.describe PhoneCall do
   end
 
   describe "#remote_response" do
-    def assert_remote_response!
-      expect(subject.remote_response).to eq({})
-    end
+    it { expect(subject.remote_response).to eq({}) }
+  end
 
-    it { assert_remote_response! }
+  describe "#remote_request_params" do
+    it { expect(subject.remote_request_params).to eq({}) }
+  end
+
+  describe "#remote_queue_response" do
+    it { expect(subject.remote_queue_response).to eq({}) }
   end
 
   describe "scopes" do

@@ -22,15 +22,24 @@ class PhoneCall < ApplicationRecord
   has_many   :remote_phone_call_events, :dependent => :restrict_with_error
 
   include MetadataHelpers
+  include Wisper::Publisher
+  include MsisdnHelpers
+
   conditionally_serialize(:remote_response, JSON)
+  conditionally_serialize(:remote_request_params, JSON)
+  conditionally_serialize(:remote_queue_response, JSON)
 
   validates :remote_call_id, :uniqueness => {:case_sensitive => false, :allow_nil => true}
   validates :status, :presence => true
   validates :callout_participation, :presence => true, :unless => :inbound?
 
-  delegate :msisdn, :to => :callout_participation
   delegate :call_flow_logic, :to => :callout_participation, :prefix => true, :allow_nil => true
-  delegate :contact, :to => :callout_participation, :prefix => true, :allow_nil => true
+
+  delegate :contact,
+           :msisdn,
+           :to => :callout_participation,
+           :prefix => true,
+           :allow_nil => true
 
   before_validation :set_defaults, :on => :create
   before_destroy    :validate_destroy
@@ -50,14 +59,14 @@ class PhoneCall < ApplicationRecord
     state :canceled
     state :completed
 
-    event :queue do
+    event :queue, :after_commit => :publish_queued do
       transitions(
         :from => :created,
         :to => :queued
       )
     end
 
-    event :queue_remote, :after => :touch_remotely_queued_at do
+    event :queue_remote, :after_commit => :touch_remotely_queued_at do
       transitions(
         :from => :queued,
         :to => :remotely_queued,
@@ -146,7 +155,7 @@ class PhoneCall < ApplicationRecord
   private
 
   def touch_remotely_queued_at
-    self.remotely_queued_at = Time.now
+    touch(:remotely_queued_at)
   end
 
   def remote_status_in_progress?
@@ -172,11 +181,16 @@ class PhoneCall < ApplicationRecord
 
   def set_defaults
     self.contact ||= callout_participation_contact
+    self.msisdn  ||= callout_participation_msisdn
   end
 
   def validate_destroy
     return true if created?
     errors.add(:base, :restrict_destroy_status, :status => status)
     throw(:abort)
+  end
+
+  def publish_queued
+    broadcast(:phone_call_queued, self)
   end
 end

@@ -1,6 +1,14 @@
 class Api::PhoneCallEventsController < Api::ResourceEventsController
   private
 
+  def setup_resource
+    subscribe_listeners
+  end
+
+  def subscribe_listeners
+    phone_call.subscribe(PhoneCallObserver.new)
+  end
+
   def parent
     phone_call
   end

@@ -38,17 +38,10 @@ FactoryGirl.define do
   end
 
   factory :phone_call do
-    transient do
-      callout nil
-    end
+    outbound
 
-    after(:build) do |phone_call, evaluator|
-      phone_call.callout_participation ||= build(
-        :callout_participation,
-        {
-          :callout => evaluator.callout,
-        }.compact
-      )
+    trait :outbound do
+      callout_participation
     end
 
     trait :not_recently_created do

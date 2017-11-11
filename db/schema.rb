@@ -56,6 +56,7 @@ ActiveRecord::Schema.define(version: 20171101092942) do
     t.integer "callout_participation_id"
     t.integer "contact_id", null: false
     t.string "status", null: false
+    t.string "msisdn", null: false
     t.string "remote_call_id"
     t.string "remote_status"
     t.string "remote_direction"
@@ -63,6 +64,8 @@ ActiveRecord::Schema.define(version: 20171101092942) do
     t.integer "lock_version"
     t.text "metadata", default: "{}", null: false
     t.text "remote_response", default: "{}", null: false
+    t.text "remote_request_params", default: "{}", null: false
+    t.text "remote_queue_response", default: "{}", null: false
     t.datetime "remotely_queued_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

@@ -15,7 +15,9 @@ class Filter::Resource::Base < Filter::Base
   end
 
   def metadata_attribute_filter
-    @metadata_attribute_filter ||= Filter::Attribute::Metadata.new(options, params)
+    @metadata_attribute_filter ||= Filter::Attribute::JSON.new(
+      {:json_attribute => :metadata}.merge(options), params
+    )
   end
 
   def self.attribute_filters

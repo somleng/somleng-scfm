@@ -1,12 +1,12 @@
 require 'rails_helper'
 
-RSpec.describe Event::CalloutPopulation do
-  let(:eventable_factory) { :callout_population }
+RSpec.describe Event::BatchOperation do
+  let(:eventable_factory) { :batch_operation }
 
   it_behaves_like("resource_event") do
     let(:event) { "queue" }
-    let(:asserted_current_status) { CalloutPopulation::STATE_PREVIEW }
-    let(:asserted_new_status) { CalloutPopulation::STATE_QUEUED }
+    let(:asserted_current_status) { BatchOperation::Base::STATE_PREVIEW }
+    let(:asserted_new_status) { BatchOperation::Base::STATE_QUEUED }
   end
 
   describe "validations" do
@@ -20,17 +20,17 @@ RSpec.describe Event::CalloutPopulation do
     end
 
     context "is queued" do
-      let(:status) { CalloutPopulation::STATE_QUEUED }
+      let(:status) { BatchOperation::Base::STATE_QUEUED }
       it { assert_invalid! }
     end
 
-    context "is populating" do
-      let(:status) { CalloutPopulation::STATE_POPULATING }
+    context "is running" do
+      let(:status) { BatchOperation::Base::STATE_RUNNING }
       it { assert_invalid! }
     end
 
-    context "is populated" do
-      let(:status) { CalloutPopulation::STATE_POPULATED }
+    context "is finished" do
+      let(:status) { BatchOperation::Base::STATE_FINISHED }
 
       context "can transition" do
         it { is_expected.to be_valid }

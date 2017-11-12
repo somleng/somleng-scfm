@@ -19,7 +19,6 @@ class CalloutStatistics
 
   delegate :completed,
            :created,
-           :scheduling,
            :fetching_status,
            :waiting_for_completion,
            :queued,
@@ -34,7 +33,6 @@ class CalloutStatistics
 
   delegate :count, :to => :calls_completed, :prefix => true
   delegate :count, :to => :calls_created, :prefix => true
-  delegate :count, :to => :calls_scheduling, :prefix => true
   delegate :count, :to => :calls_fetching_status, :prefix => true
   delegate :count, :to => :calls_waiting_for_completion, :prefix => true
   delegate :count, :to => :calls_queued, :prefix => true
@@ -61,7 +59,6 @@ class CalloutStatistics
       :callout_participations_completed => nil,
       :calls_completed => nil,
       :calls_initialized => nil,
-      :calls_scheduling => nil,
       :calls_fetching_status => nil,
       :calls_waiting_for_completion => nil,
       :calls_queued => nil,
@@ -88,7 +85,6 @@ class CalloutStatistics
       :callout_participations_completed => :callout_participations_completed_count,
       :calls_completed => :calls_completed_count,
       :calls_initialized => :calls_created_count,
-      :calls_scheduling => :calls_scheduling_count,
       :calls_fetching_status => :calls_fetching_status_count,
       :calls_waiting_for_completion => :calls_waiting_for_completion_count,
       :calls_queued => :calls_queued_count,

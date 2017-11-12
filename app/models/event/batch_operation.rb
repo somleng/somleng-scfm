@@ -1,4 +1,4 @@
-class Event::CalloutPopulation < Event::Base
+class Event::BatchOperation < Event::Base
   private
 
   def valid_events

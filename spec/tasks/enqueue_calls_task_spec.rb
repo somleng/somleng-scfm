@@ -10,6 +10,7 @@ RSpec.describe EnqueueCallsTask do
   describe "InstanceMethods" do
     let(:callout_status) { :running }
     let(:callout) { create(:callout, :status => callout_status) }
+    let(:callout_participation) { create(:callout_participation, :callout => callout) }
     let(:max_calls_to_enqueue) { nil }
     let(:max_calls_per_period) { nil }
     let(:max_calls_per_period_hours) { nil }
@@ -199,7 +200,11 @@ RSpec.describe EnqueueCallsTask do
         def setup_scenario
           callout_participations_to_call
           create(:callout_participation) # callout not running
-          create_list(:phone_call, num_queued_calls, :status => :queued, :callout => callout)
+          create_list(
+            :phone_call, num_queued_calls,
+            :status => :queued,
+            :callout_participation => callout_participation
+          )
           super
         end
 

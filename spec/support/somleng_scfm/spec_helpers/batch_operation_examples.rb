@@ -1,17 +1,10 @@
-require 'rails_helper'
-
-RSpec.describe CalloutPopulation do
-  let(:factory) { :callout_population }
+RSpec.shared_examples_for "batch_operation" do
   include_examples "has_metadata"
 
-  describe "associations" do
-    def assert_associations!
-      is_expected.to belong_to(:callout)
-      is_expected.to have_many(:callout_participations).dependent(:restrict_with_error)
-      is_expected.to have_many(:contacts)
-    end
-
-    it { assert_associations! }
+  describe "validations" do
+    it {
+      is_expected.to validate_presence_of(:type)
+    }
   end
 
   describe "state_machine" do
@@ -31,7 +24,7 @@ RSpec.describe CalloutPopulation do
       let(:event) { :queue }
 
       it("should broadcast") {
-        assert_broadcasted!(:callout_population_queued) { subject.queue! }
+        assert_broadcasted!(:batch_operation_queued) { subject.queue! }
       }
 
       it { assert_transitions! }
@@ -39,34 +32,30 @@ RSpec.describe CalloutPopulation do
 
     describe "#start!" do
       let(:current_status) { :queued }
-      let(:asserted_new_status) { :populating }
+      let(:asserted_new_status) { :running }
       let(:event) { :start }
 
       it { assert_transitions! }
     end
 
     describe "#finish!" do
-      let(:current_status) { :populating }
-      let(:asserted_new_status) { :populated }
+      let(:current_status) { :running }
+      let(:asserted_new_status) { :finished }
       let(:event) { :finish }
 
       it { assert_transitions! }
     end
 
     describe "#requeue!" do
-      let(:current_status) { :populated }
+      let(:current_status) { :finished }
       let(:asserted_new_status) { :queued }
       let(:event) { :requeue }
 
       it("should broadcast") {
-        assert_broadcasted!(:callout_population_queued) { subject.requeue! }
+        assert_broadcasted!(:batch_operation_queued) { subject.requeue! }
       }
 
       it { assert_transitions! }
     end
-  end
-
-  describe "#contact_filter_params" do
-    it { expect(subject.contact_filter_params).to eq({}) }
   end
 end

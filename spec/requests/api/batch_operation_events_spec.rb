@@ -1,22 +1,21 @@
 require 'rails_helper'
 
-RSpec.describe "POST '/api/callout_populations/:id/events'" do
+RSpec.describe "POST '/api/batch_operations/:batch_operation_id/batch_operation_events'" do
   include SomlengScfm::SpecHelpers::RequestHelpers
 
   let(:factory_attributes) { {} }
-  let(:callout_population) { create(:callout_population, factory_attributes) }
-  let(:eventable) { callout_population }
-  let(:url) { api_callout_population_callout_population_events_path(eventable) }
+  let(:batch_operation) { create(:batch_operation, factory_attributes) }
+  let(:eventable) { batch_operation }
+  let(:url) { api_batch_operation_batch_operation_events_path(eventable) }
 
   it_behaves_like "api_resource_event" do
-    let(:eventable_path) { api_callout_population_path(eventable) }
+    let(:eventable_path) { api_batch_operation_path(eventable) }
     let(:asserted_new_status) { "queued" }
     let(:event) { "queue" }
   end
 
   context "queuing" do
     let(:body) { {:event => event} }
-    let(:contact) { create(:contact) }
 
     let(:factory_attributes) {
       {
@@ -26,13 +25,11 @@ RSpec.describe "POST '/api/callout_populations/:id/events'" do
 
     def setup_scenario
       super
-      contact
       perform_enqueued_jobs { do_request(:post, url, body) }
     end
 
-    def assert_populated!
-      expect(callout_population.reload).to be_populated
-      expect(callout_population.contacts).to match_array([contact])
+    def assert_finished!
+      expect(batch_operation.reload).to be_finished
     end
 
     def assert_invalid!
@@ -43,20 +40,20 @@ RSpec.describe "POST '/api/callout_populations/:id/events'" do
       let(:event) { "queue" }
 
       context "invalid request" do
-        let(:status) { CalloutPopulation::STATE_POPULATED }
+        let(:status) { BatchOperation::Base::STATE_FINISHED }
         it { assert_invalid! }
       end
 
       context "valid request" do
-        let(:status) { CalloutPopulation::STATE_PREVIEW }
-        it { assert_populated! }
+        let(:status) { BatchOperation::Base::STATE_PREVIEW }
+        it { assert_finished! }
       end
     end
 
     context "event=requeue" do
-      let(:status) { CalloutPopulation::STATE_POPULATED }
+      let(:status) { BatchOperation::Base::STATE_FINISHED }
       let(:event) { "requeue" }
-      it { assert_populated! }
+      it { assert_finished! }
     end
   end
 end

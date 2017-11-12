@@ -15,7 +15,6 @@ RSpec.describe CalloutStatistics do
         "callout_participations_completed",
         "calls_completed",
         "calls_initialized",
-        "calls_scheduling",
         "calls_fetching_status",
         "calls_waiting_for_completion",
         "calls_queued",

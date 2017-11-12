@@ -1,20 +1,20 @@
-class CalloutPopulation < ApplicationRecord
+class BatchOperation::Base < ApplicationRecord
+  self.table_name = :batch_operations
+
   include MetadataHelpers
   include Wisper::Publisher
 
-  conditionally_serialize(:contact_filter_params, JSON)
+  conditionally_serialize(:parameters, JSON)
 
-  has_many :callout_participations, :dependent => :restrict_with_error
-  has_many :contacts, :through => :callout_participations
-  belongs_to :callout
+  validates :type, :presence => true
 
   include AASM
 
   aasm :column => :status do
     state :preview, :initial => true
     state :queued
-    state :populating
-    state :populated
+    state :running
+    state :finished
 
     event :queue, :after_commit => :publish_queued do
       transitions(
@@ -26,20 +26,20 @@ class CalloutPopulation < ApplicationRecord
     event :start do
       transitions(
         :from => :queued,
-        :to => :populating
+        :to => :running
       )
     end
 
     event :finish do
       transitions(
-        :from => :populating,
-        :to => :populated
+        :from => :running,
+        :to => :finished
       )
     end
 
     event :requeue, :after_commit => :publish_queued do
       transitions(
-        :from => :populated,
+        :from => :finished,
         :to => :queued
       )
     end
@@ -48,6 +48,6 @@ class CalloutPopulation < ApplicationRecord
   private
 
   def publish_queued
-    broadcast(:callout_population_queued, self)
+    broadcast(:batch_operation_queued, self)
   end
 end

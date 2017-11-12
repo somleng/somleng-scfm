@@ -32,8 +32,10 @@ FactoryGirl.define do
     msisdn { generate(:somali_msisdn) }
   end
 
-  factory :callout_population do
-    callout
+  factory :batch_operation_base, :class => BatchOperation::Base do
+    factory :callout_population, :aliases => [:batch_operation], :class => BatchOperation::CalloutPopulation do
+      callout
+    end
   end
 
   factory :callout_participation do

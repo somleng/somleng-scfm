@@ -8,7 +8,10 @@ class CalloutParticipation < ApplicationRecord
 
   belongs_to :callout
   belongs_to :contact
-  belongs_to :callout_population, :optional => true
+  belongs_to :callout_population,
+             :optional => true,
+             :class_name => "BatchOperation::CalloutPopulation"
+
   has_many :phone_calls
 
   validates :contact_id,

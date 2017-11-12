@@ -6,6 +6,6 @@ class Api::FilteredContactsController < Api::FilteredController
   end
 
   def callout_population
-    @callout_population ||= CalloutPopulation.find(params[:callout_population_id])
+    @callout_population ||= BatchOperation::CalloutPopulation.find(params[:callout_population_id])
   end
 end

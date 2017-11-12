@@ -189,15 +189,16 @@ RSpec.describe "Contacts" do
         }
 
         let(:contact_factory_attributes) { { :metadata => contact_metadata } }
-        let(:callout_population_factory_attributes) {
+
+        let(:contact_filter_params) {
           {
-            :contact_filter_params => {
-              :metadata => {
-                "province" => "Phnom Penh"
-              }
+            :metadata => {
+              "province" => "Phnom Penh"
             }
           }
         }
+
+        let(:callout_population_factory_attributes) { { :contact_filter_params => contact_filter_params } }
 
         it { assert_filtered! }
       end

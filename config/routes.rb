@@ -9,15 +9,14 @@ Rails.application.routes.draw do
 
     resources :callouts, :except => [:new, :edit] do
       resources :callout_events, :only => :create
-      resources :callout_populations, :only => [:create, :index]
       resources :callout_participations, :only => [:index, :create]
       resources :contacts, :only => :index
       resources :phone_calls, :only => :index
       resource :callout_statistics, :only => :show
+      resources :batch_operations, :only => [:create, :index]
     end
 
-    resources :callout_populations, :except => [:new, :edit, :create] do
-      resources :callout_population_events, :only => :create
+    resources :callout_populations, :only => [] do
       resources :contacts, :only => :index
 
       namespace :preview, :module => "callout_population_previews" do
@@ -25,6 +24,10 @@ Rails.application.routes.draw do
       end
 
       resources :callout_participations, :only => :index
+    end
+
+    resources :batch_operations, :except => [:new, :edit] do
+      resources :batch_operation_events, :only => :create
     end
 
     resources :callout_participations, :except => [:new, :edit, :create] do

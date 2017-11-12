@@ -32,6 +32,7 @@ RSpec.describe PhoneCall do
       context "remote_request_params" do
         subject { build(factory, :remote_request_params => {"foo" => "bar"}) }
         it { is_expected.not_to be_valid }
+        it { is_expected.to validate_presence_of(:remote_request_params) }
       end
 
       it { assert_validations! }

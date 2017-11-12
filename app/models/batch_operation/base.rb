@@ -1,6 +1,7 @@
 class BatchOperation::Base < ApplicationRecord
   self.table_name = :batch_operations
 
+  extend HashAttrAccessor
   include MetadataHelpers
   include Wisper::Publisher
 

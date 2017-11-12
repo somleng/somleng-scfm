@@ -32,7 +32,9 @@ class PhoneCall < ApplicationRecord
   validates :remote_call_id, :uniqueness => {:case_sensitive => false, :allow_nil => true}
   validates :status, :presence => true
   validates :callout_participation, :presence => true, :unless => :inbound?
-  validates :remote_request_params, :twilio_request_params => true
+  validates :remote_request_params,
+            :presence => true,
+            :twilio_request_params => true
 
   delegate :call_flow_logic, :to => :callout_participation, :prefix => true, :allow_nil => true
 

@@ -14,20 +14,7 @@ RSpec.describe BatchOperation::CalloutPopulation do
     it { assert_associations! }
   end
 
-  describe "#contact_filter_params" do
-    it { expect(subject.contact_filter_params).to eq({}) }
-  end
-
-  describe "#contact_filter_params=(value)" do
-    let(:value) { { "foo" => "bar" } }
-
-    def setup_scenario
-      super
-      subject.contact_filter_params = value
-    end
-
-    it { expect(subject.contact_filter_params).to eq(value) }
-  end
+  include_examples("hash_attr_accessor", :contact_filter_params)
 
   describe "#run!" do
     let(:contact) { create(:contact) }

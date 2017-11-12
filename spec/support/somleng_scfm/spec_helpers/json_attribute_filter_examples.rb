@@ -6,7 +6,6 @@ RSpec.shared_examples_for "json_attribute_filter" do
   let(:resource) { create(filterable_factory, filterable_attribute => json_data) }
 
   def setup_scenario
-    super
     resource
   end
 

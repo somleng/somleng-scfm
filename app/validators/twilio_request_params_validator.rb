@@ -1,6 +1,6 @@
 class TwilioRequestParamsValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
-    if ((value || {}).keys - allowed_parameters).any?
+    if value && (!value.is_a?(Hash) || ((value || {}).keys - allowed_parameters).any?)
       record.errors.add(attribute, :inclusion)
     end
   end

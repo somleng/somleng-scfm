@@ -7,13 +7,8 @@ class BatchOperation::CalloutPopulation < BatchOperation::Base
 
   has_many :contacts, :through => :callout_participations
 
-  def contact_filter_params
-    parameters["contact_filter_params"] || {}
-  end
-
-  def contact_filter_params=(value)
-    parameters["contact_filter_params"] = value
-  end
+  hash_attr_accessor :contact_filter_params,
+                     :attribute => :parameters
 
   def run!
     callout_population_preview.contacts.find_each do |contact|

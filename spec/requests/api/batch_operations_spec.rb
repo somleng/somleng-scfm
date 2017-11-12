@@ -17,26 +17,28 @@ RSpec.describe "Batch Operations" do
 
     describe "POST" do
       let(:method) { :post }
-      let(:type) { "BatchOperation::CalloutPopulation" }
+      let(:type) { "BatchOperation::PhoneCallCreate" }
 
       let(:body) {
         {
           :metadata => metadata,
           :parameters => parameters,
-          :type => type,
+          :type => type
         }
       }
 
       context "successful request" do
         let(:asserted_created_batch_operation) { BatchOperation::Base.last }
         let(:parsed_response) { JSON.parse(response.body) }
+        let(:remote_request_params) { generate(:twilio_request_params) }
+        let(:parameters) { { "remote_request_params" => remote_request_params } }
 
         def assert_created!
           expect(response.code).to eq("201")
           expect(parsed_response).to eq(JSON.parse(asserted_created_batch_operation.to_json))
           expect(parsed_response["metadata"]).to eq(metadata)
           expect(parsed_response["parameters"]).to eq(parameters)
-          expect(asserted_created_batch_operation).to be_a(BatchOperation::CalloutPopulation)
+          expect(asserted_created_batch_operation).to be_a(BatchOperation::PhoneCallCreate)
         end
 
         it { assert_created! }

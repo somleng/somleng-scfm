@@ -36,6 +36,10 @@ FactoryGirl.define do
     factory :callout_population, :aliases => [:batch_operation], :class => BatchOperation::CalloutPopulation do
       callout
     end
+
+    factory :phone_call_create_batch_operation, :class => BatchOperation::PhoneCallCreate do
+      remote_request_params { generate(:twilio_request_params) }
+    end
   end
 
   factory :callout_participation do
@@ -48,6 +52,7 @@ FactoryGirl.define do
 
     trait :outbound do
       callout_participation
+      remote_request_params { generate(:twilio_request_params) }
     end
 
     trait :not_recently_created do

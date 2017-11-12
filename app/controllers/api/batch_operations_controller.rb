@@ -2,7 +2,8 @@ class Api::BatchOperationsController < Api::FilteredController
   respond_to :json
 
   PERMITTED_TYPES = [
-    "BatchOperation::CalloutPopulation"
+    "BatchOperation::CalloutPopulation",
+    "BatchOperation::PhoneCallCreate"
   ]
 
   private

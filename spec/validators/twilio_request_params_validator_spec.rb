@@ -24,8 +24,13 @@ RSpec.describe TwilioRequestParamsValidator do
     it { is_expected.not_to be_valid }
   end
 
-  context "with valid params", :focus  do
+  context "with valid params" do
     let(:request_params) { Hash[[generate(:twilio_request_params).first]] }
     it { is_expected.to be_valid }
+  end
+
+  context "not passing a hash" do
+    let(:request_params) { "foo" }
+    it { is_expected.not_to be_valid }
   end
 end

@@ -1,4 +1,10 @@
 class Api::PhoneCallsController < Api::FilteredController
+  include BatchOperationResource
+
+  PERMITTED_BATCH_OPERATION_TYPES = [
+    "BatchOperation::PhoneCallCreate"
+  ]
+
   private
 
   def find_resources_association_chain
@@ -8,6 +14,8 @@ class Api::PhoneCallsController < Api::FilteredController
       callout.phone_calls
     elsif params[:contact_id]
       contact.phone_calls
+    elsif params[:batch_operation_id]
+      batch_operation.phone_calls
     else
       association_chain
     end
@@ -43,5 +51,9 @@ class Api::PhoneCallsController < Api::FilteredController
 
   def contact
     @contact ||= Contact.find(params[:contact_id])
+  end
+
+  def permitted_batch_operation_types
+    PERMITTED_BATCH_OPERATION_TYPES
   end
 end

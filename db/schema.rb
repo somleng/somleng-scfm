@@ -56,6 +56,7 @@ ActiveRecord::Schema.define(version: 20171101092942) do
   create_table "phone_calls", force: :cascade do |t|
     t.integer "callout_participation_id"
     t.integer "contact_id", null: false
+    t.integer "batch_operation_id"
     t.string "status", null: false
     t.string "msisdn", null: false
     t.string "remote_call_id"
@@ -70,6 +71,7 @@ ActiveRecord::Schema.define(version: 20171101092942) do
     t.datetime "remotely_queued_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["batch_operation_id"], name: "index_phone_calls_on_batch_operation_id"
     t.index ["callout_participation_id"], name: "index_phone_calls_on_callout_participation_id"
     t.index ["contact_id"], name: "index_phone_calls_on_contact_id"
     t.index ["remote_call_id"], name: "index_phone_calls_on_remote_call_id", unique: true

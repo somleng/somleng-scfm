@@ -157,50 +157,68 @@ RSpec.describe "Contacts" do
       it { assert_filtered! }
     end
 
-    describe "'/api/callout_population/:callout_population_id'" do
-      let(:callout_population_factory_attributes) { {} }
-      let(:callout_population) {
-        create(:callout_population, callout_population_factory_attributes)
+    describe "'/api/batch_operations/:batch_operation_id'" do
+      let(:batch_operation_factory_attributes) { {} }
+      let(:batch_operation) {
+        create(batch_operation_factory, batch_operation_factory_attributes)
       }
 
       describe "GET '/contacts'" do
-        let(:url) { api_callout_population_contacts_path(callout_population) }
+        let(:url) { api_batch_operation_contacts_path(batch_operation) }
 
-        def callout_participation_factory_attributes
-          super.merge(:callout_population => callout_population)
+        context "BatchOperation::CalloutPopulation" do
+          let(:batch_operation_factory) { :callout_population }
+
+          def callout_participation_factory_attributes
+            super.merge(:callout_population => batch_operation)
+          end
+
+          def setup_scenario
+            callout_participation
+            super
+          end
+
+          it { assert_filtered! }
         end
 
-        def setup_scenario
-          callout_participation
-          super
-        end
+        context "BatchOperation::PhoneCallCreate" do
+          let(:batch_operation_factory) { :phone_call_create_batch_operation }
 
-        it { assert_filtered! }
+          def setup_scenario
+            create(
+              :phone_call,
+              :callout_participation => callout_participation,
+              :batch_operation => batch_operation
+            )
+            super
+          end
+
+          it { assert_filtered! }
+        end
       end
 
       describe  "GET '/preview/contacts'" do
-        let(:url) { api_callout_population_preview_contacts_path(callout_population) }
+        let(:url) { api_batch_operation_preview_contacts_path(batch_operation) }
 
-        let(:contact_metadata) {
-          {
-            "province" => "Phnom Penh",
-            "commune" => "Chhbar Ambov"
-          }
-        }
+        context "BatchOperation::CalloutPopulation" do
+          let(:batch_operation_factory) { :callout_population }
+          let(:contact_factory_attributes) { { :metadata => {"foo" => "bar", "bar" => "foo"} } }
+          let(:contact_filter_params) { contact_factory_attributes.slice(:metadata) }
+          let(:batch_operation_factory_attributes) { { :contact_filter_params => contact_filter_params } }
 
-        let(:contact_factory_attributes) { { :metadata => contact_metadata } }
+          it { assert_filtered! }
+        end
 
-        let(:contact_filter_params) {
-          {
-            :metadata => {
-              "province" => "Phnom Penh"
-            }
-          }
-        }
+        context "BatchOperation::PhoneCallCreate" do
+          let(:batch_operation_factory) { :phone_call_create_batch_operation }
 
-        let(:callout_population_factory_attributes) { { :contact_filter_params => contact_filter_params } }
+          def setup_scenario
+            callout_participation
+            super
+          end
 
-        it { assert_filtered! }
+          it { assert_filtered! }
+        end
       end
     end
   end

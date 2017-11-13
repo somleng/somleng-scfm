@@ -7,10 +7,15 @@ RSpec.describe "Callout Participations" do
   let(:body) { {} }
   let(:factory_attributes) { {} }
   let(:callout_participation) { create(:callout_participation, factory_attributes) }
+  let(:execute_request_before) { true }
+
+  def execute_request
+    do_request(method, url, body)
+  end
 
   def setup_scenario
     super
-    do_request(method, url, body)
+    execute_request if execute_request_before
   end
 
   describe "'/callout_participations'" do
@@ -60,10 +65,49 @@ RSpec.describe "Callout Participations" do
     end
 
     describe "GET '/api/callout_population/:callout_population_id/callout_participations'" do
-      let(:callout_population) { create(:callout_population) }
-      let(:url) { api_callout_population_callout_participations_path(callout_population) }
-      let(:factory_attributes) { { :callout_population => callout_population } }
-      it { assert_filtered! }
+      let(:url) { api_batch_operation_callout_participations_path(batch_operation) }
+      let(:batch_operation) { create(batch_operation_factory) }
+
+      context "BatchOperation::CalloutPopulation" do
+        let(:batch_operation_factory) { :callout_population }
+        let(:factory_attributes) { { :callout_population => batch_operation } }
+        it { assert_filtered! }
+      end
+
+      context "BatchOperation::PhoneCallCreate" do
+        let(:batch_operation_factory) { :phone_call_create_batch_operation }
+        let(:phone_call) {
+          build(
+            :phone_call,
+            :batch_operation => batch_operation
+          )
+        }
+
+        let(:factory_attributes) { { :phone_calls => [phone_call] } }
+
+        it { assert_filtered! }
+      end
+    end
+
+    describe "GET '/api/batch_operations/:batch_operation_id/preview/callout_participations'" do
+      let(:url) { api_batch_operation_preview_callout_participations_path(batch_operation) }
+      let(:factory_attributes) { { :metadata => {"foo" => "bar", "bar" => "foo"} } }
+      let(:batch_operation) {
+        create(
+          :phone_call_create_batch_operation,
+          :callout_participation_filter_params => factory_attributes.slice(:metadata)
+        )
+      }
+
+      context "successful request" do
+        it { assert_filtered! }
+      end
+
+      context "invalid request" do
+        let(:execute_request_before) { false }
+        let(:batch_operation) { create(:callout_population) }
+        it {expect { execute_request }.to raise_error(ActiveRecord::RecordNotFound) }
+      end
     end
   end
 

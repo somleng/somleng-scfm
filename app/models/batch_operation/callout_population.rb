@@ -11,9 +11,13 @@ class BatchOperation::CalloutPopulation < BatchOperation::Base
                      :attribute => :parameters
 
   def run!
-    callout_population_preview.contacts.find_each do |contact|
+    preview.contacts.find_each do |contact|
       create_callout_participation(contact)
     end
+  end
+
+  def preview
+    @preview ||= Preview::CalloutPopulation.new(:previewable => self)
   end
 
   private
@@ -22,12 +26,6 @@ class BatchOperation::CalloutPopulation < BatchOperation::Base
     CalloutParticipation.create(
       :contact => contact,
       :callout => callout,
-      :callout_population => self
-    )
-  end
-
-  def callout_population_preview
-    @callout_population_preview ||= CalloutPopulationPreview.new(
       :callout_population => self
     )
   end

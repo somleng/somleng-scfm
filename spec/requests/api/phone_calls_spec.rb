@@ -6,10 +6,15 @@ RSpec.describe "Phone Calls" do
   let(:body) { {} }
   let(:factory_attributes) { {} }
   let(:phone_call) { create(:phone_call, factory_attributes) }
+  let(:execute_request_before) { true }
+
+  def execute_request
+    do_request(method, url, body)
+  end
 
   def setup_scenario
     super
-    do_request(method, url, body)
+    execute_request if execute_request_before
   end
 
   describe "GET '/phone_calls'" do
@@ -143,6 +148,22 @@ RSpec.describe "Phone Calls" do
       let(:url) { api_contact_phone_calls_path(contact) }
       let(:factory_attributes) { { :contact => contact } }
       it { assert_filtered! }
+    end
+
+    describe "GET '/api/batch_operations/:batch_operation_id/phone_calls'" do
+      let(:url) { api_batch_operation_phone_calls_path(batch_operation) }
+
+      context "valid request" do
+        let(:batch_operation) { create(:phone_call_create_batch_operation) }
+        let(:factory_attributes) { { :batch_operation => batch_operation } }
+        it { assert_filtered! }
+      end
+
+      context "invalid request" do
+        let(:execute_request_before) { false }
+        let(:batch_operation) { create(:callout_population) }
+        it { expect { execute_request }.to raise_error(ActiveRecord::RecordNotFound) }
+      end
     end
   end
 end

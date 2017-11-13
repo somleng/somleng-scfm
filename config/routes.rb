@@ -16,18 +16,16 @@ Rails.application.routes.draw do
       resources :batch_operations, :only => [:create, :index]
     end
 
-    resources :callout_populations, :only => [] do
-      resources :contacts, :only => :index
-
-      namespace :preview, :module => "callout_population_previews" do
-        resources :contacts, :only => :index
-      end
-
-      resources :callout_participations, :only => :index
-    end
-
     resources :batch_operations, :except => [:new, :edit] do
       resources :batch_operation_events, :only => :create
+      resources :callout_participations, :only => :index
+      resources :contacts, :only => :index
+      resources :phone_calls, :only => :index
+
+      namespace :preview, :module => "batch_operation_preview" do
+        resources :callout_participations, :only => :index
+        resources :contacts, :only => :index
+      end
     end
 
     resources :callout_participations, :except => [:new, :edit, :create] do

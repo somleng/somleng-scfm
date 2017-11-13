@@ -8,6 +8,7 @@ RSpec.describe PhoneCall do
     def assert_associations!
       is_expected.to belong_to(:callout_participation)
       is_expected.to belong_to(:contact).validate(true)
+      is_expected.to belong_to(:batch_operation)
       is_expected.to have_many(:remote_phone_call_events).dependent(:restrict_with_error)
     end
 

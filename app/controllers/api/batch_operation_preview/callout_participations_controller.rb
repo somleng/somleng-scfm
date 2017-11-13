@@ -1,15 +1,14 @@
-class Api::FilteredContactsController < Api::FilteredController
+class Api::BatchOperationPreview::CalloutParticipationsController < Api::FilteredController
   include BatchOperationResource
 
   PERMITTED_BATCH_OPERATION_TYPES = [
-    "BatchOperation::CalloutPopulation",
     "BatchOperation::PhoneCallCreate"
   ]
 
   private
 
-  def filter_class
-    Filter::Resource::Contact
+  def find_resources_association_chain
+    batch_operation.preview.callout_participations
   end
 
   def permitted_batch_operation_types

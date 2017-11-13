@@ -2,8 +2,8 @@ class Api::ContactsController < Api::FilteredContactsController
   private
 
   def find_resources_association_chain
-    if params[:callout_population_id]
-      callout_population.contacts
+    if params[:batch_operation_id]
+      batch_operation.contacts
     elsif params[:callout_id]
       callout.contacts
     else

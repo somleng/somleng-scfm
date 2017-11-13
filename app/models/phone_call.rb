@@ -18,6 +18,8 @@ class PhoneCall < ApplicationRecord
   }
 
   belongs_to :callout_participation, :optional => true
+  belongs_to :batch_operation, :class_name => "BatchOperation::PhoneCallCreate",
+                               :optional => true
   belongs_to :contact, :validate => true
   has_many   :remote_phone_call_events, :dependent => :restrict_with_error
 

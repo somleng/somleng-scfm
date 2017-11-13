@@ -1,4 +1,11 @@
 class Api::CalloutParticipationsController < Api::FilteredController
+  include BatchOperationResource
+
+  PERMITTED_BATCH_OPERATION_TYPES = [
+    "BatchOperation::CalloutPopulation",
+    "BatchOperation::PhoneCallCreate"
+  ]
+
   private
 
   def build_resource_association_chain
@@ -10,8 +17,8 @@ class Api::CalloutParticipationsController < Api::FilteredController
       callout.callout_participations
     elsif params[:contact_id]
       contact.callout_participations
-    elsif params[:callout_population_id]
-      callout_population.callout_participations
+    elsif params[:batch_operation_id]
+      batch_operation.callout_participations
     else
       association_chain
     end
@@ -33,8 +40,8 @@ class Api::CalloutParticipationsController < Api::FilteredController
     @contact ||= Contact.find(params[:contact_id])
   end
 
-  def callout_population
-    @callout_population ||= BatchOperation::CalloutPopulation.find(params[:callout_population_id])
+  def permitted_batch_operation_types
+    PERMITTED_BATCH_OPERATION_TYPES
   end
 
   def permitted_build_params

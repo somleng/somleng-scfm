@@ -40,6 +40,9 @@ FactoryGirl.define do
     factory :phone_call_create_batch_operation, :class => BatchOperation::PhoneCallCreate do
       remote_request_params { generate(:twilio_request_params) }
     end
+
+    factory :phone_call_queue_batch_operation, :class => BatchOperation::PhoneCallQueue do
+    end
   end
 
   factory :callout_participation do

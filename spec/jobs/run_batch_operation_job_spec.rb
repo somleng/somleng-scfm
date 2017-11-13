@@ -2,9 +2,10 @@ require 'rails_helper'
 
 RSpec.describe RunBatchOperationJob do
   describe "#perform(batch_operation_id)" do
+    let(:batch_operation_factory) { :batch_operation }
     let(:batch_operation) {
       create(
-        :batch_operation,
+        batch_operation_factory,
         :status => BatchOperation::Base::STATE_QUEUED
       )
     }

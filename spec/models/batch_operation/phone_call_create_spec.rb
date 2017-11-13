@@ -20,12 +20,8 @@ RSpec.describe BatchOperation::PhoneCallCreate do
     end
   end
 
-  include_examples(
-    "hash_attr_accessor",
-    :remote_request_params,
-    :callout_filter_params,
-    :callout_participation_filter_params
-  )
+  include_examples("hash_attr_accessor", :remote_request_params)
+  include_examples("phone_call_operation_batch_operation")
 
   describe "#run!" do
     let(:callout_participation) { create(:callout_participation) }

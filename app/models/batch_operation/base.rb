@@ -1,7 +1,7 @@
 class BatchOperation::Base < ApplicationRecord
   self.table_name = :batch_operations
 
-  extend HashAttrAccessor
+  extend JSONAttrAccessor
   include MetadataHelpers
   include Wisper::Publisher
 

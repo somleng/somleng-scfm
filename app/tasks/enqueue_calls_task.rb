@@ -8,8 +8,7 @@ class EnqueueCallsTask < ApplicationTask
     DEFAULT_ENV_VARS = {
       :enqueue_calls_task_max_calls_to_enqueue => "30",
       :enqueue_calls_task_enqueue_strategy => "optimistic",
-      :enqueue_calls_task_pessimistic_min_calls_to_enqueue => "1",
-      :enqueue_calls_task_default_somleng_request_params => "{\\\"from\\\":\\\"1234\\\",\\\"url\\\":\\\"http://demo.twilio.com/docs/voice.xml\\\",\\\"method\\\":\\\"GET\\\"}"
+      :enqueue_calls_task_pessimistic_min_calls_to_enqueue => "1"
     }
 
     def self.default_env_vars(task_name)
@@ -31,19 +30,11 @@ class EnqueueCallsTask < ApplicationTask
     ].compact.min
   end
 
-  def optimistic_max_num_calls_to_enqueue
-    max_calls_to_enqueue
-  end
-
   def pessimistic_max_num_calls_to_enqueue
     [
       ((max_calls_to_enqueue || callout_participations_to_call.count) - phone_calls_waiting_for_completion.count),
       pessimistic_min_calls_to_enqueue
     ].max
-  end
-
-  def callout_participations_to_call
-    CalloutParticipation.from_running_callout.remaining
   end
 
   private
@@ -52,52 +43,12 @@ class EnqueueCallsTask < ApplicationTask
     PhoneCall.waiting_for_completion
   end
 
-  def schedule_phone_call!(callout_participation)
-    callout_participation.phone_calls.new
-  end
-
-  def enqueue_phone_call!(phone_call)
-    begin
-      response = queue_remote_call!(phone_call.callout_participation)
-      phone_call.remote_call_id = response.sid
-      phone_call.remote_direction = response.direction
-    rescue Twilio::REST::RestError => e
-      phone_call.remote_error_message = e.message
-    end
-
-    phone_call.queue!
-  end
-
-  def queue_remote_call!(callout_participation)
-    somleng_client.api.account.calls.create(
-      default_somleng_request_params.merge(somleng_request_params(callout_participation))
-    )
-  end
-
-  def somleng_request_params(callout_participation)
-    {
-      :to => callout_participation.msisdn
-    }
-  end
-
-  def somleng_client
-    @somleng_client ||= Somleng::Client.new
-  end
-
   def calls_remaining_in_period
     [(max_calls_per_period - calls_queued_in_period.count), 0].max
   end
 
   def calls_queued_in_period
     PhoneCall.in_last_hours(max_calls_per_period_hours, :remotely_queued_at)
-  end
-
-  def enqueue_strategy
-    Hash[ENQUEUE_STRATEGIES.map {|k| [k, k] }][ENV["ENQUEUE_CALLS_TASK_ENQUEUE_STRATEGY"].presence] ||DEFAULT_ENQUEUE_STRATEGY
-  end
-
-  def max_calls_to_enqueue
-    ENV["ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE"].to_i if ENV["ENQUEUE_CALLS_TASK_MAX_CALLS_TO_ENQUEUE"].present?
   end
 
   def max_calls_per_period
@@ -110,9 +61,5 @@ class EnqueueCallsTask < ApplicationTask
 
   def pessimistic_min_calls_to_enqueue
     (ENV["ENQUEUE_CALLS_TASK_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE"].presence || DEFAULT_PESSIMISTIC_MIN_CALLS_TO_ENQUEUE).to_i
-  end
-
-  def default_somleng_request_params
-    @default_somleng_request_params ||= JSON.parse(ENV["ENQUEUE_CALLS_TASK_DEFAULT_SOMLENG_REQUEST_PARAMS"].presence || "{}").symbolize_keys
   end
 end

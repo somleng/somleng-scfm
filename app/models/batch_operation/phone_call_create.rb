@@ -1,4 +1,4 @@
-class BatchOperation::PhoneCallCreate < BatchOperation::Base
+class BatchOperation::PhoneCallCreate < BatchOperation::PhoneCallOperation
   has_many :phone_calls,
            :foreign_key => :batch_operation_id,
            :dependent => :restrict_with_error
@@ -10,10 +10,11 @@ class BatchOperation::PhoneCallCreate < BatchOperation::Base
             :twilio_request_params => true,
             :presence => true
 
-  hash_attr_accessor :remote_request_params,
-                     :callout_filter_params,
-                     :callout_participation_filter_params,
-                     :attribute => :parameters
+  json_attr_accessor :remote_request_params,
+                     :json_attribute => :parameters
+
+  hash_attr_reader :remote_request_params,
+                   :json_attribute => :parameters
 
   def run!
     preview.callout_participations.find_each do |callout_participation|

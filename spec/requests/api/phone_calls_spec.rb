@@ -58,7 +58,6 @@ RSpec.describe "Phone Calls" do
       let(:remote_request_params) { { "foo" => "bar" } }
 
       def assert_invalid!
-        p response.body
         expect(response.code).to eq("422")
       end
 

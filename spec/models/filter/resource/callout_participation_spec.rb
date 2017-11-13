@@ -14,10 +14,10 @@ RSpec.describe Filter::Resource::CalloutParticipation do
       let(:factory_attributes) { {} }
       let(:callout_participation) { create(filterable_factory, factory_attributes) }
       let(:asserted_results) { [callout_participation] }
+      let(:non_matching_callout_participation) { create(filterable_factory) }
 
       def setup_scenario
-        super
-        create(filterable_factory)
+        non_matching_callout_participation
         callout_participation
       end
 
@@ -56,6 +56,60 @@ RSpec.describe Filter::Resource::CalloutParticipation do
         end
 
         it { assert_filter! }
+      end
+
+      context "filtering by has_phone_calls" do
+        def setup_scenario
+          super
+          create(:phone_call, :callout_participation => callout_participation)
+        end
+
+        def filter_params
+          super.merge(:has_phone_calls => "true")
+        end
+
+        it { assert_filter! }
+      end
+
+      context "last_phone_call_attempt" do
+        let(:phone_call) {
+          create(
+            :phone_call,
+            :callout_participation => callout_participation,
+            :status => PhoneCall::STATE_FAILED
+          )
+        }
+
+        def setup_scenario
+          super
+          phone_call
+        end
+
+        context "filtering by last_phone_call_attempt" do
+          def filter_params
+            super.merge(:last_phone_call_attempt => " failed,  errored  ")
+          end
+
+          it { assert_filter! }
+        end
+
+        context "filtering by no_phone_calls_or_last_phone_attempt" do
+          def filter_params
+            super.merge(:no_phone_calls_or_last_attempt => filter_value)
+          end
+
+          context "no phone calls" do
+            let(:filter_value) { "errored" }
+            let(:asserted_results) { [non_matching_callout_participation] }
+            it { assert_filter! }
+          end
+
+          context "last attempt" do
+            let(:filter_value) { "failed" }
+            let(:asserted_results) { [callout_participation, non_matching_callout_participation] }
+            it { assert_filter! }
+          end
+        end
       end
     end
   end

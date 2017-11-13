@@ -56,6 +56,10 @@ class CalloutParticipation < ApplicationRecord
     left_outer_joins(:phone_calls).where(:phone_calls => {:id => nil})
   end
 
+  def self.has_phone_calls
+    joins(:phone_calls)
+  end
+
   def self.last_phone_call_attempt(status)
     # Adapted from:
     # https://stackoverflow.com/questions/2111384/sql-join-selecting-the-last-records-in-a-one-to-many-relationship

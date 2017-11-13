@@ -34,7 +34,8 @@ class PhoneCall < ApplicationRecord
   validates :callout_participation, :presence => true, :unless => :inbound?
   validates :remote_request_params,
             :presence => true,
-            :twilio_request_params => true
+            :twilio_request_params => true,
+            :unless => :inbound?
 
   delegate :call_flow_logic, :to => :callout_participation, :prefix => true, :allow_nil => true
 

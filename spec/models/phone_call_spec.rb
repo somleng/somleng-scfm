@@ -23,16 +23,17 @@ RSpec.describe PhoneCall do
       context "for an inbound call" do
         subject { build(factory, :inbound) }
         it { is_expected.not_to validate_presence_of(:callout_participation) }
+        it { is_expected.not_to validate_presence_of(:remote_request_params) }
       end
 
       context "for an outbound call" do
         it { is_expected.to validate_presence_of(:callout_participation) }
+        it { is_expected.to validate_presence_of(:remote_request_params) }
       end
 
       context "remote_request_params" do
         subject { build(factory, :remote_request_params => {"foo" => "bar"}) }
         it { is_expected.not_to be_valid }
-        it { is_expected.to validate_presence_of(:remote_request_params) }
       end
 
       it { assert_validations! }

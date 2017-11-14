@@ -11,16 +11,20 @@ class BatchOperation::CalloutPopulation < BatchOperation::Base
   hash_store_reader   :contact_filter_params
 
   def run!
-    preview.contacts.find_each do |contact|
+    contacts_preview.find_each do |contact|
       create_callout_participation(contact)
     end
   end
 
-  def preview
-    @preview ||= Preview::CalloutPopulation.new(:previewable => self)
+  def contacts_preview
+    preview.contacts
   end
 
   private
+
+  def preview
+    @preview ||= Preview::CalloutPopulation.new(:previewable => self)
+  end
 
   def create_callout_participation(contact)
     CalloutParticipation.create(

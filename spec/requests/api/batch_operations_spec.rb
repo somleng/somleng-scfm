@@ -31,7 +31,12 @@ RSpec.describe "Batch Operations" do
         let(:asserted_created_batch_operation) { BatchOperation::Base.last }
         let(:parsed_response) { JSON.parse(response.body) }
         let(:remote_request_params) { generate(:twilio_request_params) }
-        let(:parameters) { { "remote_request_params" => remote_request_params } }
+        let(:parameters) {
+          {
+            "remote_request_params" => remote_request_params,
+            "skip_validate_preview_presence" => "1"
+          }
+        }
 
         def assert_created!
           expect(response.code).to eq("201")

@@ -2,7 +2,6 @@ require 'rails_helper'
 
 RSpec.describe BatchOperation::PhoneCallCreate do
   let(:factory) { :phone_call_create_batch_operation }
-  include_examples("batch_operation")
 
   describe "associations" do
     it {
@@ -18,8 +17,36 @@ RSpec.describe BatchOperation::PhoneCallCreate do
       it { is_expected.not_to be_valid }
       it { is_expected.to validate_presence_of(:remote_request_params) }
     end
+
+    context "phone_calls_preview", :focus do
+      let(:skip_validate_preview_presence) { nil }
+      subject { build(factory, :skip_validate_preview_presence => skip_validate_preview_presence) }
+
+      context "by default" do
+        context "no callout participations in preview" do
+          it {
+            is_expected.not_to be_valid
+            expect(subject.errors[:callout_participations_preview]).not_to be_empty
+          }
+        end
+
+        context "callout participations in preview" do
+          def setup_scenario
+            create(:phone_call)
+          end
+
+          it { is_expected.to be_valid }
+        end
+      end
+
+      context "skip_validate_preview_presence=true" do
+        let(:skip_validate_preview_presence) { true }
+        it { is_expected.to be_valid }
+      end
+    end
   end
 
+  include_examples("batch_operation")
   include_examples("hash_store_accessor", :remote_request_params)
   include_examples("phone_call_operation_batch_operation")
 

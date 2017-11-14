@@ -23,6 +23,16 @@ module CustomStoreReaders
       end
     end
 
+    def boolean_store_reader(*keys)
+      _accessors_module.module_eval do
+        keys.each do |key|
+          define_method("#{key}?") do
+            ActiveRecord::Type::Boolean.new.cast(public_send(key))
+          end
+        end
+      end
+    end
+
     def _accessors_module
       @_accessors_module ||= begin
         mod = Module.new

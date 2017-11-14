@@ -1,14 +1,14 @@
-class Api::BatchOperationPreview::CalloutParticipationsController < Api::FilteredController
+class Api::BatchOperationPreview::PhoneCallsController < Api::FilteredController
   include BatchOperationResource
 
   PERMITTED_BATCH_OPERATION_TYPES = [
-    "BatchOperation::PhoneCallCreate"
+    "BatchOperation::PhoneCallQueue"
   ]
 
   private
 
   def find_resources_association_chain
-    batch_operation.callout_participations_preview
+    batch_operation.phone_calls_preview
   end
 
   def permitted_batch_operation_types

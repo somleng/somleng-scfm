@@ -188,7 +188,7 @@ RSpec.describe "Contacts" do
             create(
               :phone_call,
               :callout_participation => callout_participation,
-              :batch_operation => batch_operation
+              :create_batch_operation => batch_operation
             )
             super
           end

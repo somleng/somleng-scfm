@@ -37,11 +37,15 @@ FactoryGirl.define do
       callout
     end
 
-    factory :phone_call_create_batch_operation, :class => BatchOperation::PhoneCallCreate do
-      remote_request_params { generate(:twilio_request_params) }
-    end
+    factory :batch_operation_phone_call_operation, :class => BatchOperation::PhoneCallOperation do
+      skip_validate_preview_presence { true }
 
-    factory :phone_call_queue_batch_operation, :class => BatchOperation::PhoneCallQueue do
+      factory :phone_call_create_batch_operation, :class => BatchOperation::PhoneCallCreate do
+        remote_request_params { generate(:twilio_request_params) }
+      end
+
+      factory :phone_call_queue_batch_operation, :class => BatchOperation::PhoneCallQueue do
+      end
     end
   end
 

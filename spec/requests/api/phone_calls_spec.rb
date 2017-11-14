@@ -149,18 +149,54 @@ RSpec.describe "Phone Calls" do
       it { assert_filtered! }
     end
 
-    describe "GET '/api/batch_operations/:batch_operation_id/phone_calls'" do
-      let(:url) { api_batch_operation_phone_calls_path(batch_operation) }
+    describe "GET '/api/batch_operations/:batch_operation_id/preview/phone_calls'" do
+      let(:batch_operation_attributes) { {} }
+      let(:batch_operation) { create(batch_operation_factory, batch_operation_attributes) }
+      let(:url) { api_batch_operation_preview_phone_calls_path(batch_operation) }
 
-      context "valid request" do
-        let(:batch_operation) { create(:phone_call_create_batch_operation) }
-        let(:factory_attributes) { { :batch_operation => batch_operation } }
-        it { assert_filtered! }
+      context "valid requests" do
+        let(:factory_attributes) { { :metadata => { "foo" => "bar", "bar" => "foo" } } }
+
+        context "BatchOperation::PhoneCallQueue" do
+          let(:batch_operation_factory) { :phone_call_queue_batch_operation }
+          let(:batch_operation_attributes) {
+            {
+              :phone_call_filter_params => factory_attributes.slice(:metadata)
+            }
+          }
+
+          it { assert_filtered! }
+        end
       end
 
       context "invalid request" do
         let(:execute_request_before) { false }
-        let(:batch_operation) { create(:callout_population) }
+        let(:batch_operation) { create(:phone_call_create_batch_operation) }
+        it {expect { execute_request }.to raise_error(ActiveRecord::RecordNotFound) }
+      end
+    end
+
+    describe "GET '/api/batch_operations/:batch_operation_id/phone_calls'" do
+      let(:batch_operation) { create(batch_operation_factory) }
+      let(:url) { api_batch_operation_phone_calls_path(batch_operation) }
+
+      context "valid requests" do
+        context "BatchOperation::PhoneCallCreate" do
+          let(:batch_operation_factory) { :phone_call_create_batch_operation }
+          let(:factory_attributes) { { :create_batch_operation => batch_operation } }
+          it { assert_filtered! }
+        end
+
+        context "BatchOperation::PhoneCallQueue" do
+          let(:batch_operation_factory) { :phone_call_queue_batch_operation }
+          let(:factory_attributes) { { :queue_batch_operation => batch_operation } }
+          it { assert_filtered! }
+        end
+      end
+
+      context "invalid request" do
+        let(:execute_request_before) { false }
+        let(:batch_operation_factory) { :callout_population }
         it { expect { execute_request }.to raise_error(ActiveRecord::RecordNotFound) }
       end
     end

@@ -64,7 +64,7 @@ RSpec.describe "Callout Participations" do
       it { assert_filtered! }
     end
 
-    describe "GET '/api/callout_population/:callout_population_id/callout_participations'" do
+    describe "GET '/api/batch_operation/:batch_operation_id/callout_participations'" do
       let(:url) { api_batch_operation_callout_participations_path(batch_operation) }
       let(:batch_operation) { create(batch_operation_factory) }
 
@@ -79,7 +79,7 @@ RSpec.describe "Callout Participations" do
         let(:phone_call) {
           build(
             :phone_call,
-            :batch_operation => batch_operation
+            :create_batch_operation => batch_operation
           )
         }
 

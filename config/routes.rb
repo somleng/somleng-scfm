@@ -25,6 +25,7 @@ Rails.application.routes.draw do
       namespace :preview, :module => "batch_operation_preview" do
         resources :callout_participations, :only => :index
         resources :contacts, :only => :index
+        resources :phone_calls, :only => :index
       end
     end
 

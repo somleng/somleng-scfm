@@ -45,6 +45,33 @@ RSpec.shared_examples_for("hash_store_accessor") do |*args|
   include_examples("json_store_writer", *args)
 end
 
+RSpec.shared_examples_for("boolean_store_accessor") do |*args|
+  args.each do |arg|
+    describe "##{arg}?" do
+      def assert_boolean_accessor!(attribute, value, assertion)
+        subject.public_send("#{attribute}=", value)
+        expect(subject.public_send("#{attribute}?")).to eq(assertion)
+      end
+
+      context "'1'" do
+        it { assert_boolean_accessor!(arg, "1", true) }
+      end
+
+      context "'true'" do
+        it { assert_boolean_accessor!(arg, "true", true) }
+      end
+
+      context "'0'" do
+        it { assert_boolean_accessor!(arg, "0", false) }
+      end
+
+      context "'false'" do
+        it { assert_boolean_accessor!(arg, "false", false) }
+      end
+    end
+  end
+end
+
 RSpec.shared_examples_for("integer_store_reader") do |*args|
   options = args.extract_options!
 

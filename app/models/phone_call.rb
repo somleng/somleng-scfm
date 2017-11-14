@@ -17,9 +17,18 @@ class PhoneCall < ApplicationRecord
     :inbound => "inbound"
   }
 
-  belongs_to :callout_participation, :optional => true
-  belongs_to :batch_operation, :class_name => "BatchOperation::PhoneCallCreate",
-                               :optional => true
+  belongs_to :create_batch_operation, :class_name => "BatchOperation::PhoneCallCreate",
+                                      :optional => true
+
+  belongs_to :queue_batch_operation,  :class_name => "BatchOperation::PhoneCallQueue",
+                                      :optional => true
+
+  belongs_to :update_batch_operation, :class_name => "BatchOperation::PhoneCallCreate",
+                                      :optional => true
+
+  belongs_to :callout_participation,
+             :optional => true
+
   belongs_to :contact, :validate => true
   has_many   :remote_phone_call_events, :dependent => :restrict_with_error
 

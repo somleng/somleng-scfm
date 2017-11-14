@@ -30,10 +30,6 @@ class CalloutParticipation < ApplicationRecord
     super || callout_call_flow_logic
   end
 
-  def self.from_running_callout
-    joins(:callout).merge(Callout.running)
-  end
-
   def self.no_phone_calls_or_last_attempt(status)
     where(
       :id => no_phone_calls

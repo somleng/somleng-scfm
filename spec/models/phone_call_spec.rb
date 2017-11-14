@@ -296,21 +296,6 @@ RSpec.describe PhoneCall do
       end
     end
 
-    describe ".from_running_callout" do
-      let(:running_callout) { create(:callout, :status => :running) }
-      let(:callout_participation) { create(:callout_participation, :callout => running_callout) }
-      let(:phone_call) { create(factory, :callout_participation => callout_participation) }
-      let(:results) { described_class.from_running_callout }
-      let(:asserted_results) { [phone_call] }
-
-      def setup_scenario
-        create(factory)
-        phone_call
-      end
-
-      it { assert_scope! }
-    end
-
     describe ".with_remote_call_id" do
       let(:phone_call) { create(factory, :remote_call_id => "foo") }
       let(:results) { described_class.with_remote_call_id }

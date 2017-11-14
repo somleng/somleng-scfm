@@ -7,11 +7,8 @@ class BatchOperation::CalloutPopulation < BatchOperation::Base
 
   has_many :contacts, :through => :callout_participations
 
-  json_attr_accessor :contact_filter_params,
-                     :json_attribute => :parameters
-
-  hash_attr_reader   :contact_filter_params,
-                     :json_attribute => :parameters
+  store_accessor :parameters, :contact_filter_params
+  hash_store_reader   :contact_filter_params
 
   def run!
     preview.contacts.find_each do |contact|

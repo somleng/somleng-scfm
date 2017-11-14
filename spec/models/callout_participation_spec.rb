@@ -52,20 +52,6 @@ RSpec.describe CalloutParticipation do
       expect(results).to match_array(asserted_results)
     end
 
-    describe ".from_running_callout" do
-      let(:running_callout) { create(:callout, :status => :running) }
-      let(:callout_participation) { create(factory, :callout => running_callout) }
-      let(:results) { described_class.from_running_callout }
-      let(:asserted_results) { [callout_participation] }
-
-      def setup_scenario
-        create(factory)
-        callout_participation
-      end
-
-      it { assert_scope! }
-    end
-
     context "relating to phone calls" do
       let(:callout) { create(:callout) }
 

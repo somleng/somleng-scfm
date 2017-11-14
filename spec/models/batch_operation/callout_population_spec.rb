@@ -14,7 +14,7 @@ RSpec.describe BatchOperation::CalloutPopulation do
     it { assert_associations! }
   end
 
-  include_examples("hash_attr_accessor", :contact_filter_params)
+  include_examples("hash_store_accessor", :contact_filter_params)
 
   describe "#run!" do
     let(:contact) { create(:contact) }

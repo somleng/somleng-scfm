@@ -135,11 +135,7 @@ class PhoneCall < ApplicationRecord
   end
 
   def self.waiting_for_completion
-    queued.or(in_progress)
-  end
-
-  def self.from_running_callout
-    joins(:callout_participation => :callout).merge(Callout.running)
+    remotely_queued.or(in_progress)
   end
 
   def self.in_last_hours(hours, timestamp_column = :created_at)

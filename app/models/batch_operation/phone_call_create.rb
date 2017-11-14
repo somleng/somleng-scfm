@@ -10,11 +10,8 @@ class BatchOperation::PhoneCallCreate < BatchOperation::PhoneCallOperation
             :twilio_request_params => true,
             :presence => true
 
-  json_attr_accessor :remote_request_params,
-                     :json_attribute => :parameters
-
-  hash_attr_reader :remote_request_params,
-                   :json_attribute => :parameters
+  store_accessor :parameters, :remote_request_params
+  hash_store_reader :remote_request_params
 
   def run!
     preview.callout_participations.find_each do |callout_participation|

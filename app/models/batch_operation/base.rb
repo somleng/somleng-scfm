@@ -1,11 +1,12 @@
 class BatchOperation::Base < ApplicationRecord
   self.table_name = :batch_operations
 
-  extend JSONAttrAccessor
+  include CustomStoreReaders
   include MetadataHelpers
   include Wisper::Publisher
 
   conditionally_serialize(:parameters, JSON)
+  conditionally_store(:parameters, :coder => JSON)
 
   validates :type, :presence => true
 

@@ -1,9 +1,8 @@
 class BatchOperation::PhoneCallOperation < BatchOperation::Base
-  json_attr_accessor :callout_filter_params,
-                     :callout_participation_filter_params,
-                     :json_attribute => :parameters
+  store_accessor :parameters,
+                 :callout_filter_params,
+                 :callout_participation_filter_params
 
-  hash_attr_reader   :callout_filter_params,
-                     :callout_participation_filter_params,
-                     :json_attribute => :parameters
+  hash_store_reader   :callout_filter_params,
+                      :callout_participation_filter_params
 end

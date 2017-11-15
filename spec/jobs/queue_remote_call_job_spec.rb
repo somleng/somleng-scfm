@@ -28,7 +28,8 @@ RSpec.describe QueueRemoteCallJob do
     let(:remote_response_params) {
       {
         "sid" => "1234",
-        "direction" => "outbound-api"
+        "direction" => "outbound-api",
+        "status" => "queued"
       }
     }
 
@@ -53,6 +54,7 @@ RSpec.describe QueueRemoteCallJob do
       )
 
       expect(phone_call.reload.remote_queue_response).to include(asserted_remote_queue_response)
+      expect(phone_call.remote_status).to eq(asserted_remote_status)
       expect(phone_call.remote_call_id).to eq(asserted_remote_call_id)
       expect(phone_call.remote_direction).to eq(asserted_remote_direction)
       expect(phone_call.remote_error_message).to eq(asserted_remote_error_message)
@@ -65,6 +67,7 @@ RSpec.describe QueueRemoteCallJob do
       let(:asserted_remote_queue_response) { remote_response_params }
       let(:asserted_remote_call_id) { remote_response_params["sid"] }
       let(:asserted_remote_direction) { remote_response_params["direction"] }
+      let(:asserted_remote_status) { remote_response_params["status"] }
       let(:asserted_remote_error_message) { nil }
       it { assert_perform! }
     end
@@ -73,6 +76,7 @@ RSpec.describe QueueRemoteCallJob do
       let(:asserted_status) { "errored" }
       let(:asserted_remote_call_id) { nil }
       let(:asserted_remote_direction) { nil }
+      let(:asserted_remote_status) { nil }
       let(:asserted_remote_queue_response) { {} }
       let(:asserted_remote_response_status) { 422 }
       let(:asserted_remote_error_message) { "Unable to create record" }

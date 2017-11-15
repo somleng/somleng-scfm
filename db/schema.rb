@@ -58,14 +58,13 @@ ActiveRecord::Schema.define(version: 20171101092942) do
     t.integer "contact_id", null: false
     t.integer "create_batch_operation_id"
     t.integer "queue_batch_operation_id"
-    t.integer "update_batch_operation_id"
+    t.integer "queue_remote_fetch_batch_operation_id"
     t.string "status", null: false
     t.string "msisdn", null: false
     t.string "remote_call_id"
     t.string "remote_status"
     t.string "remote_direction"
     t.text "remote_error_message"
-    t.integer "lock_version"
     t.text "metadata", default: "{}", null: false
     t.text "remote_response", default: "{}", null: false
     t.text "remote_request_params", default: "{}", null: false
@@ -77,8 +76,8 @@ ActiveRecord::Schema.define(version: 20171101092942) do
     t.index ["contact_id"], name: "index_phone_calls_on_contact_id"
     t.index ["create_batch_operation_id"], name: "index_phone_calls_on_create_batch_operation_id"
     t.index ["queue_batch_operation_id"], name: "index_phone_calls_on_queue_batch_operation_id"
+    t.index ["queue_remote_fetch_batch_operation_id"], name: "index_phone_calls_on_queue_remote_fetch_batch_operation_id"
     t.index ["remote_call_id"], name: "index_phone_calls_on_remote_call_id", unique: true
-    t.index ["update_batch_operation_id"], name: "index_phone_calls_on_update_batch_operation_id"
   end
 
   create_table "remote_phone_call_events", force: :cascade do |t|

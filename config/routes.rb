@@ -12,7 +12,6 @@ Rails.application.routes.draw do
       resources :callout_participations, :only => [:index, :create]
       resources :contacts, :only => :index
       resources :phone_calls, :only => :index
-      resource :callout_statistics, :only => :show
       resources :batch_operations, :only => [:create, :index]
     end
 

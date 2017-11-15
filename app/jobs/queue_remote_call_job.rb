@@ -6,6 +6,7 @@ class QueueRemoteCallJob < ApplicationJob
     begin
       response = queue_remote_call!
       phone_call.remote_queue_response = response.instance_variable_get(:@properties).compact
+      phone_call.remote_status = response.status
       phone_call.remote_call_id = response.sid
       phone_call.remote_direction = response.direction
     rescue Twilio::REST::RestError => e

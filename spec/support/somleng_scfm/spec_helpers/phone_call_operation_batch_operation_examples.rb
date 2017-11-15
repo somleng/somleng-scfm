@@ -34,6 +34,12 @@ RSpec.shared_examples_for("phone_call_operation_batch_operation") do
     "skip_validate_preview_presence",
   )
 
+  describe "associations" do
+    it {
+      is_expected.to have_many(:phone_calls).dependent(:restrict_with_error)
+    }
+  end
+
   describe "#calculate_limit" do
     def factory_attributes
       {}

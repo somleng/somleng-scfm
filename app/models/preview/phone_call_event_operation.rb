@@ -1,4 +1,4 @@
-class Preview::PhoneCallQueue < Preview::PhoneCallOperation
+class Preview::PhoneCallEventOperation < Preview::PhoneCallOperation
   def phone_calls
     filter_resources(PhoneCall.joins(:callout_participation => :callout))
   end

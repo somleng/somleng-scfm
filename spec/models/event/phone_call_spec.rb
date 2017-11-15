@@ -19,9 +19,19 @@ RSpec.describe Event::PhoneCall do
       expect(subject.errors[:event]).not_to be_empty
     end
 
-    context "is queued" do
+    context "created" do
+      let(:status) { PhoneCall::STATE_CREATED }
+      it { is_expected.to be_valid }
+    end
+
+    context "queued" do
       let(:status) { PhoneCall::STATE_QUEUED }
       it { assert_invalid! }
+    end
+
+    context "remotely_queued" do
+      let(:status) { PhoneCall::STATE_REMOTELY_QUEUED }
+      it { is_expected.to be_valid }
     end
 
     context "can't transition" do

@@ -157,14 +157,19 @@ RSpec.describe "Phone Calls" do
       context "valid requests" do
         let(:factory_attributes) { { :metadata => { "foo" => "bar", "bar" => "foo" } } }
 
+        let(:batch_operation_attributes) {
+          {
+            :phone_call_filter_params => factory_attributes.slice(:metadata)
+          }
+        }
+
         context "BatchOperation::PhoneCallQueue" do
           let(:batch_operation_factory) { :phone_call_queue_batch_operation }
-          let(:batch_operation_attributes) {
-            {
-              :phone_call_filter_params => factory_attributes.slice(:metadata)
-            }
-          }
+          it { assert_filtered! }
+        end
 
+        context "BatchOperation::PhoneCallQueueRemoteFetch" do
+          let(:batch_operation_factory) { :phone_call_queue_remote_fetch_batch_operation }
           it { assert_filtered! }
         end
       end
@@ -190,6 +195,12 @@ RSpec.describe "Phone Calls" do
         context "BatchOperation::PhoneCallQueue" do
           let(:batch_operation_factory) { :phone_call_queue_batch_operation }
           let(:factory_attributes) { { :queue_batch_operation => batch_operation } }
+          it { assert_filtered! }
+        end
+
+        context "BatchOperation::PhoneCallQueueRemoteFetch" do
+          let(:batch_operation_factory) { :phone_call_queue_remote_fetch_batch_operation }
+          let(:factory_attributes) { { :queue_remote_fetch_batch_operation => batch_operation } }
           it { assert_filtered! }
         end
       end

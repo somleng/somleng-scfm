@@ -46,6 +46,9 @@ FactoryGirl.define do
 
       factory :phone_call_queue_batch_operation, :class => BatchOperation::PhoneCallQueue do
       end
+
+      factory :phone_call_queue_remote_fetch_batch_operation, :class => BatchOperation::PhoneCallQueueRemoteFetch do
+      end
     end
   end
 

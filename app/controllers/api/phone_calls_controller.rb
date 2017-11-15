@@ -4,6 +4,7 @@ class Api::PhoneCallsController < Api::FilteredController
   PERMITTED_BATCH_OPERATION_TYPES = [
     "BatchOperation::PhoneCallCreate",
     "BatchOperation::PhoneCallQueue",
+    "BatchOperation::PhoneCallQueueRemoteFetch"
   ]
 
   private

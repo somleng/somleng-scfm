@@ -1,21 +1,14 @@
 require 'rails_helper'
 
-RSpec.describe UpdateCallsTask do
-  describe UpdateCallsTask::Install do
-    describe ".rake_tasks" do
-      it { expect(described_class.rake_tasks).to eq([:run!]) }
-    end
-  end
-
-  describe "#run!" do
+RSpec.describe FetchRemoteCallJob do
+  describe "#perform(phone_call_id)" do
     include SomlengScfm::SpecHelpers::SomlengClientHelpers
 
     let(:remote_call_id) { "call-sid" }
-    let(:queued_phone_call) {
+    let(:phone_call) {
       create(
         :phone_call,
-        :not_recently_created,
-        :status => "queued",
+        :status => PhoneCall::STATE_REMOTE_FETCH_QUEUED,
         :remote_call_id => remote_call_id
       )
     }
@@ -30,18 +23,17 @@ RSpec.describe UpdateCallsTask do
     def setup_scenario
       super
       stub_request(:get, asserted_remote_api_endpoint).to_return(asserted_remote_response)
-      queued_phone_call
-      create(:phone_call)
-      subject.run!
+      phone_call
+      subject.perform(phone_call.id)
     end
 
-    def assert_run!
+    def assert_perform!
       assert_somleng_client_request!
-      queued_phone_call.reload
-      expect(queued_phone_call.remote_response["status"]).to eq(asserted_status)
-      expect(queued_phone_call.status).to eq(asserted_status)
+      phone_call.reload
+      expect(phone_call.remote_response["status"]).to eq(asserted_status)
+      expect(phone_call.status).to eq(asserted_status)
     end
 
-    it { assert_run! }
+    it { assert_perform! }
   end
 end

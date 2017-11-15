@@ -5,7 +5,6 @@ RSpec.describe BatchOperation::PhoneCallCreate do
 
   describe "associations" do
     it {
-      is_expected.to have_many(:phone_calls).dependent(:restrict_with_error)
       is_expected.to have_many(:callout_participations)
       is_expected.to have_many(:contacts)
     }
@@ -18,7 +17,7 @@ RSpec.describe BatchOperation::PhoneCallCreate do
       it { is_expected.to validate_presence_of(:remote_request_params) }
     end
 
-    context "phone_calls_preview", :focus do
+    context "phone_calls_preview" do
       let(:skip_validate_preview_presence) { nil }
       subject { build(factory, :skip_validate_preview_presence => skip_validate_preview_presence) }
 

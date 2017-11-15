@@ -1,7 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe Preview::PhoneCallQueue do
-  let(:batch_operation_factory) { :phone_call_queue_batch_operation }
+RSpec.describe Preview::PhoneCallEventOperation do
   let(:callout_participation_filter_params) { {} }
   let(:callout_filter_params) { {} }
 
@@ -60,7 +59,19 @@ RSpec.describe Preview::PhoneCallQueue do
     end
 
     describe "#phone_calls" do
-      it { expect(subject.phone_calls).to match_array([phone_call]) }
+      def assert_phone_calls!
+        expect(subject.phone_calls).to match_array([phone_call])
+      end
+
+      context "previewable type is BatchOperation::PhoneCallQueue" do
+        let(:batch_operation_factory) { :phone_call_queue_batch_operation }
+        it { assert_phone_calls! }
+      end
+
+      context "previewable type is BatchOperation::PhoneCallQueueRemoteFetch" do
+        let(:batch_operation_factory) { :phone_call_queue_remote_fetch_batch_operation }
+        it { assert_phone_calls! }
+      end
     end
   end
 end

@@ -77,19 +77,11 @@ RSpec.describe CalloutParticipation do
         )
       }
 
-      let(:retry_statuses) { nil }
-
       def setup_scenario
         super
         callout_participation_with_no_calls
         callout_participation_last_attempt_completed
         callout_participation_last_attempt_failed
-      end
-
-      def env
-        {
-          "CALLOUT_PARTICIPATION_RETRY_STATUSES" => retry_statuses
-        }
       end
 
       def create_callout_participation_last_attempt(status, options = {})
@@ -112,36 +104,6 @@ RSpec.describe CalloutParticipation do
             :phone_calls => [first_attempt, last_attempt].compact
           }.merge(options)
         )
-      end
-
-      describe ".remaining" do
-        let(:results) { described_class.remaining }
-
-        context "by default" do
-          let(:asserted_results) { [callout_participation_with_no_calls, callout_participation_last_attempt_failed] }
-          it { assert_scope! }
-        end
-
-        context "CALLOUT_PARTICIPATION_RETRY_STATUSES='failed,completed'" do
-          let(:retry_statuses) { "failed,completed" }
-          let(:asserted_results) { [callout_participation_with_no_calls, callout_participation_last_attempt_failed, callout_participation_last_attempt_completed] }
-          it { assert_scope! }
-        end
-      end
-
-      describe ".completed" do
-        let(:results) { described_class.completed }
-
-        context "by default" do
-          let(:asserted_results) { [callout_participation_last_attempt_completed] }
-          it { assert_scope! }
-        end
-
-        context "CALLOUT_PARTICIPATION_RETRY_STATUSES='failed,completed'" do
-          let(:retry_statuses) { "failed,completed" }
-          let(:asserted_results) { [] }
-          it { assert_scope! }
-        end
       end
 
       describe ".last_phone_call_attempt(status)" do

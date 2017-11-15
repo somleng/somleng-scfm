@@ -40,14 +40,6 @@ class CalloutParticipation < ApplicationRecord
     )
   end
 
-  def self.completed
-    last_phone_call_attempt(PhoneCall.aasm.states.map(&:to_s) - retry_statuses)
-  end
-
-  def self.remaining
-    no_phone_calls_or_last_attempt(retry_statuses)
-  end
-
   def self.no_phone_calls
     left_outer_joins(:phone_calls).where(:phone_calls => {:id => nil})
   end
@@ -75,18 +67,6 @@ class CalloutParticipation < ApplicationRecord
         :status => [status]
       }
     )
-  end
-
-  def self.last_phone_call_attempt_not(status)
-    status_scope = PhoneCall.where.not(:status => [status])
-  end
-
-  def self.default_retry_statuses
-    DEFAULT_RETRY_STATUSES
-  end
-
-  def self.retry_statuses
-    ENV["CALLOUT_PARTICIPATION_RETRY_STATUSES"].present? ? ENV["CALLOUT_PARTICIPATION_RETRY_STATUSES"].to_s.split(",") : default_retry_statuses
   end
 
   private

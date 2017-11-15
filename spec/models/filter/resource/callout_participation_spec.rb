@@ -9,6 +9,7 @@ RSpec.describe Filter::Resource::CalloutParticipation do
   describe "#resources" do
     include_examples "metadata_attribute_filter"
     include_examples "msisdn_attribute_filter"
+    include_examples "timestamp_attribute_filter"
 
     context "filtering" do
       let(:factory_attributes) { {} }

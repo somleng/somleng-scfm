@@ -24,7 +24,19 @@ class Filter::Resource::Base < Filter::Base
     )
   end
 
+  def created_at_attribute_filter
+    @created_at_attribute_filter ||= Filter::Attribute::Timestamp.new(
+      {:timestamp_attribute => :created_at}.merge(options), params
+    )
+  end
+
+  def updated_at_attribute_filter
+    @updated_at_attribute_filter ||= Filter::Attribute::Timestamp.new(
+      {:timestamp_attribute => :updated_at}.merge(options), params
+    )
+  end
+
   def self.attribute_filters
-    [:metadata_attribute_filter]
+    [:metadata_attribute_filter, :created_at_attribute_filter, :updated_at_attribute_filter]
   end
 end

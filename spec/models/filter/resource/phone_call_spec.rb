@@ -9,6 +9,12 @@ RSpec.describe Filter::Resource::PhoneCall do
   describe "#resources" do
     include_examples "metadata_attribute_filter"
     include_examples "msisdn_attribute_filter"
+    include_examples(
+      "timestamp_attribute_filter",
+      :created_at,
+      :updated_at,
+      :remotely_queued_at
+    )
 
     context "filtering by remote_response" do
       let(:filterable_attribute) { :remote_response }

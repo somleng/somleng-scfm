@@ -8,6 +8,7 @@ RSpec.describe Filter::Resource::BatchOperation do
 
   describe "#resources" do
     include_examples "metadata_attribute_filter"
+    include_examples "timestamp_attribute_filter"
 
     context "filtering by parameters" do
       let(:filterable_attribute) { :parameters }

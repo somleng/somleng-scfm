@@ -8,6 +8,7 @@ RSpec.describe Filter::Resource::Callout do
 
   describe "#resources" do
     include_examples "metadata_attribute_filter"
+    include_examples "timestamp_attribute_filter"
 
     context "filtering" do
       let(:callout) { create(filterable_factory, :running) }

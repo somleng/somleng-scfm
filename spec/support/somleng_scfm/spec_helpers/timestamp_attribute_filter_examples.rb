@@ -3,7 +3,7 @@ RSpec.shared_examples_for "timestamp_attribute_filter" do |*timestamp_attributes
 
   timestamp_attributes.each do |timestamp_attribute|
     context "filtering by #{timestamp_attribute}" do
-      let(:resource_timestamp) { Time.now }
+      let(:resource_timestamp) { Time.now.utc }
       let(:resource) {
         filterable = create(filterable_factory, timestamp_attribute => resource_timestamp)
         filterable.update_column(timestamp_attribute, resource_timestamp)

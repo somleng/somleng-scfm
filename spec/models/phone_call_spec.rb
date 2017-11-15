@@ -229,13 +229,13 @@ RSpec.describe PhoneCall do
         context "status: '#{current_status}'" do
           let(:current_status) { current_status }
           {
-            "ringing" => :in_progress,
-            "in-progress" => :in_progress,
-            "busy" => :busy,
-            "failed" => :failed,
-            "no-answer" => :not_answered,
-            "canceled" => :canceled,
-            "completed" => :completed,
+            "ringing" => described_class::STATE_IN_PROGRESS,
+            "in-progress" => described_class::STATE_IN_PROGRESS,
+            "busy" => described_class::STATE_BUSY,
+            "failed" => described_class::STATE_FAILED,
+            "no-answer" => described_class::STATE_NOT_ANSWERED,
+            "canceled" => described_class::STATE_CANCELED,
+            "completed" => described_class::STATE_COMPLETED,
           }.each do |remote_status, asserted_new_status|
             context "remote_status: '#{remote_status}'" do
               let(:remote_status) { remote_status }
@@ -321,56 +321,6 @@ RSpec.describe PhoneCall do
           let(:asserted_results) { [] }
           it { assert_scope! }
         end
-      end
-    end
-
-    describe ".with_remote_call_id" do
-      let(:phone_call) { create(factory, :remote_call_id => "foo") }
-      let(:results) { described_class.with_remote_call_id }
-      let(:asserted_results) { [phone_call] }
-
-      def setup_scenario
-        create(factory)
-        phone_call
-      end
-
-      it { assert_scope! }
-    end
-
-    describe ".not_recently_created" do
-      let(:results) { described_class.not_recently_created }
-
-      let(:phone_call) {
-        create(
-          factory,
-          :created_at => time_considered_recently_created_seconds.to_i.seconds.ago
-        )
-      }
-
-      let(:asserted_results) { [phone_call] }
-
-      def setup_scenario
-        create(factory)
-        phone_call
-      end
-
-      context "using defaults" do
-        let(:time_considered_recently_created_seconds) {
-          described_class::DEFAULT_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS
-        }
-        it { assert_scope! }
-      end
-
-      context "setting PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS" do
-        let(:time_considered_recently_created_seconds) { "120" }
-
-        def env
-          super.merge(
-            "PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS" => time_considered_recently_created_seconds
-          )
-        end
-
-        it { assert_scope! }
       end
     end
   end

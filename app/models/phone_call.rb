@@ -1,6 +1,4 @@
 class PhoneCall < ApplicationRecord
-  DEFAULT_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS = 60
-
   TWILIO_CALL_STATUSES = {
     :queued => "queued",
     :ringing => "ringing",
@@ -138,24 +136,8 @@ class PhoneCall < ApplicationRecord
     end
   end
 
-  def self.with_remote_call_id
-    where.not(:remote_call_id => nil)
-  end
-
-  def self.not_recently_created
-    where(arel_table[:created_at].lt(time_considered_recently_created_seconds.seconds.ago))
-  end
-
-  def self.waiting_for_completion
-    remotely_queued.or(in_progress)
-  end
-
   def self.in_last_hours(hours, timestamp_column = :created_at)
     where(arel_table[timestamp_column].gt(hours.hours.ago))
-  end
-
-  def self.time_considered_recently_created_seconds
-    (ENV["PHONE_CALL_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS"] || DEFAULT_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS).to_i
   end
 
   def call_flow_logic

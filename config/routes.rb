@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  root :to => redirect('https://github.com/somleng/somleng-scfm')
+
   namespace "api", :defaults => { :format => "json" } do
 
     defaults :format => :xml do

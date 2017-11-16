@@ -125,12 +125,14 @@ RSpec.describe "Callout Participations" do
 
     context "valid request" do
       let(:metadata) { { "foo" => "bar" } }
+      let(:call_flow_logic) { CallFlowLogic::Application.to_s }
       let(:contact) { create(:contact) }
 
       let(:body) {
         {
           :metadata => metadata,
-          :contact_id => contact.id
+          :contact_id => contact.id,
+          :call_flow_logic => call_flow_logic
         }
       }
 
@@ -147,6 +149,7 @@ RSpec.describe "Callout Participations" do
         expect(created_callout_participation.callout).to eq(callout)
         expect(created_callout_participation.contact).to eq(contact)
         expect(created_callout_participation.metadata).to eq(metadata)
+        expect(created_callout_participation.call_flow_logic).to eq(call_flow_logic)
       end
 
       it { assert_created! }
@@ -170,12 +173,14 @@ RSpec.describe "Callout Participations" do
     describe "PATCH" do
       let(:method) { :patch }
       let(:contact) { create(:contact) }
+      let(:call_flow_logic) { CallFlowLogic::Application.to_s }
       let(:metadata) { {"foo" => "bar"} }
-      let(:body) { {:metadata => metadata, :contact_id => contact.id} }
+      let(:body) { {:metadata => metadata, :contact_id => contact.id, :call_flow_logic => call_flow_logic} }
 
       def assert_update!
         expect(response.code).to eq("204")
         expect(callout_participation.reload.metadata).to eq(metadata)
+        expect(callout_participation.call_flow_logic).to eq(call_flow_logic)
         expect(callout_participation.contact).not_to eq(contact)
       end
 

@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe Callout do
   let(:factory) { :callout }
   include_examples "has_metadata"
+  include_examples "has_call_flow_logic"
 
   describe "associations" do
     def assert_associations!

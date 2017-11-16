@@ -40,6 +40,7 @@ class Filter::Resource::PhoneCall < Filter::Resource::Msisdn
       :callout_participation_id,
       :contact_id,
       :status,
+      :call_flow_logic,
       :remote_call_id,
       :remote_status,
       :remote_direction,

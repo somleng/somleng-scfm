@@ -45,11 +45,11 @@ class Api::CalloutParticipationsController < Api::FilteredController
   end
 
   def permitted_build_params
-    params.permit(:contact_id, :metadata => {})
+    params.permit(:contact_id, :call_flow_logic, :metadata => {})
   end
 
   def permitted_update_params
-    params.permit(:metadata => {})
+    params.permit(:call_flow_logic, :metadata => {})
   end
 
   def resource_location

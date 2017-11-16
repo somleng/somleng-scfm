@@ -27,7 +27,8 @@ RSpec.describe "'/api/callouts'" do
 
     describe "POST" do
       let(:method) { :post }
-      let(:body) { { :metadata => metadata } }
+      let(:call_flow_logic) { CallFlowLogic::Application.to_s }
+      let(:body) { { :metadata => metadata, :call_flow_logic => call_flow_logic } }
       let(:asserted_created_callout) { Callout.last }
       let(:parsed_response) { JSON.parse(response.body) }
 
@@ -35,6 +36,7 @@ RSpec.describe "'/api/callouts'" do
         expect(response.code).to eq("201")
         expect(parsed_response).to eq(JSON.parse(asserted_created_callout.to_json))
         expect(parsed_response["metadata"]).to eq(metadata)
+        expect(parsed_response["call_flow_logic"]).to eq(call_flow_logic)
       end
 
       it { assert_create! }

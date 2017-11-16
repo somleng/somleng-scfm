@@ -11,6 +11,7 @@ class CreateCalloutParticipations < ApplicationMigration
         }
       )
       t.string(:msisdn, :null => false)
+      t.string(:call_flow_logic)
       t.public_send(json_column_type, :metadata, :null => false, :default => json_column_default)
       t.index([:callout_id, :msisdn], :unique => true)
       t.index([:callout_id, :contact_id], :unique => true)

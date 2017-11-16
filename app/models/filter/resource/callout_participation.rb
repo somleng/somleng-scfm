@@ -9,7 +9,7 @@ class Filter::Resource::CalloutParticipation < Filter::Resource::Msisdn
   private
 
   def filter_params
-    params.slice(:callout_id, :contact_id, :callout_population_id)
+    params.slice(:call_flow_logic, :callout_id, :contact_id, :callout_population_id)
   end
 
   def has_phone_calls_scope

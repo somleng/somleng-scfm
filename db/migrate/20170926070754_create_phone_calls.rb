@@ -34,6 +34,7 @@ class CreatePhoneCalls < ApplicationMigration
       t.public_send(json_column_type, :remote_response, :null => false, :default => json_column_default)
       t.public_send(json_column_type, :remote_request_params, :null => false, :default => json_column_default)
       t.public_send(json_column_type, :remote_queue_response, :null => false, :default => json_column_default)
+      t.string(:call_flow_logic)
       t.datetime "remotely_queued_at"
       t.timestamps
     end

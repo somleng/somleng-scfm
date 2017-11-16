@@ -7,6 +7,19 @@ FactoryGirl.define do
     Hash[Somleng::Client.new.api.account.calls.method(:create).parameters.map { |param| [param[1].to_s, param[1].to_s] }]
   end
 
+  sequence :twilio_remote_call_event_details do
+    {
+      "CallSid" => SecureRandom.uuid,
+      "From" => FactoryGirl.generate(:somali_msisdn),
+      "To" => "345",
+      "CallStatus" => "completed",
+      "Direction" => "inbound",
+      "AccountSid" => SecureRandom.uuid,
+      "ApiVersion" => "2010-04-01",
+      "Digits" => "5"
+    }
+  end
+
   factory :callout do
     trait :can_start do
     end
@@ -65,12 +78,15 @@ FactoryGirl.define do
       remote_request_params { generate(:twilio_request_params) }
     end
 
-    trait :not_recently_created do
-      created_at { PhoneCall::DEFAULT_TIME_CONSIDERED_RECENTLY_CREATED_SECONDS.seconds.ago }
-    end
-
     trait :inbound do
+      callout_participation nil
+      remote_request_params { {} }
+      msisdn { generate(:somali_msisdn) }
       remote_direction { PhoneCall::TWILIO_DIRECTIONS[:inbound] }
     end
+  end
+
+  factory :remote_phone_call_event do
+    details { generate(:twilio_remote_call_event_details) }
   end
 end

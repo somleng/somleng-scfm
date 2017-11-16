@@ -1,5 +1,6 @@
 class Callout < ApplicationRecord
   include MetadataHelpers
+  include HasCallFlowLogic
 
   has_many :callout_participations, :dependent => :restrict_with_error
 

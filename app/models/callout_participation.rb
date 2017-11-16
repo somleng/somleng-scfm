@@ -1,6 +1,7 @@
 class CalloutParticipation < ApplicationRecord
   include MsisdnHelpers
   include MetadataHelpers
+  include HasCallFlowLogic
 
   DEFAULT_RETRY_STATUSES = [
     "failed"
@@ -20,7 +21,7 @@ class CalloutParticipation < ApplicationRecord
   validates :msisdn,
             :uniqueness => {:scope => :callout_id}
 
-  delegate :call_flow_logic, :to => :callout, :prefix => true
+  delegate :call_flow_logic, :to => :callout, :prefix => true, :allow_nil => true
   delegate :msisdn, :to => :contact, :prefix => true, :allow_nil => true
 
   before_validation :set_msisdn_from_contact,

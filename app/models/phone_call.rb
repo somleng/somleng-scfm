@@ -36,6 +36,7 @@ class PhoneCall < ApplicationRecord
   include MetadataHelpers
   include Wisper::Publisher
   include MsisdnHelpers
+  include HasCallFlowLogic
 
   conditionally_serialize(:remote_response, JSON)
   conditionally_serialize(:remote_request_params, JSON)
@@ -172,8 +173,12 @@ class PhoneCall < ApplicationRecord
   end
 
   def set_defaults
-    self.contact ||= callout_participation_contact
     self.msisdn  ||= callout_participation_msisdn
+    self.contact ||= callout_participation_contact || find_or_initialize_contact
+  end
+
+  def find_or_initialize_contact
+    Contact.where_msisdn(msisdn).first_or_initialize
   end
 
   def validate_destroy

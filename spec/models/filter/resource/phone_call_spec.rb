@@ -15,6 +15,15 @@ RSpec.describe Filter::Resource::PhoneCall do
       :updated_at,
       :remotely_queued_at
     )
+    include_examples(
+      "string_attribute_filter",
+      "status" => PhoneCall::STATE_COMPLETED,
+      :call_flow_logic => CallFlowLogic::Application.to_s,
+      :remote_call_id => SecureRandom.uuid,
+      :remote_status => PhoneCall::TWILIO_CALL_STATUSES[:not_answered],
+      :remote_direction => PhoneCall::TWILIO_DIRECTIONS[:inbound],
+      :remote_error_message => "Some Error"
+    )
 
     context "filtering by remote_response" do
       let(:filterable_attribute) { :remote_response }
@@ -64,61 +73,6 @@ RSpec.describe Filter::Resource::PhoneCall do
 
         def filter_params
           super.merge(:contact_id => contact.id)
-        end
-
-        it { assert_filter! }
-      end
-
-      context "by status" do
-        let(:status) { PhoneCall::STATE_COMPLETED }
-        let(:factory_attributes) { { :status => status } }
-
-        def filter_params
-          super.merge(:status => status)
-        end
-
-        it { assert_filter! }
-      end
-
-      context "by remote_call_id" do
-        let(:remote_call_id) { SecureRandom.uuid }
-        let(:factory_attributes) { { :remote_call_id => remote_call_id } }
-
-        def filter_params
-          super.merge(:remote_call_id => remote_call_id)
-        end
-
-        it { assert_filter! }
-      end
-
-      context "by remote_status" do
-        let(:remote_status) { PhoneCall::TWILIO_CALL_STATUSES[:not_answered] }
-        let(:factory_attributes) { { :remote_status => remote_status } }
-
-        def filter_params
-          super.merge(:remote_status => remote_status)
-        end
-
-        it { assert_filter! }
-      end
-
-      context "by remote_direction" do
-        let(:remote_direction) { PhoneCall::TWILIO_DIRECTIONS[:inbound] }
-        let(:factory_attributes) { { :remote_direction => remote_direction } }
-
-        def filter_params
-          super.merge(:remote_direction => remote_direction)
-        end
-
-        it { assert_filter! }
-      end
-
-      context "by remote_error_message" do
-        let(:remote_error_message) { "Some Error" }
-        let(:factory_attributes) { { :remote_error_message => remote_error_message } }
-
-        def filter_params
-          super.merge(:remote_error_message => remote_error_message)
         end
 
         it { assert_filter! }

@@ -4,44 +4,30 @@ class Api::RemotePhoneCallEventsController < Api::BaseController
   private
 
   def build_resource
-    @resource = phone_call.remote_phone_call_events.new(:details => permitted_params)
+    @resource = RemotePhoneCallEvent.new(:details => permitted_params)
   end
 
-  def phone_call
-    @phone_call ||= find_or_initialize_phone_call
+  def after_save_resource
+    call_flow_logic_instance.run! if resource.persisted?
   end
 
-  def find_or_initialize_phone_call
-    phone_call = PhoneCall.where(
-      :remote_call_id => params["CallSid"],
-      :remote_direction => params["Direction"],
-    ).first_or_initialize
+  def call_flow_logic_instance
+    @call_flow_logic_instance ||= call_flow_logic.new(:event => resource)
+  end
 
-    phone_call.msisdn ||= params["From"] if phone_call.new_record? && phone_call.inbound?
-
-    phone_call.contact ||= Contact.where(
-      :msisdn => params["From"]
-    ).first_or_initialize if phone_call.new_record?
-
-    phone_call
+  def call_flow_logic
+    @call_flow_logic ||= begin
+      resource_call_flow_logic = CallFlowLogic::Base.descendants.map(&:to_s).select { |available_call_flow_logic| available_call_flow_logic == resource.call_flow_logic }.first
+      (resource_call_flow_logic && resource_call_flow_logic.constantize) || CallFlowLogic::Application
+    end
   end
 
   def respond_with_create_resource
     if resource.persisted?
-      respond_with(call_flow_logic, :location => nil)
+      respond_with(call_flow_logic_instance, :location => nil)
     else
       respond_with(resource)
     end
-  end
-
-  def call_flow_logic
-    event_call_flow_logic = resource.call_flow_logic
-    permitted_call_flow_logic = event_call_flow_logic && CallFlowLogic::Base.descendants.map(&:to_s).select { |available_call_flow_logic| available_call_flow_logic == event_call_flow_logic }.first
-    (permitted_call_flow_logic && permitted_call_flow_logic.constantize || default_call_flow_logic).new(resource)
-  end
-
-  def default_call_flow_logic
-    CallFlowLogic::Application
   end
 
   # https://www.twilio.com/docs/api/twiml/twilio_request
@@ -52,4 +38,5 @@ class Api::RemotePhoneCallEventsController < Api::BaseController
       "AccountSid", "ApiVersion", "Digits"
     )
   end
+
 end

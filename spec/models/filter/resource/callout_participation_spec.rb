@@ -10,6 +10,10 @@ RSpec.describe Filter::Resource::CalloutParticipation do
     include_examples "metadata_attribute_filter"
     include_examples "msisdn_attribute_filter"
     include_examples "timestamp_attribute_filter"
+    include_examples(
+      "string_attribute_filter",
+      :call_flow_logic => CallFlowLogic::Application.to_s
+    )
 
     context "filtering" do
       let(:factory_attributes) { {} }

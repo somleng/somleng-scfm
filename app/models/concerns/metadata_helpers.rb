@@ -7,10 +7,6 @@ module MetadataHelpers
     conditionally_serialize(:metadata, JSON)
   end
 
-  def call_flow_logic
-    metadata["call_flow_logic"]
-  end
-
   module ClassMethods
     def metadata_has_value(key, value)
       json_has_value(key, value, :metadata)

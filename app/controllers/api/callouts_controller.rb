@@ -10,7 +10,7 @@ class Api::CalloutsController < Api::FilteredController
   end
 
   def permitted_params
-    params.permit(:metadata => {})
+    params.permit(:call_flow_logic, :metadata => {})
   end
 
   def resource_location

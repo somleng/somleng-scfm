@@ -5,6 +5,7 @@ class Api::BaseController < ApplicationController
     build_resource
     setup_resource
     save_resource
+    after_save_resource
     respond_with_create_resource
   end
 
@@ -64,6 +65,9 @@ class Api::BaseController < ApplicationController
 
   def save_resource
     resource.save
+  end
+
+  def after_save_resource
   end
 
   def update_resource

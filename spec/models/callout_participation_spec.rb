@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe CalloutParticipation do
   let(:factory) { :callout_participation }
   include_examples "has_metadata"
+  include_examples "has_call_flow_logic"
 
   include SomlengScfm::SpecHelpers::MsisdnExamples
 

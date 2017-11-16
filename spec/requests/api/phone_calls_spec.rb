@@ -34,11 +34,13 @@ RSpec.describe "Phone Calls" do
     let(:url) { api_callout_participation_phone_calls_path(callout_participation) }
     let(:metadata) { nil }
     let(:remote_request_params) { nil }
-    let(:body) { { :metadata => metadata, :remote_request_params => remote_request_params } }
+    let(:call_flow_logic) { nil }
+    let(:body) { { :metadata => metadata, :remote_request_params => remote_request_params, :call_flow_logic => call_flow_logic } }
 
     context "valid request" do
       let(:metadata) { { "foo" => "bar"} }
       let(:remote_request_params) { generate(:twilio_request_params) }
+      let(:call_flow_logic) { CallFlowLogic::Application.to_s }
 
       let(:created_phone_call) { callout_participation.phone_calls.last }
       let(:parsed_response_body) { JSON.parse(response.body) }
@@ -49,6 +51,7 @@ RSpec.describe "Phone Calls" do
         expect(parsed_response_body).to eq(JSON.parse(created_phone_call.to_json))
         expect(parsed_response_body["metadata"]).to eq(metadata)
         expect(parsed_response_body["remote_request_params"]).to eq(remote_request_params)
+        expect(parsed_response_body["call_flow_logic"]).to eq(call_flow_logic)
       end
 
       it { assert_created! }

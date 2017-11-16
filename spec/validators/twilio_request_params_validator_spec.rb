@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe TwilioRequestParamsValidator do
-  class Validatable
+  class TwilioRequestParamsValidator::Validatable
     include ActiveModel::Validations
     attr_accessor  :request_params
 
@@ -13,7 +13,7 @@ RSpec.describe TwilioRequestParamsValidator do
   end
 
   let(:request_params) { nil }
-  subject { Validatable.new(:request_params => request_params) }
+  subject { TwilioRequestParamsValidator::Validatable.new(:request_params => request_params) }
 
   context "without request params" do
     it { is_expected.to be_valid }

@@ -3,6 +3,7 @@ require 'rails_helper'
 RSpec.describe PhoneCall do
   let(:factory) { :phone_call }
   include_examples "has_metadata"
+  include_examples "has_call_flow_logic"
 
   describe "associations" do
     def assert_associations!
@@ -55,7 +56,8 @@ RSpec.describe PhoneCall do
   end
 
   describe "defaults" do
-    subject { build(factory) }
+    let(:factory_attributes) { {} }
+    subject { build(factory, *factory_traits, factory_attributes) }
 
     def setup_scenario
       super
@@ -63,13 +65,53 @@ RSpec.describe PhoneCall do
     end
 
     def assert_defaults!
-      expect(subject.contact).to be_present
-      expect(subject.contact).to eq(subject.callout_participation.contact)
+      expect(subject.errors).to be_empty
       expect(subject.msisdn).to be_present
-      expect(subject.msisdn).to eq(subject.callout_participation.msisdn)
+      expect(subject.contact).to be_present
     end
 
-    it { assert_defaults! }
+    context "outbound" do
+      let(:factory_traits) { [:outbound] }
+      it { assert_defaults! }
+
+      def assert_defaults!
+        super
+        expect(subject.contact).to eq(subject.callout_participation.contact)
+        expect(subject.msisdn).to eq(subject.callout_participation.msisdn)
+      end
+    end
+
+    context "inbound" do
+      let(:factory_traits) { [:inbound] }
+      let(:msisdn) { generate(:somali_msisdn) }
+      let(:factory_attributes) { { :msisdn => msisdn } }
+
+      context "contact exists with matching msisdn" do
+        let(:contact) { create(:contact, :msisdn => msisdn) }
+
+        def setup_scenario
+          contact
+          super
+        end
+
+        def assert_defaults!
+          super
+          expect(subject.contact).to eq(contact)
+          expect(subject.msisdn).to eq(contact.msisdn)
+        end
+
+        it { assert_defaults! }
+      end
+
+      context "contact does not exist" do
+       def assert_defaults!
+          super
+          expect(subject.msisdn).to eq(subject.contact.msisdn)
+        end
+      end
+
+      it { assert_defaults! }
+    end
   end
 
   describe "destroying" do

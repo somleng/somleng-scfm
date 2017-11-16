@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(version: 20171101092942) do
     t.integer "contact_id", null: false
     t.integer "callout_population_id"
     t.string "msisdn", null: false
+    t.string "call_flow_logic"
     t.text "metadata", default: "{}", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -40,6 +41,7 @@ ActiveRecord::Schema.define(version: 20171101092942) do
 
   create_table "callouts", force: :cascade do |t|
     t.string "status", null: false
+    t.string "call_flow_logic"
     t.text "metadata", default: "{}", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -69,6 +71,7 @@ ActiveRecord::Schema.define(version: 20171101092942) do
     t.text "remote_response", default: "{}", null: false
     t.text "remote_request_params", default: "{}", null: false
     t.text "remote_queue_response", default: "{}", null: false
+    t.string "call_flow_logic"
     t.datetime "remotely_queued_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -83,6 +86,10 @@ ActiveRecord::Schema.define(version: 20171101092942) do
   create_table "remote_phone_call_events", force: :cascade do |t|
     t.integer "phone_call_id", null: false
     t.text "details", default: "{}", null: false
+    t.text "metadata", default: "{}", null: false
+    t.string "remote_call_id", null: false
+    t.string "remote_direction", null: false
+    t.string "call_flow_logic", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["phone_call_id"], name: "index_remote_phone_call_events_on_phone_call_id"

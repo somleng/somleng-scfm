@@ -23,3 +23,8 @@
 remove_focus.rb
 install
 vendor/ruby
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml

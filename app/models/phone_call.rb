@@ -106,7 +106,7 @@ class PhoneCall < ApplicationRecord
       )
     end
 
-    event :complete do
+    event :complete, :after_commit => :publish_completed do
       transitions :from => [:remotely_queued, :remote_fetch_queued, :in_progress],
                   :to => :in_progress,
                   :if => :remote_status_in_progress?
@@ -193,6 +193,10 @@ class PhoneCall < ApplicationRecord
 
   def publish_remote_fetch_queued
     broadcast(:phone_call_remote_fetch_queued, self)
+  end
+
+  def publish_completed
+    broadcast(:phone_call_completed, self)
   end
 
   def was_remotely_queued_and_new_remote_status_unknown?

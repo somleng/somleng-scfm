@@ -236,6 +236,14 @@ RSpec.describe PhoneCall do
         super.merge(:remote_status => remote_status)
       end
 
+      context "can complete" do
+        let(:current_status) { described_class::STATE_IN_PROGRESS }
+        let(:remote_status) { "completed" }
+        it("should broadcast") {
+          assert_broadcasted!(:phone_call_completed) { subject.complete! }
+        }
+      end
+
       context "new_remote_status: nil" do
         # this is set when fetching the remote call
 

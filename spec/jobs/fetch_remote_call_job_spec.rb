@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe FetchRemoteCallJob do
+  include_examples("application_job")
+
   describe "#perform(phone_call_id)" do
     include SomlengScfm::SpecHelpers::SomlengClientHelpers
 

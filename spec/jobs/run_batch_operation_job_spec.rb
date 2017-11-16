@@ -1,6 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe RunBatchOperationJob do
+  include_examples("application_job")
+
   describe "#perform(batch_operation_id)" do
     let(:batch_operation_factory) { :batch_operation }
     let(:batch_operation) {

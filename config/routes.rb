@@ -1,6 +1,11 @@
 Rails.application.routes.draw do
   namespace "api", :defaults => { :format => "json" } do
-    resources :remote_phone_call_events, :only => [:create], :defaults => { :format => "xml" }
+
+    defaults :format => :xml do
+      resources :remote_phone_call_events, :only => :create
+    end
+
+    resources :remote_phone_call_events, :only => [:index, :show, :update]
 
     resources :contacts, :except => [:new, :edit] do
       resources :callout_participations, :only => :index

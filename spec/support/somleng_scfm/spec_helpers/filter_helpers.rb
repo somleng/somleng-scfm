@@ -13,8 +13,8 @@ module SomlengScfm::SpecHelpers::FilterHelpers
     @filter_params ||= {}
   end
 
-  def actual_resources
-    subject.resources
+  def json_data
+    {"foo" => "bar", "bar" => "foo"}
   end
 end
 

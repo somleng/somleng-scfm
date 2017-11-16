@@ -1,8 +1,4 @@
 RSpec.shared_examples_for "json_attribute_filter" do
-  def json_data
-    defined?(super) ? super : {"foo" => "bar", "bar" => "foo"}
-  end
-
   let(:resource) { create(filterable_factory, filterable_attribute => json_data) }
 
   def setup_scenario
@@ -13,19 +9,21 @@ RSpec.shared_examples_for "json_attribute_filter" do
     super.merge(filterable_attribute => json_params)
   end
 
-  def assert_filter!
-    expect(subject.resources).to match_array(asserted_results)
+  def assert_results!
+    expect(subject.resources).to match_array([resource])
+  end
+
+  def assert_no_results!
+    expect(subject.resources).to match_array([])
   end
 
   context "finding" do
     let(:json_params) { Hash[[json_data.first]] }
-    let(:asserted_results) { [resource] }
-    it { assert_filter! }
+    it { assert_results! }
   end
 
   context "not finding" do
     let(:json_params) { {"foo" => "baz"} }
-    let(:asserted_results) { [] }
-    it { assert_filter! }
+    it { assert_no_results! }
   end
 end

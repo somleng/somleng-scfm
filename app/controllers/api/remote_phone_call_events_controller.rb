@@ -1,10 +1,23 @@
-class Api::RemotePhoneCallEventsController < Api::BaseController
-  respond_to :xml
+class Api::RemotePhoneCallEventsController < Api::FilteredController
+  respond_to :xml,  :only => :create
+  respond_to :json, :except => :create
 
   private
 
   def build_resource
-    @resource = RemotePhoneCallEvent.new(:details => permitted_params)
+    @resource = association_chain.new(:details => permitted_build_params)
+  end
+
+  def find_resources_association_chain
+    association_chain
+  end
+
+  def association_chain
+    RemotePhoneCallEvent.all
+  end
+
+  def filter_class
+    Filter::Resource::RemotePhoneCallEvent
   end
 
   def after_save_resource
@@ -31,7 +44,7 @@ class Api::RemotePhoneCallEventsController < Api::BaseController
   end
 
   # https://www.twilio.com/docs/api/twiml/twilio_request
-  def permitted_params
+  def permitted_build_params
     params.permit(
       "CallSid", "From", "To",
       "CallStatus", "Direction",
@@ -39,4 +52,11 @@ class Api::RemotePhoneCallEventsController < Api::BaseController
     )
   end
 
+  def permitted_update_params
+    params.permit(:metadata => {})
+  end
+
+  def api_authenticate?
+    super if params[:action] != "create"
+  end
 end

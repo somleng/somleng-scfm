@@ -1,33 +1,73 @@
 # Deployment
 
-## Databases
+## AWS Elastic Beanstalk
 
-Somleng SCFM currently supports [SQLite](https://www.sqlite.org/) and [PostgreSQL](https://www.postgresql.org/). If you want to test things out locally using Docker feel free to use the SQLite. For production we recommend using PostgreSQL.
+### Set up a VPC
 
-## Docker
+[Set up a VPC with public and private subnets](https://github.com/somleng/twilreapi/blob/master/docs/AWS_VPC_SETUP.md).
 
-The following section decribes how to deploy Somleng Simple Call Flow Manager with Docker using and SQLite database.
+### Create a Bastion Host for debugging (optional)
 
-### Pull the latest Docker image
+In this guide we will setup your environment so that the EC2 instances are deployed to the private subnets, similar to what is shown in [this diagram](http://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_Scenario2.html). Our private subnets, created in the previous step, do not have an Internet Gateway attached to the routing table and therefore cannot be accessed from the Internet. Therefore, in order to have SSH access to our EC2 instances (for debugging purposes) we need to create a bastion host. In order to create a bastion host, launch a new nano instance in one of your public subnets and assign it an elastic IP. SSH into the bastion host with the `-A` flag. For example `$ ssh -A ubuntu@elastic-ip`. From the bastion host you should be able to ssh into your Elastic Beanstalk SSH instances via the private IP.
 
-```
-$ sudo docker pull dwilkie/somleng-scfm
-```
+### Create a new a RDS Postgresql Database
 
-### Setup Database
+Follow [this guide](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/AWSHowTo.RDS.html?icmpid=docs_elasticbeanstalk_console) to setup a new RDS Postgresql Instance. Note down the RDS instance's security group id.
 
-#### Create Database (SQLite)
+### Create a new web application environment
 
-Creates a new database called `somleng_scfm_production` and copies it to the host directory `/etc/somleng-scfm/db`. Modify the command below to change these defaults.
+As described above, we will setup your environment so that the EC2 instances are deployed to the private subnets in your VPC.
 
-```
-$ sudo docker run --rm -v /etc/somleng-scfm/db:/tmp/db -e RAILS_ENV=production -e RAILS_DB_ADAPTER=sqlite3 -e DATABASE_NAME=somleng_scfm_production dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake db:create && bundle exec rake db:migrate && if [ ! -f /tmp/db/somleng_scfm_production.sqlite3 ]; then cp /usr/src/app/db/somleng_scfm_production.sqlite3 /tmp/db; fi'
-```
+Launch a new web application environment using the ruby (Puma) platform. When prompted for the VPC, enter the VPC you created above. When prompted if you want to associate a public IP Address select No. When prompted for EC2 subnets, enter your *private* subnets. When prompted for your ELB subnets enter your *public* subnets. When prompted for Security Groups enter the id of the RDS Instance's security group.
 
-### Export Cron
-
-Exports cron scripts with sensible defaults to `/etc/somleng-scfm/cron`. Modify the command below to change these defaults or edit them in the exported cron scripts. For additional configuration options see [the install task](https://github.com/somleng/somleng-scfm/blob/master/app/tasks/install_task.rb) and the [.env](https://github.com/somleng/somleng-scfm/blob/master/.env) file.
+Modify the commands below to match your details:
 
 ```
-$ sudo docker run --rm -v /etc/somleng-scfm/cron:/usr/src/app/install/cron -e RAILS_ENV=production -e HOST_INSTALL_DIR=/etc/somleng-scfm dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake task:install:cron'
+$ eb platform select --profile <profile-name>
+$ eb create somleng-scfm-web --vpc -r <region> --envvars DATABASE_URL=postgres://dbuser:dbpassword@dbendpoint:dbport/db_name,SECRET_KEY_BASE=`bundle exec rails secret`,RAILS_MAX_THREADS=32 --profile <profile-name>
+```
+
+#### Environment Variables
+
+Configure the following Environment Variables using `eb setenv` or the Elastic Beanstalk Web Console.
+
+Required:
+
+```
+SECRET_KEY_BASE=`bundle exec rails secret`
+DATABASE_URL=postgres://dbuser:dbpassword@dbendpoint:dbport/db_name
+RAILS_MAX_THREADS=32 # Default used by Elasic Beanstalk's Puma Configuration
+```
+
+Optional but highly recommended:
+
+```
+FORCE_SSL=1 # Forces SSL (you'll need a SSL certificate)
+HTTP_BASIC_AUTH_USER=api-key # Specify a HTTP Basic Auth User to authenticate API access
+```
+
+Optional:
+
+```
+HTTP_BASIC_AUTH_PASSWORD=secret # Specify a HTTP Basic Auth Password to authenticate API access
+```
+
+### Create a new worker environment
+
+Create a worker environment for processing background jobs such as queuing remote calls, fetching remote calls and running batch operations.
+
+Launch a new worker environment using the ruby (Puma) platform. When prompted for the VPC, enter the VPC you created above. When prompted for EC2 subnets, enter the *private* subnets (separated by a comma for both availability zones). Enter the same for your ELB subnets (note there is no ELB for Worker environments so this setting will be ignored).
+
+$ eb create somleng-scfm-worker1 --vpc --tier worker -i t2.nano --envvars DATABASE_URL=postgres://dbuser:dbpassword@dbendpoint:dbport/db_name,SECRET_KEY_BASE=same-as-above,RAILS_MAX_THREADS=32 --profile <profile-name>
+
+#### Environment Variables
+
+Configure the following Environment Variables using `eb setenv` or the Elastic Beanstalk Web Console.
+
+Required:
+
+```
+SECRET_KEY_BASE=same-as-web-environment
+DATABASE_URL=postgres://dbuser:dbpassword@dbendpoint:dbport/db_name
+RAILS_MAX_THREADS=32
 ```

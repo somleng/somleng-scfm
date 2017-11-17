@@ -399,12 +399,12 @@ Right now our callout isn't very interesting. Let's change that by populating ou
 
 ### Create a Callout Population
 
-In order to populate a callout we create what's called callout population. This will allow us to preview the contacts that will be called before actually queuing the population process.
+In order to populate a callout we create what's called callout population. This will allow us to preview the contacts that will be called before actually queuing the population process. A callout population is a type of batch operation. A batch operation can be one of a few different types and can be previewed queued, and requeued for processing (more on this later).
 
-Take notice of the url in the command below `/api/callouts/1/callout_populations`. Here `1` is the id of the callout created in the previous step. We are creating a callout population for the callout with the id `1`.
+Let's go ahead and create a batch operation for populating the callout. Take notice of the url in the command below `/api/callouts/1/batch_operations`. Here `1` is the id of the callout created in the previous step. We are creating a batch operation of type `BatchOperation::CalloutPopulation` on the the callout with the id `1`.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_populations | jq'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/batch_operations -d type=BatchOperation::CalloutPopulation | jq'
 ```
 
 You should see something like:
@@ -413,20 +413,20 @@ You should see something like:
 {
   "id": 1,
   "callout_id": 1,
-  "contact_filter_params": {},
+  "parameters": {},
   "metadata": {},
   "status": "preview",
-  "created_at": "2017-11-09T09:22:52.895Z",
-  "updated_at": "2017-11-09T09:22:52.895Z"
+  "created_at": "2017-11-17T10:24:20.458Z",
+  "updated_at": "2017-11-17T10:24:20.458Z"
 }
 ```
 
 Now that we have our callout population we can preview which contacts will participate in our callout.
 
-Again, take notice of the url in the command below `/api/callout_populations/1/preview/contacts`. Here `1` is the id of the callout population created in the previous step. We are previewing the contacts in the callout population.
+Again, take notice of the url in the command below `/api/batch_operations/1/preview/contacts`. Here `1` is the id of the callout population created in the previous step. We are previewing the contacts in the callout population.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/callout_populations/1/preview/contacts | jq'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/preview/contacts | jq'
 ```
 
 You should see something like:
@@ -469,10 +469,10 @@ We can see from the response that there's `Total` of `2` contacts in the preview
 
 Typically you don't want to call everyone in your contacts table. Let's say for this example that we only want to call females.
 
-To do this let's update the callout population specifying the `contact_filter_params` which will limit our population of the callout.
+To do this let's update the callout population specifying the `contact_filter_params` which will limit our population of the callout. Note that the `contacts_filter_params` are nested under `parameters` attribute. A batch operation will have different configurable parameters depending on the type.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callout_populations/1 -d contact_filter_params[metadata][gender]=f'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/1 -d parameters[contact_filter_params][metadata][gender]=f'
 ```
 
 Again since we're updating a record, a successful response will return `No Content`.
@@ -486,7 +486,7 @@ Again since we're updating a record, a successful response will return `No Conte
 Let's double check that our callout population was updated.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/callout_populations/1 | jq'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/1 | jq'
 ```
 
 You should see something like;
@@ -495,15 +495,17 @@ You should see something like;
 {
   "id": 1,
   "callout_id": 1,
-  "contact_filter_params": {
-    "metadata": {
-      "gender": "f"
+  "parameters": {
+    "contact_filter_params": {
+      "metadata": {
+        "gender": "f"
+      }
     }
   },
   "metadata": {},
   "status": "preview",
-  "created_at": "2017-11-09T09:22:52.895Z",
-  "updated_at": "2017-11-09T09:37:09.053Z"
+  "created_at": "2017-11-17T10:24:20.458Z",
+  "updated_at": "2017-11-17T10:35:15.500Z"
 }
 ```
 
@@ -512,7 +514,7 @@ We can see now that the `contact_filter_params` are populated with the paramters
 Let's try the preview again.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/callout_populations/1/preview/contacts | jq'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/preview/contacts | jq'
 ```
 
 ```
@@ -539,10 +541,10 @@ Now we can see from the response that there's `Total` of `1` contacts in the pre
 
 ### Queuing the callout for population
 
-Once we're happy with our callout population we can queue it for population. This will take some time depending on how many participations need to be created.
+Once we're happy with our batch operation for populating the callout we can queue it for processing. This will take some time depending on how many participations need to be created.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callout_populations/1/callout_population_events -d "event=queue" | jq'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations/1/batch_operation_events -d "event=queue" | jq'
 ```
 
 You should see something like:
@@ -551,22 +553,24 @@ You should see something like:
 {
   "id": 1,
   "callout_id": 1,
-  "contact_filter_params": {
-    "metadata": {
-      "gender": "f"
+  "parameters": {
+    "contact_filter_params": {
+      "metadata": {
+        "gender": "f"
+      }
     }
   },
   "metadata": {},
   "status": "queued",
-  "created_at": "2017-11-09T09:22:52.895Z",
-  "updated_at": "2017-11-09T09:52:56.070Z"
+  "created_at": "2017-11-17T10:24:20.458Z",
+  "updated_at": "2017-11-17T10:39:24.759Z"
 }
 ```
 
 Notice that the status is now `queued`. In the background, Somleng SCFM is now busy populating your callout with callout participations. You can check the status of the population by fetching it again.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/callout_populations/1 | jq'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/1 | jq'
 ```
 
 You should see something like this:
@@ -575,21 +579,23 @@ You should see something like this:
 {
   "id": 1,
   "callout_id": 1,
-  "contact_filter_params": {
-    "metadata": {
-      "gender": "f"
+  "parameters": {
+    "contact_filter_params": {
+      "metadata": {
+        "gender": "f"
+      }
     }
   },
   "metadata": {},
-  "status": "populated",
-  "created_at": "2017-11-09T09:22:52.895Z",
-  "updated_at": "2017-11-09T09:52:56.070Z"
+  "status": "finished",
+  "created_at": "2017-11-17T10:24:20.458Z",
+  "updated_at": "2017-11-17T10:39:25.073Z"
 }
 ```
 
-Notice that the status is now `populated`. This means that the population has finished and you should now have participations in your callout.
+Notice that the status is now `finished`. This means that the batch operation has finished and you should now have participations in your callout.
 
-Let's check the contacts in our callout population.
+Let's check the contacts that the batch operation added to our callout.
 
 ```
 < Per-Page: 25
@@ -597,7 +603,7 @@ Let's check the contacts in our callout population.
 ```
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callout_populations/1/contacts | jq'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations/1/contacts | jq'
 ```
 
 ```json
@@ -621,7 +627,7 @@ Now that we have populated our callout we should have a bunch of callout partici
 
 Let's see what callout participations we have in our callout.
 
-Take notice of the url in the command below `/api/callouts/1/callout_participations`. Here `1` is the id of the callout, *not* the callout population (although in this case the callout population may also have an id of `1`). Here we are fetching the participations in the callout.
+Take notice of the url in the command below `/api/callouts/1/callout_participations`. Here `1` is the id of the callout, *not* the batch operation (although in this case the batch operation id may also have an id of `1`). Here we are fetching the participations in the callout.
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/callout_participations | jq'
@@ -649,7 +655,7 @@ You should see something like:
 ]
 ```
 
-As you can see we have just the one participation in the callout, which has the `contact_id: 2` (Alice).
+As you can see we have just the one participation in the callout, which has the `contact_id: 1` (Alice).
 
 ### Listing Contacts
 
@@ -814,36 +820,38 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 
 ### Repopulating
 
-Let's say that we really do want Alice in the callout after all. We could just re-add her to the callout as we did for Bob, but let's add her back by repopulating the callout.
+Let's say that we really do want Alice in the callout after all. We could just re-add her to the callout as we did for Bob, but let's add her back by requeuing or batch operation for populating the callout.
 
-First let's check our callout population again:
+First let's check our batch operation again:
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/callout_populations/1 | jq'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/1 | jq'
 ```
 
 ```json
 {
   "id": 1,
   "callout_id": 1,
-  "contact_filter_params": {
-    "metadata": {
-      "gender": "f"
+  "parameters": {
+    "contact_filter_params": {
+      "metadata": {
+        "gender": "f"
+      }
     }
   },
   "metadata": {},
-  "status": "populated",
-  "created_at": "2017-11-10T09:52:10.116Z",
-  "updated_at": "2017-11-10T09:53:08.435Z"
+  "status": "finished",
+  "created_at": "2017-11-17T10:24:20.458Z",
+  "updated_at": "2017-11-17T10:39:25.073Z"
 }
 ```
 
-As you can see from the response above the status of the callout population is already `populated`. But we can repopulate it again.
+As you can see from the response above the status of the batch operation is already `finished`. But we can requeue it again.
 
 First let's make sure that Alice will be added again if we repopulate by previewing the contacts.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/callout_populations/1/preview/contacts | jq'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/preview/contacts | jq'
 ```
 
 ```
@@ -868,25 +876,27 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
 
 Ok so we can see from the preview that Alice will added as a participant to the callout.
 
-Finally let's go ahead and repopulate the callout. Notice that the `event` in the command below is `requeue`. We're requeuing the callout population.
+Finally let's go ahead and queue the batch operation. Notice that the `event` in the command below is `requeue`. We're requeuing the batch operation to populate the callout.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callout_populations/1/callout_population_events -d "event=requeue" | jq'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations/1/batch_operation_events -d "event=requeue" | jq'
 ```
 
 ```json
 {
   "id": 1,
   "callout_id": 1,
-  "contact_filter_params": {
-    "metadata": {
-      "gender": "f"
+  "parameters": {
+    "contact_filter_params": {
+      "metadata": {
+        "gender": "f"
+      }
     }
   },
   "metadata": {},
   "status": "queued",
-  "created_at": "2017-11-10T09:52:10.116Z",
-  "updated_at": "2017-11-10T10:40:29.051Z"
+  "created_at": "2017-11-17T10:24:20.458Z",
+  "updated_at": "2017-11-17T10:39:25.073Z"
 }
 ```
 
@@ -895,29 +905,31 @@ Now we see that the callout population has been queued again.
 Let's check again to see if it's done.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/callout_populations/1 | jq'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/1 | jq'
 ```
 
 ```json
 {
   "id": 1,
   "callout_id": 1,
-  "contact_filter_params": {
-    "metadata": {
-      "gender": "f"
+  "parameters": {
+    "contact_filter_params": {
+      "metadata": {
+        "gender": "f"
+      }
     }
   },
   "metadata": {},
-  "status": "populated",
-  "created_at": "2017-11-10T09:52:10.116Z",
-  "updated_at": "2017-11-10T10:40:29.097Z"
+  "status": "finished",
+  "created_at": "2017-11-17T10:24:20.458Z",
+  "updated_at": "2017-11-17T10:39:25.073Z"
 }
 ```
 
 Looks good. Now let's check to see if Alice is was populated in our callout.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callout_populations/1/contacts | jq'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations/1/contacts | jq'
 ```
 
 ```
@@ -940,7 +952,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 ]
 ```
 
-Ok, we see that Alice is has been populated but what happened to Bob? If we take a closer look at the previous command notice that the URL is `api/callout_populations/1/contacts`. This command lists all the contacts which have been populated by the callout population.
+Ok, we see that Alice is has been populated but what happened to Bob? If we take a closer look at the previous command notice that the URL is `api/batch_operations/1/contacts`. This command lists all the contacts which have been populated by the batch operation.
 
 What we really want to see is who is now in our callout.
 

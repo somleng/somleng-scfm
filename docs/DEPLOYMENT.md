@@ -24,7 +24,7 @@ Modify the commands below to match your details:
 
 ```
 $ eb platform select --profile <profile-name>
-$ eb create somleng-scfm-web --vpc -r <region> --envvars DATABASE_URL=postgres://dbuser:dbpassword@dbendpoint:dbport/db_name,SECRET_KEY_BASE=`bundle exec rails secret`,RAILS_MAX_THREADS=32 --profile <profile-name>
+$ eb create somleng-scfm-web --vpc -r <region> --envvars DATABASE_URL=postgres://dbuser:dbpassword@dbendpoint:dbport/db_name,SECRET_KEY_BASE=`bundle exec rails secret`,RAILS_MAX_THREADS=32,AWS_REGION=aws-region-id,ACTIVE_JOB_ADAPTER=active_elastic_job --profile <profile-name>
 ```
 
 #### Environment Variables
@@ -37,6 +37,9 @@ Required:
 SECRET_KEY_BASE=`bundle exec rails secret`
 DATABASE_URL=postgres://dbuser:dbpassword@dbendpoint:dbport/db_name
 RAILS_MAX_THREADS=32 # Default used by Elasic Beanstalk's Puma Configuration
+AWS_REGION=aws-region-id
+ACTIVE_JOB_ADAPTER=active_elastic_job
+ACTIVE_JOB_QUEUE_NAME=name-of-sqs-queue
 ```
 
 Optional but highly recommended:
@@ -54,11 +57,13 @@ HTTP_BASIC_AUTH_PASSWORD=secret # Specify a HTTP Basic Auth Password to authenti
 
 ### Create a new worker environment
 
-Create a worker environment for processing background jobs such as queuing remote calls, fetching remote calls and running batch operations.
+Create a worker environment(s) for processing background jobs such as queuing remote calls, fetching remote calls and running batch operations.
 
 Launch a new worker environment using the ruby (Puma) platform. When prompted for the VPC, enter the VPC you created above. When prompted for EC2 subnets, enter the *private* subnets (separated by a comma for both availability zones). Enter the same for your ELB subnets (note there is no ELB for Worker environments so this setting will be ignored).
 
-$ eb create somleng-scfm-worker1 --vpc --tier worker -i t2.nano --envvars DATABASE_URL=postgres://dbuser:dbpassword@dbendpoint:dbport/db_name,SECRET_KEY_BASE=same-as-above,RAILS_MAX_THREADS=32 --profile <profile-name>
+$ eb create somleng-scfm-worker1 --vpc --tier worker -i t2.nano --envvars DATABASE_URL=postgres://dbuser:dbpassword@dbendpoint:dbport/db_name,SECRET_KEY_BASE=same-as-above,RAILS_MAX_THREADS=32,PROCESS_ACTIVE_ELASTIC_JOBS=true,AWS_REGION=aws-region-id,ACTIVE_JOB_ADAPTER=active_elastic_job --profile <profile-name>
+
+You can optionally repeat this step if you want to create separate workers for separate jobs.
 
 #### Environment Variables
 
@@ -70,4 +75,22 @@ Required:
 SECRET_KEY_BASE=same-as-web-environment
 DATABASE_URL=postgres://dbuser:dbpassword@dbendpoint:dbport/db_name
 RAILS_MAX_THREADS=32
+PROCESS_ACTIVE_ELASTIC_JOBS=true
+AWS_REGION=aws-region-id
+ACTIVE_JOB_ADAPTER=active_elastic_job
+ACTIVE_JOB_QUEUE_NAME=name-of-sqs-queue
 ```
+
+Optional:
+
+Override default configuration by configuring additional workers/queues:
+
+```
+ACTIVE_JOB_QUEUE_REMOTE_CALL_JOB_QUEUE_NAME=sqs-queue-name
+ACTIVE_JOB_FETCH_REMOTE_CALL_JOB_QUEUE_NAME=sqs-queue-name
+ACTIVE_JOB_RUN_BATCH_OPERATION_JOB_QUEUE_NAME=sqs-queue-name
+```
+
+#### Configure Active Elastic Job
+
+https://github.com/tawan/active-elastic-job

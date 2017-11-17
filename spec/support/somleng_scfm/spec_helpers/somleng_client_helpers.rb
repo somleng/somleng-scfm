@@ -17,6 +17,7 @@ module SomlengScfm::SpecHelpers::SomlengClientHelpers
 
   def env
     somleng_client_env = {
+      "PLATFORM_PROVIDER" => "somleng",
       "SOMLENG_CLIENT_REST_API_HOST" => somleng_client_rest_api_host,
       "SOMLENG_CLIENT_REST_API_BASE_URL" => somleng_client_rest_api_base_url,
       "SOMLENG_ACCOUNT_SID" => somleng_account_sid,

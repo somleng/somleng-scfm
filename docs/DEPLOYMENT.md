@@ -91,6 +91,10 @@ ACTIVE_JOB_FETCH_REMOTE_CALL_JOB_QUEUE_NAME=sqs-queue-name
 ACTIVE_JOB_RUN_BATCH_OPERATION_JOB_QUEUE_NAME=sqs-queue-name
 ```
 
-#### Configure Active Elastic Job
+Follow the [active-elastic-job README](https://github.com/tawan/active-elastic-job) for more info on configuring Active Elastic Job.
 
-https://github.com/tawan/active-elastic-job
+#### Worker Auto Scaling
+
+1. Create two CloudWatch alarms for each SQS queue using the AWS CloudWatch console using the metric `ApproximateNumberOfMessagesVisible`. One alarm should be for scaling up, and the other for scaling down.
+2. Attach the alarm to the AutoScaling group which was created by Elastic Beanstalk for the worker environment. Check the tag names of the Autoscaling group to confirm.
+3. Optionally set the minimum instance count to 0 in the environment settings for Elastic Beanstalk.

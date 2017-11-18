@@ -36,7 +36,7 @@ class RemotePhoneCallEvent < ApplicationRecord
 
   def valid_call_flow_logic(call_flow_logic)
     return if !call_flow_logic
-    CallFlowLogic::Base.descendants.map(&:to_s).select { |available_call_flow_logic| available_call_flow_logic == call_flow_logic }.first
+    CallFlowLogic::Base.registered.map(&:to_s).select { |registered_call_flow_logic| registered_call_flow_logic == call_flow_logic }.first
   end
 
   def find_or_initialize_phone_call

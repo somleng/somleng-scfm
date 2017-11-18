@@ -25,7 +25,7 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
   end
 
   def call_flow_logic_instance
-    @call_flow_logic_instance ||= call_flow_logic.new(:event => resource)
+    @call_flow_logic_instance ||= call_flow_logic.new(resource)
   end
 
   def call_flow_logic

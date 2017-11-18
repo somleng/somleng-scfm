@@ -1,7 +1,4 @@
 class CallFlowLogic::Application < CallFlowLogic::Base
-  def run!
-  end
-
   def to_xml(options = {})
     Twilio::TwiML::VoiceResponse.new do |response|
       response.say("Thanks for trying our documentation. Enjoy!")

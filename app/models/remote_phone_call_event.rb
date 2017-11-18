@@ -15,6 +15,8 @@ class RemotePhoneCallEvent < ApplicationRecord
             :remote_direction,
             :presence => true
 
+  delegate :contact, :to => :phone_call
+
   def from=(value)
     phone_call.msisdn = value
   end

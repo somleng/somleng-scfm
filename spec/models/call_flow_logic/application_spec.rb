@@ -1,8 +1,8 @@
 require 'rails_helper'
 
 RSpec.describe CallFlowLogic::Application do
-  let(:remote_phone_call_event) { create(:remote_phone_call_event) }
-  subject { described_class.new(remote_phone_call_event) }
+  let(:event) { create(:remote_phone_call_event) }
+  subject { described_class.new(:event => event) }
 
   describe "#to_xml" do
     let(:xml) { subject.to_xml }

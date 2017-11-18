@@ -8,6 +8,6 @@ class CallFlowLogicValidator < ActiveModel::EachValidator
   private
 
   def registered_call_flow_logic
-    @registered_call_flow_logic ||= CallFlowLogic::Base.registered.map(&:to_s)
+    CallFlowLogic::Base.registered.map(&:to_s)
   end
 end

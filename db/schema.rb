@@ -12,10 +12,13 @@
 
 ActiveRecord::Schema.define(version: 20171101092942) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "batch_operations", force: :cascade do |t|
-    t.integer "callout_id"
-    t.text "parameters", default: "{}", null: false
-    t.text "metadata", default: "{}", null: false
+    t.bigint "callout_id"
+    t.jsonb "parameters", default: {}, null: false
+    t.jsonb "metadata", default: {}, null: false
     t.string "status", null: false
     t.string "type", null: false
     t.datetime "created_at", null: false
@@ -24,12 +27,12 @@ ActiveRecord::Schema.define(version: 20171101092942) do
   end
 
   create_table "callout_participations", force: :cascade do |t|
-    t.integer "callout_id", null: false
-    t.integer "contact_id", null: false
-    t.integer "callout_population_id"
+    t.bigint "callout_id", null: false
+    t.bigint "contact_id", null: false
+    t.bigint "callout_population_id"
     t.string "msisdn", null: false
     t.string "call_flow_logic"
-    t.text "metadata", default: "{}", null: false
+    t.jsonb "metadata", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["callout_id", "contact_id"], name: "index_callout_participations_on_callout_id_and_contact_id", unique: true
@@ -42,35 +45,35 @@ ActiveRecord::Schema.define(version: 20171101092942) do
   create_table "callouts", force: :cascade do |t|
     t.string "status", null: false
     t.string "call_flow_logic"
-    t.text "metadata", default: "{}", null: false
+    t.jsonb "metadata", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "contacts", force: :cascade do |t|
     t.string "msisdn", null: false
-    t.text "metadata", default: "{}", null: false
+    t.jsonb "metadata", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["msisdn"], name: "index_contacts_on_msisdn", unique: true
   end
 
   create_table "phone_calls", force: :cascade do |t|
-    t.integer "callout_participation_id"
-    t.integer "contact_id", null: false
-    t.integer "create_batch_operation_id"
-    t.integer "queue_batch_operation_id"
-    t.integer "queue_remote_fetch_batch_operation_id"
+    t.bigint "callout_participation_id"
+    t.bigint "contact_id", null: false
+    t.bigint "create_batch_operation_id"
+    t.bigint "queue_batch_operation_id"
+    t.bigint "queue_remote_fetch_batch_operation_id"
     t.string "status", null: false
     t.string "msisdn", null: false
     t.string "remote_call_id"
     t.string "remote_status"
     t.string "remote_direction"
     t.text "remote_error_message"
-    t.text "metadata", default: "{}", null: false
-    t.text "remote_response", default: "{}", null: false
-    t.text "remote_request_params", default: "{}", null: false
-    t.text "remote_queue_response", default: "{}", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.jsonb "remote_response", default: {}, null: false
+    t.jsonb "remote_request_params", default: {}, null: false
+    t.jsonb "remote_queue_response", default: {}, null: false
     t.string "call_flow_logic"
     t.datetime "remotely_queued_at"
     t.datetime "created_at", null: false
@@ -84,9 +87,9 @@ ActiveRecord::Schema.define(version: 20171101092942) do
   end
 
   create_table "remote_phone_call_events", force: :cascade do |t|
-    t.integer "phone_call_id", null: false
-    t.text "details", default: "{}", null: false
-    t.text "metadata", default: "{}", null: false
+    t.bigint "phone_call_id", null: false
+    t.jsonb "details", default: {}, null: false
+    t.jsonb "metadata", default: {}, null: false
     t.string "remote_call_id", null: false
     t.string "remote_direction", null: false
     t.string "call_flow_logic", null: false
@@ -95,4 +98,14 @@ ActiveRecord::Schema.define(version: 20171101092942) do
     t.index ["phone_call_id"], name: "index_remote_phone_call_events_on_phone_call_id"
   end
 
+  add_foreign_key "batch_operations", "callouts"
+  add_foreign_key "callout_participations", "batch_operations", column: "callout_population_id"
+  add_foreign_key "callout_participations", "callouts"
+  add_foreign_key "callout_participations", "contacts"
+  add_foreign_key "phone_calls", "batch_operations", column: "create_batch_operation_id"
+  add_foreign_key "phone_calls", "batch_operations", column: "queue_batch_operation_id"
+  add_foreign_key "phone_calls", "batch_operations", column: "queue_remote_fetch_batch_operation_id"
+  add_foreign_key "phone_calls", "callout_participations"
+  add_foreign_key "phone_calls", "contacts"
+  add_foreign_key "remote_phone_call_events", "phone_calls"
 end

@@ -1,6 +1,6 @@
 language: ruby
 dist: trusty
-sudo: required
+sudo: false
 services:
   - postgresql
 env:

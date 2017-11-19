@@ -17,6 +17,6 @@ addons:
 before_script:
   - bash -c '[[ "${DOCKER}" != "1" ]] && psql -c "create database somleng_scfm_test;" -U postgres || echo "Running tests inside docker container"'
 script:
-  - bash -c 'if [[ "${DOCKER}" = "1" ]]; then sudo docker run --rm dwilkie/somleng-scfm:spec /bin/sh -c "bundle exec rake db:migrate && bundle exec rake db:test:prepare && bundle exec rake"; else bundle exec rake db:migrate && bundle exec rake db:test:prepare && bundle exec rake; fi'
+  - bash -c 'if [[ "${DOCKER}" = "1" ]]; then sudo docker run --rm -e RAILS_DB_ADAPTER=sqlite3 dwilkie/somleng-scfm:spec /bin/sh -c "bundle exec rake db:migrate && bundle exec rake db:test:prepare && bundle exec rake"; else bundle exec rake db:migrate && bundle exec rake db:test:prepare && bundle exec rake; fi'
 after_success:
   - bundle exec codeclimate-test-reporter

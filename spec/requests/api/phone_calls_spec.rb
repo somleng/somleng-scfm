@@ -33,11 +33,20 @@ RSpec.describe "Phone Calls" do
     let(:method) { :post }
     let(:url) { api_callout_participation_phone_calls_path(callout_participation) }
     let(:metadata) { nil }
+    let(:msisdn) { nil }
     let(:remote_request_params) { nil }
     let(:call_flow_logic) { nil }
-    let(:body) { { :metadata => metadata, :remote_request_params => remote_request_params, :call_flow_logic => call_flow_logic } }
+    let(:body) {
+      {
+        :metadata => metadata,
+        :remote_request_params => remote_request_params,
+        :call_flow_logic => call_flow_logic,
+        :msisdn => msisdn
+      }
+    }
 
     context "valid request" do
+      let(:msisdn) { generate(:somali_msisdn) }
       let(:metadata) { { "foo" => "bar"} }
       let(:remote_request_params) { generate(:twilio_request_params) }
       let(:call_flow_logic) { CallFlowLogic::Application.to_s }
@@ -52,6 +61,7 @@ RSpec.describe "Phone Calls" do
         expect(parsed_response_body["metadata"]).to eq(metadata)
         expect(parsed_response_body["remote_request_params"]).to eq(remote_request_params)
         expect(parsed_response_body["call_flow_logic"]).to eq(call_flow_logic)
+        expect(parsed_response_body["msisdn"]).to eq("+#{msisdn}")
       end
 
       it { assert_created! }
@@ -85,11 +95,18 @@ RSpec.describe "Phone Calls" do
     describe "PATCH" do
       let(:method) { :patch }
       let(:metadata) { { "foo" => "bar" } }
-      let(:body) { { :metadata => metadata } }
+      let(:msisdn) { generate(:somali_msisdn) }
+      let(:body) {
+        {
+          :metadata => metadata,
+          :msisdn => msisdn
+        }
+      }
 
       def assert_update!
         expect(response.code).to eq("204")
         expect(phone_call.reload.metadata).to eq(metadata)
+        expect(phone_call.msisdn).to eq("+#{msisdn}")
       end
 
       it { assert_update! }

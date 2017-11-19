@@ -127,12 +127,15 @@ RSpec.describe "Callout Participations" do
       let(:metadata) { { "foo" => "bar" } }
       let(:call_flow_logic) { CallFlowLogic::Application.to_s }
       let(:contact) { create(:contact) }
+      let(:msisdn) { generate(:somali_msisdn) }
+      let(:parsed_response) { JSON.parse(response.body) }
 
       let(:body) {
         {
           :metadata => metadata,
           :contact_id => contact.id,
-          :call_flow_logic => call_flow_logic
+          :call_flow_logic => call_flow_logic,
+          :msisdn => msisdn
         }
       }
 
@@ -146,6 +149,7 @@ RSpec.describe "Callout Participations" do
       def assert_created!
         expect(response.code).to eq("201")
         expect(response.headers["Location"]).to eq(api_callout_participation_path(created_callout_participation))
+        expect(parsed_response["msisdn"]).to eq("+#{msisdn}")
         expect(created_callout_participation.callout).to eq(callout)
         expect(created_callout_participation.contact).to eq(contact)
         expect(created_callout_participation.metadata).to eq(metadata)
@@ -175,13 +179,22 @@ RSpec.describe "Callout Participations" do
       let(:contact) { create(:contact) }
       let(:call_flow_logic) { CallFlowLogic::Application.to_s }
       let(:metadata) { {"foo" => "bar"} }
-      let(:body) { {:metadata => metadata, :contact_id => contact.id, :call_flow_logic => call_flow_logic} }
+      let(:msisdn) { generate(:somali_msisdn) }
+      let(:body) {
+        {
+          :metadata => metadata,
+          :contact_id => contact.id,
+          :call_flow_logic => call_flow_logic,
+          :msisdn => msisdn
+        }
+      }
 
       def assert_update!
         expect(response.code).to eq("204")
         expect(callout_participation.reload.metadata).to eq(metadata)
         expect(callout_participation.call_flow_logic).to eq(call_flow_logic)
         expect(callout_participation.contact).not_to eq(contact)
+        expect(callout_participation.msisdn).to eq("+#{msisdn}")
       end
 
       it { assert_update! }

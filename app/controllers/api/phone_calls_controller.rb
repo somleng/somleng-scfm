@@ -32,7 +32,7 @@ class Api::PhoneCallsController < Api::FilteredController
   end
 
   def permitted_params
-    params.permit(:call_flow_logic, :metadata => {}, :remote_request_params => {})
+    params.permit(:call_flow_logic, :msisdn, :metadata => {}, :remote_request_params => {})
   end
 
   def resource_location

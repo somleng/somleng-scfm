@@ -4,19 +4,16 @@ sudo: required
 services:
   - postgresql
 env:
-  global:
-    - START_SIMPLECOV=1
   matrix:
-    - RAILS_DB_ADAPTER=postgresql
-    - DOCKER=1 RAILS_DB_ADAPTER=sqlite3
+    - RAILS_DB_ADAPTER=postgresql START_SIMPLECOV=1
 addons:
   postgresql: '9.6'
   code_climate:
     repo_token:
       secure: "PIV3i6vp+43fisDQoODIlWuH/rEDmTzMC4/85XLuCSagqfD34sLj6rNETfPl75dVwvsV/OQRmb5Lvy4ba4xFN0ga2GfWt3Pr3jnVmvnLr/HP80y4Z1X/4HeXRBK9NUUlu43iCXmPyXq+aPyW7TtXBTD0Olxz1ow/vwAlAIsJX3RNE1z8QUqDYdVyI9GRdQ5zLbQNUFvwtXgZCZW1GvJs5dDPJ3dpmAV8igzPW+rvakwQDOg11wS2dkK+4b17ktnfw9n5gviD6A79gveL8aM86a2kgLGaaYp/krvDpcqy2MykwjpgcH0jQtSfUV6VDj88DE0OTzpvJon2dFUnCbuIj8jgGBNxtcfHqgFC7FeO+9ZD2YJ5mEBb+mT1T/uwE9UxLz1JviGJg7iQ4L9HIGyQMzwHCOUBOJhVbBLm3SEyt8RKKUZUThOn8mFQI0cPcZaUeiZCOicdya0RCtQ/T8JlI3wlKXARcO2IBNr+ydvkw3zwkTrs6cP1j8A/OLrWznD160+cvGdghK71JdxTdgV5Tex0eubSmjhfDHs5Monj9mO/BudKxVNIt0Kn+JmAQDLV8XYt0INRcvzU/w7kRj1pzRGX5uvDsRX91B42SFAnMa9Gu61Qkc929Kw+qleN9R6+9kCEFUHtjcS45Wq1tiZst8T4+mm4YTUGEWVZ6TC4uVk="
 before_script:
-  - bash -c '[[ "${DOCKER}" != "1" ]] && psql -c "create database somleng_scfm_test;" -U postgres || echo "Running tests inside docker container"'
+  - bash -c 'if [[ "${DOCKER}" != "1" ]]; then psql -c "create database somleng_scfm_test;" -U postgres; fi'
 script:
   - bash -c 'if [[ "${DOCKER}" = "1" ]]; then sudo docker run --rm -e RAILS_DB_ADAPTER=sqlite3 dwilkie/somleng-scfm:spec /bin/sh -c "bundle exec rake db:migrate && bundle exec rake db:test:prepare && bundle exec rake"; else bundle exec rake db:migrate && bundle exec rake db:test:prepare && bundle exec rake; fi'
 after_success:
-  - bundle exec codeclimate-test-reporter
+  - bash -c 'if [[ "${START_SIMPLECOV}" = "1" ]]; then bundle exec codeclimate-test-reporter; fi'

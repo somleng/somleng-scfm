@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     resources :contacts, :except => [:new, :edit] do
       resources :callout_participations, :only => :index
       resources :phone_calls, :only => :index
+      resources :remote_phone_call_events, :only => :index
     end
 
     resources :callouts, :except => [:new, :edit] do
@@ -19,6 +20,7 @@ Rails.application.routes.draw do
       resources :callout_participations, :only => [:index, :create]
       resources :contacts, :only => :index
       resources :phone_calls, :only => :index
+      resources :remote_phone_call_events, :only => :index
       resources :batch_operations, :only => [:create, :index]
     end
 
@@ -37,10 +39,12 @@ Rails.application.routes.draw do
 
     resources :callout_participations, :except => [:new, :edit, :create] do
       resources :phone_calls, :only => [:index, :create]
+      resources :remote_phone_call_events, :only => :index
     end
 
     resources :phone_calls, :except => [:new, :edit, :create] do
       resources :phone_call_events, :only => :create
+      resources :remote_phone_call_events, :only => :index
     end
   end
 end

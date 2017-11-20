@@ -11,6 +11,7 @@ RSpec.describe Callout do
       is_expected.to have_many(:batch_operations).dependent(:restrict_with_error)
       is_expected.to have_many(:contacts)
       is_expected.to have_many(:phone_calls)
+      is_expected.to have_many(:remote_phone_call_events)
     end
 
     it { assert_associations! }

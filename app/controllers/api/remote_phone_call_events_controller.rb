@@ -9,7 +9,17 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
   end
 
   def find_resources_association_chain
-    association_chain
+    if params[:phone_call_id]
+      phone_call.remote_phone_call_events
+    elsif params[:callout_participation_id]
+      callout_participation.remote_phone_call_events
+    elsif params[:callout_id]
+      callout.remote_phone_call_events
+    elsif params[:contact_id]
+      contact.remote_phone_call_events
+    else
+      association_chain
+    end
   end
 
   def association_chain
@@ -58,4 +68,21 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
   def api_authenticate?
     super if params[:action] != "create"
   end
+
+  def phone_call
+    @phone_call ||= PhoneCall.find(params[:phone_call_id])
+  end
+
+  def callout_participation
+    @callout_participation ||= CalloutParticipation.find(params[:callout_participation_id])
+  end
+
+  def callout
+    @callout ||= Callout.find(params[:callout_id])
+  end
+
+  def contact
+    @contact ||= Contact.find(params[:contact_id])
+  end
+
 end

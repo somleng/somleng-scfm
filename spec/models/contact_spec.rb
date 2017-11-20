@@ -13,6 +13,7 @@ RSpec.describe Contact do
       is_expected.to have_many(:callout_participations).dependent(:restrict_with_error)
       is_expected.to have_many(:callouts)
       is_expected.to have_many(:phone_calls).dependent(:restrict_with_error)
+      is_expected.to have_many(:remote_phone_call_events)
     end
 
     it { assert_associations! }

@@ -5,7 +5,8 @@ RSpec.describe "Remote Phone Call Events" do
   let(:execute_request) { true }
   let(:body) { {} }
   let(:headers) { {} }
-  let(:remote_phone_call_event) { create(:remote_phone_call_event) }
+  let(:factory_attributes) { {} }
+  let(:remote_phone_call_event) { create(:remote_phone_call_event, factory_attributes) }
 
   def execute_request!
     do_request(method, url, body, headers)
@@ -200,6 +201,56 @@ RSpec.describe "Remote Phone Call Events" do
           end
         end
       end
+    end
+  end
+
+  describe "nested indexes" do
+    let(:method) { :get }
+    let(:callout_factory_attributes) { {} }
+    let(:callout) { create(:callout, callout_factory_attributes) }
+    let(:callout_participation_factory_attributes) { { :callout => callout } }
+
+    let(:callout_participation) {
+      create(
+        :callout_participation,
+        callout_participation_factory_attributes
+      )
+    }
+
+    let(:phone_call_factory_attributes) { { :callout_participation => callout_participation } }
+    let(:phone_call) { create(:phone_call, phone_call_factory_attributes) }
+    let(:factory_attributes) { { :phone_call => phone_call } }
+
+    def setup_scenario
+      create(:remote_phone_call_event)
+      remote_phone_call_event
+      super
+    end
+
+    def assert_filtered!
+      expect(JSON.parse(response.body)).to eq(JSON.parse([remote_phone_call_event].to_json))
+    end
+
+    describe "GET '/api/phone_calls/:phone_call_id/remote_phone_call_events'" do
+      let(:url) { api_phone_call_remote_phone_call_events_path(phone_call) }
+      it { assert_filtered! }
+    end
+
+    describe "GET '/api/callout_participations/:callout_participation_id/remote_phone_call_events'" do
+      let(:url) { api_callout_participation_remote_phone_call_events_path(callout_participation) }
+      it { assert_filtered! }
+    end
+
+    describe "GET '/api/callout/:callout_id/remote_phone_call_events'" do
+      let(:url) { api_callout_remote_phone_call_events_path(callout) }
+      it { assert_filtered! }
+    end
+
+    describe "GET '/api/contact/:contact_id/remote_phone_call_events'" do
+      let(:contact) { create(:contact) }
+      let(:url) { api_contact_remote_phone_call_events_path(contact) }
+      let(:phone_call_factory_attributes) { { :contact => contact } }
+      it { assert_filtered! }
     end
   end
 end

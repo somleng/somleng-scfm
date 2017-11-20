@@ -19,6 +19,7 @@ RSpec.describe CalloutParticipation do
       is_expected.to belong_to(:contact)
       is_expected.to belong_to(:callout_population)
       is_expected.to have_many(:phone_calls)
+      is_expected.to have_many(:remote_phone_call_events)
     end
 
     it { assert_associations! }

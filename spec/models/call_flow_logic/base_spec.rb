@@ -1,6 +1,22 @@
 require 'rails_helper'
 
 RSpec.describe CallFlowLogic::Base do
+  describe ".permitted" do
+    let(:call_flow_logic) { CallFlowLogic::Application }
+    let(:asserted_call_flow_logic) { call_flow_logic }
+
+    def assert_permitted!
+      expect(described_class.permitted).to include(asserted_call_flow_logic.to_s)
+    end
+
+    def setup_scenario
+      described_class.permitted
+      call_flow_logic
+    end
+
+    it { assert_permitted! }
+  end
+
   describe ".register(*args)" do
     def assert_registered!
       expect(described_class.registered).to include(asserted_call_flow_logic.to_s)

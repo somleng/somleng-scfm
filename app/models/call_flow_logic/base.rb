@@ -16,7 +16,7 @@ class CallFlowLogic::Base
   end
 
   def self.permitted
-    @permitted ||= CallFlowLogic::Base.descendants.map(&:to_s)
+    CallFlowLogic::Base.descendants.map(&:to_s)
   end
 
   def initialize(options = {})

@@ -5,6 +5,8 @@ RSpec.describe "'/api/callouts'" do
 
   let(:body) { {} }
   let(:metadata) { { "foo" => "bar" } }
+  let(:factory_attributes) { {} }
+  let(:callout) { create(:callout, factory_attributes) }
 
   def setup_scenario
     super
@@ -44,7 +46,6 @@ RSpec.describe "'/api/callouts'" do
   end
 
   describe "'/:id'" do
-    let(:callout) { create(:callout) }
     let(:url) { api_callout_path(callout) }
 
     describe "GET" do
@@ -96,6 +97,32 @@ RSpec.describe "'/api/callouts'" do
 
         it { assert_invalid! }
       end
+    end
+  end
+
+  describe "nested indexes" do
+    let(:method) { :get }
+
+    def setup_scenario
+      create(:callout)
+      callout
+      super
+    end
+
+    def assert_filtered!
+      expect(JSON.parse(response.body)).to eq(JSON.parse([callout].to_json))
+    end
+
+    describe "GET '/api/contacts/:contact_id/callouts'" do
+      let(:contact) { create(:contact) }
+
+      def setup_scenario
+        create(:callout_participation, :contact => contact, :callout => callout)
+        super
+      end
+
+      let(:url) { api_contact_callouts_path(contact) }
+      it { assert_filtered! }
     end
   end
 end

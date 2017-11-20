@@ -11,6 +11,7 @@ Rails.application.routes.draw do
 
     resources :contacts, :except => [:new, :edit] do
       resources :callout_participations, :only => :index
+      resources :callouts, :only => :index
       resources :phone_calls, :only => :index
       resources :remote_phone_call_events, :only => :index
     end

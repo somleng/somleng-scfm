@@ -1675,3 +1675,163 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
 ```
 
 Now we can see that the call was updated and the `status` is `failed`. We can also see the full response from Twilio/Somleng in the `remote_response` attribute.
+
+### Using your own call flow logic
+
+In the previous examples we used call flow logic from Twilio. Specifically we asked Twilio/Somleng to execute the [sample TwiML](https://demo.twilio.com/docs/voice.xml) which defined our call flow logic.
+
+We could also use the API to specify our own custom call flow logic instead. There's a little bit more to do in order to simulate a live demo here because both Twilio and Somleng need to contact your server through the Internet in order to retrieve the TwiML. Since we're running our API locally using Docker we can use something like [ngrok](https://ngrok.com/) to setup a tunnel to our local machine. The details behind setting up a [ngrok](https://ngrok.com/) tunnel are beyond the scope of this guide, but it's quite easy to do so please feel free to go ahead and setup ngrok if you want to test this out.
+
+In order to use our own logic let's go ahead and create yet another phone call for Alice. Notice that this time we're specifying the `remote_request_params[url]` parameter as `http://18a2c6b3.ngrok.io/api/remote_phone_call_events`. If you're using ngrok, you'll need to update this to url provided by ngrok. The path though is important `/api/remote_phone_call_events`. This is the endpoint within the API which is designed to return TwiML for our custom call flow logic. Also notice that we left out the `remote_request_params[method]` parameter. This is because, by default, Twilio and Somleng assume that it can reach your TwiML endpoint via HTTP POST. Since the somleng-scfm API endpoint at `/api/remote_phone_call_events` supports POST (and only POST) we can leave this blank.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callout_participations/3/phone_calls --data-urlencode "remote_request_params[from]=345" --data-urlencode "remote_request_params[url]=http://18a2c6b3.ngrok.io/api/remote_phone_call_events" | jq'
+```
+
+```json
+{
+  "id": 5,
+  "callout_participation_id": 3,
+  "contact_id": 1,
+  "create_batch_operation_id": null,
+  "queue_batch_operation_id": null,
+  "queue_remote_fetch_batch_operation_id": null,
+  "status": "created",
+  "msisdn": "+252662345678",
+  "remote_call_id": null,
+  "remote_status": null,
+  "remote_direction": null,
+  "remote_error_message": null,
+  "metadata": {},
+  "remote_response": {},
+  "remote_request_params": {
+    "from": "345",
+    "url": "http://18a2c6b3.ngrok.io/api/remote_phone_call_events"
+  },
+  "remote_queue_response": {},
+  "call_flow_logic": null,
+  "remotely_queued_at": null,
+  "created_at": "2017-11-20T05:04:29.661Z",
+  "updated_at": "2017-11-20T05:04:29.661Z"
+}
+```
+
+We can see from the output that the phone call has been created successfully with the `remote_request_params` that we specified. Also notice that the `call_flow_logic` is `null`. The `call_flow_logic` parameter allows us to specify which call flow logic will be executed when a request is received from Twilio or Somleng to the `url` endpoint. By default the `call_flow_logic` parameter is `null` which means that it will execute the default application call flow logic, which is defined [here](https://github.com/somleng/somleng-scfm/blob/master/app/models/call_flow_logic/application.rb). If you take a look at that file you'll see it's a plain ruby class which implements the `to_xml` method. The `to_xml` method returns valid TwiML using the [twilio-ruby](https://github.com/twilio/twilio-ruby) which simply says the words "Thanks for trying our documentation. Enjoy!" then plays a song.
+
+But what if we want to use our own call flow logic? In order to do this you can define a ruby class in your application inheriting `CallFlowLogic::Base`, then implement the `to_xml` method (for some more complex examples checkout the [call_flow_logic directory](https://github.com/somleng/somleng-scfm/tree/master/app/models/call_flow_logic)). Once you have defined your call flow logic you can set it on a callout, callout participation or phone call. For this example let's try to set the call flow logic to `CallFlowLogic::OutcomeMonitoring` which is already defined in the call_flow_logic directory](https://github.com/somleng/somleng-scfm/tree/master/app/models/call_flow_logic).
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -XPATCH http://scfm:3000/api/phone_calls/5 -d call_flow_logic=CallFlowLogic::OutcomeMonitoring | jq'
+```
+
+```
+< HTTP/1.1 422 Unprocessable Entity
+```
+
+```json
+{
+  "errors": {
+    "call_flow_logic": [
+      "is not included in the list"
+    ]
+  }
+}
+```
+
+Oops. Doesn't seem to have worked. The error message suggests that our call flow logic is not included in the list of available call flow logic for the application.
+
+### Registering your call flow logic
+
+In order to make our custom call flow logic available, we need to register it first. You can use the environment variable `REGISTERED_CALL_FLOW_LOGIC` to define a comma separated list of call flow logic that your application uses. For example, setting the following will register the call flow logic `CallFlowLogic::OutcomeMonitoring`
+
+```
+REGISTERED_CALL_FLOW_LOGIC=CallFlowLogic::OutcomeMonitoring
+```
+
+Let's go ahead and restart our API server and specify this environment variable. Don't forget to shutdown the running API server first (Ctrl-C). Also note that for brevity we have left out the Twilio and Somleng configuration variables. Be sure to add them in as well.
+
+```
+$ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 -e REGISTERED_CALL_FLOW_LOGIC=CallFlowLogic::OutcomeMonitoring dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
+```
+
+Ok let's try to use our call flow logic again.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -XPATCH http://scfm:3000/api/phone_calls/5 -d call_flow_logic=CallFlowLogic::OutcomeMonitoring'
+```
+
+```
+< HTTP/1.1 204 No Content
+```
+
+Looks better. Let's fetch the phone call again to make sure it's been updated with our call flow logic.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/phone_calls/5 | jq'
+```
+
+```json
+{
+  "id": 5,
+  "callout_participation_id": 3,
+  "contact_id": 1,
+  "create_batch_operation_id": null,
+  "queue_batch_operation_id": null,
+  "queue_remote_fetch_batch_operation_id": null,
+  "status": "created",
+  "msisdn": "+252662345678",
+  "remote_call_id": null,
+  "remote_status": null,
+  "remote_direction": null,
+  "remote_error_message": null,
+  "metadata": {},
+  "remote_response": {},
+  "remote_request_params": {
+    "from": "345",
+    "url": "http://18a2c6b3.ngrok.io/api/remote_phone_call_events"
+  },
+  "remote_queue_response": {},
+  "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+  "remotely_queued_at": null,
+  "created_at": "2017-11-20T05:04:29.661Z",
+  "updated_at": "2017-11-20T05:04:29.661Z"
+}
+```
+
+Now we can see that the `call_flow_logic` has been successfully updated. Finally let's go ahead and queue the call.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/phone_calls/5/phone_call_events -d event=queue | jq'
+```
+
+```json
+{
+  "id": 5,
+  "callout_participation_id": 3,
+  "contact_id": 1,
+  "create_batch_operation_id": null,
+  "queue_batch_operation_id": null,
+  "queue_remote_fetch_batch_operation_id": null,
+  "status": "queued",
+  "msisdn": "+252662345678",
+  "remote_call_id": null,
+  "remote_status": null,
+  "remote_direction": null,
+  "remote_error_message": null,
+  "metadata": {},
+  "remote_response": {},
+  "remote_request_params": {
+    "from": "345",
+    "url": "http://18a2c6b3.ngrok.io/api/remote_phone_call_events"
+  },
+  "remote_queue_response": {},
+  "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+  "remotely_queued_at": null,
+  "created_at": "2017-11-20T05:04:29.661Z",
+  "updated_at": "2017-11-20T10:14:22.960Z"
+}
+```
+
+We can see that the call's `status` was `queued`. As before we can go ahead and fetch the call again to see if it's been remotely queued. We can also update it's remote status.
+
+## Phone Call Events

@@ -40,6 +40,13 @@ RAILS_MAX_THREADS=32 # Default used by Elasic Beanstalk's Puma Configuration
 AWS_REGION=aws-region-id
 ACTIVE_JOB_ADAPTER=active_elastic_job
 ACTIVE_JOB_QUEUE_NAME=name-of-sqs-queue
+SOMLENG_ACCOUNT_SID=somleng-account-sid
+SOMLENG_AUTH_TOKEN=somleng-auth-token
+SOMLENG_CLIENT_REST_API_HOST=somleng-rest-api-host
+SOMLENG_CLIENT_REST_API_BASE_URL=somleng-rest-api-base-url
+TWILIO_ACCOUNT_SID=twilio-account-sid
+TWILIO_AUTH_TOKEN=twilio-auth-token
+PLATFORM_PROVIDER=twilio-or-somleng
 ```
 
 Optional but highly recommended:

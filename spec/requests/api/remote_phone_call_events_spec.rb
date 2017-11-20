@@ -184,7 +184,7 @@ RSpec.describe "Remote Phone Call Events" do
           let(:asserted_contact_msisdn) { contact.msisdn }
 
           def setup_scenario
-            CallFlowLogic::Base.register(call_flow_logic)
+            CallFlowLogic::Base.register(call_flow_logic.to_s)
             phone_call
             super
           end

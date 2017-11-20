@@ -9,7 +9,14 @@ class CallFlowLogic::Base
   end
 
   def self.register(*args)
-    @registered += args.compact
+    args.each do |arg|
+      @registered << arg if arg && permitted.include?(arg)
+    end
+    @registered
+  end
+
+  def self.permitted
+    @permitted ||= CallFlowLogic::Base.descendants.map(&:to_s)
   end
 
   def initialize(options = {})

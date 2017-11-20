@@ -75,7 +75,7 @@ RSpec.describe "Remote Phone Call Events" do
 
       def env
         super.merge(
-          "TWILIO_REQUEST_AUTH_TOKEN" => twilio_request_auth_token
+          "TWILIO_AUTH_TOKEN" => twilio_request_auth_token
         )
       end
 

@@ -34,10 +34,6 @@ class Api::BatchOperationsController < Api::FilteredController
     (permitted_types.include?(params[:type]) ? params[:type].constantize : BatchOperation::Base).all
   end
 
-  def callout
-    @callout ||= Callout.find(params[:callout_id])
-  end
-
   def permitted_types
     PERMITTED_TYPES
   end

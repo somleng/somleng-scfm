@@ -29,10 +29,6 @@ class Api::FilteredController < Api::AuthenticatedController
     end
   end
 
-  def find_resources_association_chain
-    association_chain
-  end
-
   def filter_params
     permitted_query_params[:q] || {}
   end

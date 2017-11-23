@@ -17,7 +17,7 @@ RSpec.describe "Batch Operations" do
 
     describe "POST" do
       let(:method) { :post }
-      let(:type) { "BatchOperation::PhoneCallCreate" }
+      let(:asserted_type) { type }
 
       let(:body) {
         {
@@ -27,26 +27,41 @@ RSpec.describe "Batch Operations" do
         }
       }
 
-      context "successful request" do
+      context "successful requests" do
         let(:asserted_created_batch_operation) { BatchOperation::Base.last }
         let(:parsed_response) { JSON.parse(response.body) }
-        let(:remote_request_params) { generate(:twilio_request_params) }
+
         let(:parameters) {
           {
-            "remote_request_params" => remote_request_params,
             "skip_validate_preview_presence" => "1"
           }
         }
 
         def assert_created!
+          p response.body
           expect(response.code).to eq("201")
           expect(parsed_response).to eq(JSON.parse(asserted_created_batch_operation.to_json))
           expect(parsed_response["metadata"]).to eq(metadata)
           expect(parsed_response["parameters"]).to eq(parameters)
-          expect(asserted_created_batch_operation).to be_a(BatchOperation::PhoneCallCreate)
+          expect(asserted_created_batch_operation.class.to_s).to eq(asserted_type)
         end
 
-        it { assert_created! }
+        context "BatchOperation::PhoneCallCreate" do
+          let(:remote_request_params) { generate(:twilio_request_params) }
+          let(:parameters) { super().merge("remote_request_params" => remote_request_params) }
+          let(:type) { "BatchOperation::PhoneCallCreate" }
+          it { assert_created! }
+        end
+
+        context "BatchOperation::PhoneCallQueue" do
+          let(:type) { "BatchOperation::PhoneCallQueue" }
+          it { assert_created! }
+        end
+
+        context "BatchOperation::PhoneCallQueueRemoteFetch" do
+          let(:type) { "BatchOperation::PhoneCallQueueRemoteFetch" }
+          it { assert_created! }
+        end
       end
 
       context "invalid request" do

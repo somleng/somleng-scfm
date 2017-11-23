@@ -1,52 +1,84 @@
 # REST API Reference
 
-Somleng SCFM provides a REST API for managing core resources. Below is the full documentation for the REST API.
+Somleng SCFM provides a REST API for managing core resources. Below is the full documentation for the REST API. If you're new to Somleng SCFM we recommend that you read the [GETTING_STARTED](https://github.com/somleng/somleng-scfm/blob/master/docs/GETTING_STARTED.md) guide first.
 
-## Authentication
+## Prerequisites
 
-HTTP Basic Authentication is supported out of the box. To enable HTTP Basic Authentication set the following environment variable:
+Just like the [GETTING_STARTED](https://github.com/somleng/somleng-scfm/blob/master/docs/GETTING_STARTED.md) guide, the examples that follow assume that you are useing Somleng SCFM in SQLite mode with Docker. Please go ahead and [install Docker](https://docs.docker.com/engine/installation/) if you haven't already done so, then pull the latest image:
 
 ```
-HTTP_BASIC_AUTH_USER=api-user
+$ docker pull dwilkie/somleng-scfm
 ```
 
-Optionally you can set `HTTP_BASIC_AUTH_PASSWORD` to enable username and password authentication.
+Setup a new database:
+
+```
+$ docker run --rm -v /tmp/somleng-scfm/db:/tmp/db -e RAILS_ENV=production -e RAILS_DB_ADAPTER=sqlite3 dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake db:create && bundle exec rake db:migrate && if [ ! -f /tmp/db/somleng_scfm_production.sqlite3 ]; then cp /usr/src/app/db/somleng_scfm_production.sqlite3 /tmp/db; fi'
+```
+
+And boot the API Server:
+
+
+```
+$ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
+```
 
 ## Contacts
 
 ### Create
 
 ```
-$ curl -XPOST http://localhost:3000/api/contacts \
-  --data-urlencode "msisdn=+85510202101" \
-  -d "metadata[foo]=bar" \
-  -d "metadata[bar]=baz"
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/contacts --data-urlencode "msisdn=+252662345699" | jq'
 ```
-
-Sample Response:
 
 ```json
 {
   "id": 1,
-  "msisdn": "+85510202101",
-  "metadata": {
-    "foo": "bar",
-    "bar": "baz"
-  },
-  "created_at": "2017-11-07T08:34:25.880Z",
-  "updated_at": "2017-11-07T08:34:25.880Z"
+  "msisdn": "+252662345699",
+  "metadata": {},
+  "created_at": "2017-11-23T05:22:07.519Z",
+  "updated_at": "2017-11-23T05:22:07.519Z"
 }
 ```
 
-### List
+### Update
+
+Note that the response is `204 No Content`
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/contacts/1 --data-urlencode "msisdn=+252662345700" -d "metadata[name]=Alice" -d "metadata[gender]=f"'
+```
+
+```
+< HTTP/1.1 204 No Content
+```
+
+### Fetch
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/contacts/1 | jq'
+```
+
+```json
+{
+  "id": 1,
+  "msisdn": "+252662345700",
+  "metadata": {
+    "name": "Alice",
+    "gender": "f"
+  },
+  "created_at": "2017-11-23T05:22:07.519Z",
+  "updated_at": "2017-11-23T05:26:14.983Z"
+}
+```
+
+### Index
 
 Note that the response is paginated.
 
 ```
-$ curl -v http://localhost:3000/api/contacts
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/contacts | jq'
 ```
-
-Sample Response:
 
 ```
 < HTTP/1.1 200 OK
@@ -58,99 +90,75 @@ Sample Response:
 [
   {
     "id": 1,
-    "msisdn": "+85510202101",
+    "msisdn": "+252662345700",
     "metadata": {
-      "foo": "bar",
-      "bar": "baz"
+      "name": "Alice",
+      "gender": "f"
     },
-    "created_at": "2017-11-07T08:34:25.880Z",
-    "updated_at": "2017-11-07T08:34:25.880Z"
+    "created_at": "2017-11-23T05:22:07.519Z",
+    "updated_at": "2017-11-23T05:26:14.983Z"
   }
 ]
 ```
 
+Sample Response:
+
 ### Filter by metadata
 
+Note that the response is paginated.
+
 ```
-$ curl -g "http://localhost:3000/api/contacts?metadata[foo]=bar&metadata[bar]=baz"
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/contacts?q[metadata][gender]=f | jq'
 ```
 
-Sample Response:
+```
+< HTTP/1.1 200 OK
+< Per-Page: 25
+< Total: 1
+```
 
 ```json
 [
   {
     "id": 1,
-    "msisdn": "+85510202101",
+    "msisdn": "+252662345700",
     "metadata": {
-      "foo": "bar",
-      "bar": "baz"
+      "name": "Alice",
+      "gender": "f"
     },
-    "created_at": "2017-11-07T08:34:25.880Z",
-    "updated_at": "2017-11-07T08:34:25.880Z"
+    "created_at": "2017-11-23T05:22:07.519Z",
+    "updated_at": "2017-11-23T05:26:14.983Z"
   }
 ]
 ```
 
 ### Filter by msisdn
 
+Note that the response is paginated.
+
 ```
-$ curl -g "http://localhost:3000/api/contacts?q[msisdn]=85510202101"
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/contacts?q[msisdn]=252662345700 | jq'
 ```
 
-Sample Response:
+```
+< HTTP/1.1 200 OK
+< Per-Page: 25
+< Total: 1
+```
 
 ```json
 [
   {
     "id": 1,
-    "msisdn": "+85510202101",
+    "msisdn": "+252662345700",
     "metadata": {
-      "foo": "bar",
-      "bar": "baz"
+      "name": "Alice",
+      "gender": "f"
     },
-    "created_at": "2017-11-07T08:34:25.880Z",
-    "updated_at": "2017-11-07T08:34:25.880Z"
+    "created_at": "2017-11-23T05:22:07.519Z",
+    "updated_at": "2017-11-23T05:26:14.983Z"
   }
 ]
-```
-
-### Fetch
-
-```
-$ curl http://localhost:3000/api/contacts/1
-```
-
-Sample Response:
-
-```json
-{
-  "id": 1,
-  "msisdn": "+85510202101",
-  "metadata": {
-    "foo": "bar",
-    "bar": "baz"
-  },
-  "created_at": "2017-11-07T08:34:25.880Z",
-  "updated_at": "2017-11-07T08:34:25.880Z"
-}
-```
-
-### Update
-
-Note that the response is `204 No Content`
-
-```
-$ curl -v -XPATCH http://localhost:3000/api/contacts/1 \
-  --data-urlencode "msisdn=+85510202102" \
-  -d "metadata[foo]=baz" \
-  -d "metadata[baz]=foo"
-```
-
-Sample Response:
-
-```
-< HTTP/1.1 204 No Content
 ```
 
 ### Delete
@@ -158,10 +166,8 @@ Sample Response:
 Note that the the response is `204 No Content`
 
 ```
-$ curl -v -XDELETE http://localhost:3000/api/contacts/1
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/contacts/1'
 ```
-
-Sample Response:
 
 ```
 < HTTP/1.1 204 No Content
@@ -172,35 +178,58 @@ Sample Response:
 ### Create
 
 ```
-$ curl -XPOST http://localhost:3000/api/callouts \
-  -d "metadata[foo]=bar" \
-  -d "metadata[bar]=baz"
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts | jq'
 ```
-
-Sample Response:
 
 ```json
 {
   "id": 1,
   "status": "initialized",
-  "metadata": {
-    "foo": "bar",
-    "bar": "baz"
-  },
-  "created_at": "2017-11-07T05:11:24.772Z",
-  "updated_at": "2017-11-07T05:11:24.772Z"
+  "call_flow_logic": null,
+  "metadata": {},
+  "created_at": "2017-11-23T05:32:25.773Z",
+  "updated_at": "2017-11-23T05:32:25.773Z"
 }
 ```
 
-### List
+### Update
+
+Note that the response is `204 No Content`
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/1 -d call_flow_logic=CallFlowLogic::Application -d "metadata[name]=my+callout"'
+```
+
+```
+< HTTP/1.1 204 No Content
+```
+
+### Fetch
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/callouts/1 | jq'
+```
+
+```json
+{
+  "id": 1,
+  "status": "initialized",
+  "call_flow_logic": "CallFlowLogic::Application",
+  "metadata": {
+    "name": "my callout"
+  },
+  "created_at": "2017-11-23T05:32:25.773Z",
+  "updated_at": "2017-11-23T05:34:33.218Z"
+}
+```
+
+### Index
 
 Note that the response is paginated.
 
 ```
-$ curl -v http://localhost:3000/api/callouts
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts | jq'
 ```
-
-Sample Response:
 
 ```
 < HTTP/1.1 200 OK
@@ -213,43 +242,57 @@ Sample Response:
   {
     "id": 1,
     "status": "initialized",
+    "call_flow_logic": "CallFlowLogic::Application",
     "metadata": {
-      "foo": "bar",
-      "bar": "baz"
+      "name": "my callout"
     },
-    "created_at": "2017-11-07T05:29:13.935Z",
-    "updated_at": "2017-11-07T05:29:13.935Z"
+    "created_at": "2017-11-23T05:32:25.773Z",
+    "updated_at": "2017-11-23T05:34:33.218Z"
   }
 ]
 ```
 
 ### Filter by metadata
 
+Note that the response is paginated.
+
 ```
-$ curl -g "http://localhost:3000/api/callouts?q[metadata][foo]=bar&q[metadata][bar]=baz"
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/callouts?q[metadata][name]=my+callout | jq'
 ```
 
-Sample Response:
+```
+< HTTP/1.1 200 OK
+< Per-Page: 25
+< Total: 1
+```
 
 ```json
 [
   {
     "id": 1,
     "status": "initialized",
+    "call_flow_logic": "CallFlowLogic::Application",
     "metadata": {
-      "foo": "bar",
-      "bar": "baz"
+      "name": "my callout"
     },
-    "created_at": "2017-11-07T05:53:03.370Z",
-    "updated_at": "2017-11-07T05:53:03.370Z"
+    "created_at": "2017-11-23T05:32:25.773Z",
+    "updated_at": "2017-11-23T05:34:33.218Z"
   }
 ]
 ```
 
 ### Filter by status
 
+Note that the response is paginated.
+
 ```
-$ curl -g "http://localhost:3000/api/callouts?q[status]=initialized"
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/callouts?q[status]=initialized | jq'
+```
+
+```
+< HTTP/1.1 200 OK
+< Per-Page: 25
+< Total: 1
 ```
 
 Sample Response:
@@ -259,58 +302,51 @@ Sample Response:
   {
     "id": 1,
     "status": "initialized",
+    "call_flow_logic": "CallFlowLogic::Application",
     "metadata": {
-      "foo": "bar",
-      "bar": "baz"
+      "name": "my callout"
     },
-    "created_at": "2017-11-07T05:53:03.370Z",
-    "updated_at": "2017-11-07T05:53:03.370Z"
+    "created_at": "2017-11-23T05:32:25.773Z",
+    "updated_at": "2017-11-23T05:34:33.218Z"
   }
 ]
 ```
 
-### Fetch
+### Filter by call_flow_logic
+
+Note that the response is paginated.
 
 ```
-$ curl http://localhost:3000/api/callouts/1
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/callouts?q[call_flow_logic]=CallFlowLogic::Application | jq'
+```
+
+```
+< HTTP/1.1 200 OK
+< Per-Page: 25
+< Total: 1
 ```
 
 Sample Response:
 
 ```json
-{
-  "id": 1,
-  "status": "initialized",
-  "metadata": {
-    "foo": "bar",
-    "bar": "baz"
-  },
-  "created_at": "2017-11-07T05:29:13.935Z",
-  "updated_at": "2017-11-07T05:29:13.935Z"
-}
+[
+  {
+    "id": 1,
+    "status": "initialized",
+    "call_flow_logic": "CallFlowLogic::Application",
+    "metadata": {
+      "name": "my callout"
+    },
+    "created_at": "2017-11-23T05:32:25.773Z",
+    "updated_at": "2017-11-23T05:34:33.218Z"
+  }
+]
 ```
 
-### Update
-
-Note that the response is `204 No Content`
+### Events (Start)
 
 ```
-$ curl -v -XPATCH http://localhost:3000/api/callouts/1 \
-  -d "metadata[foo]=baz" \
-  -d "metadata[baz]=foo"
-```
-
-Sample Response:
-
-```
-< HTTP/1.1 204 No Content
-```
-
-### Start
-
-```
-$ curl -XPOST http://localhost:3000/api/callouts/1/callout_events \
-  -d "event=start"
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_events -d "event=start" | jq'
 ```
 
 Sample Response:
@@ -319,42 +355,38 @@ Sample Response:
 {
   "id": 1,
   "status": "running",
+  "call_flow_logic": "CallFlowLogic::Application",
   "metadata": {
-    "foo": "baz",
-    "baz": "foo"
+    "name": "my callout"
   },
-  "created_at": "2017-11-07T05:11:24.772Z",
-  "updated_at": "2017-11-07T05:17:33.823Z"
+  "created_at": "2017-11-23T05:32:25.773Z",
+  "updated_at": "2017-11-23T05:40:46.139Z"
 }
 ```
 
-### Pause
+### Events (Pause)
 
 ```
-$ curl -XPOST http://localhost:3000/api/callouts/1/callout_events \
-  -d "event=pause"
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_events -d "event=pause" | jq'
 ```
-
-Sample Response:
 
 ```json
 {
   "id": 1,
   "status": "paused",
+  "call_flow_logic": "CallFlowLogic::Application",
   "metadata": {
-    "foo": "baz",
-    "baz": "foo"
+    "name": "my callout"
   },
-  "created_at": "2017-11-07T05:29:13.935Z",
-  "updated_at": "2017-11-07T05:31:31.297Z"
+  "created_at": "2017-11-23T05:32:25.773Z",
+  "updated_at": "2017-11-23T05:41:11.264Z"
 }
 ```
 
-### Resume
+### Events (Resume)
 
 ```
-$ curl -XPOST http://localhost:3000/api/callouts/1/callout_events \
-  -d "event=resume"
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_events -d "event=resume" | jq'
 ```
 
 Sample Response:
@@ -363,103 +395,31 @@ Sample Response:
 {
   "id": 1,
   "status": "running",
+  "call_flow_logic": "CallFlowLogic::Application",
   "metadata": {
-    "foo": "baz",
-    "baz": "foo"
+    "name": "my callout"
   },
-  "created_at": "2017-11-07T05:29:13.935Z",
-  "updated_at": "2017-11-07T05:31:49.596Z"
+  "created_at": "2017-11-23T05:32:25.773Z",
+  "updated_at": "2017-11-23T05:41:35.727Z"
 }
 ```
 
-### Stop
+### Events (Stop)
 
 ```
-$ curl -XPOST http://localhost:3000/api/callouts/1/callout_events \
-  -d "event=stop"
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_events -d "event=stop" | jq'
 ```
-
-Sample Response:
 
 ```json
 {
   "id": 1,
   "status": "stopped",
+  "call_flow_logic": "CallFlowLogic::Application",
   "metadata": {
-    "foo": "baz",
-    "baz": "foo"
+    "name": "my callout"
   },
-  "created_at": "2017-11-07T05:29:13.935Z",
-  "updated_at": "2017-11-07T05:32:02.503Z"
-}
-```
-
-### List Participants
-
-Note that the response is paginated.
-
-```
-$ curl -v /http://localhost:3000/api/callouts/1/contacts
-```
-
-Sample Response:
-
-```
-< Per-Page: 25
-< Total: 2
-```
-
-```json
-[
-  {
-    "id": 1,
-    "msisdn": "+85510202101",
-    "metadata": {
-      "name": "Alice",
-      "gender": "f"
-    },
-    "created_at": "2017-11-10T09:50:15.301Z",
-    "updated_at": "2017-11-10T09:50:27.928Z"
-  },
-  {
-    "id": 2,
-    "msisdn": "+85510202102",
-    "metadata": {
-      "name": "Bob",
-      "gender": "m"
-    },
-    "created_at": "2017-11-10T09:50:46.118Z",
-    "updated_at": "2017-11-10T09:50:46.118Z"
-  }
-]
-```
-
-### Get Statistics (Deprecated)
-
-```
-$ curl http://localhost:3000/api/callouts/1/callout_statistics
-```
-
-Sample Response:
-
-```json
-{
-  "callout_status": "initialized",
-  "callout_participations": 0,
-  "callout_participations_remaining": 0,
-  "callout_participations_completed": 0,
-  "calls_completed": 0,
-  "calls_initialized": 0,
-  "calls_scheduling": 0,
-  "calls_fetching_status": 0,
-  "calls_waiting_for_completion": 0,
-  "calls_queued": 0,
-  "calls_in_progress": 0,
-  "calls_errored": 0,
-  "calls_failed": 0,
-  "calls_busy": 0,
-  "calls_not_answered": 0,
-  "calls_canceled": 0
+  "created_at": "2017-11-23T05:32:25.773Z",
+  "updated_at": "2017-11-23T05:42:00.691Z"
 }
 ```
 
@@ -468,331 +428,13 @@ Sample Response:
 Note that the response is `204 No Content`
 
 ```
-$ curl -v -XDELETE http://localhost:3000/api/callouts/1
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/callouts/1
 ```
 
 Sample Response:
 
 ```
 < HTTP/1.1 204 No Content
-```
-
-## Callout Populations
-
-### Create
-
-```
-$ curl -XPOST http://localhost:3000/api/callouts/1/callout_populations \
-  -d "metadata[foo]=bar" \
-  -d "metadata[bar]=baz" \
-  -d "contact_filter_params[metadata][location]=phnom+penh"
-```
-
-Sample Response:
-
-```json
-{
-  "id": 1,
-  "callout_id": 1,
-  "contact_filter_params": {
-    "metadata": {
-      "location": "phnom penh"
-    }
-  },
-  "metadata": {
-    "foo": "bar",
-    "bar": "baz"
-  },
-  "status": "preview",
-  "created_at": "2017-11-08T09:04:02.346Z",
-  "updated_at": "2017-11-08T09:04:02.346Z"
-}
-```
-
-### List
-
-Note that the response is paginated.
-
-```
-$ curl http://localhost:3000/api/callout_populations
-```
-
-Sample Response:
-
-```json
-[
-  {
-    "id": 1,
-    "callout_id": 1,
-    "contact_filter_params": {
-      "metadata": {
-        "location": "phnom penh"
-      }
-    },
-    "metadata": {
-      "foo": "bar",
-      "bar": "baz"
-    },
-    "status": "preview",
-    "created_at": "2017-11-08T09:04:02.346Z",
-    "updated_at": "2017-11-08T09:04:02.346Z"
-  }
-]
-```
-
-### List for a Callout
-
-Note that the response is paginated.
-
-```
-$ curl http://localhost:3000/api/callouts/1/callout_populations
-```
-
-Sample Response:
-
-```json
-[
-  {
-    "id": 1,
-    "callout_id": 1,
-    "contact_filter_params": {
-      "metadata": {
-        "location": "phnom penh"
-      }
-    },
-    "metadata": {
-      "foo": "bar",
-      "bar": "baz"
-    },
-    "status": "preview",
-    "created_at": "2017-11-08T09:04:02.346Z",
-    "updated_at": "2017-11-08T09:04:02.346Z"
-  }
-]
-```
-
-### Filter by metadata
-
-```
-$ curl -g "http://localhost:3000/api/callout_populations?q[metadata][foo]=bar"
-```
-
-Sample Response:
-
-```json
-[
-  {
-    "id": 1,
-    "callout_id": 1,
-    "contact_filter_params": {
-      "metadata": {
-        "location": "phnom penh"
-      }
-    },
-    "metadata": {
-      "foo": "bar",
-      "bar": "baz"
-    },
-    "status": "preview",
-    "created_at": "2017-11-08T09:04:02.346Z",
-    "updated_at": "2017-11-08T09:04:02.346Z"
-  }
-]
-```
-
-### Filter by contact_filter_params
-
-```
-$ curl -g "http://localhost:3000/api/callout_populations?q[contact_filter_params][metadata][location]=phnom+penh"
-```
-
-Sample Response:
-
-```json
-[
-  {
-    "id": 1,
-    "callout_id": 1,
-    "contact_filter_params": {
-      "location": "phnom penh"
-    },
-    "metadata": {
-      "foo": "bar",
-      "bar": "baz"
-    },
-    "created_at": "2017-11-07T12:04:59.470Z",
-    "updated_at": "2017-11-07T12:04:59.470Z"
-  }
-]
-```
-
-### Fetch
-
-```
-$ curl http://localhost:3000/api/callout_populations/1
-```
-
-Sample Response:
-
-```json
-{
-  "id": 1,
-  "callout_id": 1,
-  "contact_filter_params": {
-    "metadata": {
-      "gender": "f"
-    }
-  },
-  "metadata": {},
-  "status": "populated",
-  "created_at": "2017-11-10T09:52:10.116Z",
-  "updated_at": "2017-11-10T10:40:29.097Z"
-}
-```
-
-### Preview Population
-
-Note that the response is paginated.
-
-```
-$ curl -v  http://localhost:3000/api/callout_populations/1/preview/contacts
-```
-
-Sample Response:
-
-```
-< HTTP/1.1 200 OK
-< Per-Page: 25
-< Total: 1
-```
-
-```json
-[
-  {
-    "id": 1,
-    "msisdn": "+85510202101",
-    "metadata": {
-      "location": "phnom penh"
-    },
-    "created_at": "2017-11-08T08:55:51.477Z",
-    "updated_at": "2017-11-08T08:56:23.752Z"
-  }
-]
-```
-
-### Update
-
-Note that the response is `204 No Content`
-
-```
-$ curl -v -XPATCH http://localhost:3000/api/callout_populations/1 \
-  -d "metadata[foo]=baz" \
-  -d "metadata[baz]=foo" \
-  -d "contact_filter_params[metadata][location]=battambang"
-```
-
-Sample Response:
-
-```
-< HTTP/1.1 204 No Content
-```
-
-### Delete
-
-Note the response is `204 No Content`
-
-```
-$ curl -v -XDELETE http://localhost:3000/api/callout_populations/1
-```
-
-Sample Response:
-
-```
-< HTTP/1.1 204 No Content
-```
-
-### Populate
-
-This enqueues a callout population to be populated with callout participations
-
-```
-$ curl -XPOST http://localhost:3000/api/callout_populations/1/callout_population_events \
-  -d "event=queue"
-```
-
-Sample Response:
-
-```json
-{
-  "id": 1,
-  "callout_id": 1,
-  "contact_filter_params": {
-    "location": "phnom penh"
-  },
-  "metadata": {
-    "foo": "bar",
-    "bar": "baz"
-  },
-  "status": "queued",
-  "created_at": "2017-11-08T02:59:10.898Z",
-  "updated_at": "2017-11-08T02:59:27.053Z"
-}
-```
-
-### Repopulate
-
-This requeues a callout population to be populated with callout participations
-
-```
-$ curl -XPOST http://localhost:3000/api/callout_populations/1/callout_population_events \
-  -d "event=requeue"
-```
-
-```json
-{
-  "id": 1,
-  "callout_id": 1,
-  "contact_filter_params": {
-    "metadata": {
-      "gender": "f"
-    }
-  },
-  "metadata": {},
-  "status": "queued",
-  "created_at": "2017-11-10T09:52:10.116Z",
-  "updated_at": "2017-11-10T11:06:10.964Z"
-}
-```
-
-### List the contacts populated
-
-Note that the response is paginated.
-
-```
-$ curl http://localhost:3000/api/callout_populations/1/contacts
-```
-
-Sample Response:
-
-```
-< HTTP/1.1 200 OK
-< Per-Page: 25
-< Total: 1
-```
-
-```json
-[
-  {
-    "id": 1,
-    "msisdn": "+85510202101",
-    "metadata": {
-      "foo": "bar",
-      "bar": "baz"
-    },
-    "created_at": "2017-11-07T08:34:25.880Z",
-    "updated_at": "2017-11-07T08:34:25.880Z"
-  }
-]
 ```
 
 ## Callout Participations
@@ -803,8 +445,6 @@ Sample Response:
 $ curl -XPOST http://localhost:3000/api/callouts/1/callout_participations \
   -d "contact_id=1"
 ```
-
-Sample Response:
 
 ```json
 {
@@ -819,15 +459,48 @@ Sample Response:
 }
 ```
 
-### List
+### Update
+
+Note that the response is `204 No Content`
+
+```
+$ curl -v -XPATCH http://localhost:3000/api/callout_participations/2 \
+  -d "metadata[foo]=baz" \
+  -d "metadata[baz]=foo"
+```
+
+```
+< HTTP/1.1 204 No Content
+```
+
+### Fetch
+
+```
+$ curl http://localhost:3000/api/callout_participations/2
+```
+
+Sample Response:
+
+```
+{
+  "id": 2,
+  "callout_id": 1,
+  "contact_id": 2,
+  "callout_population_id": null,
+  "msisdn": "+85510202102",
+  "metadata": {},
+  "created_at": "2017-11-10T10:21:24.395Z",
+  "updated_at": "2017-11-10T10:21:24.395Z"
+}
+```
+
+### Index
 
 Note that the response is paginated.
 
 ```
 $ curl -v http://localhost:3000/api/callouts/1/callout_participations
 ```
-
-Sample Response:
 
 ```
 < Per-Page: 25
@@ -922,41 +595,6 @@ Sample Response:
 ]
 ```
 
-### Fetch
-
-```
-$ curl http://localhost:3000/api/callout_participations/2
-```
-
-Sample Response:
-
-```
-{
-  "id": 2,
-  "callout_id": 1,
-  "contact_id": 2,
-  "callout_population_id": null,
-  "msisdn": "+85510202102",
-  "metadata": {},
-  "created_at": "2017-11-10T10:21:24.395Z",
-  "updated_at": "2017-11-10T10:21:24.395Z"
-}
-```
-
-### Update
-
-Note that the response is `204 No Content`
-
-```
-$ curl -v -XPATCH http://localhost:3000/api/callout_participations/2 \
-  -d "metadata[foo]=baz" \
-  -d "metadata[baz]=foo"
-```
-
-```
-< HTTP/1.1 204 No Content
-```
-
 ### Delete
 
 Note that the response is `204 No Content`
@@ -964,6 +602,292 @@ Note that the response is `204 No Content`
 ```
 $ curl -v -XDELETE http://localhost:3000/api/callout_participations/2
 ```
+
+```
+< HTTP/1.1 204 No Content
+```
+
+## Phone Calls
+
+### Create
+
+### Update
+
+### Fetch
+
+### Index
+
+### Filter
+
+### Delete
+
+## Remote Phone Call Events
+
+### Create
+
+### Update
+
+### Fetch
+
+### Index
+
+### Filter
+
+### Delete
+
+## Batch Operations
+
+### Create (CalloutPopulation)
+
+```
+$ curl -XPOST http://localhost:3000/api/callouts/1/callout_populations \
+  -d "metadata[foo]=bar" \
+  -d "metadata[bar]=baz" \
+  -d "contact_filter_params[metadata][location]=phnom+penh"
+```
+
+```json
+{
+  "id": 1,
+  "callout_id": 1,
+  "contact_filter_params": {
+    "metadata": {
+      "location": "phnom penh"
+    }
+  },
+  "metadata": {
+    "foo": "bar",
+    "bar": "baz"
+  },
+  "status": "preview",
+  "created_at": "2017-11-08T09:04:02.346Z",
+  "updated_at": "2017-11-08T09:04:02.346Z"
+}
+```
+
+### Create (PhoneCall::Create)
+
+### Create (PhoneCall::Queue)
+
+### Create (PhoneCall::QueueRemoteFetch)
+
+### Update
+
+Note that the response is `204 No Content`
+
+```
+$ curl -v -XPATCH http://localhost:3000/api/callout_populations/1 \
+  -d "metadata[foo]=baz" \
+  -d "metadata[baz]=foo" \
+  -d "contact_filter_params[metadata][location]=battambang"
+```
+
+```
+< HTTP/1.1 204 No Content
+```
+### Fetch
+
+```
+$ curl http://localhost:3000/api/batch_operations/1
+```
+
+```json
+{
+  "id": 1,
+  "callout_id": 1,
+  "contact_filter_params": {
+    "metadata": {
+      "gender": "f"
+    }
+  },
+  "metadata": {},
+  "status": "populated",
+  "created_at": "2017-11-10T09:52:10.116Z",
+  "updated_at": "2017-11-10T10:40:29.097Z"
+}
+```
+
+### Index
+
+Note that the response is paginated.
+
+```
+$ curl http://localhost:3000/api/callout_populations
+```
+
+```
+< HTTP/1.1 200 OK
+< Per-Page: 25
+< Total: 1
+```
+
+```json
+[
+  {
+    "id": 1,
+    "callout_id": 1,
+    "contact_filter_params": {
+      "metadata": {
+        "location": "phnom penh"
+      }
+    },
+    "metadata": {
+      "foo": "bar",
+      "bar": "baz"
+    },
+    "status": "preview",
+    "created_at": "2017-11-08T09:04:02.346Z",
+    "updated_at": "2017-11-08T09:04:02.346Z"
+  }
+]
+```
+
+### Index for a Callout
+
+Note that the response is paginated.
+
+```
+$ curl http://localhost:3000/api/callouts/1/callout_populations
+```
+
+Sample Response:
+
+```json
+[
+  {
+    "id": 1,
+    "callout_id": 1,
+    "contact_filter_params": {
+      "metadata": {
+        "location": "phnom penh"
+      }
+    },
+    "metadata": {
+      "foo": "bar",
+      "bar": "baz"
+    },
+    "status": "preview",
+    "created_at": "2017-11-08T09:04:02.346Z",
+    "updated_at": "2017-11-08T09:04:02.346Z"
+  }
+]
+```
+
+### Filter by parameters
+
+```
+$ curl -g "http://localhost:3000/api/callout_populations?q[contact_filter_params][metadata][location]=phnom+penh"
+```
+
+Sample Response:
+
+```json
+[
+  {
+    "id": 1,
+    "callout_id": 1,
+    "contact_filter_params": {
+      "location": "phnom penh"
+    },
+    "metadata": {
+      "foo": "bar",
+      "bar": "baz"
+    },
+    "created_at": "2017-11-07T12:04:59.470Z",
+    "updated_at": "2017-11-07T12:04:59.470Z"
+  }
+]
+```
+
+### Filter by metadata
+
+```
+$ curl -g "http://localhost:3000/api/callout_populations?q[metadata][foo]=bar"
+```
+
+Sample Response:
+
+```json
+[
+  {
+    "id": 1,
+    "callout_id": 1,
+    "contact_filter_params": {
+      "metadata": {
+        "location": "phnom penh"
+      }
+    },
+    "metadata": {
+      "foo": "bar",
+      "bar": "baz"
+    },
+    "status": "preview",
+    "created_at": "2017-11-08T09:04:02.346Z",
+    "updated_at": "2017-11-08T09:04:02.346Z"
+  }
+]
+```
+
+### Events (Queue)
+
+This enqueues a callout population to be populated with callout participations
+
+```
+$ curl -XPOST http://localhost:3000/api/callout_populations/1/callout_population_events \
+  -d "event=queue"
+```
+
+```json
+{
+  "id": 1,
+  "callout_id": 1,
+  "contact_filter_params": {
+    "location": "phnom penh"
+  },
+  "metadata": {
+    "foo": "bar",
+    "bar": "baz"
+  },
+  "status": "queued",
+  "created_at": "2017-11-08T02:59:10.898Z",
+  "updated_at": "2017-11-08T02:59:27.053Z"
+}
+```
+
+### Events (Requeue)
+
+This requeues a callout population to be populated with callout participations
+
+```
+$ curl -XPOST http://localhost:3000/api/callout_populations/1/callout_population_events \
+  -d "event=requeue"
+```
+
+```json
+{
+  "id": 1,
+  "callout_id": 1,
+  "contact_filter_params": {
+    "metadata": {
+      "gender": "f"
+    }
+  },
+  "metadata": {},
+  "status": "queued",
+  "created_at": "2017-11-10T09:52:10.116Z",
+  "updated_at": "2017-11-10T11:06:10.964Z"
+}
+```
+
+### Delete
+
+Note the response is `204 No Content`
+
+```
+$ curl -v -XDELETE http://localhost:3000/api/callout_populations/1
+```
+
+Sample Response:
 
 ```
 < HTTP/1.1 204 No Content

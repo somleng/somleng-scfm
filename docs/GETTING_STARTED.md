@@ -392,7 +392,7 @@ Sample Response:
 }
 ```
 
-Note that the callout's status is initialized. This is the initial state for a callout. Callouts can be either initialized, running, paused or stopped. Also notice that our callout has no `call_flow_logic`. We'll update this later.
+Note that the callout's `status` is `initialized`. This is the initial state for a callout. Callouts can be either `initialized`, `running`, `paused` or `stopped`. Also notice that our callout has no `call_flow_logic`. We'll update this later.
 
 ## Populating a Callout
 
@@ -1718,7 +1718,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
 
 We can see from the output that the phone call has been created successfully with the `remote_request_params` that we specified. Also notice that the `call_flow_logic` is `null`. The `call_flow_logic` parameter allows us to specify which call flow logic will be executed when a request is received from Twilio or Somleng to the `url` endpoint. By default the `call_flow_logic` parameter is `null` which means that it will execute the default application call flow logic, which is defined [here](https://github.com/somleng/somleng-scfm/blob/master/app/models/call_flow_logic/application.rb). If you take a look at that file you'll see it's a plain ruby class which implements the `to_xml` method. The `to_xml` method returns valid TwiML using the [twilio-ruby](https://github.com/twilio/twilio-ruby) which simply says the words "Thanks for trying our documentation. Enjoy!" then plays a song.
 
-But what if we want to use our own call flow logic? In order to do this you can define a ruby class in your application inheriting `CallFlowLogic::Base`, then implement the `to_xml` method (for some more complex examples checkout the [call_flow_logic directory](https://github.com/somleng/somleng-scfm/tree/master/app/models/call_flow_logic)). Once you have defined your call flow logic you can set it on a callout, callout participation or phone call. For this example let's try to set the call flow logic to `CallFlowLogic::OutcomeMonitoring` which is already defined in the call_flow_logic directory](https://github.com/somleng/somleng-scfm/tree/master/app/models/call_flow_logic).
+But what if we want to use our own call flow logic? In order to do this you can define a ruby class in your application inheriting `CallFlowLogic::Base`, then implement the `to_xml` method (for some more complex examples checkout the [call_flow_logic directory](https://github.com/somleng/somleng-scfm/tree/master/app/models/call_flow_logic)). Once you have defined your call flow logic you can set it on a callout, callout participation or phone call. For this example let's try to set the call flow logic to `CallFlowLogic::OutcomeMonitoring` which is already defined in the [call_flow_logic directory](https://github.com/somleng/somleng-scfm/tree/master/app/models/call_flow_logic).
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -XPATCH http://scfm:3000/api/phone_calls/5 -d call_flow_logic=CallFlowLogic::OutcomeMonitoring | jq'
@@ -1834,4 +1834,679 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
 
 We can see that the call's `status` was `queued`. As before we can go ahead and fetch the call again to see if it's been remotely queued. We can also update it's remote status.
 
-## Phone Call Events
+## Phone Call Batch Operations (Creating Phone Calls)
+
+So far we have gone through [managing contacts](#managing-contacts), [creating callouts](#managing-callouts), [populating callouts](#populating-a-callout), [managing callout participations](#managing-callout-participations) and [managing phone calls](#managing-phone-calls) for participants.
+
+Recall when we went through [populating callouts](#populating-a-callout) we used a batch operation to filter contacts, preview the callout population then finally queue the batch operation for creating callout participations? It turns out we can also use a batch operation for creating, remotely queuing and updating the remote status of multiple phone calls. A single batch operation can be used to create phone calls across multiple callouts.
+
+### Create another callout
+
+In order to demonstrate this let's go and [create a second callout](#managing-callouts) and populate it with participations.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts | jq'
+```
+
+```json
+{
+  "id": 2,
+  "status": "initialized",
+  "call_flow_logic": null,
+  "metadata": {},
+  "created_at": "2017-11-23T03:13:39.136Z",
+  "updated_at": "2017-11-23T03:13:39.136Z"
+}
+```
+
+Now that we have our second callout, let's go and [populate it](#populating-a-callout) with callout participations.
+
+First create a batch operation for populating our new callout:
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/2/batch_operations -d type=BatchOperation::CalloutPopulation | jq'
+```
+
+```json
+{
+  "id": 2,
+  "callout_id": 2,
+  "parameters": {},
+  "metadata": {},
+  "status": "preview",
+  "created_at": "2017-11-23T03:17:42.371Z",
+  "updated_at": "2017-11-23T03:17:42.371Z"
+}
+```
+
+Then preview the batch operation:
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/2/preview/contacts | jq'
+```
+
+```
+< Per-Page: 25
+< Total: 2
+```
+
+```json
+[
+  {
+    "id": 1,
+    "msisdn": "+252662345678",
+    "metadata": {
+      "name": "Alice",
+      "gender": "f"
+    },
+    "created_at": "2017-11-23T03:12:06.684Z",
+    "updated_at": "2017-11-23T03:12:55.097Z"
+  },
+  {
+    "id": 2,
+    "msisdn": "+252662345679",
+    "metadata": {
+      "name": "Bob",
+      "gender": "m"
+    },
+    "created_at": "2017-11-23T03:12:21.240Z",
+    "updated_at": "2017-11-23T03:12:21.240Z"
+  }
+]
+```
+
+Queue it for population:
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations/2/batch_operation_events -d "event=queue" | jq'
+```
+
+```json
+{
+  "id": 2,
+  "callout_id": 2,
+  "parameters": {},
+  "metadata": {},
+  "status": "queued",
+  "created_at": "2017-11-23T03:17:42.371Z",
+  "updated_at": "2017-11-23T03:20:14.283Z"
+}
+```
+
+And finally check the participants:
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations/2/contacts | jq'
+```
+
+```
+< Per-Page: 25
+< Total: 2
+```
+
+```json
+[
+  {
+    "id": 1,
+    "msisdn": "+252662345678",
+    "metadata": {
+      "name": "Alice",
+      "gender": "f"
+    },
+    "created_at": "2017-11-23T03:12:06.684Z",
+    "updated_at": "2017-11-23T03:12:55.097Z"
+  },
+  {
+    "id": 2,
+    "msisdn": "+252662345679",
+    "metadata": {
+      "name": "Bob",
+      "gender": "m"
+    },
+    "created_at": "2017-11-23T03:12:21.240Z",
+    "updated_at": "2017-11-23T03:12:21.240Z"
+  }
+]
+```
+
+Alice and Bob are now both participants in the first callout and the second callout. We can double check this by looking at all callout participations across all callouts.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callout_participations | jq'
+```
+
+```
+< Per-Page: 25
+< Total: 4
+```
+
+```json
+[
+  {
+    "id": 1,
+    "callout_id": 1,
+    "contact_id": 1,
+    "callout_population_id": 1,
+    "msisdn": "+252662345678",
+    "call_flow_logic": null,
+    "metadata": {},
+    "created_at": "2017-11-23T03:14:59.328Z",
+    "updated_at": "2017-11-23T03:14:59.328Z"
+  },
+  {
+    "id": 2,
+    "callout_id": 1,
+    "contact_id": 2,
+    "callout_population_id": 1,
+    "msisdn": "+252662345679",
+    "call_flow_logic": null,
+    "metadata": {},
+    "created_at": "2017-11-23T03:14:59.341Z",
+    "updated_at": "2017-11-23T03:14:59.341Z"
+  },
+  {
+    "id": 3,
+    "callout_id": 2,
+    "contact_id": 1,
+    "callout_population_id": 2,
+    "msisdn": "+252662345678",
+    "call_flow_logic": null,
+    "metadata": {},
+    "created_at": "2017-11-23T03:20:14.315Z",
+    "updated_at": "2017-11-23T03:20:14.315Z"
+  },
+  {
+    "id": 4,
+    "callout_id": 2,
+    "contact_id": 2,
+    "callout_population_id": 2,
+    "msisdn": "+252662345679",
+    "call_flow_logic": null,
+    "metadata": {},
+    "created_at": "2017-11-23T03:20:14.327Z",
+    "updated_at": "2017-11-23T03:20:14.327Z"
+  }
+]
+```
+
+Now let's take a closer look at our actual callouts.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts | jq'
+```
+
+```
+< Per-Page: 25
+< Total: 2
+```
+
+```json
+[
+  {
+    "id": 1,
+    "status": "initialized",
+    "call_flow_logic": null,
+    "metadata": {},
+    "created_at": "2017-11-23T03:13:34.487Z",
+    "updated_at": "2017-11-23T03:13:34.487Z"
+  },
+  {
+    "id": 2,
+    "status": "initialized",
+    "call_flow_logic": null,
+    "metadata": {},
+    "created_at": "2017-11-23T03:13:39.136Z",
+    "updated_at": "2017-11-23T03:13:39.136Z"
+  }
+]
+```
+
+We can see that both of our callouts have the `status` `initialized` and that both of them have a `call_flow_logic` of `null`
+
+### More about Callouts
+
+For this example, let's assume that we want to use the `CallFlowLogic::OutcomeMonitoring` logic for all calls in the second callout, but not the first. Also let's assume that we don't want to create any phone calls for the first callout which is using a different call flow.
+
+#### Updating
+
+Firstly let's go ahead and update the `call_flow_logic` for the second callout. Note that you'll have to register this callout first as explained in the previous section.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/2 -d call_flow_logic="CallFlowLogic::OutcomeMonitoring"'
+```
+
+```
+< HTTP/1.1 204 No Content
+```
+
+#### Fetching
+
+Now let's fetch the callout to make sure that it was updated successfully:
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/callouts/2 | jq'
+```
+
+```
+{
+  "id": 2,
+  "status": "initialized",
+  "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+  "metadata": {},
+  "created_at": "2017-11-23T03:13:39.136Z",
+  "updated_at": "2017-11-23T03:35:50.274Z"
+}
+```
+
+#### Events
+
+Now we can see that our `call_flow_logic` has been updated to `CallFlowLogic::OutcomeMonitoring`, but the `status` is still `initialized`. The status of a callout can be either `initialized`, `running`, `paused` or `stopped`. We can change the status by either, `starting`, `stopping`, `pausing` or `resuming` the callout.
+
+Since, that for this example we only want to deal with the second callout, let's go ahead and set the status to `running` by `starting` the callout.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -XPOST -s http://scfm:3000/api/callouts/2/callout_events -d "event=start" | jq'
+```
+
+```
+{
+  "id": 2,
+  "status": "running",
+  "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+  "metadata": {},
+  "created_at": "2017-11-23T03:13:39.136Z",
+  "updated_at": "2017-11-23T03:52:51.145Z"
+}
+```
+
+#### Filtering
+
+Now that our second callout's `status` is `running` we can filter all callouts on the status. The following command lists all callouts with the `status` equal to `running`.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/callouts?q[status]="running" | jq'
+```
+
+```
+< Per-Page: 25
+< Total: 1
+```
+
+```json
+[
+  {
+    "id": 2,
+    "status": "running",
+    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "metadata": {},
+    "created_at": "2017-11-23T03:13:39.136Z",
+    "updated_at": "2017-11-23T03:52:51.145Z"
+  }
+]
+```
+
+To summarize this is what we just did:
+
+1. Created a second callout
+2. Populated it
+3. Set the call flow logic
+4. Started it
+
+### Create a Batch Operation for creating phone calls
+
+Let's see how we can use a batch operation for creating phone calls across callouts. First let's go ahead and create a batch operation for creating phone calls.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -XPOST http://scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallCreate | jq'
+```
+
+```
+< HTTP/1.1 422 Unprocessable Entity
+```
+
+```json
+{
+  "errors": {
+    "remote_request_params": [
+      "can't be blank"
+    ]
+  }
+}
+```
+
+Oops, that didn't seem to have worked. It's saying that we haven't specified any `remote_request_params`.
+
+When using a batch operation for creating phone calls that batch operation must be able to create valid phone calls. Recall when [creating a phone call using the phone calls API](#managing-phone-calls) that we needed to specify the `remote_request_params` when creating the phone call? The same applies for the batch operation.
+
+Let's try again, this time specifying the `remote_request_params`. Note that for batch operations the `remote_request_params` are nested under `parameters`.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -XPOST http://scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallCreate --data-urlencode "parameters[remote_request_params][from]=1234" --data-urlencode "parameters[remote_request_params][url]=https://demo.twilio.com/docs/voice.xml" -d "parameters[remote_request_params][method]=GET" | jq'
+```
+
+```
+< HTTP/1.1 201 Created
+```
+
+```json
+{
+  "id": 3,
+  "callout_id": null,
+  "parameters": {
+    "remote_request_params": {
+      "from": "1234",
+      "url": "https://demo.twilio.com/docs/voice.xml",
+      "method": "GET"
+    }
+  },
+  "metadata": {},
+  "status": "preview",
+  "created_at": "2017-11-23T04:26:06.717Z",
+  "updated_at": "2017-11-23T04:26:06.717Z"
+}
+```
+
+Alright that seemed to have worked. Note from the response above that the `status` is `preview`. This is similar to when we created a [batch operation for populating a callout](#populating-a-callout).
+
+### Previewing
+
+Now that we have our batch operation we can go ahead and preview it to see which [callout participations](#managing-callout-participations) will have phone calls created.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations/3/preview/callout_participations | jq'
+```
+
+```
+< Per-Page: 25
+< Total: 4
+```
+
+```json
+[
+  {
+    "id": 1,
+    "callout_id": 1,
+    "contact_id": 1,
+    "callout_population_id": 1,
+    "msisdn": "+252662345678",
+    "call_flow_logic": null,
+    "metadata": {},
+    "created_at": "2017-11-23T03:14:59.328Z",
+    "updated_at": "2017-11-23T03:14:59.328Z"
+  },
+  {
+    "id": 2,
+    "callout_id": 1,
+    "contact_id": 2,
+    "callout_population_id": 1,
+    "msisdn": "+252662345679",
+    "call_flow_logic": null,
+    "metadata": {},
+    "created_at": "2017-11-23T03:14:59.341Z",
+    "updated_at": "2017-11-23T03:14:59.341Z"
+  },
+  {
+    "id": 3,
+    "callout_id": 2,
+    "contact_id": 1,
+    "callout_population_id": 2,
+    "msisdn": "+252662345678",
+    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "metadata": {},
+    "created_at": "2017-11-23T03:20:14.315Z",
+    "updated_at": "2017-11-23T03:20:14.315Z"
+  },
+  {
+    "id": 4,
+    "callout_id": 2,
+    "contact_id": 2,
+    "callout_population_id": 2,
+    "msisdn": "+252662345679",
+    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "metadata": {},
+    "created_at": "2017-11-23T03:20:14.327Z",
+    "updated_at": "2017-11-23T03:20:14.327Z"
+  }
+]
+```
+
+Here we see a total of `4` callout participations across both of our callouts. This means that if we were to go ahead and execute the batch operation right now, phone calls would be created for all of these participations.
+
+For this example we only wanted to create phone calls from the second callout, or the one which we started.
+
+### Updating with filter parameters
+
+Let's go ahead and specify some `callout_filter_params` so that our batch operation will only create phone calls for the callouts that are `running`. To do this let's go ahead and update the batch operation, this time specifying `callout_filter_params`. Note that we also need to specify the `remote_request_params` when updating the batch operation.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/3 --data-urlencode "parameters[remote_request_params][from]=1234" --data-urlencode "parameters[remote_request_params][url]=https://demo.twilio.com/docs/voice.xml" -d "parameters[remote_request_params][method]=GET" -d "parameters[callout_filter_params][status]=running"'
+```
+
+```
+< HTTP/1.1 204 No Content
+```
+
+### Fetching
+
+Let's fetch the batch operation to make sure that our filter parameters were specified correctly:
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/3 | jq'
+```
+
+```json
+{
+  "id": 3,
+  "callout_id": null,
+  "parameters": {
+    "remote_request_params": {
+      "from": "1234",
+      "url": "https://demo.twilio.com/docs/voice.xml",
+      "method": "GET"
+    },
+    "callout_filter_params": {
+      "status": "running"
+    }
+  },
+  "metadata": {},
+  "status": "preview",
+  "created_at": "2017-11-23T04:26:06.717Z",
+  "updated_at": "2017-11-23T04:40:32.154Z"
+}
+```
+
+### Previewing again
+
+Let's preview our batch operation again to see which callout participations will have phone calls created.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations/3/preview/callout_participations | jq'
+```
+
+```
+< Per-Page: 25
+< Total: 2
+```
+
+```json
+[
+  {
+    "id": 3,
+    "callout_id": 2,
+    "contact_id": 1,
+    "callout_population_id": 2,
+    "msisdn": "+252662345678",
+    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "metadata": {},
+    "created_at": "2017-11-23T03:20:14.315Z",
+    "updated_at": "2017-11-23T03:20:14.315Z"
+  },
+  {
+    "id": 4,
+    "callout_id": 2,
+    "contact_id": 2,
+    "callout_population_id": 2,
+    "msisdn": "+252662345679",
+    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "metadata": {},
+    "created_at": "2017-11-23T03:20:14.327Z",
+    "updated_at": "2017-11-23T03:20:14.327Z"
+  }
+]
+```
+
+Now we can see that the preview only shows the two callout participations from the second callout.
+
+### Queuing
+
+Now that we're happy with out batch operation let's go ahead and queue it.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/3/batch_operation_events -d event=queue | jq'
+```
+
+```json
+{
+  "id": 3,
+  "callout_id": null,
+  "parameters": {
+    "remote_request_params": {
+      "from": "1234",
+      "url": "https://demo.twilio.com/docs/voice.xml",
+      "method": "GET"
+    },
+    "callout_filter_params": {
+      "status": "running"
+    }
+  },
+  "metadata": {},
+  "status": "queued",
+  "created_at": "2017-11-23T04:26:06.717Z",
+  "updated_at": "2017-11-23T04:45:54.390Z"
+}
+```
+
+We can see theat the `status` is `queued`. Let's fetch it again to see if it's finished.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/3 | jq'
+```
+
+```json
+{
+  "id": 3,
+  "callout_id": null,
+  "parameters": {
+    "remote_request_params": {
+      "from": "1234",
+      "url": "https://demo.twilio.com/docs/voice.xml",
+      "method": "GET"
+    },
+    "callout_filter_params": {
+      "status": "running"
+    }
+  },
+  "metadata": {},
+  "status": "finished",
+  "created_at": "2017-11-23T04:26:06.717Z",
+  "updated_at": "2017-11-23T04:45:54.483Z"
+}
+```
+
+Now we can see that the `status` is `finished`, we can check to see the phone calls which have been created.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations/3/phone_calls | jq'
+```
+
+```
+< Per-Page: 25
+< Total: 2
+```
+
+```json
+[
+  {
+    "id": 1,
+    "callout_participation_id": 3,
+    "contact_id": 1,
+    "create_batch_operation_id": 3,
+    "queue_batch_operation_id": null,
+    "queue_remote_fetch_batch_operation_id": null,
+    "status": "created",
+    "msisdn": "+252662345678",
+    "remote_call_id": null,
+    "remote_status": null,
+    "remote_direction": null,
+    "remote_error_message": null,
+    "metadata": {},
+    "remote_response": {},
+    "remote_request_params": {
+      "from": "1234",
+      "url": "https://demo.twilio.com/docs/voice.xml",
+      "method": "GET"
+    },
+    "remote_queue_response": {},
+    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "remotely_queued_at": null,
+    "created_at": "2017-11-23T04:45:54.454Z",
+    "updated_at": "2017-11-23T04:45:54.454Z"
+  },
+  {
+    "id": 2,
+    "callout_participation_id": 4,
+    "contact_id": 2,
+    "create_batch_operation_id": 3,
+    "queue_batch_operation_id": null,
+    "queue_remote_fetch_batch_operation_id": null,
+    "status": "created",
+    "msisdn": "+252662345679",
+    "remote_call_id": null,
+    "remote_status": null,
+    "remote_direction": null,
+    "remote_error_message": null,
+    "metadata": {},
+    "remote_response": {},
+    "remote_request_params": {
+      "from": "1234",
+      "url": "https://demo.twilio.com/docs/voice.xml",
+      "method": "GET"
+    },
+    "remote_queue_response": {},
+    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "remotely_queued_at": null,
+    "created_at": "2017-11-23T04:45:54.467Z",
+    "updated_at": "2017-11-23T04:45:54.467Z"
+  }
+]
+```
+
+So we can see that two phone calls were created from this batch operation. One for Alice and one for Bob. Using the [Phone Calls API](#managing-phone-calls) we manage the phone calls created by this batch operation if we need to.
+
+## Phone Call Batch Operations (Queuing Phone Calls)
+
+In the previous section we explained how to use a batch operation to create phone calls. The next logical step would be to create a batch operation to queue the calls on Twilio or Somleng. Let's go ahead and do this now:
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -XPOST http://scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallQueue | jq'
+```
+
+```
+< HTTP/1.1 422 Unprocessable Entity
+```
+
+```json
+{
+  "errors": {
+    "phone_calls_preview": [
+      "can't be blank"
+    ]
+  }
+}
+```
+
+Oops, that didn't seem to have worked. If we look closely at the error message it's telling us that the preview can't be blank. But what does that mean? It means that if this batch operation were to run no phone calls would be queued. Why? Because we haven't specified any filter parameters to This behavior is a little different from the other batch operations that we have encountered and there's a reason for it.
+
+Let's s
+
+By default a batch operation cannot be created for a phone call event if there is no phone calls that match this preview.

@@ -38,7 +38,6 @@ RSpec.describe "Batch Operations" do
         }
 
         def assert_created!
-          p response.body
           expect(response.code).to eq("201")
           expect(parsed_response).to eq(JSON.parse(asserted_created_batch_operation.to_json))
           expect(parsed_response["metadata"]).to eq(metadata)

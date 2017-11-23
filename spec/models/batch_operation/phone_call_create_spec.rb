@@ -12,8 +12,8 @@ RSpec.describe BatchOperation::PhoneCallCreate do
 
   describe "validations" do
     context "remote_request_params" do
-      subject { build(factory, :remote_request_params => {"foo" => "bar"}) }
-      it { is_expected.not_to be_valid }
+      subject { build(factory, :remote_request_params => {}) }
+      it { is_expected.not_to allow_value({"foo" => "bar"}).for(:remote_request_params) }
       it { is_expected.to validate_presence_of(:remote_request_params) }
     end
 

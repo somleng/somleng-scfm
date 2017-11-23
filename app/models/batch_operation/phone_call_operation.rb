@@ -11,12 +11,7 @@ class BatchOperation::PhoneCallOperation < BatchOperation::Base
   store_accessor :parameters,
                  :callout_filter_params,
                  :callout_participation_filter_params,
-                 :skip_validate_preview_presence
-
-  hash_store_reader   :callout_filter_params,
-                      :callout_participation_filter_params
-
-  store_accessor :parameters,
+                 :skip_validate_preview_presence,
                  :max,
                  :max_per_period,
                  :max_per_period_hours,
@@ -24,12 +19,18 @@ class BatchOperation::PhoneCallOperation < BatchOperation::Base
                  :max_per_period_statuses,
                  :limit
 
+  hash_store_reader   :callout_filter_params,
+                      :callout_participation_filter_params
+
   integer_store_reader :max,
                        :max_per_period,
                        :max_per_period_hours,
                        :limit
 
   boolean_store_reader :skip_validate_preview_presence
+
+  generic_store_reader :max_per_period_statuses,
+                       :max_per_period_timestamp_attribute
 
   def calculate_limit
     [

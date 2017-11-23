@@ -6,9 +6,9 @@ class BatchOperation::Base < ApplicationRecord
   include Wisper::Publisher
 
   conditionally_serialize(:parameters, JSON)
-  conditionally_store(:parameters, :coder => JSON)
 
   validates :type, :presence => true
+  validates :parameters, :json => true
 
   include AASM
 

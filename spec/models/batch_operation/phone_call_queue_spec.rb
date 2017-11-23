@@ -10,4 +10,15 @@ RSpec.describe BatchOperation::PhoneCallQueue do
     let(:invalid_transition_status) { PhoneCall::STATE_QUEUED }
     let(:phone_call_factory_attributes) { {:status => PhoneCall::STATE_CREATED} }
   end
+
+  describe "#parameters" do
+    let(:phone_call) { create(:phone_call) }
+    subject { create(factory, :parameters => {}) }
+
+    def setup_scenario
+      phone_call
+    end
+
+    it { expect(subject).to be_persisted }
+  end
 end

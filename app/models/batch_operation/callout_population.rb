@@ -7,7 +7,9 @@ class BatchOperation::CalloutPopulation < BatchOperation::Base
 
   has_many :contacts, :through => :callout_participations
 
-  store_accessor :parameters, :contact_filter_params
+  store_accessor :parameters,
+                 :contact_filter_params
+
   hash_store_reader   :contact_filter_params
 
   def run!

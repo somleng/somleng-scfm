@@ -2,9 +2,18 @@ RSpec.shared_examples_for "batch_operation" do
   include_examples "has_metadata"
 
   describe "validations" do
-    it {
+    subject { build(factory) }
+
+    def assert_validations!
       is_expected.to validate_presence_of(:type)
-    }
+      is_expected.not_to allow_value("foo").for(:parameters)
+      is_expected.to allow_value({"foo" => "bar"}).for(:parameters)
+      subject.parameters = nil
+      is_expected.not_to be_valid
+      expect(subject.errors[:parameters]).not_to be_empty
+    end
+
+    it { assert_validations! }
   end
 
   describe "state_machine" do

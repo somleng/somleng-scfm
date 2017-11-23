@@ -5,9 +5,11 @@ module MetadataHelpers
 
   included do
     conditionally_serialize(:metadata, JSON)
+    validates :metadata,
+              :json => true
   end
 
-  module ClassMethods
+  class_methods do
     def metadata_has_value(key, value)
       json_has_value(key, value, :metadata)
     end

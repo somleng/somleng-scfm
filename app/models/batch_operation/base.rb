@@ -12,7 +12,7 @@ class BatchOperation::Base < ApplicationRecord
 
   include AASM
 
-  aasm :column => :status do
+  aasm :column => :status, :skip_validation_on_save => true do
     state :preview, :initial => true
     state :queued
     state :running

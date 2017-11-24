@@ -30,6 +30,28 @@ RSpec.shared_examples_for("phone_call_event_operation_batch_operation") do
     end
   end
 
+  describe "state_machine" do
+    describe "#finish!" do
+      let(:phone_call) { create(:phone_call) }
+      subject {
+        create(
+          factory,
+          :status => BatchOperation::Base::STATE_RUNNING,
+          :skip_validate_preview_presence => nil,
+        )
+      }
+
+      def setup_scenario
+        phone_call
+        subject
+        phone_call.destroy
+        subject.finish!
+      end
+
+      it { expect(subject).to be_finished }
+    end
+  end
+
   describe "#run!" do
     let(:phone_call) { create(:phone_call, phone_call_factory_attributes) }
     subject { create(factory) }

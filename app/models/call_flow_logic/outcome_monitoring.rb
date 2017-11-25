@@ -14,6 +14,7 @@ class CallFlowLogic::OutcomeMonitoring < CallFlowLogic::Base
     state :recording_transfer_not_received_reason
     state :playing_transfer_not_received_exit_message
     state :finished
+    state :gathering_paid_for_transport
 
     before_all_events :set_current_state
     after_all_events :set_status
@@ -28,10 +29,6 @@ class CallFlowLogic::OutcomeMonitoring < CallFlowLogic::Base
                   :to =>   :gathering_received_transfer
 
       transitions :from => :gathering_received_transfer,
-                  :to => :gathering_received_transfer_amount,
-                  :if => :answered_yes?
-
-      transitions :from => :gathering_received_transfer,
                   :to => :recording_transfer_not_received_reason,
                   :if => :answered_no?
 
@@ -40,6 +37,14 @@ class CallFlowLogic::OutcomeMonitoring < CallFlowLogic::Base
 
       transitions :from => :playing_transfer_not_received_exit_message,
                   :to => :finished
+
+      transitions :from => :gathering_received_transfer,
+                  :to => :gathering_received_transfer_amount,
+                  :if => :answered_yes?
+
+      transitions :from => :gathering_received_transfer_amount,
+                  :to => :gathering_paid_for_transport,
+                  :if => :answered_any?
     end
   end
 
@@ -98,6 +103,10 @@ class CallFlowLogic::OutcomeMonitoring < CallFlowLogic::Base
     digits == "2"
   end
 
+  def answered_any?
+    digits.present?
+  end
+
   def contact
     event.contact
   end
@@ -111,13 +120,15 @@ class CallFlowLogic::OutcomeMonitoring < CallFlowLogic::Base
   end
 
   def twiml_for_gathering_received_transfer
-    gather(:num_digits => 1) do |gather|
-      play_response(gather, play_url_for(:did_not_understand_response)) if status_did_not_change?
-    end
+    gather(:num_digits => 1)
   end
 
   def twiml_for_gathering_received_transfer_amount
     gather(:num_digits => 3)
+  end
+
+  def twiml_for_gathering_paid_for_transport
+    gather(:num_digits => 1)
   end
 
   def twiml_for_recording_transfer_not_received_reason
@@ -141,7 +152,11 @@ class CallFlowLogic::OutcomeMonitoring < CallFlowLogic::Base
   def gather(options = {}, &block)
     voice_response do |response|
       response.gather(default_gather_options.merge(options)) do |gather|
-        yield(gather) if block_given?
+        if block_given?
+          yield(gather)
+        else
+          play_response(gather, play_url_for(:did_not_understand_response)) if status_did_not_change?
+        end
         play_response_from_status(gather)
       end
     end

@@ -1,7 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe CallFlowLogic::OutcomeMonitoring do
-
   let(:phone_call) { create(:phone_call, phone_call_factory_attributes) }
   let(:event_details) { generate(:twilio_remote_call_event_details) }
   let(:event_factory_attributes) { { :details => event_details, :phone_call => phone_call } }
@@ -33,7 +32,7 @@ RSpec.describe CallFlowLogic::OutcomeMonitoring do
       elsif response == :no
         event_details.merge("Digits" => "2")
       else
-        event_details.merge("Digits" => "0")
+        event_details.merge("Digits" => response && response.to_s)
       end
     end
 
@@ -94,12 +93,34 @@ RSpec.describe CallFlowLogic::OutcomeMonitoring do
       let(:asserted_new_status) { described_class::STATE_FINISHED }
       it { assert_run! }
     end
+
+    context "status: '#{described_class::STATE_GATHERING_RECEIVED_TRANSFER_AMOUNT}'" do
+      let(:status) { described_class::STATE_GATHERING_RECEIVED_TRANSFER_AMOUNT }
+
+      context "no answer" do
+        let(:event_details) { event_details_with_response(nil, super()) }
+        let(:asserted_new_status) { described_class::STATE_GATHERING_RECEIVED_TRANSFER_AMOUNT }
+        it { assert_run! }
+      end
+
+      context "answered 500" do
+        let(:event_details) { event_details_with_response("500", super()) }
+        let(:asserted_new_status) { described_class::STATE_GATHERING_PAID_FOR_TRANSPORT }
+
+        it { assert_run! }
+      end
+    end
   end
 
   describe "#to_xml" do
     let(:xml) { subject.to_xml }
     let(:response) { Hash.from_xml(xml)["Response"] }
     let(:gather_response) { response["Gather"] }
+
+    def setup_no_status_change
+      subject.previous_status = status
+      subject.aasm.current_state = status.to_sym
+    end
 
     def asserted_play_file_url(filename)
       [
@@ -112,13 +133,25 @@ RSpec.describe CallFlowLogic::OutcomeMonitoring do
       expect(response).to be_present
     end
 
+    def assert_play!(response, options = {})
+      options[:url] ||= status
+      play_response = response["Play"]
+      play_response = play_response[options[:index]] if options[:index]
+      expect(play_response).to eq(asserted_play_file_url(options[:url]))
+    end
+
     def assert_play_status_and_redirect!
-      expect(response["Play"]).to eq(asserted_play_file_url(status))
+      assert_play!(response)
       expect(response["Redirect"]).to eq(current_url)
     end
 
+    def assert_did_not_understand_response!
+      assert_play!(gather_response, :index => 1)
+      assert_play!(gather_response, :index => 0, :url => :did_not_understand_response)
+    end
+
     def assert_finished!
-      expect(response["Play"]).to eq(asserted_play_file_url(:survey_is_already_finished))
+      assert_play!(response, :url => :survey_is_already_finished)
       expect(response).to have_key("Hangup")
     end
 
@@ -154,22 +187,13 @@ RSpec.describe CallFlowLogic::OutcomeMonitoring do
       end
 
       context "no status change" do
-        let(:previous_status) { status }
-
         def setup_scenario
-          super
-          subject.previous_status = status
-          subject.aasm.current_state = status.to_sym
+          setup_no_status_change
         end
 
         def assert_xml!
           super
-          expect(gather_response["Play"]).to eq(
-            [
-              asserted_play_file_url(:did_not_understand_response),
-              asserted_play_file_url(status)
-            ]
-          )
+          assert_did_not_understand_response!
         end
 
         it { assert_xml! }
@@ -178,7 +202,7 @@ RSpec.describe CallFlowLogic::OutcomeMonitoring do
       context "status changed" do
         def assert_xml!
           super
-          expect(gather_response["Play"]).to eq(asserted_play_file_url(status))
+          assert_play!(gather_response)
         end
 
         it { assert_xml! }
@@ -189,13 +213,31 @@ RSpec.describe CallFlowLogic::OutcomeMonitoring do
       let(:status) { described_class::STATE_GATHERING_RECEIVED_TRANSFER_AMOUNT }
 
       def assert_xml!
-        super
         expect(gather_response).to be_present
         expect(gather_response["numDigits"]).to eq("3")
-        expect(gather_response["Play"]).to eq(asserted_play_file_url(status))
       end
 
-      it { assert_xml! }
+      context "no status change" do
+        def setup_scenario
+          setup_no_status_change
+        end
+
+        def assert_xml!
+          super
+          assert_did_not_understand_response!
+        end
+
+        it { assert_xml! }
+      end
+
+      context "status changed" do
+        def assert_xml!
+          super
+          assert_play!(gather_response)
+        end
+
+        it { assert_xml! }
+      end
     end
 
     context "status: '#{described_class::STATE_RECORDING_TRANSFER_NOT_RECEIVED_REASON}'" do
@@ -203,7 +245,7 @@ RSpec.describe CallFlowLogic::OutcomeMonitoring do
 
       def assert_xml!
         super
-        expect(response["Play"]).to eq(asserted_play_file_url(status))
+        assert_play!(response)
         expect(response).to have_key("Record")
       end
 
@@ -230,6 +272,37 @@ RSpec.describe CallFlowLogic::OutcomeMonitoring do
       end
 
       it { assert_xml! }
+    end
+
+    context "status: '#{described_class::STATE_GATHERING_PAID_FOR_TRANSPORT}'" do
+      let(:status) { described_class::STATE_GATHERING_PAID_FOR_TRANSPORT }
+
+      def assert_xml!
+        expect(gather_response).to be_present
+        expect(gather_response["numDigits"]).to eq("1")
+      end
+
+      context "no status change" do
+        def setup_scenario
+          setup_no_status_change
+        end
+
+        def assert_xml!
+          super
+          assert_did_not_understand_response!
+        end
+
+        it { assert_xml! }
+      end
+
+      context "status change" do
+        def assert_xml!
+          super
+          assert_play!(gather_response)
+        end
+
+        it { assert_xml! }
+      end
     end
   end
 end

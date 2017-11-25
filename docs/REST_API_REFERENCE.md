@@ -18,7 +18,6 @@ $ docker run --rm -v /tmp/somleng-scfm/db:/tmp/db -e RAILS_ENV=production -e RAI
 
 And boot the API Server:
 
-
 ```
 $ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
 ```
@@ -30,6 +29,8 @@ $ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h sc
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/contacts --data-urlencode "msisdn=+252662345699" | jq'
 ```
+
+Sample Response:
 
 ```json
 {
@@ -43,11 +44,11 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
 
 ### Update
 
-Note that the response is `204 No Content`
-
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/contacts/1 --data-urlencode "msisdn=+252662345700" -d "metadata[name]=Alice" -d "metadata[gender]=f"'
 ```
+
+Sample Response:
 
 ```
 < HTTP/1.1 204 No Content
@@ -58,6 +59,8 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/contacts/1 | jq'
 ```
+
+Sample Response:
 
 ```json
 {
@@ -72,73 +75,27 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
 }
 ```
 
-### Index
+### Index and Filter
 
-Note that the response is paginated.
+#### All Contacts
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/contacts | jq'
 ```
 
-```
-< HTTP/1.1 200 OK
-< Per-Page: 25
-< Total: 1
-```
-
-```json
-[
-  {
-    "id": 1,
-    "msisdn": "+252662345700",
-    "metadata": {
-      "name": "Alice",
-      "gender": "f"
-    },
-    "created_at": "2017-11-23T05:22:07.519Z",
-    "updated_at": "2017-11-23T05:26:14.983Z"
-  }
-]
-```
-
-Sample Response:
-
-### Filter by metadata
-
-Note that the response is paginated.
+#### Filter by metadata
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/contacts?q[metadata][gender]=f | jq'
 ```
 
-```
-< HTTP/1.1 200 OK
-< Per-Page: 25
-< Total: 1
-```
-
-```json
-[
-  {
-    "id": 1,
-    "msisdn": "+252662345700",
-    "metadata": {
-      "name": "Alice",
-      "gender": "f"
-    },
-    "created_at": "2017-11-23T05:22:07.519Z",
-    "updated_at": "2017-11-23T05:26:14.983Z"
-  }
-]
-```
-
-### Filter by msisdn
-
-Note that the response is paginated.
+#### Filter by msisdn
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/contacts?q[msisdn]=252662345700 | jq'
 ```
+
+Sample Response:
 
 ```
 < HTTP/1.1 200 OK
@@ -169,6 +126,8 @@ Note that the the response is `204 No Content`
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/contacts/1'
 ```
 
+Sample Response:
+
 ```
 < HTTP/1.1 204 No Content
 ```
@@ -180,6 +139,8 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts | jq'
 ```
+
+Sample Response:
 
 ```json
 {
@@ -194,11 +155,11 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
 
 ### Update
 
-Note that the response is `204 No Content`
-
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/1 -d call_flow_logic=CallFlowLogic::Application -d "metadata[name]=my+callout"'
 ```
+
+Sample Response:
 
 ```
 < HTTP/1.1 204 No Content
@@ -209,6 +170,8 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/callouts/1 | jq'
 ```
+
+Sample Response:
 
 ```json
 {
@@ -223,110 +186,39 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
 }
 ```
 
-### Index
+### Index and Filter
 
-Note that the response is paginated.
+#### All Callouts
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts | jq'
 ```
 
-```
-< HTTP/1.1 200 OK
-< Per-Page: 25
-< Total: 1
-```
-
-```json
-[
-  {
-    "id": 1,
-    "status": "initialized",
-    "call_flow_logic": "CallFlowLogic::Application",
-    "metadata": {
-      "name": "my callout"
-    },
-    "created_at": "2017-11-23T05:32:25.773Z",
-    "updated_at": "2017-11-23T05:34:33.218Z"
-  }
-]
-```
-
-### Filter by metadata
-
-Note that the response is paginated.
+#### Filter by metadata
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/callouts?q[metadata][name]=my+callout | jq'
 ```
 
-```
-< HTTP/1.1 200 OK
-< Per-Page: 25
-< Total: 1
-```
-
-```json
-[
-  {
-    "id": 1,
-    "status": "initialized",
-    "call_flow_logic": "CallFlowLogic::Application",
-    "metadata": {
-      "name": "my callout"
-    },
-    "created_at": "2017-11-23T05:32:25.773Z",
-    "updated_at": "2017-11-23T05:34:33.218Z"
-  }
-]
-```
-
-### Filter by status
-
-Note that the response is paginated.
+#### Filter by status
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/callouts?q[status]=initialized | jq'
 ```
 
-```
-< HTTP/1.1 200 OK
-< Per-Page: 25
-< Total: 1
-```
-
-Sample Response:
-
-```json
-[
-  {
-    "id": 1,
-    "status": "initialized",
-    "call_flow_logic": "CallFlowLogic::Application",
-    "metadata": {
-      "name": "my callout"
-    },
-    "created_at": "2017-11-23T05:32:25.773Z",
-    "updated_at": "2017-11-23T05:34:33.218Z"
-  }
-]
-```
-
-### Filter by call_flow_logic
-
-Note that the response is paginated.
+#### Filter by call flow logic
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/callouts?q[call_flow_logic]=CallFlowLogic::Application | jq'
 ```
 
+Sample Response:
+
 ```
 < HTTP/1.1 200 OK
 < Per-Page: 25
 < Total: 1
 ```
-
-Sample Response:
 
 ```json
 [
@@ -343,10 +235,30 @@ Sample Response:
 ]
 ```
 
-### Events (Start)
+### Events
+
+#### Start
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_events -d "event=start" | jq'
+```
+
+#### Pause
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_events -d "event=pause" | jq'
+```
+
+#### Resume
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_events -d "event=resume" | jq'
+```
+
+#### Stop
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_events -d "event=stop" | jq'
 ```
 
 Sample Response:
@@ -364,68 +276,7 @@ Sample Response:
 }
 ```
 
-### Events (Pause)
-
-```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_events -d "event=pause" | jq'
-```
-
-```json
-{
-  "id": 1,
-  "status": "paused",
-  "call_flow_logic": "CallFlowLogic::Application",
-  "metadata": {
-    "name": "my callout"
-  },
-  "created_at": "2017-11-23T05:32:25.773Z",
-  "updated_at": "2017-11-23T05:41:11.264Z"
-}
-```
-
-### Events (Resume)
-
-```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_events -d "event=resume" | jq'
-```
-
-Sample Response:
-
-```json
-{
-  "id": 1,
-  "status": "running",
-  "call_flow_logic": "CallFlowLogic::Application",
-  "metadata": {
-    "name": "my callout"
-  },
-  "created_at": "2017-11-23T05:32:25.773Z",
-  "updated_at": "2017-11-23T05:41:35.727Z"
-}
-```
-
-### Events (Stop)
-
-```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_events -d "event=stop" | jq'
-```
-
-```json
-{
-  "id": 1,
-  "status": "stopped",
-  "call_flow_logic": "CallFlowLogic::Application",
-  "metadata": {
-    "name": "my callout"
-  },
-  "created_at": "2017-11-23T05:32:25.773Z",
-  "updated_at": "2017-11-23T05:42:00.691Z"
-}
-```
-
 ### Delete
-
-Note that the response is `204 No Content`
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/callouts/1
@@ -442,32 +293,32 @@ Sample Response:
 ### Create
 
 ```
-$ curl -XPOST http://localhost:3000/api/callouts/1/callout_participations \
-  -d "contact_id=1"
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_participations -d "contact_id=1" | jq'
 ```
+
+Sample Response:
 
 ```json
 {
-  "id": 3,
+  "id": 1,
   "callout_id": 1,
   "contact_id": 1,
-  "callout_population_id": 1,
-  "msisdn": "+85510202101",
+  "callout_population_id": null,
+  "msisdn": "+252662345700",
+  "call_flow_logic": null,
   "metadata": {},
-  "created_at": "2017-11-10T10:40:29.083Z",
-  "updated_at": "2017-11-10T10:40:29.083Z"
+  "created_at": "2017-11-25T03:28:16.151Z",
+  "updated_at": "2017-11-25T03:28:16.151Z"
 }
 ```
 
 ### Update
 
-Note that the response is `204 No Content`
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callout_participations/1 -d call_flow_logic=CallFlowLogic::Application -d "metadata[name]=my+callout+participation" -d "msisdn=252662345701"'
+```
 
-```
-$ curl -v -XPATCH http://localhost:3000/api/callout_participations/2 \
-  -d "metadata[foo]=baz" \
-  -d "metadata[baz]=foo"
-```
+Sample Response:
 
 ```
 < HTTP/1.1 204 No Content
@@ -476,132 +327,121 @@ $ curl -v -XPATCH http://localhost:3000/api/callout_participations/2 \
 ### Fetch
 
 ```
-$ curl http://localhost:3000/api/callout_participations/2
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/callout_participations/1 | jq'
 ```
 
 Sample Response:
 
 ```
 {
-  "id": 2,
+  "id": 1,
   "callout_id": 1,
-  "contact_id": 2,
+  "contact_id": 1,
   "callout_population_id": null,
-  "msisdn": "+85510202102",
-  "metadata": {},
-  "created_at": "2017-11-10T10:21:24.395Z",
-  "updated_at": "2017-11-10T10:21:24.395Z"
+  "msisdn": "+252662345701",
+  "call_flow_logic": "CallFlowLogic::Application",
+  "metadata": {
+    "name": "my callout participation"
+  },
+  "created_at": "2017-11-25T03:28:16.151Z",
+  "updated_at": "2017-11-25T03:55:01.439Z"
 }
 ```
 
-### Index
+### Index and Filter
 
-Note that the response is paginated.
+#### All Callout Participations
 
 ```
-$ curl -v http://localhost:3000/api/callouts/1/callout_participations
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callout_participations | jq'
 ```
+
+#### Filter by metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[metadata][name]=my+callout+participation | jq'
+```
+
+#### Filter by callout
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/callout_participations | jq'
+```
+
+#### Filter by contact
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/contacts/1/callout_participations | jq'
+```
+
+#### Filter by msisdn
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[msisdn]=252662345700 | jq'
+```
+
+#### Filter by call flow logic
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[call_flow_logic]=CallFlowLogic::Application | jq'
+```
+
+#### Filter by callout participations which have phone calls
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[has_phone_calls]=true | jq'
+```
+
+#### Filter by callout participations which have no phone calls
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[has_phone_calls]=false | jq'
+```
+
+#### Filter by callout participations where the last phone call attempt was failed or errored
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[last_phone_call_attempt]=failed,errored | jq'
+```
+
+#### Filter by callout participations which have no phone calls OR the last phone call attempt was failed or errored
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[no_phone_calls_or_last_attempt]=failed,errored | jq'
+```
+
+Sample Response:
 
 ```
 < Per-Page: 25
-< Total: 2
+< Total: 1
 ```
 
 ```
 [
   {
-    "id": 3,
+    "id": 1,
     "callout_id": 1,
     "contact_id": 1,
-    "callout_population_id": 1,
-    "msisdn": "+85510202101",
-    "metadata": {},
-    "created_at": "2017-11-10T10:40:29.083Z",
-    "updated_at": "2017-11-10T10:40:29.083Z"
-  },
-  {
-    "id": 2,
-    "callout_id": 1,
-    "contact_id": 2,
     "callout_population_id": null,
-    "msisdn": "+85510202102",
-    "metadata": {},
-    "created_at": "2017-11-10T10:21:24.395Z",
-    "updated_at": "2017-11-10T10:21:24.395Z"
-  }
-]
-```
-
-### Filter by metadata
-
-Note that the response is paginated.
-
-```
-$ curl -v -g "http://localhost:3000/api/callouts/1/callout_participations?q[metadata][foo]=baz"
-```
-
-Sample Response:
-
-```
-< Per-Page: 25
-< Total: 1
-```
-
-```json
-[
-  {
-    "id": 2,
-    "callout_id": 1,
-    "contact_id": 2,
-    "callout_population_id": null,
-    "msisdn": "+85510202102",
+    "msisdn": "+252662345701",
+    "call_flow_logic": "CallFlowLogic::Application",
     "metadata": {
-      "foo": "baz",
-      "baz": "foo"
+      "name": "my callout participation"
     },
-    "created_at": "2017-11-10T10:21:24.395Z",
-    "updated_at": "2017-11-10T11:24:47.143Z"
-  }
-]
-```
-
-### Filter by contact_id
-
-Note that the response is paginated.
-
-```
-$ curl -v -g "http://localhost:3000/api/callouts/1/callout_participations?q[contact_id]=2"
-```
-
-Sample Response:
-
-```
-< Per-Page: 25
-< Total: 1
-```
-
-```json
-[
-  {
-    "id": 2,
-    "callout_id": 1,
-    "contact_id": 2,
-    "callout_population_id": null,
-    "msisdn": "+85510202102",
-    "metadata": {},
-    "created_at": "2017-11-10T10:21:24.395Z",
-    "updated_at": "2017-11-10T10:21:24.395Z"
+    "created_at": "2017-11-25T03:28:16.151Z",
+    "updated_at": "2017-11-25T03:55:01.439Z"
   }
 ]
 ```
 
 ### Delete
 
-Note that the response is `204 No Content`
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/callout_participations/1
+```
 
-```
-$ curl -v -XDELETE http://localhost:3000/api/callout_participations/2
-```
+Sample Response:
 
 ```
 < HTTP/1.1 204 No Content
@@ -673,8 +513,6 @@ $ curl -XPOST http://localhost:3000/api/callouts/1/callout_populations \
 
 ### Update
 
-Note that the response is `204 No Content`
-
 ```
 $ curl -v -XPATCH http://localhost:3000/api/callout_populations/1 \
   -d "metadata[foo]=baz" \
@@ -709,8 +547,6 @@ $ curl http://localhost:3000/api/batch_operations/1
 
 ### Index
 
-Note that the response is paginated.
-
 ```
 $ curl http://localhost:3000/api/callout_populations
 ```
@@ -743,8 +579,6 @@ $ curl http://localhost:3000/api/callout_populations
 ```
 
 ### Index for a Callout
-
-Note that the response is paginated.
 
 ```
 $ curl http://localhost:3000/api/callouts/1/callout_populations

@@ -10,9 +10,7 @@ RSpec.shared_examples_for("resource_event") do
       subject { described_class.new(:eventable => eventable) }
 
       it {
-        is_expected.to validate_inclusion_of(:event).in_array(
-          eventable.aasm.events.map { |event| event.name.to_s }
-        )
+        is_expected.to validate_inclusion_of(:event).in_array([event])
       }
     end
   end

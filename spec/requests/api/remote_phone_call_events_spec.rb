@@ -65,6 +65,7 @@ RSpec.describe "Remote Phone Call Events" do
       let(:from) { nil }
       let(:to) { nil }
       let(:direction) { nil }
+      let(:call_status) { nil }
 
       let(:twilio_request_auth_token) { "abcdefg" }
       let(:twilio_request_validator) { Twilio::Security::RequestValidator.new(twilio_request_auth_token) }
@@ -85,7 +86,8 @@ RSpec.describe "Remote Phone Call Events" do
           "CallSid" => call_sid,
           "From" => from,
           "To" => to,
-          "Direction" => direction
+          "Direction" => direction,
+          "CallStatus" => call_status
         }
       end
 
@@ -132,9 +134,11 @@ RSpec.describe "Remote Phone Call Events" do
           expect(response.code).to eq("201")
           expect(response.headers).not_to have_key("Location")
           expect(asserted_remote_phone_call_event.details).to eq(body)
-          expect(asserted_phone_call).to be_present
+          expect(asserted_phone_call.reload).to be_present
+          expect(asserted_phone_call.status).to eq(asserted_phone_call_status.to_s)
           expect(asserted_phone_call.remote_call_id).to eq(call_sid)
           expect(asserted_phone_call.remote_direction).to eq(direction)
+          expect(asserted_phone_call.remote_status).to eq(call_status)
           expect(asserted_contact).to be_present
           expect(asserted_contact.msisdn).to eq(asserted_contact_msisdn)
           expect(response.body).to eq(asserted_response_body)
@@ -144,8 +148,10 @@ RSpec.describe "Remote Phone Call Events" do
           let(:from) { "+85510202101" }
           let(:to) { "345" }
           let(:direction) { "inbound" }
+          let(:call_status) { "in-progress" }
 
           let(:asserted_phone_call) { asserted_remote_phone_call_event.phone_call }
+          let(:asserted_phone_call_status) { PhoneCall::STATE_IN_PROGRESS }
           let(:asserted_contact) { asserted_phone_call.contact }
           let(:asserted_contact_msisdn) { from }
 
@@ -164,11 +170,13 @@ RSpec.describe "Remote Phone Call Events" do
           let(:from) { "345" }
           let(:to) { "+85510202101" }
           let(:direction) { "outbound-api" }
+          let(:call_status) { "ringing" }
 
           let(:contact) { create(:contact) }
           let(:call_flow_logic) { nil }
           let(:callout) { create(:callout, :call_flow_logic => call_flow_logic) }
           let(:callout_participation) { create(:callout_participation, :callout => callout) }
+          let(:asserted_phone_call_status) { PhoneCall::STATE_IN_PROGRESS }
 
           let(:phone_call) {
             create(

@@ -32,6 +32,7 @@ class CallFlowLogic::Base
   end
 
   def run!
+    event.phone_call_complete! if event
   end
 
   def no_response

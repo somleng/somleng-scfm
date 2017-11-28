@@ -107,27 +107,27 @@ class PhoneCall < ApplicationRecord
     end
 
     event :complete, :after_commit => :publish_completed do
-      transitions :from => [:remotely_queued, :remote_fetch_queued, :in_progress],
+      transitions :from => [:created, :remotely_queued, :remote_fetch_queued, :in_progress],
                   :to => :in_progress,
                   :if => :remote_status_in_progress?
 
-      transitions :from => [:remotely_queued, :remote_fetch_queued, :in_progress],
+      transitions :from => [:created, :remotely_queued, :remote_fetch_queued, :in_progress],
                   :to => :busy,
                   :if => :remote_status_busy?
 
-      transitions :from => [:remotely_queued, :remote_fetch_queued, :in_progress],
+      transitions :from => [:created, :remotely_queued, :remote_fetch_queued, :in_progress],
                   :to => :failed,
                   :if => :remote_status_failed?
 
-      transitions :from => [:remotely_queued, :remote_fetch_queued, :in_progress],
+      transitions :from => [:created, :remotely_queued, :remote_fetch_queued, :in_progress],
                   :to => :not_answered,
                   :if => :remote_status_not_answered?
 
-      transitions :from => [:remotely_queued, :remote_fetch_queued, :in_progress],
+      transitions :from => [:created, :remotely_queued, :remote_fetch_queued, :in_progress],
                   :to => :canceled,
                   :if => :remote_status_canceled?
 
-      transitions :from => [:remotely_queued, :remote_fetch_queued, :in_progress],
+      transitions :from => [:created, :remotely_queued, :remote_fetch_queued, :in_progress],
                   :to => :completed,
                   :if => :remote_status_completed?
 

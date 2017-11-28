@@ -52,6 +52,7 @@ RSpec.describe RemotePhoneCallEvent do
         expect(phone_call.remote_call_id).to eq(subject.remote_call_id)
         expect(phone_call.remote_direction).to eq(subject.remote_direction)
         expect(phone_call.msisdn).to eq(PhonyRails.normalize_number(subject.details["From"]))
+        expect(phone_call.remote_status).to eq(subject.details["CallStatus"])
       end
 
       it { assert_defaults! }

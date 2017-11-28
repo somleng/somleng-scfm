@@ -275,7 +275,12 @@ RSpec.describe PhoneCall do
         end
       end
 
-      [described_class::STATE_REMOTELY_QUEUED, described_class::STATE_IN_PROGRESS, described_class::STATE_REMOTE_FETCH_QUEUED].each do |current_status|
+      [
+        described_class::STATE_CREATED,
+        described_class::STATE_REMOTELY_QUEUED,
+        described_class::STATE_IN_PROGRESS,
+        described_class::STATE_REMOTE_FETCH_QUEUED
+      ].each do |current_status|
         context "status: '#{current_status}'" do
           let(:current_status) { current_status }
           {

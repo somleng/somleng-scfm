@@ -4,6 +4,8 @@ RSpec.describe CallFlowLogic::Application do
   let(:event) { create(:remote_phone_call_event) }
   subject { described_class.new(:event => event) }
 
+  it_behaves_like("call_flow_logic")
+
   describe "#to_xml" do
     let(:xml) { subject.to_xml }
     let(:parsed_xml) { Hash.from_xml(xml) }

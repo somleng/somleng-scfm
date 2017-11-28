@@ -15,6 +15,8 @@ RSpec.describe CallFlowLogic::OutcomeMonitoring do
   let(:current_url) { "http://scfm.example.com/api/remote_phone_call_events" }
   subject { described_class.new(:event => event, :current_url => current_url) }
 
+  it_behaves_like("call_flow_logic")
+
   describe "state_machine" do
     context "by default" do
       it { is_expected.to be_initialized }

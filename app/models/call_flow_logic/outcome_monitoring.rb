@@ -114,6 +114,7 @@ class CallFlowLogic::OutcomeMonitoring < CallFlowLogic::Base
   end
 
   def run!
+    super
     if step!
       before_save_contact
       contact.save

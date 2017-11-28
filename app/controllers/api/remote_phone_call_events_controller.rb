@@ -43,7 +43,7 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
 
   def call_flow_logic
     @call_flow_logic ||= begin
-      resource_call_flow_logic = CallFlowLogic::Base.registered.map(&:to_s).select { |registered_call_flow_logic| registered_call_flow_logic == resource.call_flow_logic }.first
+      resource_call_flow_logic = CallFlowLogic::Base.registered.map(&:to_s).detect { |registered_call_flow_logic| registered_call_flow_logic == resource.call_flow_logic }
       (resource_call_flow_logic && resource_call_flow_logic.constantize) || CallFlowLogic::Application
     end
   end
@@ -84,5 +84,4 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
   def contact
     @contact ||= Contact.find(params[:contact_id])
   end
-
 end

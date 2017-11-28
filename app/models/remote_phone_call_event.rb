@@ -15,7 +15,8 @@ class RemotePhoneCallEvent < ApplicationRecord
             :remote_direction,
             :presence => true
 
-  delegate :contact, :to => :phone_call
+  delegate :contact, :remote_status, :remote_status=, :to => :phone_call
+  delegate :complete!, :to => :phone_call, :prefix => true
 
   def from=(value)
     phone_call.msisdn = value
@@ -32,6 +33,7 @@ class RemotePhoneCallEvent < ApplicationRecord
     self.remote_direction ||= details["Direction"]
     self.phone_call ||= find_or_initialize_phone_call
     self.from ||= details["From"]
+    self.remote_status ||= details["CallStatus"]
     self.call_flow_logic ||= valid_call_flow_logic(phone_call.call_flow_logic) || DEFAULT_CALL_FLOW_LOGIC
     self.phone_call.call_flow_logic = call_flow_logic
   end
@@ -42,6 +44,8 @@ class RemotePhoneCallEvent < ApplicationRecord
   end
 
   def find_or_initialize_phone_call
-    PhoneCall.where(:remote_call_id => remote_call_id).first_or_initialize(:remote_direction => remote_direction)
+    PhoneCall.where(:remote_call_id => remote_call_id).first_or_initialize(
+      :remote_direction => remote_direction
+    )
   end
 end

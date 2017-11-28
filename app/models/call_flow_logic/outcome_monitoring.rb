@@ -253,11 +253,11 @@ class CallFlowLogic::OutcomeMonitoring < CallFlowLogic::Base
   end
 
   def twiml_for_playing_transfer_not_received_exit_message
-    play_and_redirect
+    play_and_hangup
   end
 
   def twiml_for_playing_completed_survey_message
-    play_and_redirect
+    play_and_hangup
   end
 
   def twiml_for_finished
@@ -277,6 +277,13 @@ class CallFlowLogic::OutcomeMonitoring < CallFlowLogic::Base
         end
         play_response_from_status(gather)
       end
+    end
+  end
+
+  def play_and_hangup
+    voice_response do |response|
+      play_response_from_status(response)
+      response.hangup
     end
   end
 

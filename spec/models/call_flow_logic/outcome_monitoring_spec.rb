@@ -270,6 +270,12 @@ RSpec.describe CallFlowLogic::OutcomeMonitoring do
       assert_play!(response)
     end
 
+    def assert_play_status_and_hangup!
+      assert_response!
+      assert_play!(response)
+      expect(response).to have_key("Hangup")
+    end
+
     def assert_did_not_understand_response!
       assert_play!(gather_response, :index => 1)
       assert_play!(gather_response, :index => 0, :url => :did_not_understand_response)
@@ -352,7 +358,7 @@ RSpec.describe CallFlowLogic::OutcomeMonitoring do
 
     context "status: '#{described_class::STATE_PLAYING_TRANSFER_NOT_RECEIVED_EXIT_MESSAGE}'" do
       let(:status) { described_class::STATE_PLAYING_TRANSFER_NOT_RECEIVED_EXIT_MESSAGE }
-      it { assert_play_status_and_redirect! }
+      it { assert_play_status_and_hangup! }
     end
 
     context "status: '#{described_class::STATE_FINISHED}'" do
@@ -417,7 +423,7 @@ RSpec.describe CallFlowLogic::OutcomeMonitoring do
 
     context "status: '#{described_class::STATE_PLAYING_COMPLETED_SURVEY_MESSAGE}'" do
       let(:status) { described_class::STATE_PLAYING_COMPLETED_SURVEY_MESSAGE }
-      it { assert_play_status_and_redirect! }
+      it { assert_play_status_and_hangup! }
     end
   end
 end

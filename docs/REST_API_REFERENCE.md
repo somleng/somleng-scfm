@@ -95,6 +95,58 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/contacts?q[msisdn]=252662345700 | jq'
 ```
 
+#### Filter by created_at
+
+##### created_at_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[created_at_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### created_at_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[created_at_after]=2017-11-29+01:36:02" | jq'
+```
+
+##### created_at_or_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[created_at_or_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### created_at_or_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[created_at_or_after]=2017-11-29+01:36:02" | jq'
+```
+
+#### Filter by updated_at
+
+##### updated_at_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[updated_at_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### updated_at_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[updated_at_after]=2017-11-29+01:36:02" | jq'
+```
+
+##### updated_at_or_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[updated_at_or_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### updated_at_or_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[updated_at_or_after]=2017-11-29+01:36:02" | jq'
+```
+
 Sample Response:
 
 ```
@@ -210,6 +262,58 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/callouts?q[call_flow_logic]=CallFlowLogic::Application | jq'
+```
+
+#### Filter by created_at
+
+##### created_at_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[created_at_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### created_at_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[created_at_after]=2017-11-29+01:36:02" | jq'
+```
+
+##### created_at_or_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[created_at_or_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### created_at_or_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[created_at_or_after]=2017-11-29+01:36:02" | jq'
+```
+
+#### Filter by updated_at
+
+##### updated_at_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[updated_at_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### updated_at_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[updated_at_after]=2017-11-29+01:36:02" | jq'
+```
+
+##### updated_at_or_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[updated_at_or_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### updated_at_or_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[updated_at_or_after]=2017-11-29+01:36:02" | jq'
 ```
 
 Sample Response:
@@ -408,6 +512,58 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[no_phone_calls_or_last_attempt]=failed,errored | jq'
+```
+
+#### Filter by created_at
+
+##### created_at_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[created_at_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### created_at_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[created_at_after]=2017-11-29+01:36:02" | jq'
+```
+
+##### created_at_or_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[created_at_or_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### created_at_or_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[created_at_or_after]=2017-11-29+01:36:02" | jq'
+```
+
+#### Filter by updated_at
+
+##### updated_at_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[updated_at_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### updated_at_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[updated_at_after]=2017-11-29+01:36:02" | jq'
+```
+
+##### updated_at_or_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[updated_at_or_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### updated_at_or_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[updated_at_or_after]=2017-11-29+01:36:02" | jq'
 ```
 
 Sample Response:
@@ -741,6 +897,51 @@ Sample Response:
 ]
 ```
 
+### Events
+
+#### Queue
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/phone_calls/1/phone_call_events -d event=queue | jq'
+```
+
+#### Queue Remote Fetch
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/phone_calls/1/phone_call_events -d event=queue_remote_fetch | jq'
+```
+
+Sample Response:
+
+```json
+{
+  "id": 1,
+  "callout_participation_id": 1,
+  "contact_id": 1,
+  "create_batch_operation_id": null,
+  "queue_batch_operation_id": null,
+  "queue_remote_fetch_batch_operation_id": null,
+  "status": "queued",
+  "msisdn": "+252662345699",
+  "remote_call_id": null,
+  "remote_status": null,
+  "remote_direction": null,
+  "remote_error_message": null,
+  "metadata": {},
+  "remote_response": {},
+  "remote_request_params": {
+    "from": "345",
+    "url": "https://demo.twilio.com/docs/voice.xml",
+    "method": "GET"
+  },
+  "remote_queue_response": {},
+  "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+  "remotely_queued_at": null,
+  "created_at": "2017-11-29T03:54:35.502Z",
+  "updated_at": "2017-11-29T03:58:07.144Z"
+}
+```
+
 ### Delete
 
 ```
@@ -755,17 +956,186 @@ Sample Response:
 
 ## Remote Phone Call Events
 
-### Create
+Remote Phone Call Events are created by Twilio or Somleng.
 
 ### Update
 
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/remote_phone_call_events/1 -d "metadata[foo]=bar"'
+
+Sample Response:
+
+```
+< HTTP/1.1 204 No Content
+```
+
 ### Fetch
 
-### Index
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/remote_phone_call_events/1 | jq'
+```
 
-### Filter
+Sample Response:
 
-### Delete
+```json
+{
+  "id": 1,
+  "phone_call_id": 1,
+  "details": {
+    "From": "+1234",
+    "To": "+252662345699",
+    "CallSid": "06d9ebf7-4d71-4470-8b57-09235979781e",
+    "CallStatus": "ringing",
+    "Direction": "outbound-api",
+    "AccountSid": "ddda6f6c-f698-40f7-be5b-53056ec1c52c",
+    "ApiVersion": "2010-04-01"
+  },
+  "metadata": {},
+  "remote_call_id": "06d9ebf7-4d71-4470-8b57-09235979781e",
+  "remote_direction": "outbound-api",
+  "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+  "created_at": "2017-11-29T03:58:16.135Z",
+  "updated_at": "2017-11-29T03:58:16.135Z"
+}
+```
+
+### Index and Filter
+
+#### All Remote Phone Call Events
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/remote_phone_call_events | jq'
+```
+
+#### Filter by Phone Call
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/phone_calls/1/remote_phone_call_events | jq'
+```
+
+#### Filter by Contact
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/contacts/1/remote_phone_call_events | jq'
+```
+
+#### Filter by Callout
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/remote_phone_call_events | jq'
+```
+
+#### Filter by Callout Participation
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callout_participations/1/remote_phone_call_events | jq'
+```
+
+#### Filter by details
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/remote_phone_call_events?q[details][CallStatus]=ringing | jq'
+```
+
+#### Filter by call_flow_logic
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[call_flow_logic]=CallFlowLogic::OutcomeMonitoring" | jq'
+```
+
+#### Filter by remote_call_id
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[remote_call_id]=06d9ebf7-4d71-4470-8b57-09235979781e" | jq'
+```
+
+#### Filter by remote_direction
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[remote_call_id]=06d9ebf7-4d71-4470-8b57-09235979781e" | jq'
+```
+
+#### Filter by created_at
+
+##### created_at_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[created_at_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### created_at_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[created_at_after]=2017-11-29+01:36:02" | jq'
+```
+
+##### created_at_or_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[created_at_or_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### created_at_or_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[created_at_or_after]=2017-11-29+01:36:02" | jq'
+```
+
+#### Filter by updated_at
+
+##### updated_at_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[updated_at_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### updated_at_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[updated_at_after]=2017-11-29+01:36:02" | jq'
+```
+
+##### updated_at_or_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[updated_at_or_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### updated_at_or_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[updated_at_or_after]=2017-11-29+01:36:02" | jq'
+```
+
+Sample Response:
+
+```
+< Per-Page: 25
+< Total: 1
+```
+
+```json
+[
+  {
+    "id": 1,
+    "phone_call_id": 1,
+    "details": {
+      "From": "+1234",
+      "To": "+252662345699",
+      "CallSid": "06d9ebf7-4d71-4470-8b57-09235979781e",
+      "CallStatus": "ringing",
+      "Direction": "outbound-api",
+      "AccountSid": "ddda6f6c-f698-40f7-be5b-53056ec1c52c",
+      "ApiVersion": "2010-04-01"
+    },
+    "metadata": {},
+    "remote_call_id": "06d9ebf7-4d71-4470-8b57-09235979781e",
+    "remote_direction": "outbound-api",
+    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "created_at": "2017-11-29T03:58:16.135Z",
+    "updated_at": "2017-11-29T03:58:16.135Z"
+  }
+]
+```
 
 ## Batch Operations
 
@@ -955,7 +1325,9 @@ Sample Response:
 ]
 ```
 
-### Events (Queue)
+### Events
+
+#### Queue
 
 This enqueues a callout population to be populated with callout participations
 
@@ -981,7 +1353,9 @@ $ curl -XPOST http://localhost:3000/api/callout_populations/1/callout_population
 }
 ```
 
-### Events (Requeue)
+### Events
+
+#### Requeue
 
 This requeues a callout population to be populated with callout participations
 

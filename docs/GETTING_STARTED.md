@@ -1681,10 +1681,10 @@ In the previous examples we used call flow logic from Twilio. Specifically we as
 
 We could also use the API to specify our own custom call flow logic instead. There's a little bit more to do in order to simulate a live demo here because both Twilio and Somleng need to contact your server through the Internet in order to retrieve the TwiML. Since we're running our API locally using Docker we can use something like [ngrok](https://ngrok.com/) to setup a tunnel to our local machine. The details behind setting up a [ngrok](https://ngrok.com/) tunnel are beyond the scope of this guide, but it's quite easy to do so please feel free to go ahead and setup ngrok if you want to test this out.
 
-In order to use our own logic let's go ahead and create yet another phone call for Alice. Notice that this time we're specifying the `remote_request_params[url]` parameter as `http://18a2c6b3.ngrok.io/api/remote_phone_call_events`. If you're using ngrok, you'll need to update this to url provided by ngrok. The path though is important `/api/remote_phone_call_events`. This is the endpoint within the API which is designed to return TwiML for our custom call flow logic. Also notice that we left out the `remote_request_params[method]` parameter. This is because, by default, Twilio and Somleng assume that it can reach your TwiML endpoint via HTTP POST. Since the somleng-scfm API endpoint at `/api/remote_phone_call_events` supports POST (and only POST) we can leave this blank.
+In order to use our own logic let's go ahead and create yet another phone call for Alice. Notice that this time we're specifying the `remote_request_params[url]` parameter AND the `remote_request_params[status_callback]` as `http://18a2c6b3.ngrok.io/api/remote_phone_call_events`. If you're using ngrok, you'll need to update this to url provided by ngrok. The path though is important `/api/remote_phone_call_events`. This is the endpoint within the API which is designed to return TwiML for our custom call flow logic. Also notice that we left out the `remote_request_params[method]` parameter. This is because, by default, Twilio and Somleng assume that it can reach your TwiML endpoint via HTTP POST. Since the somleng-scfm API endpoint at `/api/remote_phone_call_events` supports POST (and only POST) we can leave this blank.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callout_participations/3/phone_calls --data-urlencode "remote_request_params[from]=345" --data-urlencode "remote_request_params[url]=http://18a2c6b3.ngrok.io/api/remote_phone_call_events" | jq'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callout_participations/3/phone_calls --data-urlencode "remote_request_params[from]=345" --data-urlencode "remote_request_params[url]=http://18a2c6b3.ngrok.io/api/remote_phone_call_events" --data-urlencode "remote_request_params[status_callback]=http://18a2c6b3.ngrok.io/api/remote_phone_call_events" | jq'
 ```
 
 ```json
@@ -1705,7 +1705,8 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
   "remote_response": {},
   "remote_request_params": {
     "from": "345",
-    "url": "http://18a2c6b3.ngrok.io/api/remote_phone_call_events"
+    "url": "http://18a2c6b3.ngrok.io/api/remote_phone_call_events",
+    "status_callback": "http://18a2c6b3.ngrok.io/api/remote_phone_call_events",
   },
   "remote_queue_response": {},
   "call_flow_logic": null,

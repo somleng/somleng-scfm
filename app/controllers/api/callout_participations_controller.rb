@@ -49,7 +49,7 @@ class Api::CalloutParticipationsController < Api::FilteredController
   end
 
   def permitted_update_params
-    params.permit(:call_flow_logic, :msisdn, :metadata => {})
+    params.permit(:call_flow_logic, :msisdn, :metadata_merge_mode, :metadata => {})
   end
 
   def resource_location

@@ -39,7 +39,7 @@ class Api::BatchOperationsController < Api::FilteredController
   end
 
   def permitted_params
-    params.permit(:metadata => {}, :parameters => {})
+    params.permit(:metadata_merge_mode, :metadata => {}, :parameters => {})
   end
 
   def resource_location

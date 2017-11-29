@@ -33,8 +33,14 @@ RSpec.describe "Remote Phone Call Events" do
 
     describe "PATCH" do
       let(:method) { :patch }
+      let(:factory_attributes) { { "metadata" => {"bar" => "baz" }} }
       let(:metadata) { { "foo" => "bar" } }
-      let(:body) { { :metadata => metadata } }
+      let(:body) {
+        {
+          :metadata => metadata,
+          :metadata_merge_mode => "replace"
+        }
+      }
 
       def assert_update!
         expect(response.code).to eq("204")

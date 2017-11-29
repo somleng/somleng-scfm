@@ -18,46 +18,51 @@ RSpec.shared_examples_for "has_metadata" do
     it { expect(subject.metadata).to eq({}) }
   end
 
-  describe ".metadata_has_value(key, value)" do
-    let(:metadata_key) { "foo" }
-    let(:metadata_value) { "bar" }
-    let(:metadata) { { metadata_key => metadata_value } }
+  describe "#metadata=(value)" do
+    let(:existing_metadata) { {"a" => "b", "foo" => "bar", "baz" => {"c" => [1, 2, 3] }} }
+    let(:new_metadata) { { "foo" => "baz", "bar" => "baz", "baz" => {"x" => [4, 5, 6] }} }
+    let(:metadata_merge_mode) { nil }
 
-    let(:key) { metadata_key }
-    let(:value) { metadata_value }
-    let(:results) { described_class.metadata_has_value(key, value) }
-
-    let(:record_with_metadata) { create(factory, :metadata => metadata) }
-    let(:record_without_metadata) { create(factory) }
+    subject {
+      build(
+        factory,
+        :metadata_merge_mode => metadata_merge_mode,
+        :metadata => existing_metadata
+      )
+    }
 
     def setup_scenario
-      record_with_metadata
-      record_without_metadata
+      subject.metadata = new_metadata
     end
 
-    def assert_scope!
-      expect(results).to match_array(asserted_results)
+    context "by default" do
+      let(:metadata_merge_mode) { nil }
+      it { expect(subject.metadata).to eq(existing_metadata.merge(new_metadata)) }
     end
 
-    context "passing a key and value matching existing metadata" do
-      let(:asserted_results) { [record_with_metadata] }
-      it { assert_scope! }
+    context "metadata_merge_mode='replace'" do
+      let(:metadata_merge_mode) { "replace" }
+      it { expect(subject.metadata).to eq(new_metadata) }
     end
 
-    context "passing nil as the value" do
-      let(:value) { nil }
+    context "metadata_merge_mode='merge'" do
+      let(:metadata_merge_mode) { "merge" }
+      it { expect(subject.metadata).to eq(existing_metadata.merge(new_metadata)) }
+    end
 
-      context "where the key exists (but it's value is nil)" do
-        let(:metadata_value) { nil }
-        let(:asserted_results) { [record_with_metadata, record_without_metadata] }
+    context "metadata_merge_mode='deep_merge'" do
+      let(:metadata_merge_mode) { "deep_merge" }
+      it { expect(subject.metadata).to eq(existing_metadata.deep_merge(new_metadata)) }
+    end
 
-        it { assert_scope! }
-      end
+    context "metadata_merge_mode='delete'" do
+      let(:metadata_merge_mode) { "delete" }
+      it { expect(subject.metadata).to eq(existing_metadata.merge(new_metadata)) }
+    end
 
-      context "where the key does not exist" do
-        let(:asserted_results) { [record_without_metadata] }
-        it { assert_scope! }
-      end
+    context "new_metadata='foo'" do
+      let(:new_metadata) { "foo" }
+      it { expect(subject.metadata).to eq(new_metadata) }
     end
   end
 end

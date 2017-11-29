@@ -1,7 +1,7 @@
 module JsonQueryHelpers
   extend ActiveSupport::Concern
 
-  module ClassMethods
+  class_methods do
     def json_has_value(keys, value, json_column)
       # Adapted from:
       # https://stackoverflow.com/questions/33432421/sqlite-json1-example-for-json-extract-set

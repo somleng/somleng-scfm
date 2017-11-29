@@ -94,11 +94,13 @@ RSpec.describe "Phone Calls" do
 
     describe "PATCH" do
       let(:method) { :patch }
+      let(:factory_attributes) { { "metadata" => {"bar" => "baz" }} }
       let(:metadata) { { "foo" => "bar" } }
       let(:msisdn) { generate(:somali_msisdn) }
       let(:body) {
         {
           :metadata => metadata,
+          :metadata_merge_mode => "replace",
           :msisdn => msisdn
         }
       }

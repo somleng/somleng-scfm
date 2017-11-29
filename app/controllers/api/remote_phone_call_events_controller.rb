@@ -62,7 +62,7 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
   end
 
   def permitted_update_params
-    params.permit(:metadata => {})
+    params.permit(:metadata_merge_mode, :metadata => {})
   end
 
   def api_authenticate?

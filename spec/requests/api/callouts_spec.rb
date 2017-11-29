@@ -61,7 +61,13 @@ RSpec.describe "'/api/callouts'" do
 
     describe "PATCH" do
       let(:method) { :patch }
-      let(:body) { { :metadata => metadata } }
+      let(:factory_attributes) { { "metadata" => {"bar" => "baz" }} }
+      let(:body) {
+        {
+          :metadata => metadata,
+          :metadata_merge_mode => "replace"
+        }
+      }
 
       def assert_update!
         expect(response.code).to eq("204")

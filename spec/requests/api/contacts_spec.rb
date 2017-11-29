@@ -62,7 +62,8 @@ RSpec.describe "Contacts" do
   end
 
   describe "'/api/contacts/:id'" do
-    let(:contact) { create(:contact) }
+    let(:factory_attributes) { {} }
+    let(:contact) { create(:contact, factory_attributes) }
     let(:url) { api_contact_path(contact) }
 
     describe "GET" do
@@ -77,8 +78,10 @@ RSpec.describe "Contacts" do
     end
 
     describe "PATCH" do
+      let(:existing_metadata) { {"bar" => "foo"} }
+      let(:factory_attributes) { {:metadata => existing_metadata} }
       let(:method) { :patch }
-      let(:body) { { :metadata => metadata } }
+      let(:body) { { :metadata => metadata, :metadata_merge_mode => "replace" } }
 
       def assert_update!
         expect(response.code).to eq("204")

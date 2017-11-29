@@ -123,7 +123,8 @@ RSpec.describe "Batch Operations" do
   end
 
   describe "'/api/batch_operations/:id'" do
-    let(:batch_operation) { create(:batch_operation) }
+    let(:batch_operation) { create(:batch_operation, factory_attributes) }
+    let(:factory_attributes) { {} }
     let(:url) { api_batch_operation_path(batch_operation) }
 
     describe "GET" do
@@ -138,10 +139,14 @@ RSpec.describe "Batch Operations" do
     end
 
     describe "PATCH" do
+      let(:factory_attributes) { { :metadata => existing_metadata } }
+      let(:existing_metadata) { { "bar" => "foo" } }
       let(:method) { :patch }
+
       let(:body) {
         {
           :metadata => metadata,
+          :metadata_merge_mode => "replace",
           :parameters => parameters
         }
       }

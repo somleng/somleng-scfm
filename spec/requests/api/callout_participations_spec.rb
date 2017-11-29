@@ -175,6 +175,7 @@ RSpec.describe "Callout Participations" do
     end
 
     describe "PATCH" do
+      let(:factory_attributes) { { "metadata" => {"bar" => "baz" }} }
       let(:method) { :patch }
       let(:contact) { create(:contact) }
       let(:call_flow_logic) { CallFlowLogic::Application.to_s }
@@ -182,6 +183,7 @@ RSpec.describe "Callout Participations" do
       let(:msisdn) { generate(:somali_msisdn) }
       let(:body) {
         {
+          :metadata_merge_mode => "replace",
           :metadata => metadata,
           :contact_id => contact.id,
           :call_flow_logic => call_flow_logic,

@@ -289,7 +289,6 @@ RSpec.describe CallFlowLogic::OutcomeMonitoring do
 
     def assert_finished!
       assert_response!
-      assert_play!(response, :url => :survey_is_already_finished)
       expect(response).to have_key("Hangup")
     end
 

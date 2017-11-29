@@ -262,7 +262,6 @@ class CallFlowLogic::OutcomeMonitoring < CallFlowLogic::Base
 
   def twiml_for_finished
     voice_response do |response|
-      play_response(response, play_url_for(:survey_is_already_finished))
       response.hangup
     end
   end

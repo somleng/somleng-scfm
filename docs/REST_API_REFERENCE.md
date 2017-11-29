@@ -451,15 +451,307 @@ Sample Response:
 
 ### Create
 
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callout_participations/1/phone_calls --data-urlencode "remote_request_params[from]=1234" --data-urlencode "remote_request_params[url]=https://demo.twilio.com/docs/voice.xml" -d "remote_request_params[method]=GET" | jq'
+```
+
+Sample Response:
+
+```json
+{
+  "id": 1,
+  "callout_participation_id": 1,
+  "contact_id": 1,
+  "create_batch_operation_id": null,
+  "queue_batch_operation_id": null,
+  "queue_remote_fetch_batch_operation_id": null,
+  "status": "created",
+  "msisdn": "+252662345699",
+  "remote_call_id": null,
+  "remote_status": null,
+  "remote_direction": null,
+  "remote_error_message": null,
+  "metadata": {},
+  "remote_response": {},
+  "remote_request_params": {
+    "from": "1234",
+    "url": "https://demo.twilio.com/docs/voice.xml",
+    "method": "GET"
+  },
+  "remote_queue_response": {},
+  "call_flow_logic": null,
+  "remotely_queued_at": null,
+  "created_at": "2017-11-28T08:23:24.458Z",
+  "updated_at": "2017-11-28T08:23:24.458Z"
+}
+```
+
 ### Update
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/phone_calls/1 --data-urlencode "remote_request_params[from]=345" --data-urlencode "remote_request_params[url]=https://demo.twilio.com/docs/voice.xml" -d "remote_request_params[method]=GET"'
+```
+
+Sample Response:
+
+```
+< HTTP/1.1 204 No Content
+```
 
 ### Fetch
 
-### Index
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/phone_calls/1 | jq'
+```
 
-### Filter
+```json
+{
+  "id": 1,
+  "callout_participation_id": 1,
+  "contact_id": 1,
+  "create_batch_operation_id": null,
+  "queue_batch_operation_id": null,
+  "queue_remote_fetch_batch_operation_id": null,
+  "status": "created",
+  "msisdn": "+252662345699",
+  "remote_call_id": null,
+  "remote_status": null,
+  "remote_direction": null,
+  "remote_error_message": null,
+  "metadata": {},
+  "remote_response": {},
+  "remote_request_params": {
+    "from": "345",
+    "url": "https://demo.twilio.com/docs/voice.xml",
+    "method": "GET"
+  },
+  "remote_queue_response": {},
+  "call_flow_logic": null,
+  "remotely_queued_at": null,
+  "created_at": "2017-11-28T08:23:24.458Z",
+  "updated_at": "2017-11-28T08:24:52.634Z"
+}
+```
+
+### Index and Filter
+
+#### All Phone Calls
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/phone_calls | jq'
+```
+
+#### Filter by Callout Participation
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callout_participations/1/phone_calls | jq'
+```
+
+#### Filter by Contact
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/contacts/1/phone_calls | jq'
+```
+
+#### Filter by Callout
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/phone_calls | jq'
+```
+
+#### Filter by metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[metadata][foo]=bar | jq'
+```
+
+#### Filter by msisdn
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[msisdn]=252662345700 | jq'
+```
+
+#### Filter by status
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[status]=created | jq'
+```
+
+#### Filter by call flow logic
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[call_flow_logic]=CallFlowLogic::Application | jq'
+```
+
+#### Filter by remote_call_id
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[remote_call_id]=082305b2-a0e4-4921-89bf-7bb544fd6910 | jq'
+```
+
+#### Filter by remote_status
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[remote_status]=in-progress | jq'
+```
+
+#### Filter by remote_direction
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[remote_direction]=inbound | jq'
+```
+
+#### Filter by remote_error_message
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[remote_error_message]=Unable+to+create+record | jq'
+```
+
+#### Filter by remote_queue_response
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[remote_queue_response][from]=345 | jq'
+```
+
+#### Filter by remote_response
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[remote_response][status]=canceled | jq'
+```
+
+#### Filter by remote_request_params
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[remote_request_params][url]=https://demo.twilio.com/docs/voice.xml" | jq'
+```
+
+#### Filter by remotely_queued_at
+
+##### remotely_queued_at_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[remotely_queued_at_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### remotely_queued_at_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[remotely_queued_at_after]=2017-11-29+01:36:02" | jq'
+```
+
+##### remotely_queued_at_or_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[remotely_queued_at_or_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### remotely_queued_at_or_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[remotely_queued_at_or_after]=2017-11-29+01:36:02" | jq'
+```
+
+#### Filter by created_at
+
+##### created_at_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[created_at_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### created_at_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[created_at_after]=2017-11-29+01:36:02" | jq'
+```
+
+##### created_at_or_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[created_at_or_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### created_at_or_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[created_at_or_after]=2017-11-29+01:36:02" | jq'
+```
+
+#### Filter by updated_at
+
+##### updated_at_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[updated_at_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### updated_at_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[updated_at_after]=2017-11-29+01:36:02" | jq'
+```
+
+##### updated_at_or_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[updated_at_or_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### updated_at_or_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[updated_at_or_after]=2017-11-29+01:36:02" | jq'
+```
+
+Sample Response:
+
+```
+< Per-Page: 25
+< Total: 1
+```
+
+```json
+[
+  {
+    "id": 1,
+    "callout_participation_id": 1,
+    "contact_id": 1,
+    "create_batch_operation_id": null,
+    "queue_batch_operation_id": null,
+    "queue_remote_fetch_batch_operation_id": null,
+    "status": "created",
+    "msisdn": "+252662345699",
+    "remote_call_id": null,
+    "remote_status": null,
+    "remote_direction": null,
+    "remote_error_message": null,
+    "metadata": {},
+    "remote_response": {},
+    "remote_request_params": {
+      "from": "345",
+      "url": "https://demo.twilio.com/docs/voice.xml",
+      "method": "GET"
+    },
+    "remote_queue_response": {},
+    "call_flow_logic": null,
+    "remotely_queued_at": null,
+    "created_at": "2017-11-28T08:23:24.458Z",
+    "updated_at": "2017-11-28T08:24:52.634Z"
+  }
+]
+```
 
 ### Delete
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/phone_calls/1'
+```
+
+Sample Response:
+
+```
+< HTTP/1.1 204 No Content
+```
 
 ## Remote Phone Call Events
 
@@ -523,6 +815,7 @@ $ curl -v -XPATCH http://localhost:3000/api/callout_populations/1 \
 ```
 < HTTP/1.1 204 No Content
 ```
+
 ### Fetch
 
 ```

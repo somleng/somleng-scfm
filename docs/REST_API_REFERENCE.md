@@ -48,6 +48,30 @@ Sample Response:
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/contacts/1 --data-urlencode "msisdn=+252662345700" -d "metadata[name]=Alice" -d "metadata[gender]=f"'
 ```
 
+#### metadata_merge_mode=merge (default)
+
+Merges new metadata with existing metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/contacts/1 -d metadata_merge_mode=merge -d "metadata[province]=Kampong+Thom"'
+```
+
+#### metadata_merge_mode=replace
+
+Replaces existing metadata with new metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/contacts/1 -d metadata_merge_mode=replace -d "metadata[gender]=f"'
+```
+
+#### metadata_merge_mode=deep_merge
+
+Deep merges existing metadata with new metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/contacts/1 -d metadata_merge_mode=deep_merge -d "metadata[gender]=f"'
+```
+
 Sample Response:
 
 ```
@@ -209,6 +233,30 @@ Sample Response:
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/1 -d call_flow_logic=CallFlowLogic::Application -d "metadata[name]=my+callout"'
+```
+
+#### metadata_merge_mode=merge (default)
+
+Merges new metadata with existing metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/1 -d metadata_merge_mode=merge -d "metadata[province]=Kampong+Thom"'
+```
+
+#### metadata_merge_mode=replace
+
+Replaces existing metadata with new metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/1 -d metadata_merge_mode=replace -d "metadata[gender]=f"'
+```
+
+#### metadata_merge_mode=deep_merge
+
+Deep merges existing metadata with new metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/1 -d metadata_merge_mode=deep_merge -d "metadata[gender]=f"'
 ```
 
 Sample Response:
@@ -420,6 +468,30 @@ Sample Response:
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callout_participations/1 -d call_flow_logic=CallFlowLogic::Application -d "metadata[name]=my+callout+participation" -d "msisdn=252662345701"'
+```
+
+#### metadata_merge_mode=merge (default)
+
+Merges new metadata with existing metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callout_participations/1 -d metadata_merge_mode=merge -d "metadata[province]=Kampong+Thom"'
+```
+
+#### metadata_merge_mode=replace
+
+Replaces existing metadata with new metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callout_participations/1 -d metadata_merge_mode=replace -d "metadata[gender]=f"'
+```
+
+#### metadata_merge_mode=deep_merge
+
+Deep merges existing metadata with new metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callout_participations/1 -d metadata_merge_mode=deep_merge -d "metadata[gender]=f"'
 ```
 
 Sample Response:
@@ -646,6 +718,30 @@ Sample Response:
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/phone_calls/1 --data-urlencode "remote_request_params[from]=345" --data-urlencode "remote_request_params[url]=https://demo.twilio.com/docs/voice.xml" -d "remote_request_params[method]=GET"'
+```
+
+#### metadata_merge_mode=merge (default)
+
+Merges new metadata with existing metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/phone_calls/1 -d metadata_merge_mode=merge -d "metadata[province]=Kampong+Thom"'
+```
+
+#### metadata_merge_mode=replace
+
+Replaces existing metadata with new metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/phone_calls/1 -d metadata_merge_mode=replace -d "metadata[gender]=f"'
+```
+
+#### metadata_merge_mode=deep_merge
+
+Deep merges existing metadata with new metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/phone_calls/1 -d metadata_merge_mode=deep_merge -d "metadata[gender]=f"'
 ```
 
 Sample Response:
@@ -960,7 +1056,33 @@ Remote Phone Call Events are created by Twilio or Somleng.
 
 ### Update
 
+```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/remote_phone_call_events/1 -d "metadata[foo]=bar"'
+```
+
+#### metadata_merge_mode=merge (default)
+
+Merges new metadata with existing metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/remote_phone_call_events/1 -d metadata_merge_mode=merge -d "metadata[province]=Kampong+Thom"'
+```
+
+#### metadata_merge_mode=replace
+
+Replaces existing metadata with new metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/remote_phone_call_events/1 -d metadata_merge_mode=replace -d "metadata[gender]=f"'
+```
+
+#### metadata_merge_mode=deep_merge
+
+Deep merges existing metadata with new metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/remote_phone_call_events/1 -d metadata_merge_mode=deep_merge -d "metadata[gender]=f"'
+```
 
 Sample Response:
 

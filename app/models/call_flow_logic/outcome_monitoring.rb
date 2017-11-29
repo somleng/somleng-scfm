@@ -1,6 +1,6 @@
 class CallFlowLogic::OutcomeMonitoring < CallFlowLogic::Base
   DEFAULT_PLAY_FILE_EXTENSION = ".wav"
-  DEFAULT_PLAY_FILE_BASE_URL = "http://example.com/voice"
+  DEFAULT_PLAY_FILE_BASE_URL = "https://s3-ap-southeast-1.amazonaws.com/scfm.unicef.io/call_flow_logic/outcome_monitoring"
 
   attr_accessor :previous_status
 

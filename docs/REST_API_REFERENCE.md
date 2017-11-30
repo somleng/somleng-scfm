@@ -1261,48 +1261,85 @@ Sample Response:
 
 ## Batch Operations
 
-### Create (CalloutPopulation)
+### Create
+
+#### CalloutPopulation
+
+Example: Create a batch operation for populating a callout, specifying `contact_filter_params` to stipulate the contacts who will participate in the callout.
 
 ```
-$ curl -XPOST http://localhost:3000/api/callouts/1/callout_populations \
-  -d "metadata[foo]=bar" \
-  -d "metadata[bar]=baz" \
-  -d "contact_filter_params[metadata][location]=phnom+penh"
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/batch_operations -d type=BatchOperation::CalloutPopulation -d parameters[contact_filter_params][metadata][gender]=f | jq'
 ```
+
+#### PhoneCallCreate
+
+Example: Create a batch operation for creating phone calls, specifying `callout_filter_params` and `callout_participation_filter_params` to stipulate that phone calls should only be created for callouts which are `running` and for callout participations which have no phone calls or where the last attempt failed or was errored. Specify `remote_request_params` which will be set on each created phone call. Limit the number of phone calls which will be created to `30`. Allow creating the batch operation even if no actual phone calls will be created.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallCreate -d parameters[callout_filter_params][status]=running -d parameters[callout_participation_filter_params][no_phone_calls_or_last_attempt]=failed,errored --data-urlencode "parameters[remote_request_params][from]=1234" --data-urlencode "parameters[remote_request_params][url]=https://demo.twilio.com/docs/voice.xml" -d "parameters[remote_request_params][method]=GET" -d parameters[limit]=30 -d parameters[skip_validate_preview_presence]=true | jq'
+```
+
+#### PhoneCallQueue
+
+Example: Create a batch operation for queuing phone calls on Twilio or Somleng specifying `phone_call_filter_params` and `callout_filter_params` to stipulate that only phone calls which have the status `created` and that are from a `running` callout should be queued. Limit the number of phone calls which will be queued to `30`. Allow creating the batch operation even if no actual phone calls will be queued.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallQueue -d parameters[callout_filter_params][status]=running -d parameters[phone_call_filter_params][status]=created -d parameters[limit]=30 -d parameters[skip_validate_preview_presence]=true | jq'
+```
+
+#### PhoneCallQueueRemoteFetch
+
+Example: Create a batch operation for remotely fetching the phone calls status on Twilio or Somleng specifying `phone_call_filter_params` to stipulate that only phone calls which have the status `remotely_queued` or `in_progress` should be fetched. Limit the number of phone calls which will be fetched to `30`. Allow creating the batch operation even if no actual phone calls will be fetched.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallQueueRemoteFetch -d "parameters[phone_call_filter_params][status]=remotely_queued,in_progress" -d parameters[limit]=30 -d parameters[skip_validate_preview_presence]=true | jq'
+```
+
+Sample Response:
 
 ```json
 {
   "id": 1,
   "callout_id": 1,
-  "contact_filter_params": {
-    "metadata": {
-      "location": "phnom penh"
-    }
-  },
-  "metadata": {
-    "foo": "bar",
-    "bar": "baz"
-  },
+  "parameters": {},
+  "metadata": {},
   "status": "preview",
-  "created_at": "2017-11-08T09:04:02.346Z",
-  "updated_at": "2017-11-08T09:04:02.346Z"
+  "created_at": "2017-11-30T03:59:39.425Z",
+  "updated_at": "2017-11-30T03:59:39.425Z"
 }
 ```
-
-### Create (PhoneCall::Create)
-
-### Create (PhoneCall::Queue)
-
-### Create (PhoneCall::QueueRemoteFetch)
 
 ### Update
 
 ```
-$ curl -v -XPATCH http://localhost:3000/api/callout_populations/1 \
-  -d "metadata[foo]=baz" \
-  -d "metadata[baz]=foo" \
-  -d "contact_filter_params[metadata][location]=battambang"
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/1 -d "metadata[foo]=bar" -d "metadata[bar]=baz"'
 ```
+
+#### metadata_merge_mode=merge (default)
+
+Merges new metadata with existing metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/1 -d metadata_merge_mode=merge -d "metadata[province]=Kampong+Thom"'
+```
+
+#### metadata_merge_mode=replace
+
+Replaces existing metadata with new metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/1 -d metadata_merge_mode=replace -d "metadata[gender]=f"'
+```
+
+#### metadata_merge_mode=deep_merge
+
+Deep merges existing metadata with new metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/1 -d metadata_merge_mode=deep_merge -d "metadata[gender]=f"'
+```
+
+Sample Response:
 
 ```
 < HTTP/1.1 204 No Content
@@ -1311,22 +1348,28 @@ $ curl -v -XPATCH http://localhost:3000/api/callout_populations/1 \
 ### Fetch
 
 ```
-$ curl http://localhost:3000/api/batch_operations/1
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/1 | jq'
 ```
+
+Sample Response:
 
 ```json
 {
   "id": 1,
   "callout_id": 1,
-  "contact_filter_params": {
-    "metadata": {
-      "gender": "f"
+  "parameters": {
+    "contact_filter_params": {
+      "metadata": {
+        "gender": "f"
+      }
     }
   },
-  "metadata": {},
-  "status": "populated",
-  "created_at": "2017-11-10T09:52:10.116Z",
-  "updated_at": "2017-11-10T10:40:29.097Z"
+  "metadata": {
+    "foo": "bar"
+  },
+  "status": "preview",
+  "created_at": "2017-11-30T03:59:39.425Z",
+  "updated_at": "2017-11-30T04:04:48.600Z"
 }
 ```
 

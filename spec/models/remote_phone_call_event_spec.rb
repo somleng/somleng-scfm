@@ -29,6 +29,8 @@ RSpec.describe RemotePhoneCallEvent do
 
   describe "defaults" do
     let(:factory_attributes) { {} }
+    let(:asserted_call_flow_logic) { described_class::DEFAULT_CALL_FLOW_LOGIC.to_s }
+
     subject { build(factory, factory_attributes) }
 
     def setup_scenario
@@ -40,7 +42,7 @@ RSpec.describe RemotePhoneCallEvent do
       expect(subject.errors).to be_empty
       expect(subject.remote_call_id).to eq(subject.details["CallSid"])
       expect(subject.remote_direction).to eq(subject.details["Direction"])
-      expect(subject.call_flow_logic).to eq(described_class::DEFAULT_CALL_FLOW_LOGIC.to_s)
+      expect(subject.call_flow_logic).to eq(asserted_call_flow_logic)
       expect(subject.phone_call.call_flow_logic).to eq(subject.call_flow_logic)
     end
 
@@ -73,13 +75,43 @@ RSpec.describe RemotePhoneCallEvent do
       }
       let(:factory_attributes) { { :details => details } }
 
+
+      class MyCallFlowLogic < CallFlowLogic::Base
+      end
+
+      let(:call_flow_logic) { MyCallFlowLogic.to_s }
+
       def setup_scenario
+        CallFlowLogic::Base.register(call_flow_logic)
         phone_call
         super
       end
 
       context "with no call flow logic" do
-        it { assert_defaults! }
+        context "by default" do
+          it { assert_defaults! }
+        end
+
+        context "DEFAULT_CALL_FLOW_LOGIC='MyCallFlowLogic'" do
+          let(:asserted_call_flow_logic) { call_flow_logic }
+
+          def env
+            super.merge("DEFAULT_CALL_FLOW_LOGIC" => call_flow_logic)
+          end
+
+          it { assert_defaults! }
+        end
+      end
+
+      context "with valid call flow logic" do
+        let(:phone_call_factory_attributes) { super().merge(:call_flow_logic => call_flow_logic) }
+        let(:asserted_call_flow_logic) { call_flow_logic }
+
+        it {
+          assert_defaults!
+          subject.save!
+          expect(phone_call.reload.call_flow_logic).to eq(subject.call_flow_logic)
+        }
       end
 
       context "with invalid call flow logic" do

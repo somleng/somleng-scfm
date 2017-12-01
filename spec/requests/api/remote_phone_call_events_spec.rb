@@ -150,21 +150,12 @@ RSpec.describe "Remote Phone Call Events" do
           expect(response.body).to eq(asserted_response_body)
         end
 
-        context "for an inbound call" do
-          let(:from) { "+85510202101" }
-          let(:to) { "345" }
-          let(:direction) { "inbound" }
-          let(:call_status) { "in-progress" }
+        context "with registered call flow logic" do
+          let(:call_flow_logic) { nil }
+          let(:my_callflow_logic_twiml) {
+            MyCallFlowLogic.new(asserted_remote_phone_call_event).to_xml
+          }
 
-          let(:asserted_phone_call) { asserted_remote_phone_call_event.phone_call }
-          let(:asserted_phone_call_status) { PhoneCall::STATE_IN_PROGRESS }
-          let(:asserted_contact) { asserted_phone_call.contact }
-          let(:asserted_contact_msisdn) { from }
-
-          it { assert_created! }
-        end
-
-        context "for an outbound call" do
           class MyCallFlowLogic < CallFlowLogic::Base
             def to_xml(options = {})
               Twilio::TwiML::VoiceResponse.new do |response|
@@ -173,45 +164,81 @@ RSpec.describe "Remote Phone Call Events" do
             end
           end
 
-          let(:from) { "345" }
-          let(:to) { "+85510202101" }
-          let(:direction) { "outbound-api" }
-          let(:call_status) { "ringing" }
-
-          let(:contact) { create(:contact) }
-          let(:call_flow_logic) { nil }
-          let(:callout) { create(:callout, :call_flow_logic => call_flow_logic) }
-          let(:callout_participation) { create(:callout_participation, :callout => callout) }
-          let(:asserted_phone_call_status) { PhoneCall::STATE_IN_PROGRESS }
-
-          let(:phone_call) {
-            create(
-              :phone_call,
-              :remote_call_id => call_sid,
-              :remote_direction => direction,
-              :contact => contact,
-              :callout_participation => callout_participation
-            )
-          }
-
-          let(:asserted_phone_call) { phone_call }
-          let(:asserted_contact) { contact }
-          let(:asserted_contact_msisdn) { contact.msisdn }
-
           def setup_scenario
             CallFlowLogic::Base.register(call_flow_logic.to_s)
-            phone_call
             super
           end
 
-          context "setting the call_flow_logic to a valid class" do
-            let(:call_flow_logic) { MyCallFlowLogic }
-            let(:asserted_twiml) { MyCallFlowLogic.new(asserted_remote_phone_call_event).to_xml }
-            it { assert_created! }
+          context "for an inbound call" do
+            let(:from) { "+85510202101" }
+            let(:to) { "345" }
+            let(:direction) { "inbound" }
+            let(:call_status) { "in-progress" }
+
+            let(:asserted_phone_call) { asserted_remote_phone_call_event.phone_call }
+            let(:asserted_phone_call_status) { PhoneCall::STATE_IN_PROGRESS }
+            let(:asserted_contact) { asserted_phone_call.contact }
+            let(:asserted_contact_msisdn) { from }
+
+            context "by default" do
+              it { assert_created! }
+            end
+
+            context "setting the default call flow logic" do
+              let(:call_flow_logic) { MyCallFlowLogic }
+              let(:asserted_twiml) { my_callflow_logic_twiml }
+
+              def env
+                super.merge(
+                  "DEFAULT_CALL_FLOW_LOGIC" => call_flow_logic.to_s
+                )
+              end
+
+              it { assert_created! }
+            end
           end
 
-          context "not setting the call_flow_logic" do
-            it { assert_created! }
+          context "for an outbound call" do
+            let(:from) { "345" }
+            let(:to) { "+85510202101" }
+            let(:direction) { "outbound-api" }
+            let(:call_status) { "ringing" }
+
+            let(:contact) { create(:contact) }
+            let(:callout) { create(:callout, :call_flow_logic => call_flow_logic) }
+            let(:callout_participation) { create(:callout_participation, :callout => callout) }
+            let(:asserted_phone_call_status) { PhoneCall::STATE_IN_PROGRESS }
+
+            let(:phone_call) {
+              create(
+                :phone_call,
+                :remote_call_id => call_sid,
+                :remote_direction => direction,
+                :contact => contact,
+                :callout_participation => callout_participation
+              )
+            }
+
+            let(:asserted_phone_call) { phone_call }
+            let(:asserted_contact) { contact }
+            let(:asserted_contact_msisdn) { contact.msisdn }
+
+            def setup_scenario
+              super
+              phone_call
+              execute_request!
+            end
+
+            context "setting the call_flow_logic to a valid class" do
+              let(:execute_request) { false }
+              let(:call_flow_logic) { MyCallFlowLogic }
+              let(:asserted_twiml) { my_callflow_logic_twiml }
+              it { assert_created! }
+            end
+
+            context "not setting the call_flow_logic" do
+              it { assert_created! }
+            end
           end
         end
       end

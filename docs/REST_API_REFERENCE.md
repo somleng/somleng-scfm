@@ -1364,23 +1364,101 @@ Sample Response:
       }
     }
   },
-  "metadata": {
-    "foo": "bar"
-  },
+  "metadata": {},
   "status": "preview",
-  "created_at": "2017-11-30T03:59:39.425Z",
-  "updated_at": "2017-11-30T04:04:48.600Z"
+  "created_at": "2017-12-01T05:28:01.904Z",
+  "updated_at": "2017-12-01T05:28:01.904Z",
+  "type": "BatchOperation::CalloutPopulation"
 }
 ```
 
-### Index
+### Index and Filter
+
+#### All Batch Operations
 
 ```
-$ curl http://localhost:3000/api/callout_populations
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations | jq'
 ```
 
+#### Filter by callout
+
 ```
-< HTTP/1.1 200 OK
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/batch_operations | jq'
+```
+
+#### Filter by parameters
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[parameters][contact_filter_params][metadata][gender]=f" | jq'
+```
+
+#### Filter by metadata
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[metadata][foo]=bar" | jq'
+```
+
+#### Filter by status
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/batch_operations?q[status]=preview | jq'
+```
+
+#### Filter by created_at
+
+##### created_at_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[created_at_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### created_at_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[created_at_after]=2017-11-29+01:36:02" | jq'
+```
+
+##### created_at_or_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[created_at_or_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### created_at_or_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[created_at_or_after]=2017-11-29+01:36:02" | jq'
+```
+
+#### Filter by updated_at
+
+##### updated_at_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[updated_at_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### updated_at_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[updated_at_after]=2017-11-29+01:36:02" | jq'
+```
+
+##### updated_at_or_before
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[updated_at_or_before]=2017-11-29+01:36:02" | jq'
+```
+
+##### updated_at_or_after
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[updated_at_or_after]=2017-11-29+01:36:02" | jq'
+```
+
+Sample Response:
+
+```
 < Per-Page: 25
 < Total: 1
 ```
@@ -1390,102 +1468,157 @@ $ curl http://localhost:3000/api/callout_populations
   {
     "id": 1,
     "callout_id": 1,
-    "contact_filter_params": {
-      "metadata": {
-        "location": "phnom penh"
+    "parameters": {
+      "contact_filter_params": {
+        "metadata": {
+          "gender": "f"
+        }
       }
     },
-    "metadata": {
-      "foo": "bar",
-      "bar": "baz"
-    },
+    "metadata": {},
     "status": "preview",
-    "created_at": "2017-11-08T09:04:02.346Z",
-    "updated_at": "2017-11-08T09:04:02.346Z"
+    "created_at": "2017-12-01T05:28:01.904Z",
+    "updated_at": "2017-12-01T05:28:01.904Z",
+    "type": "BatchOperation::CalloutPopulation"
   }
 ]
 ```
 
-### Index for a Callout
+### Preview
+
+Previewing batch operations allows you to preview what will happen, before queuing a batch operation for processing.
+
+#### Preview Contacts (who will participate in a callout)
+
+This preview can be run on a `BatchOperation::CalloutPopulation` to preview which contacts will be participants in the callout.
 
 ```
-$ curl http://localhost:3000/api/callouts/1/callout_populations
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/preview/contacts | jq'
 ```
 
 Sample Response:
+
+```
+< Per-Page: 25
+< Total: 1
+```
+
+```json
+[
+  {
+    "id": 1,
+    "msisdn": "+252662345699",
+    "metadata": {
+      "gender": "f"
+    },
+    "created_at": "2017-12-01T05:26:59.654Z",
+    "updated_at": "2017-12-01T05:28:57.367Z"
+  }
+]
+```
+
+#### Preview Callout Participations (which will have phone calls created)
+
+This preview can be run on a `BatchOperation::PhoneCallCreate` to preview which callout participations will have phone calls created.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/preview/callout_participations | jq'
+```
+
+Sample Response:
+
+```
+< Per-Page: 25
+< Total: 1
+```
 
 ```json
 [
   {
     "id": 1,
     "callout_id": 1,
-    "contact_filter_params": {
-      "metadata": {
-        "location": "phnom penh"
-      }
-    },
-    "metadata": {
-      "foo": "bar",
-      "bar": "baz"
-    },
-    "status": "preview",
-    "created_at": "2017-11-08T09:04:02.346Z",
-    "updated_at": "2017-11-08T09:04:02.346Z"
+    "contact_id": 1,
+    "callout_population_id": null,
+    "msisdn": "+252662345699",
+    "call_flow_logic": null,
+    "metadata": {},
+    "created_at": "2017-12-01T05:32:39.145Z",
+    "updated_at": "2017-12-01T05:32:39.145Z"
   }
 ]
 ```
 
-### Filter by parameters
+#### Preview Contacts (which will have phone calls created)
+
+This preview can be run on a `BatchOperation::PhoneCallCreate` to preview which contacts will have phone calls created.
 
 ```
-$ curl -g "http://localhost:3000/api/callout_populations?q[contact_filter_params][metadata][location]=phnom+penh"
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/preview/contacts | jq'
 ```
 
 Sample Response:
+
+```
+< Per-Page: 25
+< Total: 1
+```
 
 ```json
 [
   {
     "id": 1,
-    "callout_id": 1,
-    "contact_filter_params": {
-      "location": "phnom penh"
-    },
+    "msisdn": "+252662345699",
     "metadata": {
-      "foo": "bar",
-      "bar": "baz"
+      "gender": "f"
     },
-    "created_at": "2017-11-07T12:04:59.470Z",
-    "updated_at": "2017-11-07T12:04:59.470Z"
+    "created_at": "2017-12-01T05:26:59.654Z",
+    "updated_at": "2017-12-01T05:28:57.367Z"
   }
 ]
 ```
 
-### Filter by metadata
+#### Preview Phone Calls (which will be queued or remotely fetched)
+
+This preview can be run on a `BatchOperation::PhoneCallQueue` or `BatchOperation::PhoneCallQueueRemoteFetch` to preview which phone calls will be queued or remotely fetched.
 
 ```
-$ curl -g "http://localhost:3000/api/callout_populations?q[metadata][foo]=bar"
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/preview/phone_calls | jq'
 ```
 
 Sample Response:
+
+```
+< Per-Page: 25
+< Total: 1
+```
 
 ```json
 [
   {
     "id": 1,
-    "callout_id": 1,
-    "contact_filter_params": {
-      "metadata": {
-        "location": "phnom penh"
-      }
+    "callout_participation_id": 1,
+    "contact_id": 1,
+    "create_batch_operation_id": 2,
+    "queue_batch_operation_id": null,
+    "queue_remote_fetch_batch_operation_id": null,
+    "status": "created",
+    "msisdn": "+252662345699",
+    "remote_call_id": null,
+    "remote_status": null,
+    "remote_direction": null,
+    "remote_error_message": null,
+    "metadata": {},
+    "remote_response": {},
+    "remote_request_params": {
+      "from": "1234",
+      "url": "https://demo.twilio.com/docs/voice.xml",
+      "method": "GET"
     },
-    "metadata": {
-      "foo": "bar",
-      "bar": "baz"
-    },
-    "status": "preview",
-    "created_at": "2017-11-08T09:04:02.346Z",
-    "updated_at": "2017-11-08T09:04:02.346Z"
+    "remote_queue_response": {},
+    "call_flow_logic": null,
+    "remotely_queued_at": null,
+    "created_at": "2017-12-01T05:36:47.963Z",
+    "updated_at": "2017-12-01T05:36:47.963Z"
   }
 ]
 ```
@@ -1494,63 +1627,153 @@ Sample Response:
 
 #### Queue
 
-This enqueues a callout population to be populated with callout participations
+Enqueues a batch operation to be run.
 
 ```
-$ curl -XPOST http://localhost:3000/api/callout_populations/1/callout_population_events \
-  -d "event=queue"
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations/1/batch_operation_events -d "event=queue" | jq'
 ```
-
-```json
-{
-  "id": 1,
-  "callout_id": 1,
-  "contact_filter_params": {
-    "location": "phnom penh"
-  },
-  "metadata": {
-    "foo": "bar",
-    "bar": "baz"
-  },
-  "status": "queued",
-  "created_at": "2017-11-08T02:59:10.898Z",
-  "updated_at": "2017-11-08T02:59:27.053Z"
-}
-```
-
-### Events
 
 #### Requeue
 
-This requeues a callout population to be populated with callout participations
+Requeues a batch operation that has already finished
 
 ```
-$ curl -XPOST http://localhost:3000/api/callout_populations/1/callout_population_events \
-  -d "event=requeue"
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations/1/batch_operation_events -d "event=requeue" | jq'
 ```
+
+Sample Response:
 
 ```json
 {
   "id": 1,
   "callout_id": 1,
-  "contact_filter_params": {
-    "metadata": {
-      "gender": "f"
+  "parameters": {
+    "contact_filter_params": {
+      "metadata": {
+        "gender": "f"
+      }
     }
   },
   "metadata": {},
   "status": "queued",
-  "created_at": "2017-11-10T09:52:10.116Z",
-  "updated_at": "2017-11-10T11:06:10.964Z"
+  "created_at": "2017-12-01T05:28:01.904Z",
+  "updated_at": "2017-12-01T05:28:01.904Z",
+  "type": "BatchOperation::CalloutPopulation"
 }
+```
+
+### Results
+
+Get the result of a batch operation
+
+#### Callout Participations (which were created by the batch operation)
+
+This can be run on a `BatchOperation::CalloutPopulation` do see which callout participations were created by the batch operation.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/callout_participations | jq'
+```
+
+Sample Response:
+
+```
+< Per-Page: 25
+< Total: 1
+```
+
+```json
+[
+  {
+    "id": 1,
+    "callout_id": 1,
+    "contact_id": 1,
+    "callout_population_id": 1,
+    "msisdn": "+252662345699",
+    "call_flow_logic": null,
+    "metadata": {},
+    "created_at": "2017-12-01T06:36:30.581Z",
+    "updated_at": "2017-12-01T06:36:30.581Z"
+  }
+]
+```
+
+#### Contacts (who will participate in the callout)
+
+This can be run on a `BatchOperation::CalloutPopulation` do see which contacts this batch operation created callout participations for.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/contacts | jq'
+```
+
+Sample Response:
+
+```
+< Per-Page: 25
+< Total: 1
+```
+
+```json
+[
+  {
+    "id": 1,
+    "msisdn": "+252662345699",
+    "metadata": {
+      "gender": "f"
+    },
+    "created_at": "2017-12-01T05:26:59.654Z",
+    "updated_at": "2017-12-01T05:28:57.367Z"
+  }
+]
+```
+
+#### Phone Calls (which were created, queued or remotely fetched)
+
+This can be run on a `BatchOperation::PhoneCallCreate`, `BatchOperation::PhoneCallQueue` or `BatchOperation::PhoneCallQueueRemoteFetch` do see which phone calls were created, queued or remotely fetched by the batch operation.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/phone_calls | jq'
+```
+
+```
+< Per-Page: 25
+< Total: 1
+```
+
+```json
+[
+  {
+    "id": 2,
+    "callout_participation_id": 2,
+    "contact_id": 1,
+    "create_batch_operation_id": 2,
+    "queue_batch_operation_id": null,
+    "queue_remote_fetch_batch_operation_id": null,
+    "status": "created",
+    "msisdn": "+252662345699",
+    "remote_call_id": null,
+    "remote_status": null,
+    "remote_direction": null,
+    "remote_error_message": null,
+    "metadata": {},
+    "remote_response": {},
+    "remote_request_params": {
+      "from": "1234",
+      "url": "https://demo.twilio.com/docs/voice.xml",
+      "method": "GET"
+    },
+    "remote_queue_response": {},
+    "call_flow_logic": null,
+    "remotely_queued_at": null,
+    "created_at": "2017-12-01T06:43:09.703Z",
+    "updated_at": "2017-12-01T06:43:09.703Z"
+  }
+]
 ```
 
 ### Delete
 
-Note the response is `204 No Content`
-
 ```
-$ curl -v -XDELETE http://localhost:3000/api/callout_populations/1
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/batch_operations/1'
 ```
 
 Sample Response:

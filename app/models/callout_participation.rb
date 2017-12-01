@@ -13,7 +13,9 @@ class CalloutParticipation < ApplicationRecord
              :optional => true,
              :class_name => "BatchOperation::CalloutPopulation"
 
-  has_many :phone_calls
+  has_many :phone_calls,
+           :dependent => :restrict_with_error
+
   has_many :remote_phone_call_events,
            :through => :phone_calls
 

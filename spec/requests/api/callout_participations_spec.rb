@@ -205,12 +205,27 @@ RSpec.describe "Callout Participations" do
     describe "DELETE" do
       let(:method) { :delete }
 
-      def assert_destroy!
-        expect(response.code).to eq("204")
-        expect(CalloutParticipation.find_by_id(callout_participation.id)).to eq(nil)
+      context "valid request" do
+        def assert_destroy!
+          expect(response.code).to eq("204")
+          expect(CalloutParticipation.find_by_id(callout_participation.id)).to eq(nil)
+        end
+
+        it { assert_destroy! }
       end
 
-      it { assert_destroy! }
+      context "invalid request" do
+        def setup_scenario
+          create(:phone_call, :callout_participation => callout_participation)
+          super
+        end
+
+        def assert_invalid!
+          expect(response.code).to eq("422")
+        end
+
+        it { assert_invalid! }
+      end
     end
   end
 end

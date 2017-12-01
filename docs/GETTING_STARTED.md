@@ -1742,16 +1742,17 @@ Oops. Doesn't seem to have worked. The error message suggests that our call flow
 
 ### Registering your call flow logic
 
-In order to make our custom call flow logic available, we need to register it first. You can use the environment variable `REGISTERED_CALL_FLOW_LOGIC` to define a comma separated list of call flow logic that your application uses. For example, setting the following will register the call flow logic `CallFlowLogic::OutcomeMonitoring`
+In order to make our custom call flow logic available, we need to register it first. You can use the environment variable `REGISTERED_CALL_FLOW_LOGIC` to define a comma separated list of call flow logic that your application uses. You can also use the environment variable `DEFAULT_CALL_FLOW_LOGIC` to override the application's default call flow logic. This is useful for specifying call flow logic for incoming calls. For example, setting the following enironment variables will register the call flow logic called `CallFlowLogic::OutcomeMonitoring` and set it to the application default.
 
 ```
 REGISTERED_CALL_FLOW_LOGIC=CallFlowLogic::OutcomeMonitoring
+DEFAULT_CALL_FLOW_LOGIC=CallFlowLogic::OutcomeMonitoring
 ```
 
-Let's go ahead and restart our API server and specify this environment variable. Don't forget to shutdown the running API server first (Ctrl-C). Also note that for brevity we have left out the Twilio and Somleng configuration variables. Be sure to add them in as well.
+Let's go ahead and restart our API server and specify these environment variables. Don't forget to shutdown the running API server first (Ctrl-C). Also note that for brevity we have left out the Twilio and Somleng configuration variables. Be sure to add them in as well.
 
 ```
-$ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 -e REGISTERED_CALL_FLOW_LOGIC=CallFlowLogic::OutcomeMonitoring dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
+$ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 -e REGISTERED_CALL_FLOW_LOGIC=CallFlowLogic::OutcomeMonitoring -e DEFAULT_CALL_FLOW_LOGIC=CallFlowLogic::OutcomeMonitoring dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
 ```
 
 Ok let's try to use our call flow logic again.

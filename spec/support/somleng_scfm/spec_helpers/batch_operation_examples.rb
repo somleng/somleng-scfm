@@ -67,4 +67,16 @@ RSpec.shared_examples_for "batch_operation" do
       it { assert_transitions! }
     end
   end
+
+  describe "#to_json" do
+    subject { create(factory) }
+    let(:json) { subject.to_json }
+    let(:parsed_json) { JSON.parse(json) }
+
+    def assert_json!
+      expect(parsed_json).to have_key("type")
+    end
+
+    it { assert_json! }
+  end
 end

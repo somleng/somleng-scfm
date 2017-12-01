@@ -47,6 +47,15 @@ class BatchOperation::Base < ApplicationRecord
     end
   end
 
+  def serializable_hash(options = nil)
+    options ||= {}
+    super(
+      {
+        :methods => :type
+      }.merge(options)
+    )
+  end
+
   private
 
   def publish_queued

@@ -6,7 +6,10 @@ Rails.application.routes.draw do
       resources :remote_phone_call_events, :only => :create
     end
 
-    resources :accounts, :except => [:new, :edit]
+    resources :accounts, :except => [:new, :edit] do
+      resources :users, :only => :index
+    end
+
     resources :users, :except => [:new, :edit]
 
     resources :remote_phone_call_events, :only => [:index, :show, :update]

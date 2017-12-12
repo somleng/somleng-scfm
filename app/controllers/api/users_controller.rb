@@ -6,7 +6,7 @@ class Api::UsersController < Api::FilteredController
   end
 
   def association_chain
-    User.all
+    account.users.all
   end
 
   def filter_class
@@ -14,10 +14,14 @@ class Api::UsersController < Api::FilteredController
   end
 
   def permitted_params
-    params.permit(:email, :password, :account_id, :metadata_merge_mode, :metadata => {})
+    params.permit(:email, :password, :metadata_merge_mode, :metadata => {})
   end
 
   def resource_location
     api_user_path(resource)
+  end
+
+  def account
+    current_account.super_admin? && params[:account_id] && Account.find(params[:account_id]) || current_account
   end
 end

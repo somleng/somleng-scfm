@@ -1,4 +1,4 @@
-RSpec.shared_examples_for("resource_filtering") do
+RSpec.shared_examples_for("resource_filtering") do |options = {}|
   context "not filtering" do
     let(:resource) { create(filter_on_factory) }
     let(:asserted_resources) { [resource] }
@@ -12,28 +12,8 @@ RSpec.shared_examples_for("resource_filtering") do
   end
 
   context "filtering" do
-    let(:metadata) {
-      {
-        "foo" => "bar",
-        "bar" => {
-          "baz" => "foo"
-        }
-      }
-    }
-
-    let(:resource_with_matching_metadata) { create(filter_on_factory, :metadata => metadata) }
-    let(:resource_without_matching_metadata) { create(filter_on_factory) }
     let(:asserted_count) { asserted_resources.count }
-    let(:asserted_resources) { [resource_with_matching_metadata] }
     let(:asserted_parsed_json) { JSON.parse(asserted_resources.to_json) }
-    let(:query_params) { { "metadata" => metadata } }
-    let(:url_params) { { :q => query_params } }
-
-    def setup_scenario
-      resource_with_matching_metadata
-      resource_without_matching_metadata
-      super
-    end
 
     def assert_index!
       super
@@ -41,6 +21,67 @@ RSpec.shared_examples_for("resource_filtering") do
       expect(JSON.parse(response.body)).to eq(asserted_parsed_json)
     end
 
-    it { assert_index! }
+    if options[:filter_by_account] != false
+      context "by account" do
+        let(:filtered_resource) {
+          create(
+            filter_on_factory,
+            filter_factory_attributes
+          )
+        }
+
+        let(:resource_from_different_account) {
+          create(
+            filter_on_factory,
+            filter_factory_attributes.delete(:account_id)
+          )
+        }
+
+        let(:asserted_resources) { [filtered_resource] }
+
+        def setup_scenario
+          resource_from_different_account
+          filtered_resource
+          super
+        end
+
+        it { assert_index! }
+      end
+    end
+
+    context "by metadata" do
+      let(:metadata) {
+        {
+          "foo" => "bar",
+          "bar" => {
+            "baz" => "foo"
+          }
+        }
+      }
+
+      let(:resource_with_matching_metadata) {
+        create(
+          filter_on_factory,
+          filter_factory_attributes.merge(:metadata => metadata)
+        )
+      }
+
+      let(:resource_without_matching_metadata) {
+        create(filter_on_factory, filter_factory_attributes)
+      }
+
+      let(:query_params) { { "metadata" => metadata } }
+      let(:url_params) { { :q => query_params } }
+
+      let(:asserted_resources) { [resource_with_matching_metadata] }
+
+      def setup_scenario
+        resource_with_matching_metadata
+        resource_without_matching_metadata
+        super
+      end
+
+      it { assert_index! }
+    end
   end
 end

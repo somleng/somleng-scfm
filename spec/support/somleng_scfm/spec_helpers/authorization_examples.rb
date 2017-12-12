@@ -1,4 +1,4 @@
-RSpec.shared_examples_for "authorization" do
+RSpec.shared_examples_for "authorization" do |options = {}|
   def assert_unauthorized!
     expect(response.code).to eq("401")
   end
@@ -7,35 +7,19 @@ RSpec.shared_examples_for "authorization" do
     expect(response.code).not_to eq("401")
   end
 
-  context "HTTP Basic Auth disabled" do
-    let(:http_basic_auth_user) { nil }
-    let(:authorization_user) { nil }
+  context "credentials are correct" do
     it { assert_authorized! }
   end
 
-  context "HTTP Basic Auth is enabled" do
-    context "password is enabled" do
-      context "credentials are correct" do
-        it { assert_authorized! }
-      end
+  context "credentials are incorrect" do
+    let(:access_token) { nil }
+    it { assert_unauthorized! }
+  end
 
-      context "credentials are incorrect" do
-        let(:authorization_password) { nil }
-        it { assert_unauthorized! }
-      end
-    end
-
-    context "password is disabled" do
-      let(:http_basic_auth_password) { nil }
-
-      context "credentials are correct" do
-        it { assert_authorized! }
-      end
-
-      context "credentials are incorrect" do
-        let(:authorization_user) { "wrong" }
-        it { assert_unauthorized! }
-      end
+  if options[:super_admin_only]
+    context "not super admin" do
+      let(:account) { create(:account, :with_access_token) }
+      it { assert_unauthorized! }
     end
   end
 end

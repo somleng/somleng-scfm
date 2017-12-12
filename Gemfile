@@ -27,6 +27,7 @@ gem 'wisper', :github => "krisleech/wisper"
 gem 'active_elastic_job', :github => 'tawan/active-elastic-job'
 gem 'doorkeeper'
 gem 'devise'
+gem 'bitmask_attributes', :github => "numerex/bitmask_attributes"
 
 group :development, :test do
   gem 'pry'

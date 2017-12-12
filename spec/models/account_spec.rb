@@ -5,6 +5,19 @@ RSpec.describe Account do
   include_examples "has_metadata"
 
   describe "associations" do
-    it { is_expected.to have_many(:users).dependent(:restrict_with_error) }
+    def assert_associations!
+      is_expected.to have_many(:users).dependent(:restrict_with_error)
+      is_expected.to have_one(:access_token).dependent(:restrict_with_error)
+    end
+
+    it { assert_associations! }
+  end
+
+  describe "defaults" do
+    subject { create(factory) }
+
+    describe "#permissions" do
+      it { expect(subject.permissions).to be_empty }
+    end
   end
 end

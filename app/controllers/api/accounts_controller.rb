@@ -1,4 +1,6 @@
 class Api::AccountsController < Api::FilteredController
+  before_action :authorize_super_admin!
+
   private
 
   def find_resources_association_chain

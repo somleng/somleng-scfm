@@ -3,7 +3,12 @@ require 'rails_helper'
 RSpec.describe "Users" do
   include SomlengScfm::SpecHelpers::RequestHelpers
 
-  let(:account) { create(:account) }
+  let(:account_attributes) { {} }
+  let(:account_traits) { { :with_access_token => nil } }
+  let(:account) { create(:account, *account_traits.keys, account_attributes) }
+  let(:factory_attributes) { { :account => account } }
+  let(:user) { create(:user, factory_attributes) }
+
   let(:body) { {} }
 
   def setup_scenario
@@ -20,6 +25,7 @@ RSpec.describe "Users" do
 
       it_behaves_like "resource_filtering" do
         let(:filter_on_factory) { :user }
+        let(:filter_factory_attributes) { { :account => account } }
       end
 
       it_behaves_like "authorization"
@@ -27,26 +33,37 @@ RSpec.describe "Users" do
 
     describe "POST" do
       let(:method) { :post }
+      let(:created_user) { User.last }
 
       let(:body) {
         {
           :email => generate(:email),
-          :password => "secret123",
-          :account_id => account.id
+          :password => "secret123"
         }
       }
 
       def assert_create!
         expect(response.code).to eq("201")
+        expect(created_user.account).to eq(asserted_account)
       end
 
-      it { assert_create! }
+      context "super admin account" do
+        let(:account_traits) { super().merge(:super_admin => nil) }
+        let(:another_account) { create(:account) }
+        let(:asserted_account) { another_account }
+        let(:body) { super().merge(:account_id => another_account.id) }
+
+        it { assert_create! }
+      end
+
+      context "normal account" do
+        let(:asserted_account) { account }
+        it { assert_create! }
+      end
     end
   end
 
   describe "'/:id'" do
-    let(:factory_attributes) { {} }
-    let(:user) { create(:user, factory_attributes) }
     let(:url) { api_user_path(user) }
 
     describe "GET" do
@@ -63,7 +80,7 @@ RSpec.describe "Users" do
     describe "PATCH" do
       let(:method) { :patch }
       let(:metadata) { { "foo" => "bar" } }
-      let(:factory_attributes) { { "metadata" => {"bar" => "baz" }} }
+      let(:factory_attributes) { super().merge("metadata" => {"bar" => "baz" }) }
       let(:body) {
         {
           :metadata => metadata,
@@ -90,6 +107,28 @@ RSpec.describe "Users" do
 
         it { assert_destroy! }
       end
+    end
+  end
+
+  describe "nested indexes" do
+    let(:account_traits) { super().merge(:super_admin => nil) }
+    let(:method) { :get }
+    let(:another_account) { create(:account) }
+    let(:factory_attributes) { super().merge(:account => another_account) }
+
+    def setup_scenario
+      create(:user, :account => account)
+      user
+      super
+    end
+
+    def assert_filtered!
+      expect(JSON.parse(response.body)).to eq(JSON.parse([user].to_json))
+    end
+
+    describe "GET '/api/accounts/:account_id/users'" do
+      let(:url) { api_account_users_path(another_account) }
+      it { assert_filtered! }
     end
   end
 end

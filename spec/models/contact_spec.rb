@@ -10,6 +10,7 @@ RSpec.describe Contact do
 
   describe "associations" do
     def assert_associations!
+      is_expected.to belong_to(:account)
       is_expected.to have_many(:callout_participations).dependent(:restrict_with_error)
       is_expected.to have_many(:callouts)
       is_expected.to have_many(:phone_calls).dependent(:restrict_with_error)

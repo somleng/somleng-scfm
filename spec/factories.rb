@@ -25,6 +25,8 @@ FactoryBot.define do
   end
 
   factory :callout do
+    account
+
     trait :can_start do
     end
 
@@ -46,6 +48,7 @@ FactoryBot.define do
   end
 
   factory :contact do
+    account
     msisdn { generate(:somali_msisdn) }
   end
 

@@ -1,11 +1,15 @@
 require 'rails_helper'
 
-RSpec.describe "'/api/callouts'" do
+RSpec.describe "Callouts" do
   include SomlengScfm::SpecHelpers::RequestHelpers
+
+  let(:account_traits) { { :with_access_token => nil } }
+  let(:account_attributes) { {} }
+  let(:account) { create(:account, *account_traits.keys, account_attributes) }
+  let(:factory_attributes) { { :account => account } }
 
   let(:body) { {} }
   let(:metadata) { { "foo" => "bar" } }
-  let(:factory_attributes) { {} }
   let(:callout) { create(:callout, factory_attributes) }
 
   def setup_scenario
@@ -13,7 +17,7 @@ RSpec.describe "'/api/callouts'" do
     do_request(method, url, body)
   end
 
-  describe "'/'" do
+  describe "'/api/callouts'" do
     let(:url_params) { {} }
     let(:url) { api_callouts_path(url_params) }
 
@@ -22,6 +26,7 @@ RSpec.describe "'/api/callouts'" do
 
       it_behaves_like "resource_filtering" do
         let(:filter_on_factory) { :callout }
+        let(:filter_factory_attributes) { factory_attributes }
       end
 
       it_behaves_like "authorization"
@@ -61,7 +66,7 @@ RSpec.describe "'/api/callouts'" do
 
     describe "PATCH" do
       let(:method) { :patch }
-      let(:factory_attributes) { { "metadata" => {"bar" => "baz" }} }
+      let(:factory_attributes) { super().merge("metadata" => {"bar" => "baz" }) }
       let(:body) {
         {
           :metadata => metadata,
@@ -110,7 +115,7 @@ RSpec.describe "'/api/callouts'" do
     let(:method) { :get }
 
     def setup_scenario
-      create(:callout)
+      create(:callout, :account => account)
       callout
       super
     end
@@ -120,7 +125,7 @@ RSpec.describe "'/api/callouts'" do
     end
 
     describe "GET '/api/contacts/:contact_id/callouts'" do
-      let(:contact) { create(:contact) }
+      let(:contact) { create(:contact, :account => account) }
 
       def setup_scenario
         create(:callout_participation, :contact => contact, :callout => callout)

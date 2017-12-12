@@ -8,12 +8,20 @@ class Account < ApplicationRecord
           :null => false
 
   include MetadataHelpers
-  has_many :users, :dependent => :restrict_with_error
 
   has_one :access_token,
           :class_name => "Doorkeeper::AccessToken",
           :foreign_key => :resource_owner_id,
           :dependent => :restrict_with_error
+
+  has_many :users,
+           :dependent => :restrict_with_error
+
+  has_many :contacts,
+           :dependent => :restrict_with_error
+
+  has_many :callouts,
+           :dependent => :restrict_with_error
 
   def super_admin?
     permissions?(:super_admin)

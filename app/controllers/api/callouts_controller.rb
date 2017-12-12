@@ -10,7 +10,7 @@ class Api::CalloutsController < Api::FilteredController
   end
 
   def association_chain
-    Callout.all
+    current_account.callouts.all
   end
 
   def filter_class
@@ -26,6 +26,6 @@ class Api::CalloutsController < Api::FilteredController
   end
 
   def contact
-    @contact ||= Contact.find(params[:contact_id])
+    @contact ||= current_account.contacts.find(params[:contact_id])
   end
 end

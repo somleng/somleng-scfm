@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171211072157) do
+ActiveRecord::Schema.define(version: 20171212123107) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,6 +55,8 @@ ActiveRecord::Schema.define(version: 20171211072157) do
     t.jsonb "metadata", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "account_id", null: false
+    t.index ["account_id"], name: "index_callouts_on_account_id"
   end
 
   create_table "contacts", force: :cascade do |t|
@@ -62,6 +64,8 @@ ActiveRecord::Schema.define(version: 20171211072157) do
     t.jsonb "metadata", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "account_id", null: false
+    t.index ["account_id"], name: "index_contacts_on_account_id"
     t.index ["msisdn"], name: "index_contacts_on_msisdn", unique: true
   end
 
@@ -177,6 +181,8 @@ ActiveRecord::Schema.define(version: 20171211072157) do
   add_foreign_key "callout_participations", "batch_operations", column: "callout_population_id"
   add_foreign_key "callout_participations", "callouts"
   add_foreign_key "callout_participations", "contacts"
+  add_foreign_key "callouts", "accounts"
+  add_foreign_key "contacts", "accounts"
   add_foreign_key "oauth_access_grants", "accounts", column: "resource_owner_id"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_access_tokens", "accounts", column: "resource_owner_id"

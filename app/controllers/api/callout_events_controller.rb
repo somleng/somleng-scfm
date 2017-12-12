@@ -10,7 +10,7 @@ class Api::CalloutEventsController < Api::ResourceEventsController
   end
 
   def callout
-    @callout ||= Callout.find(params[:callout_id])
+    @callout ||= current_account.callouts.find(params[:callout_id])
   end
 
   def event_class

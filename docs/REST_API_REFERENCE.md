@@ -2,24 +2,143 @@
 
 Somleng SCFM provides a REST API for managing core resources. Below is the full documentation for the REST API. If you're new to Somleng SCFM we recommend that you read the [GETTING_STARTED](https://github.com/somleng/somleng-scfm/blob/master/docs/GETTING_STARTED.md) guide first.
 
-## Prerequisites
+Before we get started, follow the [Installation Guide](https://github.com/somleng/somleng-scfm/blob/master/docs/INSTALLATION.md) to install Somleng SCFM on your local machine.
 
-Just like the [GETTING_STARTED](https://github.com/somleng/somleng-scfm/blob/master/docs/GETTING_STARTED.md) guide, the examples that follow assume that you are useing Somleng SCFM in SQLite mode with Docker. Please go ahead and [install Docker](https://docs.docker.com/engine/installation/) if you haven't already done so, then pull the latest image:
+## Accounts
 
-```
-$ docker pull dwilkie/somleng-scfm
-```
+### Create
 
-Setup a new database:
+Only Super Admins can create an account. In this example we use the account credentials of the super admin account we created in the [Installation Guide](https://github.com/somleng/somleng-scfm/blob/master/docs/INSTALLATION.md) to create a user account.
 
 ```
-$ docker run --rm -v /tmp/somleng-scfm/db:/tmp/db -e RAILS_ENV=production -e RAILS_DB_ADAPTER=sqlite3 dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake db:create && bundle exec rake db:migrate && if [ ! -f /tmp/db/somleng_scfm_production.sqlite3 ]; then cp /usr/src/app/db/somleng_scfm_production.sqlite3 /tmp/db; fi'
+$ docker run -t --rm -e SUPER_ADMIN_ACCESS_TOKEN=$SUPER_ADMIN_ACCESS_TOKEN --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/accounts -u $SUPER_ADMIN_ACCESS_TOKEN: | jq'
 ```
 
-And boot the API Server:
+Sample Response:
+
+```json
+{
+  "id": 2,
+  "metadata": {},
+  "settings": {},
+  "twilio_account_sid": null,
+  "somleng_account_sid": null,
+  "permissions": [],
+  "created_at": "2018-02-18T12:52:49.993Z",
+  "updated_at": "2018-02-18T12:52:49.993Z"
+}
+```
+
+### Update
 
 ```
-$ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
+$ docker run -t --rm -e SUPER_ADMIN_ACCESS_TOKEN=$SUPER_ADMIN_ACCESS_TOKEN --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/accounts/2 -d "somleng_account_sid=abcdefg" -d "metadata[name]=Basic+Account" -u $SUPER_ADMIN_ACCESS_TOKEN:'
+```
+
+Sample Response:
+
+```
+< HTTP/1.1 204 No Content
+```
+
+### Fetch
+
+```
+$ docker run -t --rm -e SUPER_ADMIN_ACCESS_TOKEN=$SUPER_ADMIN_ACCESS_TOKEN --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/accounts/2 -u $SUPER_ADMIN_ACCESS_TOKEN: | jq'
+```
+
+Sample Response:
+
+```json
+{
+  "id": 2,
+  "metadata": {
+    "name": "Basic Account"
+  },
+  "settings": {},
+  "twilio_account_sid": null,
+  "somleng_account_sid": "abcdefg",
+  "permissions": [],
+  "created_at": "2018-02-18T12:52:49.993Z",
+  "updated_at": "2018-02-18T13:06:36.101Z"
+}
+```
+
+### Index and Filter
+
+#### All Accounts
+
+```
+$ docker run -t --rm -e SUPER_ADMIN_ACCESS_TOKEN=$SUPER_ADMIN_ACCESS_TOKEN --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/accounts -u $SUPER_ADMIN_ACCESS_TOKEN: | jq'
+```
+
+Sample Response:
+
+```
+< HTTP/1.1 200 OK
+< Per-Page: 25
+< Total: 2
+```
+
+```json
+[
+  {
+    "id": 1,
+    "metadata": {},
+    "settings": {},
+    "twilio_account_sid": null,
+    "somleng_account_sid": null,
+    "permissions": [
+      "super_admin"
+    ],
+    "created_at": "2018-02-18T12:50:30.276Z",
+    "updated_at": "2018-02-18T12:50:30.276Z"
+  },
+  {
+    "id": 2,
+    "metadata": {
+      "name": "Basic Account"
+    },
+    "settings": {},
+    "twilio_account_sid": null,
+    "somleng_account_sid": "abcdefg",
+    "permissions": [],
+    "created_at": "2018-02-18T12:52:49.993Z",
+    "updated_at": "2018-02-18T13:06:36.101Z"
+  }
+]
+```
+
+### Delete
+
+```
+$ docker run -t --rm -e SUPER_ADMIN_ACCESS_TOKEN=$SUPER_ADMIN_ACCESS_TOKEN --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/accounts/2 -u $SUPER_ADMIN_ACCESS_TOKEN:'
+```
+
+Sample Response:
+
+```
+< HTTP/1.1 204 No Content
+```
+
+## Access Tokens
+
+### Create
+
+```
+$ docker run -t --rm -e SUPER_ADMIN_ACCESS_TOKEN=$SUPER_ADMIN_ACCESS_TOKEN --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/access_tokens -d "account_sid=2" -u $SUPER_ADMIN_ACCESS_TOKEN: | jq'
+```
+
+Sample Response:
+
+```json
+{
+  "id": 2,
+  "token": "98860748b16c56acdf0c719e0d39f3bf9524c9119e8023b1b5ade32a964a6c5b",
+  "created_at": "2018-02-18T13:19:40.834Z",
+  "updated_at": "2018-02-18T13:19:40.838Z",
+  "metadata": {}
+}
 ```
 
 ## Contacts
@@ -27,7 +146,7 @@ $ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h sc
 ### Create
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/contacts --data-urlencode "msisdn=+252662345699" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/contacts --data-urlencode "msisdn=+252662345699" -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -45,7 +164,7 @@ Sample Response:
 ### Update
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/contacts/1 --data-urlencode "msisdn=+252662345700" -d "metadata[name]=Alice" -d "metadata[gender]=f"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/contacts/1 --data-urlencode "msisdn=+252662345700" -d "metadata[name]=Alice" -d "metadata[gender]=f" -u $ACCESS_TOKEN:'
 ```
 
 #### metadata_merge_mode=merge (default)
@@ -53,7 +172,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 Merges new metadata with existing metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/contacts/1 -d metadata_merge_mode=merge -d "metadata[province]=Kampong+Thom"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/contacts/1 -d metadata_merge_mode=merge -d "metadata[province]=Kampong+Thom" -u $ACCESS_TOKEN:'
 ```
 
 #### metadata_merge_mode=replace
@@ -61,7 +180,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 Replaces existing metadata with new metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/contacts/1 -d metadata_merge_mode=replace -d "metadata[gender]=f"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/contacts/1 -d metadata_merge_mode=replace -d "metadata[gender]=f" -u $ACCESS_TOKEN:'
 ```
 
 #### metadata_merge_mode=deep_merge
@@ -69,7 +188,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 Deep merges existing metadata with new metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/contacts/1 -d metadata_merge_mode=deep_merge -d "metadata[gender]=f"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/contacts/1 -d metadata_merge_mode=deep_merge -d "metadata[gender]=f" -u $ACCESS_TOKEN:'
 ```
 
 Sample Response:
@@ -81,7 +200,7 @@ Sample Response:
 ### Fetch
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/contacts/1 | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/contacts/1 -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -104,19 +223,19 @@ Sample Response:
 #### All Contacts
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/contacts | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/contacts -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/contacts?q[metadata][gender]=f | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/contacts?q[metadata][gender]=f -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by msisdn
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/contacts?q[msisdn]=252662345700 | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/contacts?q[msisdn]=252662345700 -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by created_at
@@ -124,25 +243,25 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 ##### created_at_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[created_at_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[created_at_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### created_at_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[created_at_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[created_at_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### created_at_or_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[created_at_or_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[created_at_or_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### created_at_or_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[created_at_or_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[created_at_or_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by updated_at
@@ -150,25 +269,25 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 ##### updated_at_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[updated_at_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[updated_at_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### updated_at_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[updated_at_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[updated_at_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### updated_at_or_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[updated_at_or_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[updated_at_or_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### updated_at_or_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[updated_at_or_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[updated_at_or_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -196,10 +315,8 @@ Sample Response:
 
 ### Delete
 
-Note that the the response is `204 No Content`
-
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/contacts/1'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/contacts/1 -u $ACCESS_TOKEN:'
 ```
 
 Sample Response:
@@ -213,7 +330,7 @@ Sample Response:
 ### Create
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -232,7 +349,7 @@ Sample Response:
 ### Update
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/1 -d call_flow_logic=CallFlowLogic::Application -d "metadata[name]=my+callout"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/1 -d call_flow_logic=CallFlowLogic::Application -d "metadata[name]=my+callout" -u $ACCESS_TOKEN:'
 ```
 
 #### metadata_merge_mode=merge (default)
@@ -240,7 +357,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 Merges new metadata with existing metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/1 -d metadata_merge_mode=merge -d "metadata[province]=Kampong+Thom"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/1 -d metadata_merge_mode=merge -d "metadata[province]=Kampong+Thom" -u $ACCESS_TOKEN:'
 ```
 
 #### metadata_merge_mode=replace
@@ -248,7 +365,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 Replaces existing metadata with new metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/1 -d metadata_merge_mode=replace -d "metadata[gender]=f"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/1 -d metadata_merge_mode=replace -d "metadata[gender]=f" -u $ACCESS_TOKEN:'
 ```
 
 #### metadata_merge_mode=deep_merge
@@ -256,7 +373,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 Deep merges existing metadata with new metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/1 -d metadata_merge_mode=deep_merge -d "metadata[gender]=f"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/1 -d metadata_merge_mode=deep_merge -d "metadata[gender]=f" -u $ACCESS_TOKEN:'
 ```
 
 Sample Response:
@@ -268,7 +385,7 @@ Sample Response:
 ### Fetch
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/callouts/1 | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/callouts/1 -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -291,25 +408,25 @@ Sample Response:
 #### All Callouts
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/callouts?q[metadata][name]=my+callout | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/callouts?q[metadata][name]=my+callout -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by status
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/callouts?q[status]=initialized | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/callouts?q[status]=initialized -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by call flow logic
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/callouts?q[call_flow_logic]=CallFlowLogic::Application | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/callouts?q[call_flow_logic]=CallFlowLogic::Application -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by created_at
@@ -317,25 +434,25 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 ##### created_at_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[created_at_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[created_at_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### created_at_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[created_at_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[created_at_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### created_at_or_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[created_at_or_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[created_at_or_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### created_at_or_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[created_at_or_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[created_at_or_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by updated_at
@@ -343,25 +460,25 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 ##### updated_at_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[updated_at_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[updated_at_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### updated_at_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[updated_at_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[updated_at_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### updated_at_or_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[updated_at_or_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[updated_at_or_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### updated_at_or_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[updated_at_or_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts?q[updated_at_or_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -392,25 +509,25 @@ Sample Response:
 #### Start
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_events -d "event=start" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_events -d "event=start" -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Pause
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_events -d "event=pause" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_events -d "event=pause" -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Resume
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_events -d "event=resume" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_events -d "event=resume" -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Stop
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_events -d "event=stop" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_events -d "event=stop" -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -431,7 +548,7 @@ Sample Response:
 ### Delete
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/callouts/1
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/callouts/1
 ```
 
 Sample Response:
@@ -445,7 +562,7 @@ Sample Response:
 ### Create
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_participations -d "contact_id=1" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/callout_participations -d "contact_id=1" -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -467,7 +584,7 @@ Sample Response:
 ### Update
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callout_participations/1 -d call_flow_logic=CallFlowLogic::Application -d "metadata[name]=my+callout+participation" -d "msisdn=252662345701"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callout_participations/1 -d call_flow_logic=CallFlowLogic::Application -d "metadata[name]=my+callout+participation" -d "msisdn=252662345701" -u $ACCESS_TOKEN:'
 ```
 
 #### metadata_merge_mode=merge (default)
@@ -475,7 +592,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 Merges new metadata with existing metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callout_participations/1 -d metadata_merge_mode=merge -d "metadata[province]=Kampong+Thom"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callout_participations/1 -d metadata_merge_mode=merge -d "metadata[province]=Kampong+Thom" -u $ACCESS_TOKEN:'
 ```
 
 #### metadata_merge_mode=replace
@@ -483,7 +600,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 Replaces existing metadata with new metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callout_participations/1 -d metadata_merge_mode=replace -d "metadata[gender]=f"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callout_participations/1 -d metadata_merge_mode=replace -d "metadata[gender]=f" -u $ACCESS_TOKEN:'
 ```
 
 #### metadata_merge_mode=deep_merge
@@ -491,7 +608,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 Deep merges existing metadata with new metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callout_participations/1 -d metadata_merge_mode=deep_merge -d "metadata[gender]=f"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callout_participations/1 -d metadata_merge_mode=deep_merge -d "metadata[gender]=f" -u $ACCESS_TOKEN:'
 ```
 
 Sample Response:
@@ -503,7 +620,7 @@ Sample Response:
 ### Fetch
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/callout_participations/1 | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/callout_participations/1 -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -529,61 +646,61 @@ Sample Response:
 #### All Callout Participations
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callout_participations | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callout_participations -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[metadata][name]=my+callout+participation | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[metadata][name]=my+callout+participation -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by callout
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/callout_participations | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/callout_participations -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by contact
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/contacts/1/callout_participations | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/contacts/1/callout_participations -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by msisdn
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[msisdn]=252662345700 | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[msisdn]=252662345700 -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by call flow logic
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[call_flow_logic]=CallFlowLogic::Application | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[call_flow_logic]=CallFlowLogic::Application -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by callout participations which have phone calls
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[has_phone_calls]=true | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[has_phone_calls]=true -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by callout participations which have no phone calls
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[has_phone_calls]=false | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[has_phone_calls]=false -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by callout participations where the last phone call attempt was failed or errored
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[last_phone_call_attempt]=failed,errored | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[last_phone_call_attempt]=failed,errored -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by callout participations which have no phone calls OR the last phone call attempt was failed or errored
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[no_phone_calls_or_last_attempt]=failed,errored | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -g -s http://scfm:3000/api/callout_participations?q[no_phone_calls_or_last_attempt]=failed,errored -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by created_at
@@ -591,25 +708,25 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 ##### created_at_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[created_at_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[created_at_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### created_at_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[created_at_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[created_at_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### created_at_or_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[created_at_or_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[created_at_or_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### created_at_or_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[created_at_or_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[created_at_or_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by updated_at
@@ -617,25 +734,25 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 ##### updated_at_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[updated_at_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[updated_at_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### updated_at_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[updated_at_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[updated_at_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### updated_at_or_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[updated_at_or_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[updated_at_or_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### updated_at_or_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[updated_at_or_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callout_participations?q[updated_at_or_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -666,7 +783,7 @@ Sample Response:
 ### Delete
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/callout_participations/1
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/callout_participations/1
 ```
 
 Sample Response:
@@ -680,7 +797,7 @@ Sample Response:
 ### Create
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callout_participations/1/phone_calls --data-urlencode "remote_request_params[from]=1234" --data-urlencode "remote_request_params[url]=https://demo.twilio.com/docs/voice.xml" -d "remote_request_params[method]=GET" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callout_participations/1/phone_calls --data-urlencode "remote_request_params[from]=1234" --data-urlencode "remote_request_params[url]=https://demo.twilio.com/docs/voice.xml" -d "remote_request_params[method]=GET" -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -717,7 +834,7 @@ Sample Response:
 ### Update
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/phone_calls/1 --data-urlencode "remote_request_params[from]=345" --data-urlencode "remote_request_params[url]=https://demo.twilio.com/docs/voice.xml" -d "remote_request_params[method]=GET"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/phone_calls/1 --data-urlencode "remote_request_params[from]=345" --data-urlencode "remote_request_params[url]=https://demo.twilio.com/docs/voice.xml" -d "remote_request_params[method]=GET" -u $ACCESS_TOKEN:'
 ```
 
 #### metadata_merge_mode=merge (default)
@@ -725,7 +842,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 Merges new metadata with existing metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/phone_calls/1 -d metadata_merge_mode=merge -d "metadata[province]=Kampong+Thom"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/phone_calls/1 -d metadata_merge_mode=merge -d "metadata[province]=Kampong+Thom" -u $ACCESS_TOKEN:'
 ```
 
 #### metadata_merge_mode=replace
@@ -733,7 +850,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 Replaces existing metadata with new metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/phone_calls/1 -d metadata_merge_mode=replace -d "metadata[gender]=f"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/phone_calls/1 -d metadata_merge_mode=replace -d "metadata[gender]=f" -u $ACCESS_TOKEN:'
 ```
 
 #### metadata_merge_mode=deep_merge
@@ -741,7 +858,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 Deep merges existing metadata with new metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/phone_calls/1 -d metadata_merge_mode=deep_merge -d "metadata[gender]=f"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/phone_calls/1 -d metadata_merge_mode=deep_merge -d "metadata[gender]=f" -u $ACCESS_TOKEN:'
 ```
 
 Sample Response:
@@ -753,7 +870,7 @@ Sample Response:
 ### Fetch
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/phone_calls/1 | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/phone_calls/1 -u $ACCESS_TOKEN: | jq'
 ```
 
 ```json
@@ -790,91 +907,91 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
 #### All Phone Calls
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/phone_calls | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/phone_calls -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by Callout Participation
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callout_participations/1/phone_calls | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callout_participations/1/phone_calls -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by Contact
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/contacts/1/phone_calls | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/contacts/1/phone_calls -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by Callout
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/phone_calls | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/phone_calls -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[metadata][foo]=bar | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[metadata][foo]=bar -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by msisdn
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[msisdn]=252662345700 | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[msisdn]=252662345700 -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by status
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[status]=created | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[status]=created -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by call flow logic
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[call_flow_logic]=CallFlowLogic::Application | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[call_flow_logic]=CallFlowLogic::Application -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by remote_call_id
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[remote_call_id]=082305b2-a0e4-4921-89bf-7bb544fd6910 | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[remote_call_id]=082305b2-a0e4-4921-89bf-7bb544fd6910 -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by remote_status
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[remote_status]=in-progress | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[remote_status]=in-progress -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by remote_direction
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[remote_direction]=inbound | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[remote_direction]=inbound -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by remote_error_message
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[remote_error_message]=Unable+to+create+record | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[remote_error_message]=Unable+to+create+record -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by remote_queue_response
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[remote_queue_response][from]=345 | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[remote_queue_response][from]=345 -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by remote_response
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[remote_response][status]=canceled | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/phone_calls?q[remote_response][status]=canceled -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by remote_request_params
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[remote_request_params][url]=https://demo.twilio.com/docs/voice.xml" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[remote_request_params][url]=https://demo.twilio.com/docs/voice.xml" -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by remotely_queued_at
@@ -882,25 +999,25 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 ##### remotely_queued_at_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[remotely_queued_at_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[remotely_queued_at_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### remotely_queued_at_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[remotely_queued_at_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[remotely_queued_at_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### remotely_queued_at_or_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[remotely_queued_at_or_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[remotely_queued_at_or_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### remotely_queued_at_or_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[remotely_queued_at_or_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[remotely_queued_at_or_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by created_at
@@ -908,25 +1025,25 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 ##### created_at_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[created_at_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[created_at_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### created_at_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[created_at_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[created_at_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### created_at_or_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[created_at_or_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[created_at_or_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### created_at_or_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[created_at_or_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[created_at_or_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by updated_at
@@ -934,25 +1051,25 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 ##### updated_at_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[updated_at_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[updated_at_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### updated_at_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[updated_at_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[updated_at_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### updated_at_or_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[updated_at_or_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[updated_at_or_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### updated_at_or_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[updated_at_or_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/phone_calls?q[updated_at_or_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -998,13 +1115,13 @@ Sample Response:
 #### Queue
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/phone_calls/1/phone_call_events -d event=queue | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/phone_calls/1/phone_call_events -d event=queue -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Queue Remote Fetch
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/phone_calls/1/phone_call_events -d event=queue_remote_fetch | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/phone_calls/1/phone_call_events -d event=queue_remote_fetch -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -1041,7 +1158,7 @@ Sample Response:
 ### Delete
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/phone_calls/1'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/phone_calls/1 -u $ACCESS_TOKEN:'
 ```
 
 Sample Response:
@@ -1057,7 +1174,7 @@ Remote Phone Call Events are created by Twilio or Somleng.
 ### Update
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/remote_phone_call_events/1 -d "metadata[foo]=bar"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/remote_phone_call_events/1 -d "metadata[foo]=bar" -u $ACCESS_TOKEN:'
 ```
 
 #### metadata_merge_mode=merge (default)
@@ -1065,7 +1182,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 Merges new metadata with existing metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/remote_phone_call_events/1 -d metadata_merge_mode=merge -d "metadata[province]=Kampong+Thom"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/remote_phone_call_events/1 -d metadata_merge_mode=merge -d "metadata[province]=Kampong+Thom" -u $ACCESS_TOKEN:'
 ```
 
 #### metadata_merge_mode=replace
@@ -1073,7 +1190,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 Replaces existing metadata with new metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/remote_phone_call_events/1 -d metadata_merge_mode=replace -d "metadata[gender]=f"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/remote_phone_call_events/1 -d metadata_merge_mode=replace -d "metadata[gender]=f" -u $ACCESS_TOKEN:'
 ```
 
 #### metadata_merge_mode=deep_merge
@@ -1081,7 +1198,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 Deep merges existing metadata with new metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/remote_phone_call_events/1 -d metadata_merge_mode=deep_merge -d "metadata[gender]=f"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/remote_phone_call_events/1 -d metadata_merge_mode=deep_merge -d "metadata[gender]=f" -u $ACCESS_TOKEN:'
 ```
 
 Sample Response:
@@ -1093,7 +1210,7 @@ Sample Response:
 ### Fetch
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/remote_phone_call_events/1 | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/remote_phone_call_events/1 -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -1125,55 +1242,55 @@ Sample Response:
 #### All Remote Phone Call Events
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/remote_phone_call_events | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/remote_phone_call_events -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by Phone Call
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/phone_calls/1/remote_phone_call_events | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/phone_calls/1/remote_phone_call_events -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by Contact
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/contacts/1/remote_phone_call_events | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/contacts/1/remote_phone_call_events -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by Callout
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/remote_phone_call_events | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/remote_phone_call_events -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by Callout Participation
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callout_participations/1/remote_phone_call_events | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callout_participations/1/remote_phone_call_events -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by details
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/remote_phone_call_events?q[details][CallStatus]=ringing | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/remote_phone_call_events?q[details][CallStatus]=ringing -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by call_flow_logic
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[call_flow_logic]=CallFlowLogic::AvfCapom::CapomShort" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[call_flow_logic]=CallFlowLogic::AvfCapom::CapomShort" -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by remote_call_id
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[remote_call_id]=06d9ebf7-4d71-4470-8b57-09235979781e" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[remote_call_id]=06d9ebf7-4d71-4470-8b57-09235979781e" -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by remote_direction
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[remote_call_id]=06d9ebf7-4d71-4470-8b57-09235979781e" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[remote_call_id]=06d9ebf7-4d71-4470-8b57-09235979781e" -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by created_at
@@ -1181,25 +1298,25 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 ##### created_at_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[created_at_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[created_at_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### created_at_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[created_at_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[created_at_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### created_at_or_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[created_at_or_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[created_at_or_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### created_at_or_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[created_at_or_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[created_at_or_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by updated_at
@@ -1207,25 +1324,25 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 ##### updated_at_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[updated_at_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[updated_at_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### updated_at_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[updated_at_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[updated_at_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### updated_at_or_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[updated_at_or_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[updated_at_or_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### updated_at_or_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[updated_at_or_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[updated_at_or_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -1268,7 +1385,7 @@ Sample Response:
 Example: Create a batch operation for populating a callout, specifying `contact_filter_params` to stipulate the contacts who will participate in the callout.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/batch_operations -d type=BatchOperation::CalloutPopulation -d parameters[contact_filter_params][metadata][gender]=f | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/batch_operations -d type=BatchOperation::CalloutPopulation -d parameters[contact_filter_params][metadata][gender]=f -u $ACCESS_TOKEN: | jq'
 ```
 
 #### PhoneCallCreate
@@ -1276,7 +1393,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
 Example: Create a batch operation for creating phone calls, specifying `callout_filter_params` and `callout_participation_filter_params` to stipulate that phone calls should only be created for callouts which are `running` and for callout participations which have no phone calls or where the last attempt failed or was errored. Specify `remote_request_params` which will be set on each created phone call. Limit the number of phone calls which will be created to `30`. Allow creating the batch operation even if no actual phone calls will be created.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallCreate -d parameters[callout_filter_params][status]=running -d parameters[callout_participation_filter_params][no_phone_calls_or_last_attempt]=failed,errored --data-urlencode "parameters[remote_request_params][from]=1234" --data-urlencode "parameters[remote_request_params][url]=https://demo.twilio.com/docs/voice.xml" -d "parameters[remote_request_params][method]=GET" -d parameters[limit]=30 -d parameters[skip_validate_preview_presence]=true | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallCreate -d parameters[callout_filter_params][status]=running -d parameters[callout_participation_filter_params][no_phone_calls_or_last_attempt]=failed,errored --data-urlencode "parameters[remote_request_params][from]=1234" --data-urlencode "parameters[remote_request_params][url]=https://demo.twilio.com/docs/voice.xml" -d "parameters[remote_request_params][method]=GET" -d parameters[limit]=30 -d parameters[skip_validate_preview_presence]=true -u $ACCESS_TOKEN: | jq'
 ```
 
 #### PhoneCallQueue
@@ -1284,7 +1401,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
 Example: Create a batch operation for queuing phone calls on Twilio or Somleng specifying `phone_call_filter_params` and `callout_filter_params` to stipulate that only phone calls which have the status `created` and that are from a `running` callout should be queued. Limit the number of phone calls which will be queued to `30`. Allow creating the batch operation even if no actual phone calls will be queued.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallQueue -d parameters[callout_filter_params][status]=running -d parameters[phone_call_filter_params][status]=created -d parameters[limit]=30 -d parameters[skip_validate_preview_presence]=true | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallQueue -d parameters[callout_filter_params][status]=running -d parameters[phone_call_filter_params][status]=created -d parameters[limit]=30 -d parameters[skip_validate_preview_presence]=true -u $ACCESS_TOKEN: | jq'
 ```
 
 #### PhoneCallQueueRemoteFetch
@@ -1292,7 +1409,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
 Example: Create a batch operation for remotely fetching the phone calls status on Twilio or Somleng specifying `phone_call_filter_params` to stipulate that only phone calls which have the status `remotely_queued` or `in_progress` should be fetched. Limit the number of phone calls which will be fetched to `30`. Allow creating the batch operation even if no actual phone calls will be fetched.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallQueueRemoteFetch -d "parameters[phone_call_filter_params][status]=remotely_queued,in_progress" -d parameters[limit]=30 -d parameters[skip_validate_preview_presence]=true | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallQueueRemoteFetch -d "parameters[phone_call_filter_params][status]=remotely_queued,in_progress" -d parameters[limit]=30 -d parameters[skip_validate_preview_presence]=true -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -1312,7 +1429,7 @@ Sample Response:
 ### Update
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/1 -d "metadata[foo]=bar" -d "metadata[bar]=baz"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/1 -d "metadata[foo]=bar" -d "metadata[bar]=baz" -u $ACCESS_TOKEN:'
 ```
 
 #### metadata_merge_mode=merge (default)
@@ -1320,7 +1437,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 Merges new metadata with existing metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/1 -d metadata_merge_mode=merge -d "metadata[province]=Kampong+Thom"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/1 -d metadata_merge_mode=merge -d "metadata[province]=Kampong+Thom" -u $ACCESS_TOKEN:'
 ```
 
 #### metadata_merge_mode=replace
@@ -1328,7 +1445,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 Replaces existing metadata with new metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/1 -d metadata_merge_mode=replace -d "metadata[gender]=f"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/1 -d metadata_merge_mode=replace -d "metadata[gender]=f" -u $ACCESS_TOKEN:'
 ```
 
 #### metadata_merge_mode=deep_merge
@@ -1336,7 +1453,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 Deep merges existing metadata with new metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/1 -d metadata_merge_mode=deep_merge -d "metadata[gender]=f"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/1 -d metadata_merge_mode=deep_merge -d "metadata[gender]=f" -u $ACCESS_TOKEN:'
 ```
 
 Sample Response:
@@ -1348,7 +1465,7 @@ Sample Response:
 ### Fetch
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/1 | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/1 -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -1377,31 +1494,31 @@ Sample Response:
 #### All Batch Operations
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by callout
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/batch_operations | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/batch_operations -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by parameters
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[parameters][contact_filter_params][metadata][gender]=f" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[parameters][contact_filter_params][metadata][gender]=f" -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by metadata
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[metadata][foo]=bar" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[metadata][foo]=bar" -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by status
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/batch_operations?q[status]=preview | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/batch_operations?q[status]=preview -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by created_at
@@ -1409,25 +1526,25 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 ##### created_at_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[created_at_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[created_at_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### created_at_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[created_at_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[created_at_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### created_at_or_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[created_at_or_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[created_at_or_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### created_at_or_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[created_at_or_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[created_at_or_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Filter by updated_at
@@ -1435,25 +1552,25 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 ##### updated_at_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[updated_at_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[updated_at_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### updated_at_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[updated_at_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[updated_at_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### updated_at_or_before
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[updated_at_or_before]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[updated_at_or_before]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 ##### updated_at_or_after
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[updated_at_or_after]=2017-11-29+01:36:02" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/batch_operations?q[updated_at_or_after]=2017-11-29+01:36:02" -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -1493,7 +1610,7 @@ Previewing batch operations allows you to preview what will happen, before queui
 This preview can be run on a `BatchOperation::CalloutPopulation` to preview which contacts will be participants in the callout.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/preview/contacts | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/preview/contacts -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -1522,7 +1639,7 @@ Sample Response:
 This preview can be run on a `BatchOperation::PhoneCallCreate` to preview which callout participations will have phone calls created.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/preview/callout_participations | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/preview/callout_participations -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -1553,7 +1670,7 @@ Sample Response:
 This preview can be run on a `BatchOperation::PhoneCallCreate` to preview which contacts will have phone calls created.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/preview/contacts | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/preview/contacts -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -1582,7 +1699,7 @@ Sample Response:
 This preview can be run on a `BatchOperation::PhoneCallQueue` or `BatchOperation::PhoneCallQueueRemoteFetch` to preview which phone calls will be queued or remotely fetched.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/preview/phone_calls | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/preview/phone_calls -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -1630,7 +1747,7 @@ Sample Response:
 Enqueues a batch operation to be run.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations/1/batch_operation_events -d "event=queue" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations/1/batch_operation_events -d "event=queue" -u $ACCESS_TOKEN: | jq'
 ```
 
 #### Requeue
@@ -1638,7 +1755,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
 Requeues a batch operation that has already finished
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations/1/batch_operation_events -d "event=requeue" | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations/1/batch_operation_events -d "event=requeue" -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -1671,7 +1788,7 @@ Get the result of a batch operation
 This can be run on a `BatchOperation::CalloutPopulation` do see which callout participations were created by the batch operation.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/callout_participations | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/callout_participations -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -1702,7 +1819,7 @@ Sample Response:
 This can be run on a `BatchOperation::CalloutPopulation` do see which contacts this batch operation created callout participations for.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/contacts | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/contacts -u $ACCESS_TOKEN: | jq'
 ```
 
 Sample Response:
@@ -1731,7 +1848,7 @@ Sample Response:
 This can be run on a `BatchOperation::PhoneCallCreate`, `BatchOperation::PhoneCallQueue` or `BatchOperation::PhoneCallQueueRemoteFetch` do see which phone calls were created, queued or remotely fetched by the batch operation.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/phone_calls | jq'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/phone_calls -u $ACCESS_TOKEN: | jq'
 ```
 
 ```
@@ -1773,7 +1890,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
 ### Delete
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/batch_operations/1'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/batch_operations/1 -u $ACCESS_TOKEN:'
 ```
 
 Sample Response:

@@ -3,7 +3,13 @@ require 'rails_helper'
 RSpec.describe "POST '/callouts/:callout_id/callout_events'" do
   include SomlengScfm::SpecHelpers::RequestHelpers
 
-  let(:eventable) { create(:callout) }
+  let(:account_traits) { {} }
+  let(:account_attributes) { {} }
+  let(:account) { create(:account, *account_traits.keys, account_attributes) }
+  let(:eventable_attributes) { { :account => account } }
+  let(:access_token_model) { create(:access_token, :resource_owner => account) }
+
+  let(:eventable) { create(:callout, eventable_attributes) }
   let(:url) { api_callout_callout_events_path(eventable) }
 
   it_behaves_like "api_resource_event" do

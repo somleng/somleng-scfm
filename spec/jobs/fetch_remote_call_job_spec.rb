@@ -7,16 +7,26 @@ RSpec.describe FetchRemoteCallJob do
     include SomlengScfm::SpecHelpers::SomlengClientHelpers
 
     let(:remote_call_id) { "call-sid" }
+
     let(:phone_call) {
       create(
         :phone_call,
+        :with_default_provider,
         :status => PhoneCall::STATE_REMOTE_FETCH_QUEUED,
-        :remote_call_id => remote_call_id
+        :remote_call_id => remote_call_id,
       )
     }
 
     def asserted_remote_api_endpoint
       super("Calls/#{remote_call_id}")
+    end
+
+    def somleng_account_sid
+      phone_call.platform_provider.account_sid
+    end
+
+    def somleng_auth_token
+      phone_call.platform_provider.auth_token
     end
 
     let(:asserted_remote_response_body) { { "status" => "completed" }.to_json }

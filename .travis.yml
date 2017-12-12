@@ -1,6 +1,7 @@
 language: ruby
 dist: trusty
 sudo: false
+cache: bundler
 services:
   - postgresql
 env:

@@ -18,7 +18,7 @@ class Api::BatchOperationEventsController < Api::ResourceEventsController
   end
 
   def batch_operation
-    @batch_operation ||= BatchOperation::Base.find(params[:batch_operation_id])
+    @batch_operation ||= current_account.batch_operations.find(params[:batch_operation_id])
   end
 
   def event_class

@@ -2,6 +2,12 @@ require 'rails_helper'
 
 RSpec.describe "Contacts" do
   include SomlengScfm::SpecHelpers::RequestHelpers
+  let(:account_traits) { {} }
+  let(:account_attributes) { {} }
+  let(:account) { create(:account, *account_traits.keys, account_attributes) }
+  let(:access_token_model) { create(:access_token, :resource_owner => account) }
+  let(:factory_attributes) { { :account => account } }
+  let(:contact) { create(:contact, factory_attributes) }
 
   let(:body) { {} }
   let(:metadata) { { "foo" => "bar" } }
@@ -20,6 +26,7 @@ RSpec.describe "Contacts" do
 
       it_behaves_like "resource_filtering" do
         let(:filter_on_factory) { :contact }
+        let(:filter_factory_attributes) { factory_attributes }
       end
 
       it_behaves_like "authorization"
@@ -62,8 +69,6 @@ RSpec.describe "Contacts" do
   end
 
   describe "'/api/contacts/:id'" do
-    let(:factory_attributes) { {} }
-    let(:contact) { create(:contact, factory_attributes) }
     let(:url) { api_contact_path(contact) }
 
     describe "GET" do
@@ -79,7 +84,7 @@ RSpec.describe "Contacts" do
 
     describe "PATCH" do
       let(:existing_metadata) { {"bar" => "foo"} }
-      let(:factory_attributes) { {:metadata => existing_metadata} }
+      let(:factory_attributes) { super().merge(:metadata => existing_metadata) }
       let(:method) { :patch }
       let(:body) { { :metadata => metadata, :metadata_merge_mode => "replace" } }
 
@@ -122,12 +127,8 @@ RSpec.describe "Contacts" do
 
   describe "nested indexes" do
     let(:method) { :get }
-    let(:contact_factory_attributes) { {} }
-    let(:contact) { create(:contact, contact_factory_attributes) }
 
-    def callout_participation_factory_attributes
-      {:contact => contact}
-    end
+    let(:callout_participation_factory_attributes) { {:contact => contact} }
 
     let(:callout_participation) {
       create(:callout_participation, callout_participation_factory_attributes)
@@ -135,7 +136,7 @@ RSpec.describe "Contacts" do
 
     def setup_scenario
       contact
-      create(:contact)
+      create(:contact, :account => account)
       super
     end
 
@@ -145,12 +146,12 @@ RSpec.describe "Contacts" do
     end
 
     describe "GET '/api/callouts/:callout_id/contacts'" do
-      let(:callout) { create(:callout) }
+      let(:callout) { create(:callout, :account => account) }
       let(:url) { api_callout_contacts_path(callout) }
 
-      def callout_participation_factory_attributes
-        super.merge(:callout => callout)
-      end
+      let(:callout_participation_factory_attributes) {
+        super().merge(:callout => callout)
+      }
 
       def setup_scenario
         callout_participation
@@ -161,7 +162,7 @@ RSpec.describe "Contacts" do
     end
 
     describe "'/api/batch_operations/:batch_operation_id'" do
-      let(:batch_operation_factory_attributes) { {} }
+      let(:batch_operation_factory_attributes) { { :account => account } }
       let(:batch_operation) {
         create(batch_operation_factory, batch_operation_factory_attributes)
       }
@@ -172,9 +173,9 @@ RSpec.describe "Contacts" do
         context "BatchOperation::CalloutPopulation" do
           let(:batch_operation_factory) { :callout_population }
 
-          def callout_participation_factory_attributes
-            super.merge(:callout_population => batch_operation)
-          end
+          let(:callout_participation_factory_attributes) {
+            super().merge(:callout_population => batch_operation)
+          }
 
           def setup_scenario
             callout_participation
@@ -205,9 +206,14 @@ RSpec.describe "Contacts" do
 
         context "BatchOperation::CalloutPopulation" do
           let(:batch_operation_factory) { :callout_population }
-          let(:contact_factory_attributes) { { :metadata => {"foo" => "bar", "bar" => "foo"} } }
-          let(:contact_filter_params) { contact_factory_attributes.slice(:metadata) }
-          let(:batch_operation_factory_attributes) { { :contact_filter_params => contact_filter_params } }
+          let(:factory_attributes) {
+            super().merge(:metadata => {"foo" => "bar", "bar" => "foo"})
+          }
+
+          let(:contact_filter_params) { factory_attributes.slice(:metadata) }
+          let(:batch_operation_factory_attributes) {
+            super().merge(:contact_filter_params => contact_filter_params)
+          }
 
           it { assert_filtered! }
         end

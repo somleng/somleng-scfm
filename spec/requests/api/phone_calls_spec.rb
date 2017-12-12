@@ -2,9 +2,23 @@ require 'rails_helper'
 
 RSpec.describe "Phone Calls" do
   include SomlengScfm::SpecHelpers::RequestHelpers
-  let(:callout_participation) { create(:callout_participation) }
+
+  let(:account_traits) { {} }
+  let(:account_attributes) { {} }
+  let(:account) { create(:account, *account_traits.keys, account_attributes) }
+  let(:access_token_model) { create(:access_token, :resource_owner => account) }
+
+  let(:callout_attributes) { { :account => account } }
+  let(:callout) { create(:callout, callout_attributes) }
+
+  let(:contact_attributes) { { :account => account } }
+  let(:contact) { create(:contact, contact_attributes) }
+
+  let(:callout_participation_attributes) { { :callout => callout, :contact => contact } }
+  let(:callout_participation) { create(:callout_participation, callout_participation_attributes) }
+
   let(:body) { {} }
-  let(:factory_attributes) { {} }
+  let(:factory_attributes) { { :callout_participation => callout_participation } }
   let(:phone_call) { create(:phone_call, factory_attributes) }
   let(:execute_request_before) { true }
 
@@ -24,6 +38,7 @@ RSpec.describe "Phone Calls" do
 
     it_behaves_like "resource_filtering" do
       let(:filter_on_factory) { :phone_call }
+      let(:filter_factory_attributes) { factory_attributes }
     end
 
     it_behaves_like "authorization"
@@ -94,7 +109,7 @@ RSpec.describe "Phone Calls" do
 
     describe "PATCH" do
       let(:method) { :patch }
-      let(:factory_attributes) { { "metadata" => {"bar" => "baz" }} }
+      let(:factory_attributes) { super().merge("metadata" => {"bar" => "baz" }) }
       let(:metadata) { { "foo" => "bar" } }
       let(:msisdn) { generate(:somali_msisdn) }
       let(:body) {
@@ -127,7 +142,7 @@ RSpec.describe "Phone Calls" do
       end
 
       context "invalid request" do
-        let(:factory_attributes) { { :status => PhoneCall::STATE_QUEUED } }
+        let(:factory_attributes) { super().merge(:status => PhoneCall::STATE_QUEUED) }
 
         def assert_invalid!
           expect(response.code).to eq("422")
@@ -141,8 +156,19 @@ RSpec.describe "Phone Calls" do
   describe "nested indexes" do
     let(:method) { :get }
 
+    let(:batch_operation_attributes) { { :account => account } }
+    let(:batch_operation) { create(batch_operation_factory, batch_operation_attributes) }
+
     def setup_scenario
-      create(:phone_call)
+      create(
+        :phone_call,
+        :callout_participation => create(
+          :callout_participation,
+          :callout => create(
+            :callout, :account => account
+          )
+        )
+      )
       phone_call
       super
     end
@@ -153,36 +179,29 @@ RSpec.describe "Phone Calls" do
 
     describe "GET '/api/callout_participation/:callout_participation_id/phone_calls'" do
       let(:url) { api_callout_participation_phone_calls_path(callout_participation) }
-      let(:factory_attributes) { { :callout_participation => callout_participation } }
       it { assert_filtered! }
     end
 
     describe "GET '/api/callout/:callout_id/phone_calls'" do
-      let(:callout) { callout_participation.callout }
       let(:url) { api_callout_phone_calls_path(callout) }
-      let(:factory_attributes) { { :callout_participation => callout_participation } }
       it { assert_filtered! }
     end
 
     describe "GET '/api/contact/:contact_id/phone_calls'" do
-      let(:contact) { create(:contact) }
       let(:url) { api_contact_phone_calls_path(contact) }
-      let(:factory_attributes) { { :contact => contact } }
       it { assert_filtered! }
     end
 
     describe "GET '/api/batch_operations/:batch_operation_id/preview/phone_calls'" do
-      let(:batch_operation_attributes) { {} }
-      let(:batch_operation) { create(batch_operation_factory, batch_operation_attributes) }
       let(:url) { api_batch_operation_preview_phone_calls_path(batch_operation) }
 
       context "valid requests" do
-        let(:factory_attributes) { { :metadata => { "foo" => "bar", "bar" => "foo" } } }
+        let(:factory_attributes) { super().merge(:metadata => { "foo" => "bar", "bar" => "foo" }) }
 
         let(:batch_operation_attributes) {
-          {
+          super().merge(
             :phone_call_filter_params => factory_attributes.slice(:metadata)
-          }
+          )
         }
 
         context "BatchOperation::PhoneCallQueue" do
@@ -198,13 +217,12 @@ RSpec.describe "Phone Calls" do
 
       context "invalid request" do
         let(:execute_request_before) { false }
-        let(:batch_operation) { create(:phone_call_create_batch_operation) }
+        let(:batch_operation_factory) { :phone_call_create_batch_operation }
         it {expect { execute_request }.to raise_error(ActiveRecord::RecordNotFound) }
       end
     end
 
     describe "GET '/api/batch_operations/:batch_operation_id/phone_calls'" do
-      let(:batch_operation) { create(batch_operation_factory) }
       let(:url) { api_batch_operation_phone_calls_path(batch_operation) }
 
       context "valid requests" do

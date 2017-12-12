@@ -2,6 +2,8 @@ class Contact < ApplicationRecord
   include MsisdnHelpers
   include MetadataHelpers
 
+  belongs_to :account
+
   has_many :callout_participations,
            :dependent => :restrict_with_error
 
@@ -15,5 +17,5 @@ class Contact < ApplicationRecord
            :through => :phone_calls
 
   validates :msisdn,
-            :uniqueness => true
+            :uniqueness => {:scope => :account_id}
 end

@@ -1,10 +1,23 @@
 Rails.application.routes.draw do
+  devise_for :users
   root :to => redirect('https://github.com/somleng/somleng-scfm')
 
   namespace "api", :defaults => { :format => "json" } do
-
     defaults :format => :xml do
       resources :remote_phone_call_events, :only => :create
+    end
+
+    resources :accounts, :except => [:new, :edit] do
+      resources :users, :only => :index
+      resources :access_tokens, :only => :index
+    end
+
+    resource :account, :only => [:show, :update], :as => :current_account
+
+    resources :access_tokens
+
+    resources :users, :except => [:new, :edit] do
+      resources :user_events, :only => :create
     end
 
     resources :remote_phone_call_events, :only => [:index, :show, :update]

@@ -22,6 +22,7 @@ RSpec.describe QueueRemoteCallJob do
     let(:phone_call) {
       create(
         :phone_call,
+        :with_default_provider,
         :status => PhoneCall::STATE_QUEUED,
         :remote_request_params => remote_request_params
       )
@@ -37,6 +38,14 @@ RSpec.describe QueueRemoteCallJob do
 
     let(:asserted_remote_response_body) { remote_response_params.to_json }
     let(:assert_remote_request) { true }
+
+    def somleng_account_sid
+      phone_call.platform_provider.account_sid
+    end
+
+    def somleng_auth_token
+      phone_call.platform_provider.auth_token
+    end
 
     def setup_scenario
       super

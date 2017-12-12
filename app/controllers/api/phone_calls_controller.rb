@@ -28,7 +28,7 @@ class Api::PhoneCallsController < Api::FilteredController
   end
 
   def association_chain
-    PhoneCall.all
+    current_account.phone_calls.all
   end
 
   def permitted_params
@@ -44,15 +44,15 @@ class Api::PhoneCallsController < Api::FilteredController
   end
 
   def callout_participation
-    @callout_participation ||= CalloutParticipation.find(params[:callout_participation_id])
+    @callout_participation ||= current_account.callout_participations.find(params[:callout_participation_id])
   end
 
   def callout
-    @callout ||= Callout.find(params[:callout_id])
+    @callout ||= current_account.callouts.find(params[:callout_id])
   end
 
   def contact
-    @contact ||= Contact.find(params[:contact_id])
+    @contact ||= current_account.contacts.find(params[:contact_id])
   end
 
   def permitted_batch_operation_types

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   sequence :somali_msisdn, 252662345678 do |n|
     n.to_s
   end
@@ -10,7 +10,7 @@ FactoryGirl.define do
   sequence :twilio_remote_call_event_details do
     {
       "CallSid" => SecureRandom.uuid,
-      "From" => FactoryGirl.generate(:somali_msisdn),
+      "From" => FactoryBot.generate(:somali_msisdn),
       "To" => "345",
       "CallStatus" => "completed",
       "Direction" => "inbound",
@@ -18,6 +18,10 @@ FactoryGirl.define do
       "ApiVersion" => "2010-04-01",
       "Digits" => "5"
     }
+  end
+
+  sequence :email do |n|
+    "user#{n}@example.com"
   end
 
   factory :callout do
@@ -88,5 +92,15 @@ FactoryGirl.define do
 
   factory :remote_phone_call_event do
     details { generate(:twilio_remote_call_event_details) }
+  end
+
+  factory :account do
+  end
+
+  factory :user do
+    account
+    email
+    password "secret123"
+    password_confirmation { password }
   end
 end

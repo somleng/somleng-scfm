@@ -2,10 +2,11 @@ Rails.application.routes.draw do
   root :to => redirect('https://github.com/somleng/somleng-scfm')
 
   namespace "api", :defaults => { :format => "json" } do
-
     defaults :format => :xml do
       resources :remote_phone_call_events, :only => :create
     end
+
+    resources :accounts, :except => [:new, :edit]
 
     resources :remote_phone_call_events, :only => [:index, :show, :update]
 

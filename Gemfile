@@ -25,6 +25,8 @@ gem 'kaminari'
 gem 'api-pagination'
 gem 'wisper', :github => "krisleech/wisper"
 gem 'active_elastic_job', :github => 'tawan/active-elastic-job'
+gem 'doorkeeper'
+gem 'devise'
 
 group :development, :test do
   gem 'pry'
@@ -40,7 +42,7 @@ group :development do
 end
 
 group :test do
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
   gem 'shoulda-matchers'
   gem 'webmock'
   gem 'simplecov', :require => false

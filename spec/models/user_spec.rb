@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe User do
   let(:factory) { :user }
+  include_examples "has_metadata"
 
   describe "associations" do
     it { is_expected.to belong_to(:account) }

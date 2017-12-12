@@ -7,6 +7,7 @@ Rails.application.routes.draw do
     end
 
     resources :accounts, :except => [:new, :edit]
+    resources :users, :except => [:new, :edit]
 
     resources :remote_phone_call_events, :only => [:index, :show, :update]
 

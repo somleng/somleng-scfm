@@ -13,14 +13,19 @@ RSpec.describe "Batch Operation Integration Specs" do
     include SomlengScfm::SpecHelpers::SomlengClientHelpers
 
     let(:method) { :post }
-    let(:batch_operation_factory_attributes) { {} }
+    let(:account_traits) { { :with_access_token => nil } }
+    let(:account_attributes) { {} }
+    let(:account) { create(:account, *account_traits.keys, account_attributes) }
+
+    let(:batch_operation_factory_attributes) { { :account => account } }
     let(:batch_operation) { create(batch_operation_factory, batch_operation_factory_attributes) }
+
     let(:url) { api_batch_operation_batch_operation_events_path(batch_operation) }
     let(:body) { { :event => :queue } }
     let(:phone_call_factory_attributes) { {} }
     let(:phone_call) { create(:phone_call, phone_call_factory_attributes) }
     let(:asserted_remote_response_body) { remote_response_params.to_json }
-    let(:remote_call_id) {  SecureRandom.uuid }
+    let(:remote_call_id) { SecureRandom.uuid }
 
     def remote_response_params
       {

@@ -5,7 +5,7 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
   private
 
   def build_resource
-    @resource = association_chain.new(:details => permitted_build_params)
+    @resource = RemotePhoneCallEvent.new(:details => permitted_build_params)
   end
 
   def find_resources_association_chain
@@ -23,7 +23,7 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
   end
 
   def association_chain
-    RemotePhoneCallEvent.all
+    current_account.remote_phone_call_events.all
   end
 
   def filter_class
@@ -70,19 +70,19 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
   end
 
   def phone_call
-    @phone_call ||= PhoneCall.find(params[:phone_call_id])
+    @phone_call ||= current_account.phone_calls.find(params[:phone_call_id])
   end
 
   def callout_participation
-    @callout_participation ||= CalloutParticipation.find(params[:callout_participation_id])
+    @callout_participation ||= current_account.callout_participations.find(params[:callout_participation_id])
   end
 
   def callout
-    @callout ||= Callout.find(params[:callout_id])
+    @callout ||= current_account.callouts.find(params[:callout_id])
   end
 
   def contact
-    @contact ||= Contact.find(params[:contact_id])
+    @contact ||= current_account.contacts.find(params[:contact_id])
   end
 
   def default_call_flow_logic

@@ -2,11 +2,29 @@ require 'rails_helper'
 
 RSpec.describe "Remote Phone Call Events" do
   include SomlengScfm::SpecHelpers::RequestHelpers
+
+  let(:account_traits) { { :with_access_token => nil } }
+  let(:account_attributes) { {} }
+  let(:account) { create(:account, *account_traits.keys, account_attributes) }
+
+  let(:callout_attributes) { { :account => account } }
+  let(:callout) { create(:callout, callout_attributes) }
+
+  let(:contact_attributes) { { :account => account } }
+  let(:contact) { create(:contact, contact_attributes) }
+
+  let(:callout_participation_attributes) { { :callout => callout, :contact => contact } }
+  let(:callout_participation) { create(:callout_participation, callout_participation_attributes) }
+
+  let(:phone_call_attributes) { { :callout_participation => callout_participation } }
+  let(:phone_call) { create(:phone_call, phone_call_attributes) }
+
+  let(:factory_attributes) { { :phone_call => phone_call } }
+  let(:remote_phone_call_event) { create(:remote_phone_call_event, factory_attributes) }
+
   let(:execute_request) { true }
   let(:body) { {} }
   let(:headers) { {} }
-  let(:factory_attributes) { {} }
-  let(:remote_phone_call_event) { create(:remote_phone_call_event, factory_attributes) }
 
   def execute_request!
     do_request(method, url, body, headers)
@@ -33,7 +51,7 @@ RSpec.describe "Remote Phone Call Events" do
 
     describe "PATCH" do
       let(:method) { :patch }
-      let(:factory_attributes) { { "metadata" => {"bar" => "baz" }} }
+      let(:factory_attributes) { super().merge("metadata" => {"bar" => "baz" }) }
       let(:metadata) { { "foo" => "bar" } }
       let(:body) {
         {
@@ -60,6 +78,7 @@ RSpec.describe "Remote Phone Call Events" do
 
       it_behaves_like "resource_filtering" do
         let(:filter_on_factory) { :remote_phone_call_event }
+        let(:filter_factory_attributes) { factory_attributes }
       end
 
       it_behaves_like "authorization"
@@ -73,19 +92,33 @@ RSpec.describe "Remote Phone Call Events" do
       let(:direction) { nil }
       let(:call_status) { nil }
 
-      let(:twilio_request_auth_token) { "abcdefg" }
-      let(:twilio_request_validator) { Twilio::Security::RequestValidator.new(twilio_request_auth_token) }
+      let(:twilio_account_sid) { generate(:twilio_account_sid) }
+      let(:somleng_account_sid) { SecureRandom.hex }
+      let(:twilio_auth_token) { SecureRandom.hex }
+      let(:somleng_auth_token) { SecureRandom.hex }
 
-      let(:twilio_request_signature) { twilio_request_validator.build_signature_for(url, body) }
+      let(:request_account_sid) { twilio_account_sid }
+      let(:request_auth_token) { twilio_auth_token }
+
+      let(:twilio_request_validator) {
+        Twilio::Security::RequestValidator.new(request_auth_token)
+      }
+
+      let(:twilio_request_signature) {
+        twilio_request_validator.build_signature_for(url, body)
+      }
 
       let(:authorization_user) { nil }
       let(:authorization_password) { nil }
 
-      def env
-        super.merge(
-          "TWILIO_AUTH_TOKEN" => twilio_request_auth_token
+      let(:account_attributes) {
+        super().merge(
+          :twilio_account_sid => twilio_account_sid,
+          :twilio_auth_token => twilio_auth_token,
+          :somleng_account_sid => somleng_account_sid,
+          :somleng_auth_token => somleng_auth_token
         )
-      end
+      }
 
       def body
         {
@@ -93,7 +126,8 @@ RSpec.describe "Remote Phone Call Events" do
           "From" => from,
           "To" => to,
           "Direction" => direction,
-          "CallStatus" => call_status
+          "CallStatus" => call_status,
+          "AccountSid" => request_account_sid
         }
       end
 
@@ -247,23 +281,21 @@ RSpec.describe "Remote Phone Call Events" do
 
   describe "nested indexes" do
     let(:method) { :get }
-    let(:callout_factory_attributes) { {} }
-    let(:callout) { create(:callout, callout_factory_attributes) }
-    let(:callout_participation_factory_attributes) { { :callout => callout } }
-
-    let(:callout_participation) {
-      create(
-        :callout_participation,
-        callout_participation_factory_attributes
-      )
-    }
-
-    let(:phone_call_factory_attributes) { { :callout_participation => callout_participation } }
-    let(:phone_call) { create(:phone_call, phone_call_factory_attributes) }
-    let(:factory_attributes) { { :phone_call => phone_call } }
 
     def setup_scenario
-      create(:remote_phone_call_event)
+      create(
+        :remote_phone_call_event,
+        :phone_call => create(
+          :phone_call,
+          :callout_participation => create(
+            :callout_participation,
+            :callout => create(
+              :callout,
+              :account => account
+            )
+          )
+        )
+      )
       remote_phone_call_event
       super
     end
@@ -272,7 +304,7 @@ RSpec.describe "Remote Phone Call Events" do
       expect(JSON.parse(response.body)).to eq(JSON.parse([remote_phone_call_event].to_json))
     end
 
-    describe "GET '/api/phone_calls/:phone_call_id/remote_phone_call_events'" do
+    describe "GET '/api/phone_calls/:phone_call_id/remote_phone_call_events'"do
       let(:url) { api_phone_call_remote_phone_call_events_path(phone_call) }
       it { assert_filtered! }
     end
@@ -288,9 +320,7 @@ RSpec.describe "Remote Phone Call Events" do
     end
 
     describe "GET '/api/contact/:contact_id/remote_phone_call_events'" do
-      let(:contact) { create(:contact) }
       let(:url) { api_contact_remote_phone_call_events_path(contact) }
-      let(:phone_call_factory_attributes) { { :contact => contact } }
       it { assert_filtered! }
     end
   end

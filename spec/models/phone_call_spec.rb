@@ -67,7 +67,6 @@ RSpec.describe PhoneCall do
     def assert_defaults!
       expect(subject.errors).to be_empty
       expect(subject.msisdn).to be_present
-      expect(subject.contact).to be_present
     end
 
     context "outbound" do
@@ -79,38 +78,6 @@ RSpec.describe PhoneCall do
         expect(subject.contact).to eq(subject.callout_participation.contact)
         expect(subject.msisdn).to eq(subject.callout_participation.msisdn)
       end
-    end
-
-    context "inbound" do
-      let(:factory_traits) { [:inbound] }
-      let(:msisdn) { generate(:somali_msisdn) }
-      let(:factory_attributes) { { :msisdn => msisdn } }
-
-      context "contact exists with matching msisdn" do
-        let(:contact) { create(:contact, :msisdn => msisdn) }
-
-        def setup_scenario
-          contact
-          super
-        end
-
-        def assert_defaults!
-          super
-          expect(subject.contact).to eq(contact)
-          expect(subject.msisdn).to eq(contact.msisdn)
-        end
-
-        it { assert_defaults! }
-      end
-
-      context "contact does not exist" do
-       def assert_defaults!
-          super
-          expect(subject.msisdn).to eq(subject.contact.msisdn)
-        end
-      end
-
-      it { assert_defaults! }
     end
   end
 

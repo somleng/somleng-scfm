@@ -31,7 +31,7 @@ class Api::BatchOperationsController < Api::FilteredController
   end
 
   def association_chain
-    (permitted_types.include?(params[:type]) ? params[:type].constantize : BatchOperation::Base).all
+    (permitted_types.include?(params[:type]) ? params[:type].constantize : BatchOperation::Base).where(:account_id => current_account.id)
   end
 
   def permitted_types

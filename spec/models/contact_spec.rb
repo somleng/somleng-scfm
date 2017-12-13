@@ -5,6 +5,10 @@ RSpec.describe Contact do
 
   include SomlengScfm::SpecHelpers::MsisdnExamples
 
+  def msisdn_uniqueness_matcher
+    super.scoped_to(:account_id)
+  end
+
   include_examples "has_metadata"
   it_behaves_like "has_msisdn"
 

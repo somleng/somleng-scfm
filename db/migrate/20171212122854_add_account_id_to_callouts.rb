@@ -5,7 +5,7 @@ class AddAccountIdToCallouts < ApplicationMigration
     end
 
     if Callout.any?
-      if Account.count > 1
+      if Account.without_permissions.count > 1
         raise(ActiveRecord::IrreversibleMigration, "Cannot assign callouts to an account. More than one account exists")
       else
         account = Account.first_or_create!

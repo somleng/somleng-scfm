@@ -5,6 +5,8 @@ class BatchOperation::Base < ApplicationRecord
   include MetadataHelpers
   include Wisper::Publisher
 
+  belongs_to :account
+
   conditionally_serialize(:parameters, JSON)
 
   validates :type, :presence => true

@@ -24,6 +24,10 @@ FactoryBot.define do
     "user#{n}@example.com"
   end
 
+  sequence :twilio_account_sid do |n|
+    "#{Account::TWILIO_ACCOUNT_SID_PREFIX}#{n}"
+  end
+
   factory :callout do
     account
 
@@ -53,8 +57,12 @@ FactoryBot.define do
   end
 
   factory :batch_operation_base, :class => BatchOperation::Base do
+    account
+
     factory :callout_population, :aliases => [:batch_operation], :class => BatchOperation::CalloutPopulation do
-      callout
+      after(:build) do |callout_population|
+        callout_population.callout ||= build(:callout, :account => callout_population.account)
+      end
     end
 
     factory :batch_operation_phone_call_operation, :class => BatchOperation::PhoneCallOperation do

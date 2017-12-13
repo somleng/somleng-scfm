@@ -32,8 +32,7 @@ RSpec.shared_examples_for("resource_filtering") do |options = {}|
 
         let(:resource_from_different_account) {
           create(
-            filter_on_factory,
-            filter_factory_attributes.except(:account)
+            filter_on_factory
           )
         }
 

@@ -174,11 +174,7 @@ class PhoneCall < ApplicationRecord
 
   def set_defaults
     self.msisdn  ||= callout_participation_msisdn
-    self.contact ||= callout_participation_contact || find_or_initialize_contact
-  end
-
-  def find_or_initialize_contact
-    Contact.where_msisdn(msisdn).first_or_initialize
+    self.contact ||= callout_participation_contact
   end
 
   def validate_destroy

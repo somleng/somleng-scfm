@@ -6,7 +6,7 @@ module BatchOperationResource
   end
 
   def batch_operation_scope
-    permitted_batch_operation_types.any? ? BatchOperation::Base.where(:type => permitted_batch_operation_types) : BatchOperation::Base.all
+    permitted_batch_operation_types.any? ? current_account.batch_operations.where(:type => permitted_batch_operation_types) : current_account.batch_operations.all
   end
 
   def permitted_batch_operation_types

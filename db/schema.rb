@@ -10,16 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171212123107) do
+ActiveRecord::Schema.define(version: 20171213034649) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "accounts", force: :cascade do |t|
     t.jsonb "metadata", default: {}, null: false
+    t.jsonb "settings", default: {}, null: false
+    t.string "twilio_account_sid"
+    t.string "somleng_account_sid"
     t.integer "permissions", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["somleng_account_sid"], name: "index_accounts_on_somleng_account_sid", unique: true
+    t.index ["twilio_account_sid"], name: "index_accounts_on_twilio_account_sid", unique: true
   end
 
   create_table "batch_operations", force: :cascade do |t|
@@ -30,6 +35,8 @@ ActiveRecord::Schema.define(version: 20171212123107) do
     t.string "type", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "account_id", null: false
+    t.index ["account_id"], name: "index_batch_operations_on_account_id"
     t.index ["callout_id"], name: "index_batch_operations_on_callout_id"
   end
 
@@ -65,8 +72,8 @@ ActiveRecord::Schema.define(version: 20171212123107) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "account_id", null: false
+    t.index ["account_id", "msisdn"], name: "index_contacts_on_account_id_and_msisdn", unique: true
     t.index ["account_id"], name: "index_contacts_on_account_id"
-    t.index ["msisdn"], name: "index_contacts_on_msisdn", unique: true
   end
 
   create_table "oauth_access_grants", force: :cascade do |t|
@@ -177,6 +184,7 @@ ActiveRecord::Schema.define(version: 20171212123107) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "batch_operations", "accounts"
   add_foreign_key "batch_operations", "callouts"
   add_foreign_key "callout_participations", "batch_operations", column: "callout_population_id"
   add_foreign_key "callout_participations", "callouts"

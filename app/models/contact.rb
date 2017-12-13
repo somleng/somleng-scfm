@@ -17,5 +17,5 @@ class Contact < ApplicationRecord
            :through => :phone_calls
 
   validates :msisdn,
-            :uniqueness => true
+            :uniqueness => {:scope => :account_id}
 end

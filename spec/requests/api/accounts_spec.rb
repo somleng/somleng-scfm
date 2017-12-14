@@ -58,16 +58,29 @@ RSpec.describe "Accounts" do
       let(:method) { :patch }
       let(:metadata) { { "foo" => "bar" } }
       let(:factory_attributes) { super().merge("metadata" => {"bar" => "baz" }) }
+      let(:twilio_account_sid) { generate(:twilio_account_sid) }
+      let(:twilio_auth_token) { generate(:auth_token) }
+      let(:somleng_account_sid) { generate(:somleng_account_sid) }
+      let(:somleng_auth_token) { generate(:auth_token) }
+
       let(:body) {
         {
           :metadata => metadata,
-          :metadata_merge_mode => "replace"
+          :metadata_merge_mode => "replace",
+          :twilio_account_sid => twilio_account_sid,
+          :somleng_account_sid => somleng_account_sid,
+          :twilio_auth_token => twilio_auth_token,
+          :somleng_auth_token => somleng_auth_token
         }
       }
 
       def assert_update!
         expect(response.code).to eq("204")
         expect(account.reload.metadata).to eq(metadata)
+        expect(account.twilio_account_sid).to eq(twilio_account_sid)
+        expect(account.twilio_auth_token).to eq(twilio_auth_token)
+        expect(account.somleng_account_sid).to eq(somleng_account_sid)
+        expect(account.somleng_auth_token).to eq(somleng_auth_token)
       end
 
       it { assert_update! }

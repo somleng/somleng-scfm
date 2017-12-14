@@ -28,6 +28,14 @@ FactoryBot.define do
     "#{Account::TWILIO_ACCOUNT_SID_PREFIX}#{n}"
   end
 
+  sequence :auth_token do
+    SecureRandom.uuid
+  end
+
+  sequence :somleng_account_sid do
+    SecureRandom.uuid
+  end
+
   factory :callout do
     account
 

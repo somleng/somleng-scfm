@@ -10,8 +10,9 @@ Rails.application.routes.draw do
       resources :users, :only => :index
     end
 
-    resources :users, :except => [:new, :edit]
+    resource :account, :only => [:show, :update], :as => :current_account
 
+    resources :users, :except => [:new, :edit]
     resources :remote_phone_call_events, :only => [:index, :show, :update]
 
     resources :contacts, :except => [:new, :edit] do

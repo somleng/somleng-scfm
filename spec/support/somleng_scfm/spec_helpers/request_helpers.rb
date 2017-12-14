@@ -1,3 +1,5 @@
+require_relative "../spec_helpers"
+
 module SomlengScfm::SpecHelpers::RequestHelpers
   def env
     super.merge(

@@ -1718,10 +1718,10 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
 
 We can see from the output that the phone call has been created successfully with the `remote_request_params` that we specified. Also notice that the `call_flow_logic` is `null`. The `call_flow_logic` parameter allows us to specify which call flow logic will be executed when a request is received from Twilio or Somleng to the `url` endpoint. By default the `call_flow_logic` parameter is `null` which means that it will execute the default application call flow logic, which is defined [here](https://github.com/somleng/somleng-scfm/blob/master/app/models/call_flow_logic/application.rb). If you take a look at that file you'll see it's a plain ruby class which implements the `to_xml` method. The `to_xml` method returns valid TwiML using the [twilio-ruby](https://github.com/twilio/twilio-ruby) which simply says the words "Thanks for trying our documentation. Enjoy!" then plays a song.
 
-But what if we want to use our own call flow logic? In order to do this you can define a ruby class in your application inheriting `CallFlowLogic::Base`, then implement the `to_xml` method (for some more complex examples checkout the [call_flow_logic directory](https://github.com/somleng/somleng-scfm/tree/master/app/models/call_flow_logic)). Once you have defined your call flow logic you can set it on a callout, callout participation or phone call. For this example let's try to set the call flow logic to `CallFlowLogic::OutcomeMonitoring` which is already defined in the [call_flow_logic directory](https://github.com/somleng/somleng-scfm/tree/master/app/models/call_flow_logic).
+But what if we want to use our own call flow logic? In order to do this you can define a ruby class in your application inheriting `CallFlowLogic::Base`, then implement the `to_xml` method (for some more complex examples checkout the [call_flow_logic directory](https://github.com/somleng/somleng-scfm/tree/master/app/models/call_flow_logic)). Once you have defined your call flow logic you can set it on a callout, callout participation or phone call. For this example let's try to set the call flow logic to `CallFlowLogic::AvfCapom::CapomShort` which is already defined in the [call_flow_logic directory](https://github.com/somleng/somleng-scfm/tree/master/app/models/call_flow_logic).
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -XPATCH http://scfm:3000/api/phone_calls/5 -d call_flow_logic=CallFlowLogic::OutcomeMonitoring | jq'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -XPATCH http://scfm:3000/api/phone_calls/5 -d call_flow_logic=CallFlowLogic::AvfCapom::CapomShort | jq'
 ```
 
 ```
@@ -1742,23 +1742,23 @@ Oops. Doesn't seem to have worked. The error message suggests that our call flow
 
 ### Registering your call flow logic
 
-In order to make our custom call flow logic available, we need to register it first. You can use the environment variable `REGISTERED_CALL_FLOW_LOGIC` to define a comma separated list of call flow logic that your application uses. You can also use the environment variable `DEFAULT_CALL_FLOW_LOGIC` to override the application's default call flow logic. This is useful for specifying call flow logic for incoming calls. For example, setting the following enironment variables will register the call flow logic called `CallFlowLogic::OutcomeMonitoring` and set it to the application default.
+In order to make our custom call flow logic available, we need to register it first. You can use the environment variable `REGISTERED_CALL_FLOW_LOGIC` to define a comma separated list of call flow logic that your application uses. You can also use the environment variable `DEFAULT_CALL_FLOW_LOGIC` to override the application's default call flow logic. This is useful for specifying call flow logic for incoming calls. For example, setting the following enironment variables will register the call flow logic called `CallFlowLogic::AvfCapom::CapomShort` and set it to the application default.
 
 ```
-REGISTERED_CALL_FLOW_LOGIC=CallFlowLogic::OutcomeMonitoring
-DEFAULT_CALL_FLOW_LOGIC=CallFlowLogic::OutcomeMonitoring
+REGISTERED_CALL_FLOW_LOGIC=CallFlowLogic::AvfCapom::CapomShort
+DEFAULT_CALL_FLOW_LOGIC=CallFlowLogic::AvfCapom::CapomShort
 ```
 
 Let's go ahead and restart our API server and specify these environment variables. Don't forget to shutdown the running API server first (Ctrl-C). Also note that for brevity we have left out the Twilio and Somleng configuration variables. Be sure to add them in as well.
 
 ```
-$ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 -e REGISTERED_CALL_FLOW_LOGIC=CallFlowLogic::OutcomeMonitoring -e DEFAULT_CALL_FLOW_LOGIC=CallFlowLogic::OutcomeMonitoring dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
+$ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 -e REGISTERED_CALL_FLOW_LOGIC=CallFlowLogic::AvfCapom::CapomShort -e DEFAULT_CALL_FLOW_LOGIC=CallFlowLogic::AvfCapom::CapomShort dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
 ```
 
 Ok let's try to use our call flow logic again.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -XPATCH http://scfm:3000/api/phone_calls/4 -d call_flow_logic=CallFlowLogic::OutcomeMonitoring'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -XPATCH http://scfm:3000/api/phone_calls/4 -d call_flow_logic=CallFlowLogic::AvfCapom::CapomShort'
 ```
 
 ```
@@ -1792,7 +1792,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
     "url": "http://18a2c6b3.ngrok.io/api/remote_phone_call_events"
   },
   "remote_queue_response": {},
-  "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+  "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
   "remotely_queued_at": null,
   "created_at": "2017-11-24T05:45:22.310Z",
   "updated_at": "2017-11-24T05:46:07.622Z"
@@ -1826,7 +1826,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
     "url": "http://18a2c6b3.ngrok.io/api/remote_phone_call_events"
   },
   "remote_queue_response": {},
-  "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+  "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
   "remotely_queued_at": null,
   "created_at": "2017-11-24T05:45:22.310Z",
   "updated_at": "2017-11-24T05:46:41.262Z"
@@ -2066,14 +2066,14 @@ We can see that both of our callouts have the `status` `initialized` and that bo
 
 ### More about Callouts
 
-For this example, let's assume that we want to use the `CallFlowLogic::OutcomeMonitoring` logic for all calls in the second callout, but not the first. Also let's assume that we don't want to create any phone calls for the first callout which is using a different call flow.
+For this example, let's assume that we want to use the `CallFlowLogic::AvfCapom::CapomShort` logic for all calls in the second callout, but not the first. Also let's assume that we don't want to create any phone calls for the first callout which is using a different call flow.
 
 #### Updating
 
 Firstly let's go ahead and update the `call_flow_logic` for the second callout. Note that you'll have to register this callout first as explained in the previous section.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/2 -d call_flow_logic="CallFlowLogic::OutcomeMonitoring"'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/2 -d call_flow_logic="CallFlowLogic::AvfCapom::CapomShort"'
 ```
 
 ```
@@ -2092,7 +2092,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
 {
   "id": 2,
   "status": "initialized",
-  "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+  "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
   "metadata": {},
   "created_at": "2017-11-23T03:13:39.136Z",
   "updated_at": "2017-11-23T03:35:50.274Z"
@@ -2101,7 +2101,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
 
 #### Events
 
-Now we can see that our `call_flow_logic` has been updated to `CallFlowLogic::OutcomeMonitoring`, but the `status` is still `initialized`. The status of a callout can be either `initialized`, `running`, `paused` or `stopped`. We can change the status by either, `starting`, `stopping`, `pausing` or `resuming` the callout.
+Now we can see that our `call_flow_logic` has been updated to `CallFlowLogic::AvfCapom::CapomShort`, but the `status` is still `initialized`. The status of a callout can be either `initialized`, `running`, `paused` or `stopped`. We can change the status by either, `starting`, `stopping`, `pausing` or `resuming` the callout.
 
 Since, that for this example we only want to deal with the second callout, let's go ahead and set the status to `running` by `starting` the callout.
 
@@ -2113,7 +2113,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -XP
 {
   "id": 2,
   "status": "running",
-  "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+  "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
   "metadata": {},
   "created_at": "2017-11-23T03:13:39.136Z",
   "updated_at": "2017-11-23T03:52:51.145Z"
@@ -2138,7 +2138,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
   {
     "id": 2,
     "status": "running",
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "metadata": {},
     "created_at": "2017-11-23T03:13:39.136Z",
     "updated_at": "2017-11-23T03:52:51.145Z"
@@ -2252,7 +2252,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
     "contact_id": 1,
     "callout_population_id": 2,
     "msisdn": "+252662345678",
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "metadata": {},
     "created_at": "2017-11-24T05:47:50.534Z",
     "updated_at": "2017-11-24T05:47:50.534Z"
@@ -2263,7 +2263,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
     "contact_id": 2,
     "callout_population_id": 2,
     "msisdn": "+252662345679",
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "metadata": {},
     "created_at": "2017-11-24T05:47:50.545Z",
     "updated_at": "2017-11-24T05:47:50.545Z"
@@ -2337,7 +2337,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
     "contact_id": 1,
     "callout_population_id": 2,
     "msisdn": "+252662345678",
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "metadata": {},
     "created_at": "2017-11-24T05:47:50.534Z",
     "updated_at": "2017-11-24T05:47:50.534Z"
@@ -2348,7 +2348,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
     "contact_id": 2,
     "callout_population_id": 2,
     "msisdn": "+252662345679",
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "metadata": {},
     "created_at": "2017-11-24T05:47:50.545Z",
     "updated_at": "2017-11-24T05:47:50.545Z"
@@ -2448,7 +2448,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
       "method": "GET"
     },
     "remote_queue_response": {},
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "remotely_queued_at": null,
     "created_at": "2017-11-24T05:51:36.704Z",
     "updated_at": "2017-11-24T05:51:36.704Z"
@@ -2474,7 +2474,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
       "method": "GET"
     },
     "remote_queue_response": {},
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "remotely_queued_at": null,
     "created_at": "2017-11-24T05:51:36.719Z",
     "updated_at": "2017-11-24T05:51:36.719Z"
@@ -2651,7 +2651,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
       "to_formatted": "+252 66 234 5678",
       "uri": "/api/2010-04-01/Accounts/0213d485-12cb-4d0d-9cb1-966546240a57/Calls/8ddfdac8-f200-4d07-be56-1444d9edfd7e"
     },
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "remotely_queued_at": "2017-11-24T05:46:43.246Z",
     "created_at": "2017-11-24T05:45:22.310Z",
     "updated_at": "2017-11-24T05:46:43.246Z"
@@ -2677,7 +2677,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
       "method": "GET"
     },
     "remote_queue_response": {},
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "remotely_queued_at": null,
     "created_at": "2017-11-24T05:51:36.704Z",
     "updated_at": "2017-11-24T05:51:36.704Z"
@@ -2703,7 +2703,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
       "method": "GET"
     },
     "remote_queue_response": {},
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "remotely_queued_at": null,
     "created_at": "2017-11-24T05:51:36.719Z",
     "updated_at": "2017-11-24T05:51:36.719Z"
@@ -2788,7 +2788,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
       "method": "GET"
     },
     "remote_queue_response": {},
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "remotely_queued_at": null,
     "created_at": "2017-11-24T05:51:36.704Z",
     "updated_at": "2017-11-24T05:51:36.704Z"
@@ -2814,7 +2814,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
       "method": "GET"
     },
     "remote_queue_response": {},
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "remotely_queued_at": null,
     "created_at": "2017-11-24T05:51:36.719Z",
     "updated_at": "2017-11-24T05:51:36.719Z"
@@ -2923,7 +2923,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
       "to_formatted": "+252 66 234 5678",
       "uri": "/api/2010-04-01/Accounts/0213d485-12cb-4d0d-9cb1-966546240a57/Calls/392be5ab-ad3e-4746-8076-de3995bda6a3"
     },
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "remotely_queued_at": "2017-11-24T06:47:09.246Z",
     "created_at": "2017-11-24T05:51:36.704Z",
     "updated_at": "2017-11-24T06:47:09.246Z"
@@ -2964,7 +2964,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
       "to_formatted": "+252 66 234 5679",
       "uri": "/api/2010-04-01/Accounts/0213d485-12cb-4d0d-9cb1-966546240a57/Calls/b2d6480a-27ea-4c90-a39e-ea4adeae5209"
     },
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "remotely_queued_at": "2017-11-24T06:47:09.214Z",
     "created_at": "2017-11-24T05:51:36.719Z",
     "updated_at": "2017-11-24T06:47:09.214Z"
@@ -3139,7 +3139,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
       "to_formatted": "+252 66 234 5678",
       "uri": "/api/2010-04-01/Accounts/0213d485-12cb-4d0d-9cb1-966546240a57/Calls/8ddfdac8-f200-4d07-be56-1444d9edfd7e"
     },
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "remotely_queued_at": "2017-11-24T05:46:43.246Z",
     "created_at": "2017-11-24T05:45:22.310Z",
     "updated_at": "2017-11-24T05:46:43.246Z"
@@ -3180,7 +3180,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
       "to_formatted": "+252 66 234 5678",
       "uri": "/api/2010-04-01/Accounts/0213d485-12cb-4d0d-9cb1-966546240a57/Calls/392be5ab-ad3e-4746-8076-de3995bda6a3"
     },
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "remotely_queued_at": "2017-11-24T06:47:09.246Z",
     "created_at": "2017-11-24T05:51:36.704Z",
     "updated_at": "2017-11-24T06:47:09.246Z"
@@ -3221,7 +3221,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s 
       "to_formatted": "+252 66 234 5679",
       "uri": "/api/2010-04-01/Accounts/0213d485-12cb-4d0d-9cb1-966546240a57/Calls/b2d6480a-27ea-4c90-a39e-ea4adeae5209"
     },
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "remotely_queued_at": "2017-11-24T06:47:09.214Z",
     "created_at": "2017-11-24T05:51:36.719Z",
     "updated_at": "2017-11-24T06:47:09.214Z"
@@ -3323,7 +3323,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
       "to_formatted": "+252 66 234 5678",
       "uri": "/api/2010-04-01/Accounts/0213d485-12cb-4d0d-9cb1-966546240a57/Calls/392be5ab-ad3e-4746-8076-de3995bda6a3"
     },
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "remotely_queued_at": "2017-11-24T06:47:09.246Z",
     "created_at": "2017-11-24T05:51:36.704Z",
     "updated_at": "2017-11-24T06:47:09.246Z"
@@ -3364,7 +3364,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
       "to_formatted": "+252 66 234 5679",
       "uri": "/api/2010-04-01/Accounts/0213d485-12cb-4d0d-9cb1-966546240a57/Calls/b2d6480a-27ea-4c90-a39e-ea4adeae5209"
     },
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "remotely_queued_at": "2017-11-24T06:47:09.214Z",
     "created_at": "2017-11-24T05:51:36.719Z",
     "updated_at": "2017-11-24T06:47:09.214Z"
@@ -3532,7 +3532,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
       "to_formatted": "+252 66 234 5678",
       "uri": "/api/2010-04-01/Accounts/0213d485-12cb-4d0d-9cb1-966546240a57/Calls/392be5ab-ad3e-4746-8076-de3995bda6a3"
     },
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "remotely_queued_at": "2017-11-24T06:47:09.246Z",
     "created_at": "2017-11-24T05:51:36.704Z",
     "updated_at": "2017-11-24T09:12:07.749Z"

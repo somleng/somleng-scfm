@@ -1031,7 +1031,7 @@ Sample Response:
     "method": "GET"
   },
   "remote_queue_response": {},
-  "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+  "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
   "remotely_queued_at": null,
   "created_at": "2017-11-29T03:54:35.502Z",
   "updated_at": "2017-11-29T03:58:07.144Z"
@@ -1114,7 +1114,7 @@ Sample Response:
   "metadata": {},
   "remote_call_id": "06d9ebf7-4d71-4470-8b57-09235979781e",
   "remote_direction": "outbound-api",
-  "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+  "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
   "created_at": "2017-11-29T03:58:16.135Z",
   "updated_at": "2017-11-29T03:58:16.135Z"
 }
@@ -1161,7 +1161,7 @@ $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v 
 #### Filter by call_flow_logic
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[call_flow_logic]=CallFlowLogic::OutcomeMonitoring" | jq'
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/remote_phone_call_events?q[call_flow_logic]=CallFlowLogic::AvfCapom::CapomShort" | jq'
 ```
 
 #### Filter by remote_call_id
@@ -1252,7 +1252,7 @@ Sample Response:
     "metadata": {},
     "remote_call_id": "06d9ebf7-4d71-4470-8b57-09235979781e",
     "remote_direction": "outbound-api",
-    "call_flow_logic": "CallFlowLogic::OutcomeMonitoring",
+    "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
     "created_at": "2017-11-29T03:58:16.135Z",
     "updated_at": "2017-11-29T03:58:16.135Z"
   }

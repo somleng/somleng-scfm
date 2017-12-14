@@ -27,7 +27,7 @@ RSpec.describe CallFlowLogic::Base do
     end
 
     context "using environment variables" do
-      let(:call_flow_logic) { CallFlowLogic::OutcomeMonitoring }
+      let(:call_flow_logic) { CallFlowLogic::AvfCapom::CapomShort }
       let(:asserted_call_flow_logic) { call_flow_logic }
 
       def env

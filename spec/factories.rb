@@ -110,7 +110,25 @@ FactoryBot.define do
   end
 
   factory :remote_phone_call_event do
+    transient do
+      build_phone_call true
+    end
+
     details { generate(:twilio_remote_call_event_details) }
+    remote_call_id { details["CallSid"] }
+    remote_direction { details["Direction"] }
+    call_flow_logic { RemotePhoneCallEventObserver::DEFAULT_CALL_FLOW_LOGIC }
+
+    after(:build) do |remote_phone_call_event, evaluator|
+      if evaluator.build_phone_call
+        remote_phone_call_event.phone_call ||= build(
+          :phone_call,
+          :msisdn => remote_phone_call_event.details["From"],
+          :remote_call_id => remote_phone_call_event.remote_call_id,
+          :remote_direction => remote_phone_call_event.remote_direction
+        )
+      end
+    end
   end
 
   factory :account do

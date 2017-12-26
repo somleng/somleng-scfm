@@ -8,6 +8,15 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
     @resource = RemotePhoneCallEvent.new(:details => permitted_build_params)
   end
 
+  def setup_resource
+    subscribe_listeners
+    resource.setup!
+  end
+
+  def subscribe_listeners
+    resource.subscribe(RemotePhoneCallEventObserver.new)
+  end
+
   def find_resources_association_chain
     if params[:phone_call_id]
       phone_call.remote_phone_call_events

@@ -1,4 +1,4 @@
-RSpec.shared_examples_for "api_resource_event" do
+RSpec.shared_examples_for "api_resource_event" do |options = {}|
   def setup_scenario
     super
     do_request(:post, url, body)
@@ -22,7 +22,7 @@ RSpec.shared_examples_for "api_resource_event" do
       expect(response.code).to eq("201")
       expect(response.headers["Location"]).to eq(eventable_path)
       expect(parsed_response_body).to eq(JSON.parse(eventable.reload.to_json))
-      expect(parsed_response_body["status"]).to eq(asserted_new_status)
+      expect(parsed_response_body["status"]).to eq(asserted_new_status) if options[:assert_status] != false
     end
 
     it { assert_create! }

@@ -31,5 +31,12 @@ module SomlengScfm
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    host = ENV.fetch("SOMLENG_SCFM_HOST") { "localhost" }
+    port = ENV.fetch("SOMLENG_SCFM_PORT") { "3000" }
+    config.action_mailer.default_url_options = { :host => host, :port => port }
+
+    # From https://blog.bigbinary.com/2016/02/26/rails-5-allows-configuring-queue-name-for-mailers.html
+    # config.action_mailer.deliver_later_queue_name = ApplicationJob.queue_name(:action_mailer_delivery_job)
   end
 end

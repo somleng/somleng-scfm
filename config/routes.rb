@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  devise_for :users
   root :to => redirect('https://github.com/somleng/somleng-scfm')
 
   namespace "api", :defaults => { :format => "json" } do
@@ -12,7 +13,10 @@ Rails.application.routes.draw do
 
     resource :account, :only => [:show, :update], :as => :current_account
 
-    resources :users, :except => [:new, :edit]
+    resources :users, :except => [:new, :edit] do
+      resources :user_events, :only => :create
+    end
+
     resources :remote_phone_call_events, :only => [:index, :show, :update]
 
     resources :contacts, :except => [:new, :edit] do

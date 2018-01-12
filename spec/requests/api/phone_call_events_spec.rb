@@ -5,9 +5,10 @@ RSpec.describe "POST '/api/phone_calls/:phone_call_id/phone_call_events'" do
 
   let(:method) { :post }
 
-  let(:account_traits) { { :with_access_token => nil } }
+  let(:account_traits) { {} }
   let(:account_attributes) { {} }
   let(:account) { create(:account, *account_traits.keys, account_attributes) }
+  let(:access_token_model) { create(:access_token, :resource_owner => account) }
 
   let(:callout_attributes) { { :account => account } }
   let(:callout) { create(:callout, callout_attributes) }

@@ -5,8 +5,9 @@ RSpec.describe "Account" do
 
   let(:body) { {} }
   let(:factory_attributes) { {} }
-  let(:factory_traits) { {:with_access_token => nil} }
+  let(:factory_traits) { {} }
   let(:account) { create(:account, *factory_traits.keys, factory_attributes) }
+  let(:access_token_model) { create(:access_token, :resource_owner => account) }
 
   def setup_scenario
     super

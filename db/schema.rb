@@ -92,21 +92,26 @@ ActiveRecord::Schema.define(version: 20171226101503) do
 
   create_table "oauth_access_tokens", force: :cascade do |t|
     t.bigint "resource_owner_id", null: false
+    t.bigint "created_by_id", null: false
+    t.jsonb "metadata", default: {}, null: false
     t.bigint "application_id"
     t.string "token", null: false
     t.string "refresh_token"
     t.integer "expires_in"
     t.datetime "revoked_at"
     t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "scopes"
     t.string "previous_refresh_token", default: "", null: false
     t.index ["application_id"], name: "index_oauth_access_tokens_on_application_id"
+    t.index ["created_by_id"], name: "index_oauth_access_tokens_on_created_by_id"
     t.index ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true
     t.index ["resource_owner_id"], name: "index_oauth_access_tokens_on_resource_owner_id"
     t.index ["token"], name: "index_oauth_access_tokens_on_token", unique: true
   end
 
   create_table "oauth_applications", force: :cascade do |t|
+    t.bigint "owner_id", null: false
     t.string "name", null: false
     t.string "uid", null: false
     t.string "secret", null: false
@@ -114,6 +119,7 @@ ActiveRecord::Schema.define(version: 20171226101503) do
     t.string "scopes", default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["owner_id"], name: "index_oauth_applications_on_owner_id"
     t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
   end
 
@@ -203,8 +209,10 @@ ActiveRecord::Schema.define(version: 20171226101503) do
   add_foreign_key "contacts", "accounts"
   add_foreign_key "oauth_access_grants", "accounts", column: "resource_owner_id"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
+  add_foreign_key "oauth_access_tokens", "accounts", column: "created_by_id"
   add_foreign_key "oauth_access_tokens", "accounts", column: "resource_owner_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
+  add_foreign_key "oauth_applications", "accounts", column: "owner_id"
   add_foreign_key "phone_calls", "batch_operations", column: "create_batch_operation_id"
   add_foreign_key "phone_calls", "batch_operations", column: "queue_batch_operation_id"
   add_foreign_key "phone_calls", "batch_operations", column: "queue_remote_fetch_batch_operation_id"

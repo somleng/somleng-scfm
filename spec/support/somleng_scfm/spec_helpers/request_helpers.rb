@@ -23,10 +23,14 @@ module SomlengScfm::SpecHelpers::RequestHelpers
   end
 
   def account
-    @account ||= create(:account, :with_access_token)
+    access_token_model.resource_owner
   end
 
   def access_token
-    account.access_token.token
+    access_token_model.token
+  end
+
+  def access_token_model
+    @access_token_model ||= create(:access_token)
   end
 end

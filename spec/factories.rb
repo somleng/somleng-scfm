@@ -132,12 +132,6 @@ FactoryBot.define do
   end
 
   factory :account do
-    trait :with_access_token do
-      after(:build) do |account|
-        account.access_token ||= build(:access_token, :resource_owner_id => account.id)
-      end
-    end
-
     trait :super_admin do
       permissions [:super_admin]
     end
@@ -150,5 +144,8 @@ FactoryBot.define do
     password_confirmation { password }
   end
 
-  factory :access_token, :class => Doorkeeper::AccessToken
+  factory :access_token do
+    association :resource_owner, :factory => :account
+    created_by { resource_owner }
+  end
 end

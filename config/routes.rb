@@ -9,9 +9,12 @@ Rails.application.routes.draw do
 
     resources :accounts, :except => [:new, :edit] do
       resources :users, :only => :index
+      resources :access_tokens, :only => :index
     end
 
     resource :account, :only => [:show, :update], :as => :current_account
+
+    resources :access_tokens
 
     resources :users, :except => [:new, :edit] do
       resources :user_events, :only => :create

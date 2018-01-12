@@ -3,9 +3,10 @@ require 'rails_helper'
 RSpec.describe "Batch Operations" do
   include SomlengScfm::SpecHelpers::RequestHelpers
 
-  let(:account_traits) { { :with_access_token => nil } }
+  let(:account_traits) { {} }
   let(:account_attributes) { {} }
   let(:account) { create(:account, *account_traits.keys, account_attributes) }
+  let(:access_token_model) { create(:access_token, :resource_owner => account) }
 
   let(:factory_attributes) { { :account => account } }
   let(:batch_operation) { create(:batch_operation, factory_attributes) }

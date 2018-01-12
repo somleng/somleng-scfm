@@ -6,7 +6,7 @@ class Api::UsersController < Api::FilteredController
   end
 
   def association_chain
-    account.users.all
+    specified_or_current_account.users.all
   end
 
   def filter_class
@@ -19,9 +19,5 @@ class Api::UsersController < Api::FilteredController
 
   def resource_location
     api_user_path(resource)
-  end
-
-  def account
-    current_account.super_admin? && params[:account_id] && Account.find(params[:account_id]) || current_account
   end
 end

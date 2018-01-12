@@ -13,7 +13,7 @@ RSpec.describe Account do
       is_expected.to have_many(:callout_participations)
       is_expected.to have_many(:phone_calls)
       is_expected.to have_many(:remote_phone_call_events)
-      is_expected.to have_one(:access_token).dependent(:restrict_with_error)
+      is_expected.to have_many(:access_tokens).dependent(:restrict_with_error)
     end
 
     it { assert_associations! }

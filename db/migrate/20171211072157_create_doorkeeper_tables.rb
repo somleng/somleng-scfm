@@ -1,6 +1,14 @@
 class CreateDoorkeeperTables < ApplicationMigration
   def change
     create_table :oauth_applications do |t|
+      t.references(
+        :owner,
+        :foreign_key => {
+          :to_table => :accounts
+        },
+        :null => false
+      )
+
       t.string  :name,         null: false
       t.string  :uid,          null: false
       t.string  :secret,       null: false
@@ -48,6 +56,17 @@ class CreateDoorkeeperTables < ApplicationMigration
         :null => false
       )
 
+      t.references(
+        :created_by,
+        :index => true,
+        :foreign_key => {
+          :to_table => :accounts
+        },
+        :null => false
+      )
+
+      t.public_send(json_column_type, :metadata, :null => false, :default => json_column_default)
+
       t.references :application
 
       # If you use a custom token generator you may need to change this column
@@ -56,12 +75,12 @@ class CreateDoorkeeperTables < ApplicationMigration
       # https://github.com/doorkeeper-gem/doorkeeper/tree/v3.0.0.rc1#custom-access-token-generator
       #
       # t.text     :token,             null: false
-      t.string   :token,                  null: false
+      t.string   :token,                  :null => false
 
       t.string   :refresh_token
       t.integer  :expires_in
       t.datetime :revoked_at
-      t.datetime :created_at,             null: false
+      t.timestamps                       :null => false
       t.string   :scopes
 
       # If there is a previous_refresh_token column,

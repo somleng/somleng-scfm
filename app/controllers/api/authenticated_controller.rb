@@ -14,4 +14,8 @@ class Api::AuthenticatedController < Api::BaseController
   def deny_access!
     head(:unauthorized)
   end
+
+  def specified_or_current_account
+    current_account.super_admin? && params[:account_id] && Account.find(params[:account_id]) || current_account
+  end
 end

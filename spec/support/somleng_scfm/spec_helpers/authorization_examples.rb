@@ -18,7 +18,7 @@ RSpec.shared_examples_for "authorization" do |options = {}|
 
   if options[:super_admin_only]
     context "not super admin" do
-      let(:account) { create(:account, :with_access_token) }
+      let(:account) { create(:access_token).resource_owner }
       it { assert_unauthorized! }
     end
   end

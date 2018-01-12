@@ -24,7 +24,7 @@ RSpec.shared_examples_for("resource_filtering") do |options = {}|
     if options[:filter_by_account] != false
       context "by account" do
         let(:filtered_resource) {
-          create(
+          defined?(super()) ? super() : create(
             filter_on_factory,
             filter_factory_attributes
           )

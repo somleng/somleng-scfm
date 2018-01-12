@@ -3,9 +3,10 @@ require 'rails_helper'
 RSpec.describe "Remote Phone Call Events" do
   include SomlengScfm::SpecHelpers::RequestHelpers
 
-  let(:account_traits) { { :with_access_token => nil } }
+  let(:account_traits) { {} }
   let(:account_attributes) { {} }
   let(:account) { create(:account, *account_traits.keys, account_attributes) }
+  let(:access_token_model) { create(:access_token, :resource_owner => account) }
 
   let(:callout_attributes) { { :account => account } }
   let(:callout) { create(:callout, callout_attributes) }

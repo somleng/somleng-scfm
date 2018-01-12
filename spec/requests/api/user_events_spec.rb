@@ -6,9 +6,10 @@ RSpec.describe "User Events" do
   describe "POST '/user/:user_id/user_events'" do
     let(:eventable) { create(:user) }
 
-    let(:account_traits) { { :with_access_token => nil } }
+    let(:account_traits) { {} }
     let(:account_attributes) { {} }
     let(:account) { create(:account, *account_traits.keys, account_attributes) }
+    let(:access_token_model) { create(:access_token, :resource_owner => account) }
     let(:eventable_attributes) { { :account => account } }
 
     let(:eventable) { create(:user, eventable_attributes) }

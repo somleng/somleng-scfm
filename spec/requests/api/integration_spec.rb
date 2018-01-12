@@ -13,9 +13,10 @@ RSpec.describe "Batch Operation Integration Specs" do
     include SomlengScfm::SpecHelpers::SomlengClientHelpers
 
     let(:method) { :post }
-    let(:account_traits) { { :with_access_token => nil } }
+    let(:account_traits) { {} }
     let(:account_attributes) { {} }
     let(:account) { create(:account, *account_traits.keys, account_attributes) }
+    let(:access_token_model) { create(:access_token, :resource_owner => account) }
 
     let(:batch_operation_factory_attributes) { { :account => account } }
     let(:batch_operation) { create(batch_operation_factory, batch_operation_factory_attributes) }

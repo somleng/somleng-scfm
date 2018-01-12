@@ -16,10 +16,9 @@ class Account < ApplicationRecord
           ],
           :null => false
 
-  has_one :access_token,
-          :class_name => "Doorkeeper::AccessToken",
-          :foreign_key => :resource_owner_id,
-          :dependent => :restrict_with_error
+  has_many :access_tokens,
+           :foreign_key => :resource_owner_id,
+           :dependent => :restrict_with_error
 
   has_many :users,
            :dependent => :restrict_with_error

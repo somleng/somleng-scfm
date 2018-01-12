@@ -17,6 +17,7 @@ RSpec.shared_examples_for "api_resource_event" do |options = {}|
   context "valid request" do
     let(:body) { {:event => event} }
     let(:parsed_response_body) { JSON.parse(response.body) }
+    let(:options) { options }
 
     def assert_create!
       expect(response.code).to eq("201")

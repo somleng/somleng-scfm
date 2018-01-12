@@ -23,6 +23,7 @@ RSpec.describe Event::User do
       it {
         expect(enqueued_job).to be_present
         expect(enqueued_job[:job]).to eq(ActionMailer::DeliveryJob)
+        expect(enqueued_job[:queue]).to eq(ApplicationJob::DEFAULT_QUEUE_NAME)
       }
     end
   end

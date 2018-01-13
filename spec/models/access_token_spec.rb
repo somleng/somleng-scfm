@@ -15,7 +15,8 @@ RSpec.describe AccessToken do
 
   describe "destroying" do
     let(:creator) { create(:account) }
-    let(:destroyer) { create(:account) }
+    let(:destroyer_traits) { {} }
+    let(:destroyer) { create(:account, *destroyer_traits.keys) }
     let(:factory_attributes) { {:destroyer => destroyer, :created_by => creator} }
     subject { create(factory, factory_attributes) }
 
@@ -24,12 +25,23 @@ RSpec.describe AccessToken do
       subject.destroy
     end
 
-    context "allowed to destroy" do
-      let(:destroyer) { creator }
+    def assert_destroy!
+      expect(described_class.find_by_id(subject.id)).to eq(nil)
+    end
 
-      it {
-        expect(described_class.find_by_id(subject.id)).to eq(nil)
-      }
+    context "no destroyer" do
+      let(:destroyer) { nil }
+      it { assert_destroy! }
+    end
+
+    context "destoyer is creator" do
+      let(:destroyer) { creator }
+      it { assert_destroy! }
+    end
+
+    context "destroyer is super admin" do
+      let(:destroyer_traits) { super().merge(:super_admin => nil) }
+      it { assert_destroy! }
     end
 
     context "not allowed to destroy" do
@@ -45,5 +57,14 @@ RSpec.describe AccessToken do
         )
       }
     end
+  end
+
+  describe "#to_json" do
+    let(:parsed_json) { JSON.parse(subject.to_json) }
+    let(:asserted_keys) { ["id", "token", "created_at", "updated_at", "metadata"] }
+
+    it {
+      expect(parsed_json.keys).to match_array(asserted_keys)
+    }
   end
 end

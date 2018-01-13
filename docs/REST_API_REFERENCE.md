@@ -10,16 +10,32 @@ Just like the [GETTING_STARTED](https://github.com/somleng/somleng-scfm/blob/mas
 $ docker pull dwilkie/somleng-scfm
 ```
 
-Setup a new database:
+Setup a new database with a Super Admin Account:
 
 ```
-$ docker run --rm -v /tmp/somleng-scfm/db:/tmp/db -e RAILS_ENV=production -e RAILS_DB_ADAPTER=sqlite3 dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake db:create && bundle exec rake db:migrate && if [ ! -f /tmp/db/somleng_scfm_production.sqlite3 ]; then cp /usr/src/app/db/somleng_scfm_production.sqlite3 /tmp/db; fi'
+$ docker run --rm -v /tmp/somleng-scfm/db:/tmp/db -e RAILS_ENV=production -e RAILS_DB_ADAPTER=sqlite3 -e SECRET_KEY_BASE=secret -e CREATE_SUPER_ADMIN_ACCOUNT=1 -e OUTPUT=all dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake db:create && bundle exec rake db:migrate && bundle exec rake db:seed && if [ ! -f /tmp/db/somleng_scfm_production.sqlite3 ]; then cp /usr/src/app/db/somleng_scfm_production.sqlite3 /tmp/db; fi'
 ```
 
-And boot the API Server:
+Sample Response:
+
+```
+$ Super Admin Account Access Token: 49c6f7961eae951e1d8ecb28093c4d59fcf3fd5fb31f120fcdef45f18c930a06
+```
+
+Note down the output above and boot the API Server:
 
 ```
 $ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
+```
+
+## Accounts
+
+### Create
+
+Only super admins can create an account. So we'll need to use our super admin account as created when seeding the database.
+
+```
+$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/accounts --data-urlencode "msisdn=+252662345699" | jq'
 ```
 
 ## Contacts

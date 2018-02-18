@@ -1,0 +1,11 @@
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/StringLiterals:
+  EnforcedStyle: double_quotes
+
+Metrics/LineLength:
+  Max: 100
+
+Style/Documentation:
+  Enabled: false

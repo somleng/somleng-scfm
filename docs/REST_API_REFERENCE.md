@@ -13,16 +13,16 @@ $ docker pull dwilkie/somleng-scfm
 Setup a new database with a Super Admin Account:
 
 ```
-$ docker run --rm -v /tmp/somleng-scfm/db:/tmp/db -e RAILS_ENV=production -e RAILS_DB_ADAPTER=sqlite3 -e SECRET_KEY_BASE=secret -e CREATE_SUPER_ADMIN_ACCOUNT=1 -e OUTPUT=all dwilkie/somleng-scfm /bin/bash -c 'bundle exec rake db:create && bundle exec rake db:migrate && bundle exec rake db:seed && if [ ! -f /tmp/db/somleng_scfm_production.sqlite3 ]; then cp /usr/src/app/db/somleng_scfm_production.sqlite3 /tmp/db; fi'
+$ docker run --rm -v /tmp/somleng-scfm:/tmp -e RAILS_ENV=production -e RAILS_DB_ADAPTER=sqlite3 -e SECRET_KEY_BASE=secret -e CREATE_SUPER_ADMIN_ACCOUNT=1 -e OUTPUT=super_admin -e FORMAT=http_basic dwilkie/somleng-scfm /bin/bash -c 'if [ -f /tmp/db/somleng_scfm_production.sqlite3 ]; then cp /tmp/db/somleng_scfm_production.sqlite3 ./db/; fi && bundle exec rake db:create && bundle exec rake db:migrate && SUPER_ADMIN_ACCESS_TOKEN=$(bundle exec rake db:seed) && mkdir -p /tmp/db/ && cp ./db/somleng_scfm_production.sqlite3 /tmp/db && echo $SUPER_ADMIN_ACCESS_TOKEN > /tmp/super_admin_access_token.txt' && SUPER_ADMIN_ACCESS_TOKEN=$(</tmp/somleng-scfm/super_admin_access_token.txt) && echo "Super Admin Account Access Token: $SUPER_ADMIN_ACCESS_TOKEN"
 ```
 
-Sample Response:
+You should see your Super Admin's access token in the `$SUPER_ADMIN_ACCESS_TOKEN` environment variable as shown below:
 
 ```
 $ Super Admin Account Access Token: 49c6f7961eae951e1d8ecb28093c4d59fcf3fd5fb31f120fcdef45f18c930a06
 ```
 
-Note down the output above and boot the API Server:
+In *another* terminal the server:
 
 ```
 $ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
@@ -32,10 +32,137 @@ $ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h sc
 
 ### Create
 
-Only super admins can create an account. So we'll need to use our super admin account as created when seeding the database.
+Only Super Admins can create an account. In this example we use the account credentials of the super admin account we created above to create another account.
 
 ```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/accounts --data-urlencode "msisdn=+252662345699" | jq'
+$ docker run -t --rm -e SUPER_ADMIN_ACCESS_TOKEN=$SUPER_ADMIN_ACCESS_TOKEN --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/accounts -u $SUPER_ADMIN_ACCESS_TOKEN: | jq'
+```
+
+Sample Response:
+
+```json
+{
+  "id": 2,
+  "metadata": {},
+  "settings": {},
+  "twilio_account_sid": null,
+  "somleng_account_sid": null,
+  "permissions": [],
+  "created_at": "2018-02-18T12:52:49.993Z",
+  "updated_at": "2018-02-18T12:52:49.993Z"
+}
+```
+
+### Update
+
+```
+$ docker run -t --rm -e SUPER_ADMIN_ACCESS_TOKEN=$SUPER_ADMIN_ACCESS_TOKEN --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/accounts/2 -d "somleng_account_sid=abcdefg" -d "metadata[name]=Basic+Account" -u $SUPER_ADMIN_ACCESS_TOKEN:'
+```
+
+Sample Response:
+
+```
+< HTTP/1.1 204 No Content
+```
+
+### Fetch
+
+```
+$ docker run -t --rm -e SUPER_ADMIN_ACCESS_TOKEN=$SUPER_ADMIN_ACCESS_TOKEN --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/accounts/2 -u $SUPER_ADMIN_ACCESS_TOKEN: | jq'
+```
+
+Sample Response:
+
+```json
+{
+  "id": 2,
+  "metadata": {
+    "name": "Basic Account"
+  },
+  "settings": {},
+  "twilio_account_sid": null,
+  "somleng_account_sid": "abcdefg",
+  "permissions": [],
+  "created_at": "2018-02-18T12:52:49.993Z",
+  "updated_at": "2018-02-18T13:06:36.101Z"
+}
+```
+
+### Index and Filter
+
+#### All Accounts
+
+```
+$ docker run -t --rm -e SUPER_ADMIN_ACCESS_TOKEN=$SUPER_ADMIN_ACCESS_TOKEN --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/accounts -u $SUPER_ADMIN_ACCESS_TOKEN: | jq'
+```
+
+Sample Response:
+
+```
+< HTTP/1.1 200 OK
+< Per-Page: 25
+< Total: 2
+```
+
+```json
+[
+  {
+    "id": 1,
+    "metadata": {},
+    "settings": {},
+    "twilio_account_sid": null,
+    "somleng_account_sid": null,
+    "permissions": [
+      "super_admin"
+    ],
+    "created_at": "2018-02-18T12:50:30.276Z",
+    "updated_at": "2018-02-18T12:50:30.276Z"
+  },
+  {
+    "id": 2,
+    "metadata": {
+      "name": "Basic Account"
+    },
+    "settings": {},
+    "twilio_account_sid": null,
+    "somleng_account_sid": "abcdefg",
+    "permissions": [],
+    "created_at": "2018-02-18T12:52:49.993Z",
+    "updated_at": "2018-02-18T13:06:36.101Z"
+  }
+]
+```
+
+### Delete
+
+```
+$ docker run -t --rm -e SUPER_ADMIN_ACCESS_TOKEN=$SUPER_ADMIN_ACCESS_TOKEN --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/accounts/2 -u $SUPER_ADMIN_ACCESS_TOKEN:'
+```
+
+Sample Response:
+
+```
+< HTTP/1.1 204 No Content
+```
+
+## Access Tokens
+
+### Create
+
+```
+$ docker run -t --rm -e SUPER_ADMIN_ACCESS_TOKEN=$SUPER_ADMIN_ACCESS_TOKEN --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/access_tokens -d "account_sid=2" -u $SUPER_ADMIN_ACCESS_TOKEN: | jq'
+```
+
+Sample Response:
+
+```json
+{
+  "id": 2,
+  "token": "98860748b16c56acdf0c719e0d39f3bf9524c9119e8023b1b5ade32a964a6c5b",
+  "created_at": "2018-02-18T13:19:40.834Z",
+  "updated_at": "2018-02-18T13:19:40.838Z",
+  "metadata": {}
+}
 ```
 
 ## Contacts
@@ -211,8 +338,6 @@ Sample Response:
 ```
 
 ### Delete
-
-Note that the the response is `204 No Content`
 
 ```
 $ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/contacts/1'

@@ -1,20 +1,24 @@
 class ApplicationSeeder
   OUTPUTS = {
-    :all => "all",
-    :none => "none",
-    :super_admin => "super_admin",
-  }
+    all: "all",
+    none: "none",
+    super_admin: "super_admin"
+  }.freeze
+
+  FORMATS = {
+    human: "human",
+    http_basic: "http_basic"
+  }.freeze
 
   DEFAULT_OUTPUT = :none
+  DEFAULT_FORMAT = :human
 
-  def initialize(options = {})
-  end
+  def initialize(options = {}); end
 
   def seed!
-    if create_super_admin_account?
-      super_admin_account = create_super_admin_account!
-      print_account_info(super_admin_account, "Super Admin") if output_super_admin?
-    end
+    return unless create_super_admin_account?
+    super_admin_account = create_super_admin_account!
+    print_account_info(super_admin_account, "Super Admin") if output_super_admin?
   end
 
   private
@@ -27,8 +31,16 @@ class ApplicationSeeder
     @output ||= OUTPUTS[default_output]
   end
 
+  def format
+    @format ||= FORMATS[default_format]
+  end
+
   def default_output
-    (ENV["OUTPUT"] && ENV["OUTPUT"].to_sym) || DEFAULT_OUTPUT
+    (ENV["OUTPUT"]&.to_sym) || DEFAULT_OUTPUT
+  end
+
+  def default_format
+    (ENV["FORMAT"]&.to_sym) || DEFAULT_FORMAT
   end
 
   def create_super_admin_account!
@@ -41,7 +53,7 @@ class ApplicationSeeder
       account.save!
     end
 
-    account.access_tokens.first_or_create!(:created_by => account)
+    account.access_tokens.first_or_create!(created_by: account)
 
     account
   end
@@ -54,10 +66,13 @@ class ApplicationSeeder
     output == OUTPUTS[:super_admin] || output_all?
   end
 
+  def format_http_basic?
+    format == FORMATS[:http_basic]
+  end
+
   def print_account_info(account, type)
-    print(
-      "#{type} Account Access Token: #{account.access_tokens.first.token}\n"
-    )
+    access_token = account.access_tokens.first.token
+    output = format_http_basic? ? access_token : "#{type} Account Access Token: #{access_token}\n"
+    print(output)
   end
 end
-

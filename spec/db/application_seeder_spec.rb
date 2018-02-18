@@ -1,5 +1,5 @@
-require 'rails_helper'
-require Rails.root.join('db/application_seeder')
+require "rails_helper"
+require Rails.root.join("db/application_seeder")
 
 RSpec.describe ApplicationSeeder do
   let(:initialization_options) { {} }
@@ -20,7 +20,7 @@ RSpec.describe ApplicationSeeder do
       assert_outputs!(asserted_outputs) { seed! }
     end
 
-    def assert_outputs!(asserted_outputs, &block)
+    def assert_outputs!(asserted_outputs)
       expectation = expect { yield }
 
       if asserted_outputs.empty?
@@ -42,8 +42,6 @@ RSpec.describe ApplicationSeeder do
     end
 
     context "CREATE_SUPER_ADMIN_ACCOUNT=1" do
-
-
       def env
         super.merge("CREATE_SUPER_ADMIN_ACCOUNT" => "1")
       end
@@ -61,15 +59,22 @@ RSpec.describe ApplicationSeeder do
       end
 
       context "OUTPUT=super_admin" do
-        let(:asserted_outputs) { ["Super Admin Account Access Token"] }
-
         def env
-          super.merge("OUTPUT" => "super_admin")
+          super.merge("OUTPUT" => "super_admin", "FORMAT" => format)
         end
 
-        it { assert_seed! }
+        context "FORMAT=human" do
+          let(:format) { :human }
+          let(:asserted_outputs) { ["Super Admin Account Access Token"] }
+          it { assert_seed! }
+        end
+
+        context "FORMAT=http_basic" do
+          let(:format) { :http_basic }
+          let(:asserted_outputs) { ["[\da-f]+"] }
+          it { assert_seed! }
+        end
       end
     end
   end
 end
-

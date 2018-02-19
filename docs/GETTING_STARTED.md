@@ -311,7 +311,7 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 ]
 ```
 
-Note that again we specified the `-v` flag to curl in order to get the headers. If you take a closer look at the headers you'll see `Per-Page: 25`and `Total: 3`. All index requests to the REST API are paginated. This means that the maxiumum number of contacts displayed for a single request is 25. The actual number will appear in the `Total` header (in this case 3). If there are more than 25 contacts then you'll see a `Link` header with links to the first, last, next and previous pages.
+Note that again we specified the `-v` flag to curl in order to get the headers. If you take a closer look at the headers you'll see `Per-Page: 25` and `Total: 3`. All index requests to the REST API are paginated. This means that the maxiumum number of contacts displayed for a single request is 25. The actual number will appear in the `Total` header (in this case 3). If there are more than 25 contacts then you'll see a `Link` header with links to the first, last, next and previous pages.
 
 ### Filtering
 
@@ -348,7 +348,7 @@ You can filter contacts by their metadata or by their msisdn (phone number).
 Looking at our contact index, adding the Ghostbusters was just a joke so let's delete them.
 
 ```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -XDELETE -v "http://scfm:3000/api/contacts/3"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -XDELETE -v "http://scfm:3000/api/contacts/3" -u $ACCESS_TOKEN:'
 ```
 
 You should see something like:
@@ -510,7 +510,7 @@ Typically you don't want to call everyone in your contacts table. Let's say for 
 To do this let's update the callout population specifying the `contact_filter_params` which will limit our population of the callout. Note that the `contacts_filter_params` are nested under `parameters` attribute. A batch operation will have different configurable parameters depending on the type.
 
 ```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/1 -d parameters[contact_filter_params][metadata][gender]=f'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/1 -d parameters[contact_filter_params][metadata][gender]=f -u $ACCESS_TOKEN:'
 ```
 
 Again since we're updating a record, a successful response will return `No Content`.
@@ -824,7 +824,7 @@ The `id` field in the response above is Alice's callout participation id
 Once we have Alice's callout participation id we can delete her from the callout. Note that this doesn't delete her from the contacts table. It simply removes her from the callout.
 
 ```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/callout_participations/1'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/callout_participations/1 -u $ACCESS_TOKEN:'
 ```
 
 As before, when deleting a resource successfully we should get a `No Content` reponse.
@@ -1294,7 +1294,7 @@ Phone calls which have a `status` of `created` can also be deleted, since they h
 Let's go ahead and delete the most recent call that we just created for Alice's callout participation.
 
 ```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/phone_calls/2'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/phone_calls/2 -u $ACCESS_TOKEN:'
 ```
 
 ```
@@ -1795,7 +1795,7 @@ $ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h sc
 Ok let's try to use our call flow logic again.
 
 ```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -XPATCH http://scfm:3000/api/phone_calls/4 -d call_flow_logic=CallFlowLogic::AvfCapom::CapomShort'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -XPATCH http://scfm:3000/api/phone_calls/4 -d call_flow_logic=CallFlowLogic::AvfCapom::CapomShort -u $ACCESS_TOKEN:'
 ```
 
 ```
@@ -2110,7 +2110,7 @@ For this example, let's assume that we want to use the `CallFlowLogic::AvfCapom:
 Firstly let's go ahead and update the `call_flow_logic` for the second callout. Note that you'll have to register this callout first as explained in the previous section.
 
 ```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/2 -d call_flow_logic="CallFlowLogic::AvfCapom::CapomShort"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/2 -d call_flow_logic="CallFlowLogic::AvfCapom::CapomShort" -u $ACCESS_TOKEN:'
 ```
 
 ```
@@ -2755,7 +2755,7 @@ That's a lot of calls. In fact that's all the calls that we have created so far.
 When queuing phone calls, we can filter on any of the attributes in the phone calls tables, in the callout participations table and in the callouts table. Let's update our batch operation with some filter parameters.
 
 ```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/4 -d "parameters[callout_filter_params][status]=running" -d "parameters[phone_call_filter_params][status]=created"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/4 -d "parameters[callout_filter_params][status]=running" -d "parameters[phone_call_filter_params][status]=created" -u $ACCESS_TOKEN:'
 ```
 
 ```
@@ -3275,7 +3275,7 @@ When updating the remote status, we're only interested in the calls that have th
 Note that in the command below we specify the statuses as a comma separated list:
 
 ```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/5 -d "parameters[callout_filter_params][status]=running" -d "parameters[phone_call_filter_params][status]=remotely_queued,in_progress"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/5 -d "parameters[callout_filter_params][status]=running" -d "parameters[phone_call_filter_params][status]=remotely_queued,in_progress" -u $ACCESS_TOKEN:'
 ```
 
 ```
@@ -3416,7 +3416,7 @@ We can see that this filter now returns only our phone calls which have the `sta
 We can further limit the number of calls which will be updated by specifying a limit. Let's do this by updating our batch operation parameters again and setting the `limit` to `1`. Note that we also need to specify our filter parameters otherwise they'll be overridden.
 
 ```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/5 -d "parameters[callout_filter_params][status]=running" -d "parameters[phone_call_filter_params][status]=remotely_queued,in_progress" -d "parameters[limit]=1"'
+$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/5 -d "parameters[callout_filter_params][status]=running" -d "parameters[phone_call_filter_params][status]=remotely_queued,in_progress" -d "parameters[limit]=1" -u $ACCESS_TOKEN:'
 ```
 
 ```

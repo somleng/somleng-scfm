@@ -30,6 +30,9 @@ gem 'devise'
 gem 'devise-async'
 gem 'devise_invitable'
 gem 'bitmask_attributes', :github => "numerex/bitmask_attributes"
+gem 'bootstrap', '~> 4.0.0'
+gem 'jquery-rails'
+gem 'haml'
 
 group :development, :test do
   gem 'pry'

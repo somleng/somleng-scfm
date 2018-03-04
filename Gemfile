@@ -33,6 +33,7 @@ gem 'bitmask_attributes', :github => "numerex/bitmask_attributes"
 gem 'bootstrap', '~> 4.0.0'
 gem 'jquery-rails'
 gem 'haml'
+gem 'simple_form'
 
 group :development, :test do
   gem 'pry'

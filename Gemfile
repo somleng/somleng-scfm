@@ -31,6 +31,7 @@ gem 'devise-async'
 gem 'devise_invitable'
 gem 'bitmask_attributes', :github => "numerex/bitmask_attributes"
 gem 'bootstrap', '~> 4.0.0'
+gem 'octicons_helper'
 gem 'jquery-rails'
 gem 'haml'
 gem 'simple_form'
@@ -56,4 +57,5 @@ group :test do
   gem 'codeclimate-test-reporter', '~> 1.0.0'
   gem "fakefs", :require => 'fakefs/safe'
   gem 'wisper-rspec'
+  gem 'capybara'
 end

@@ -56,6 +56,20 @@ body {
 .border-top { border-top: 1px solid #e5e5e5; }
 .border-bottom { border-bottom: 1px solid #e5e5e5; }
 
+.has-error {
+  .help-block {
+    color: red;
+  }
+
+  label {
+    color: red;
+  }
+
+  .form-control {
+    border-color: red;
+  }
+}
+
 @media (min-width: 768px) {
   #left-sidebar.collapse {
     display: block;

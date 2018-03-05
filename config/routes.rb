@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   devise_for :users
-  root :to => redirect('https://github.com/somleng/somleng-scfm')
+  root to: redirect('dashboard')
+
+  namespace 'dashboard' do
+    root to: 'base#index'
+  end
 
   namespace "api", :defaults => { :format => "json" } do
     defaults :format => :xml do

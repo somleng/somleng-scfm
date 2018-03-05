@@ -1,0 +1,55 @@
+!!!
+%html{:lang => "en"}
+  %head
+    = csrf_meta_tags
+    %meta{:content => "width=device-width, initial-scale=1, shrink-to-fit=no", :name => "viewport"}/
+    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
+    = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+  %body
+    %nav.navbar.navbar-dark.sticky-top.bg-dark.navbar-expand-lg.p-0.justify-content-between
+      .navbar-brand
+        %button.navbar-toggler.d-md-none{"aria-controls" => "left-sidebar", "aria-expanded" => "false", "aria-label" => "Toggle navigation", "data-target" => "#left-sidebar", "data-toggle" => "collapse", :type => "button"}
+          %span.navbar-toggler-icon
+        Company name
+
+      %ul.navbar-nav.px-3
+        %li.nav-item.text-nowrap
+          = link_to 'Sign Out', destroy_user_session_path, class: 'nav-link', method: :delete, confirm: 'Are you sure?'
+
+    .container-fluid
+      .row
+        %nav#left-sidebar.collapse.col-12.col-md-3.col-xl-2.bg-light.sidebar
+          #accordion.sidebar-sticky
+            .card
+              .card-header
+                %h5.mb-0
+                  .btn.btn-default.text-muted
+                    Dashboard
+              .card-body
+                %ul.nav.flex-column
+                  %li.nav-item
+                    %a.nav-link.active{:href => "#"}
+                      Callouts
+                  %li.nav-item
+                    %a.nav-link{:href => "#"}
+                      Batch Operation
+                  %li.nav-item
+                    %a.nav-link{:href => "#"}
+                      Contacts
+            .card
+              .card-header
+                %h5.mb-0
+                  .btn.btn-default.text-muted
+                    Admin Management
+              .card-body
+                %ul.nav.flex-column
+                  %li.nav-item
+                    %a.nav-link{:href => "#"}
+                      Users
+                  %li.nav-item
+                    %a.nav-link{:href => "#"}
+                      Api-key
+
+        %main.col-12.col-md-9.col-xl-10.ml-sm-auto.pt-3.px-4
+          = render 'layouts/flash_messages'
+          = yield

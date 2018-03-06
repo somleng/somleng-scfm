@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Forget Password', type: :system do
-  let(:user) { create(:user, password: '12345678') }
+  let(:user) { create(:user) }
 
   it 'will send email for reset password' do
     visit '/users/password/new'

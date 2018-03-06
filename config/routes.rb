@@ -3,7 +3,9 @@ Rails.application.routes.draw do
   root to: redirect('dashboard')
 
   namespace 'dashboard' do
-    root to: 'base#index'
+    root to: 'users#index'
+    resources :users, only: :index
+    resources :access_tokens, only: :index
   end
 
   namespace "api", :defaults => { :format => "json" } do

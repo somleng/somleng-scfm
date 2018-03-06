@@ -6,59 +6,10 @@
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
   %body
-    %nav.navbar.navbar-dark.sticky-top.bg-dark.navbar-expand-lg.p-0.justify-content-between
-      .navbar-brand
-        %button.navbar-toggler.d-md-none{"aria-controls" => "left-sidebar", "aria-expanded" => "false", "aria-label" => "Toggle navigation", "data-target" => "#left-sidebar", "data-toggle" => "collapse", :type => "button"}
-          %span.navbar-toggler-icon
-        Somleng-scfm
-
-      %ul.navbar-nav.px-3
-        %li
-          %span.oi.oi-person{"aria-hidden" => "true", :title => "person"}
-          .btn-group
-            %button.btn.btn-secondary.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}
-              = octicon "person"
-            .dropdown-menu.dropdown-menu-right
-              = link_to edit_user_registration_path do
-                %button.dropdown-item{:type => "button"} Change Password
-              = link_to destroy_user_session_path, method: :delete, data: { confirm: 'Are you sure?' } do
-                %button.dropdown-item{:type => "button"} Sign Out
-
-
+    = render 'shared/nav_bar'
     .container-fluid
       .row
-        %nav#left-sidebar.collapse.col-12.col-md-3.col-xl-2.bg-light.sidebar
-          #accordion.sidebar-sticky
-            .card
-              .card-header
-                %h5.mb-0
-                  .btn.btn-default.text-muted
-                    Dashboard
-              .card-body
-                %ul.nav.flex-column
-                  %li.nav-item
-                    %a.nav-link.active{:href => "#"}
-                      Callouts
-                  %li.nav-item
-                    %a.nav-link{:href => "#"}
-                      Batch Operation
-                  %li.nav-item
-                    %a.nav-link{:href => "#"}
-                      Contacts
-            .card
-              .card-header
-                %h5.mb-0
-                  .btn.btn-default.text-muted
-                    Admin Management
-              .card-body
-                %ul.nav.flex-column
-                  %li.nav-item
-                    %a.nav-link{:href => "#"}
-                      Users
-                  %li.nav-item
-                    %a.nav-link{:href => "#"}
-                      Api-key
-
+        = render 'shared/side_bar'
         %main.col-12.col-md-9.col-xl-10.ml-sm-auto.pt-3.px-4
-          = render 'layouts/flash_messages'
+          = render 'shared/flash_messages'
           = yield

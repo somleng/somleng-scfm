@@ -2,6 +2,10 @@ body {
   font-size: .875rem;
 }
 
+main {
+  overflow-x: scroll;
+}
+
 .navbar-brand {
   padding-left: 14px;
 }

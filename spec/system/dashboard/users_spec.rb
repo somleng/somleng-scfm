@@ -20,4 +20,15 @@ RSpec.describe 'User management page', type: :system do
     expect(page).to have_text(user.email)
     expect(page).not_to have_text('bopha@somleng.com.kh')
   end
+
+  context 'click invite user button' do
+    it 'will open new inviation page' do
+      visit 'dashboard/users'
+
+      click_button 'Invite user'
+
+      expect(page).to have_text('Send invitation')
+      expect(page).to have_current_path(new_user_invitation_path)
+    end
+  end
 end

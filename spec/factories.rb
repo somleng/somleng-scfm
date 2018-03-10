@@ -4,7 +4,7 @@ FactoryBot.define do
   end
 
   sequence :twilio_request_params do
-    Hash[Somleng::Client.new.api.account.calls.method(:create).parameters.map { |param| [param[1].to_s, param[1].to_s] }]
+    Hash[Twilio::REST::Client.new.api.account.calls.method(:create).parameters.map { |param| [param[1].to_s, param[1].to_s] }]
   end
 
   sequence :twilio_remote_call_event_details do
@@ -132,6 +132,12 @@ FactoryBot.define do
   end
 
   factory :account do
+    trait :with_default_provider do
+      platform_provider_name "twilio"
+      twilio_account_sid
+      twilio_auth_token { generate(:auth_token) }
+    end
+
     trait :super_admin do
       permissions [:super_admin]
     end

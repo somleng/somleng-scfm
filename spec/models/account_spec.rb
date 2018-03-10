@@ -19,6 +19,14 @@ RSpec.describe Account do
     it { assert_associations! }
   end
 
+  describe "validations" do
+    def assert_associations!
+      is_expected.to validate_inclusion_of(:platform_provider_name).in_array(["twilio", "somleng"]).allow_nil
+    end
+
+    it { assert_associations! }
+  end
+
   describe "defaults" do
     subject { create(factory) }
 

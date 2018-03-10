@@ -8,6 +8,6 @@ class TwilioRequestParamsValidator < ActiveModel::EachValidator
   private
 
   def allowed_parameters
-    @allowed_parameters ||= Somleng::Client.new.api.account.calls.method(:create).parameters.map { |param| param[1].to_s }
+    @allowed_parameters ||= Twilio::REST::Client.new.api.account.calls.method(:create).parameters.map { |param| param[1].to_s }
   end
 end

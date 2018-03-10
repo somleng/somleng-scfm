@@ -1,14 +1,15 @@
 class Account < ApplicationRecord
   DEFAULT_PERMISSIONS_BITMASK = 0
   TWILIO_ACCOUNT_SID_PREFIX = "AC"
+  DEFAULT_PLATFORM_PROVIDER = "twilio"
+  PLATFORM_PROVIDERS = [DEFAULT_PLATFORM_PROVIDER, "somleng"]
 
   include MetadataHelpers
 
   conditionally_serialize(:settings, JSON)
 
   store_accessor :settings,
-                 :twilio_auth_token,
-                 :somleng_auth_token
+                 :platform_provider_name
 
   bitmask :permissions,
           :as => [
@@ -44,6 +45,11 @@ class Account < ApplicationRecord
 
   delegate :twilio_account_sid?, :to => :class
 
+  validates :platform_provider_name,
+            :inclusion => {
+              :in => PLATFORM_PROVIDERS
+            }, :allow_nil => true
+
   def super_admin?
     permissions?(:super_admin)
   end
@@ -60,7 +66,20 @@ class Account < ApplicationRecord
     account_sid.to_s.start_with?(TWILIO_ACCOUNT_SID_PREFIX)
   end
 
+  def platform_provider
+    @platform_provider ||= Somleng::PlatformProvider.new(
+      account_sid: platform_configuration(:account_sid),
+      auth_token: platform_configuration(:auth_token),
+      api_host: platform_configuration(:api_host),
+      api_base_url: platform_configuration(:api_base_url)
+    )
+  end
+
   private
+
+  def platform_configuration(key)
+    read_attribute("#{platform_provider_name}_#{key}")
+  end
 
   def set_default_permissions_bitmask
     self.permissions_bitmask = DEFAULT_PERMISSIONS_BITMASK if permissions.empty?

@@ -58,6 +58,12 @@ class PhoneCall < ApplicationRecord
            :prefix => true,
            :allow_nil => true
 
+  delegate :account,
+           :to => :contact
+
+  delegate :platform_provider,
+           :to => :account
+
   before_validation :set_defaults, :on => :create
   before_destroy    :validate_destroy
 

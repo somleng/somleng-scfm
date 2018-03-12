@@ -62,4 +62,7 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 
   config.include Devise::Test::IntegrationHelpers, type: :system
+  config.include Devise::Test::ControllerHelpers, type: :controller
+
+  config.infer_base_class_for_anonymous_controllers = false
 end

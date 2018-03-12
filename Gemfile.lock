@@ -26,6 +26,14 @@ GIT
       aws-sdk (~> 2)
       rails (>= 4.2)
 
+GIT
+  remote: https://github.com/thoughtbot/shoulda-matchers.git
+  revision: 4b160bd19ecca7f97d7ac22dccd5fde9b0da5a9f
+  branch: rails-5
+  specs:
+    shoulda-matchers (3.1.2)
+      activesupport (>= 4.2.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -221,6 +229,10 @@ GEM
       bundler (>= 1.3.0)
       railties (= 5.1.4)
       sprockets-rails (>= 2.0.0)
+    rails-controller-testing (1.0.2)
+      actionpack (~> 5.x, >= 5.0.1)
+      actionview (~> 5.x, >= 5.0.1)
+      activesupport (~> 5.x)
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
@@ -269,8 +281,6 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (>= 1.1, < 3)
-    shoulda-matchers (3.1.2)
-      activesupport (>= 4.0.0)
     simple_form (3.5.1)
       actionpack (> 4, < 5.2)
       activemodel (> 4, < 5.2)
@@ -358,10 +368,11 @@ DEPENDENCIES
   pry
   puma (~> 3.7)
   rails (~> 5.1.4)
+  rails-controller-testing
   responders
   rspec-rails
   sass-rails (~> 5.0)
-  shoulda-matchers
+  shoulda-matchers!
   simple_form
   simplecov
   spring

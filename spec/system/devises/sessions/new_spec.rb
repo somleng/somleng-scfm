@@ -1,12 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe 'User sign in', type: :system do
-  let(:user) { create(:user, password: '12345678') }
+  let(:user) { create(:user, password: 'mysecret') }
 
   it 'can sign in' do
     visit '/users/sign_in'
     fill_in 'user[email]', with: user.email
-    fill_in 'user[password]', with: 12345678
+    fill_in 'user[password]', with: 'mysecret'
     click_button 'Log in'
 
     expect(page).to have_text('Signed in successfully.')

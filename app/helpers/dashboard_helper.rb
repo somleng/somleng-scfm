@@ -1,4 +1,4 @@
-module Dashboard::BaseHelper
+module DashboardHelper
   def nav_link(link_text, link_path, controllers)
     class_name = 'nav-link'
     class_name += controllers.include?(controller_name) ? ' active' : ''

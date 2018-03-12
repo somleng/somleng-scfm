@@ -1,0 +1,13 @@
+.container.devise-page
+  .row
+    .col-lg-4.offset-lg-4.col-md-6.offset-md-3.col-sm-8.offset-sm-2
+      .card
+        .card-body
+          %h5.card-title Change your password
+          = simple_form_for resource, as: resource_name, url: password_path(resource_name), html: { method: :put } do |f|
+            = f.hidden_field :reset_password_token
+            = f.input :password, input_html: { autofocus: true }
+            = f.input :password_confirmation
+            .form-group.actions
+              = f.submit "Change my password", class: 'btn btn-primary'
+          = render "devise/shared/links"

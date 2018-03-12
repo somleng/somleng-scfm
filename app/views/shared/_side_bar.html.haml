@@ -1,0 +1,27 @@
+%nav#left-sidebar.collapse.col-12.col-md-3.col-xl-2.bg-light.sidebar
+  #accordion.sidebar-sticky
+    .card
+      .card-header
+        %h5.mb-0
+          .btn.btn-default.text-muted
+            Dashboard
+      .card-body
+        %ul.nav.flex-column
+          %li.nav-item
+            %a.nav-link{:href => "#"}
+              Callouts
+          %li.nav-item
+            %a.nav-link{:href => "#"}
+              Batch Operation
+          %li.nav-item
+            %a.nav-link{:href => "#"}
+              Contacts
+    .card
+      .card-header
+        %h5.mb-0
+          .btn.btn-default.text-muted
+            Admin Management
+      .card-body
+        %ul.nav.flex-column
+          = nav_link 'Users', dashboard_users_path, 'users'
+          = nav_link 'Api-key', dashboard_access_tokens_path, 'access_tokens'

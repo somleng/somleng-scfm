@@ -13,9 +13,8 @@
           %li.nav-item
             %a.nav-link{:href => "#"}
               Batch Operation
-          %li.nav-item
-            %a.nav-link{:href => "#"}
-              Contacts
+          = nav_link 'Contacts', dashboard_contacts_path, 'contacts'
+
     .card
       .card-header
         %h5.mb-0

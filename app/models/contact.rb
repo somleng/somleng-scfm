@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: contacts
+#
+#  id         :integer          not null, primary key
+#  msisdn     :string           not null
+#  metadata   :jsonb            not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  account_id :integer          not null
+#
+
 class Contact < ApplicationRecord
   include MsisdnHelpers
   include MetadataHelpers

@@ -1,0 +1,5 @@
+= simple_form_for contact, url: url do |f|
+  = f.input :msisdn, input_html: { autofocus: true }, label: 'Phone number'
+  .form-group.actions
+    = f.button :submit, class: 'btn btn-primary'
+    = link_to 'Cancel', :back, class: 'btn btn-outline-dark'

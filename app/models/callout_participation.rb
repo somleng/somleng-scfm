@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: callout_participations
+#
+#  id                    :integer          not null, primary key
+#  callout_id            :integer          not null
+#  contact_id            :integer          not null
+#  callout_population_id :integer
+#  msisdn                :string           not null
+#  call_flow_logic       :string
+#  metadata              :jsonb            not null
+#  created_at            :datetime         not null
+#  updated_at            :datetime         not null
+#
+
 class CalloutParticipation < ApplicationRecord
   include MsisdnHelpers
   include MetadataHelpers

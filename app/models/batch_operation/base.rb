@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: batch_operations
+#
+#  id         :integer          not null, primary key
+#  callout_id :integer
+#  parameters :jsonb            not null
+#  metadata   :jsonb            not null
+#  status     :string           not null
+#  type       :string           not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  account_id :integer          not null
+#
+
 class BatchOperation::Base < ApplicationRecord
   self.table_name = :batch_operations
 

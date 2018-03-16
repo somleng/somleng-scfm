@@ -1,3 +1,29 @@
+# == Schema Information
+#
+# Table name: phone_calls
+#
+#  id                                    :integer          not null, primary key
+#  callout_participation_id              :integer
+#  contact_id                            :integer          not null
+#  create_batch_operation_id             :integer
+#  queue_batch_operation_id              :integer
+#  queue_remote_fetch_batch_operation_id :integer
+#  status                                :string           not null
+#  msisdn                                :string           not null
+#  remote_call_id                        :string
+#  remote_status                         :string
+#  remote_direction                      :string
+#  remote_error_message                  :text
+#  metadata                              :jsonb            not null
+#  remote_response                       :jsonb            not null
+#  remote_request_params                 :jsonb            not null
+#  remote_queue_response                 :jsonb            not null
+#  call_flow_logic                       :string
+#  remotely_queued_at                    :datetime
+#  created_at                            :datetime         not null
+#  updated_at                            :datetime         not null
+#
+
 class PhoneCall < ApplicationRecord
   TWILIO_CALL_STATUSES = {
     :queued => "queued",

@@ -1,8 +1,10 @@
 .col-12
-  %ul.nav
-    %li.nav-item
-      .nav-link
+  .col-12
+    .btn-toolbar{ role: 'toolbar' }
+      .btn-group.mr-2{ role: 'group' }
         = button_to 'Invite user', new_user_invitation_path, method: 'get', class: ' btn btn-outline-dark'
+    %br
+
 .col-12
   %table.table.table-hover.table-bordered
     %thead.thead-light

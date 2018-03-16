@@ -1,3 +1,17 @@
+# == Schema Information
+#
+# Table name: accounts
+#
+#  id                  :integer          not null, primary key
+#  metadata            :jsonb            not null
+#  settings            :jsonb            not null
+#  twilio_account_sid  :string
+#  somleng_account_sid :string
+#  permissions         :integer          default(0), not null
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
+#
+
 class Account < ApplicationRecord
   DEFAULT_PERMISSIONS_BITMASK = 0
   TWILIO_ACCOUNT_SID_PREFIX = "AC"

@@ -1,3 +1,16 @@
+# == Schema Information
+#
+# Table name: callouts
+#
+#  id              :integer          not null, primary key
+#  status          :string           not null
+#  call_flow_logic :string
+#  metadata        :jsonb            not null
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  account_id      :integer          not null
+#
+
 class Callout < ApplicationRecord
   include MetadataHelpers
   include HasCallFlowLogic

@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: batch_operations
+#
+#  id         :integer          not null, primary key
+#  callout_id :integer
+#  parameters :jsonb            not null
+#  metadata   :jsonb            not null
+#  status     :string           not null
+#  type       :string           not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  account_id :integer          not null
+#
+
 class BatchOperation::PhoneCallOperation < BatchOperation::Base
   DEFAULT_MAX_PER_PERIOD_HOURS = 24
   DEFAULT_MAX_PER_PERIOD_TIMESTAMP_ATTRIBUTE = "remotely_queued_at"

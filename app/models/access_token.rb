@@ -1,3 +1,22 @@
+# == Schema Information
+#
+# Table name: oauth_access_tokens
+#
+#  id                     :integer          not null, primary key
+#  resource_owner_id      :integer          not null
+#  created_by_id          :integer          not null
+#  metadata               :jsonb            not null
+#  application_id         :integer
+#  token                  :string           not null
+#  refresh_token          :string
+#  expires_in             :integer
+#  revoked_at             :datetime
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  scopes                 :string
+#  previous_refresh_token :string           default(""), not null
+#
+
 class AccessToken < Doorkeeper::AccessToken
   include DatabaseAdapterHelpers
   include MetadataHelpers

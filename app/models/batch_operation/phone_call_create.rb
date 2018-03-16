@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: batch_operations
+#
+#  id         :integer          not null, primary key
+#  callout_id :integer
+#  parameters :jsonb            not null
+#  metadata   :jsonb            not null
+#  status     :string           not null
+#  type       :string           not null
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  account_id :integer          not null
+#
+
 class BatchOperation::PhoneCallCreate < BatchOperation::PhoneCallOperation
   has_many :phone_calls,
            :class_name => "PhoneCall",

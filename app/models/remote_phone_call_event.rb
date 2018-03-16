@@ -1,3 +1,18 @@
+# == Schema Information
+#
+# Table name: remote_phone_call_events
+#
+#  id               :integer          not null, primary key
+#  phone_call_id    :integer          not null
+#  details          :jsonb            not null
+#  metadata         :jsonb            not null
+#  remote_call_id   :string           not null
+#  remote_direction :string           not null
+#  call_flow_logic  :string           not null
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
+#
+
 class RemotePhoneCallEvent < ApplicationRecord
   include MetadataHelpers
   include HasCallFlowLogic

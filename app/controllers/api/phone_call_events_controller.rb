@@ -14,7 +14,7 @@ class Api::PhoneCallEventsController < Api::ResourceEventsController
   end
 
   def phone_call
-    @phone_call ||= PhoneCall.find(params[:phone_call_id])
+    @phone_call ||= current_account.phone_calls.find(params[:phone_call_id])
   end
 
   def path_to_parent

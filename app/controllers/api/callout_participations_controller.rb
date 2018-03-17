@@ -25,7 +25,7 @@ class Api::CalloutParticipationsController < Api::FilteredController
   end
 
   def association_chain
-    CalloutParticipation.all
+    current_account.callout_participations.all
   end
 
   def filter_class
@@ -33,11 +33,11 @@ class Api::CalloutParticipationsController < Api::FilteredController
   end
 
   def callout
-    @callout ||= Callout.find(params[:callout_id])
+    @callout ||= current_account.callouts.find(params[:callout_id])
   end
 
   def contact
-    @contact ||= Contact.find(params[:contact_id])
+    @contact ||= current_account.contacts.find(params[:contact_id])
   end
 
   def permitted_batch_operation_types

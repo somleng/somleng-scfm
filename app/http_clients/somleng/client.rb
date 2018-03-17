@@ -1,30 +1,20 @@
 class Somleng::Client
-  DEFAULT_PLATFORM_PROVIDER = "TWILIO"
-
   attr_accessor :somleng_rest_client,
-                :platform_provider
+                :provider
 
   delegate :api, :to => :somleng_rest_client
 
-  def initialize(options = {})
-    self.somleng_rest_client = options[:somleng_rest_client]
-    self.platform_provider = options[:platform_provider]
+  def initialize(provider:, somleng_rest_client: nil)
+    self.provider = provider
+    self.somleng_rest_client = somleng_rest_client
   end
 
   def somleng_rest_client
-    @somleng_rest_client ||= Somleng::REST::Client.new(
-      resolve_configuration("ACCOUNT_SID"),
-      resolve_configuration("AUTH_TOKEN")
-    )
-  end
-
-  def platform_provider
-    @platform_provider ||= ENV["PLATFORM_PROVIDER"] || DEFAULT_PLATFORM_PROVIDER
-  end
-
-  private
-
-  def resolve_configuration(key)
-    ENV[[platform_provider, key].join("_").upcase]
+    @somleng_rest_client ||= begin
+      client = Somleng::REST::Client.new(provider.account_sid, provider.auth_token)
+      client.api_host = provider.api_host
+      client.api_base_url = provider.api_base_url
+      client
+    end
   end
 end

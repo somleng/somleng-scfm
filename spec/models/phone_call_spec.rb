@@ -6,12 +6,13 @@ RSpec.describe PhoneCall do
   include_examples "has_call_flow_logic"
 
   describe "associations" do
+    subject { build(:phone_call, :inbound) }
     def assert_associations!
-      is_expected.to belong_to(:callout_participation)
+      is_expected.to belong_to(:callout_participation).optional
       is_expected.to belong_to(:contact).validate(true)
-      is_expected.to belong_to(:create_batch_operation)
-      is_expected.to belong_to(:queue_batch_operation)
-      is_expected.to belong_to(:queue_remote_fetch_batch_operation)
+      is_expected.to belong_to(:create_batch_operation).optional
+      is_expected.to belong_to(:queue_batch_operation).optional
+      is_expected.to belong_to(:queue_remote_fetch_batch_operation).optional
       is_expected.to have_many(:remote_phone_call_events).dependent(:restrict_with_error)
     end
 
@@ -67,7 +68,6 @@ RSpec.describe PhoneCall do
     def assert_defaults!
       expect(subject.errors).to be_empty
       expect(subject.msisdn).to be_present
-      expect(subject.contact).to be_present
     end
 
     context "outbound" do
@@ -79,38 +79,6 @@ RSpec.describe PhoneCall do
         expect(subject.contact).to eq(subject.callout_participation.contact)
         expect(subject.msisdn).to eq(subject.callout_participation.msisdn)
       end
-    end
-
-    context "inbound" do
-      let(:factory_traits) { [:inbound] }
-      let(:msisdn) { generate(:somali_msisdn) }
-      let(:factory_attributes) { { :msisdn => msisdn } }
-
-      context "contact exists with matching msisdn" do
-        let(:contact) { create(:contact, :msisdn => msisdn) }
-
-        def setup_scenario
-          contact
-          super
-        end
-
-        def assert_defaults!
-          super
-          expect(subject.contact).to eq(contact)
-          expect(subject.msisdn).to eq(contact.msisdn)
-        end
-
-        it { assert_defaults! }
-      end
-
-      context "contact does not exist" do
-       def assert_defaults!
-          super
-          expect(subject.msisdn).to eq(subject.contact.msisdn)
-        end
-      end
-
-      it { assert_defaults! }
     end
   end
 

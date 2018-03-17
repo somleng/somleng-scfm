@@ -1,25 +1,21 @@
 class Api::AuthenticatedController < Api::BaseController
-  before_action :api_authenticate!
+  before_action :doorkeeper_authorize!
 
   private
 
-  def api_authenticate!
-    if api_authenticate?
-      authenticate_or_request_with_http_basic do |user, password|
-        ActiveSupport::SecurityUtils.variable_size_secure_compare(user, http_basic_auth_user) && (!http_basic_auth_password || ActiveSupport::SecurityUtils.variable_size_secure_compare(password, http_basic_auth_password))
-      end
-    end
+  def current_account
+    @current_account ||= Account.find(doorkeeper_token && doorkeeper_token.resource_owner_id)
   end
 
-  def api_authenticate?
-    !!http_basic_auth_user
+  def authorize_super_admin!
+    deny_access! if !current_account.super_admin?
   end
 
-  def http_basic_auth_user
-    ENV["HTTP_BASIC_AUTH_USER"]
+  def deny_access!
+    head(:unauthorized)
   end
 
-  def http_basic_auth_password
-    ENV["HTTP_BASIC_AUTH_PASSWORD"]
+  def specified_or_current_account
+    current_account.super_admin? && params[:account_id] && Account.find(params[:account_id]) || current_account
   end
 end

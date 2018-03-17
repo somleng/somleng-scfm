@@ -3,6 +3,10 @@ class ApplicationMigration < ActiveRecord::Migration[5.1]
     database_adapter_helper.adapter_postgresql? ? :jsonb : :text
   end
 
+  def inet_column_type
+    database_adapter_helper.adapter_postgresql? ? :inet : :string
+  end
+
   def json_column_default
     database_adapter_helper.adapter_postgresql? ? {} : "{}"
   end

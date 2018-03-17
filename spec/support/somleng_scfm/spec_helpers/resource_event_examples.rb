@@ -1,4 +1,4 @@
-RSpec.shared_examples_for("resource_event") do
+RSpec.shared_examples_for("resource_event") do |options = {}|
   let(:eventable) { create(eventable_factory) }
 
   describe "validations" do
@@ -23,14 +23,14 @@ RSpec.shared_examples_for("resource_event") do
 
       it {
         expect(subject.save).to eq(false)
-        expect(subject.eventable.status).to eq(asserted_current_status.to_s)
+        expect(subject.eventable.status).to eq(asserted_current_status.to_s) if options[:assert_status] != false
       }
     end
 
     context "valid" do
       it {
         expect(subject.save).to eq(true)
-        expect(subject.eventable.status).to eq(asserted_new_status.to_s)
+        expect(subject.eventable.status).to eq(asserted_new_status.to_s) if options[:assert_status] != false
       }
     end
   end

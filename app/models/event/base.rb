@@ -16,13 +16,17 @@ class Event::Base
 
   def save
     if valid?
-      eventable.aasm.fire!(event.to_sym)
+      fire_event!
     else
       false
     end
   end
 
   private
+
+  def fire_event!
+    eventable.aasm.fire!(event.to_sym)
+  end
 
   def valid_events
     eventable && eventable.aasm.events.map { |event| event.name.to_s } || []

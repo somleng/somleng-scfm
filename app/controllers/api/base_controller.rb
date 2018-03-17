@@ -22,6 +22,7 @@ class Api::BaseController < ApplicationController
 
   def destroy
     find_resource
+    before_destroy_resource
     destroy_resource
     respond_with_resource
   end
@@ -76,6 +77,9 @@ class Api::BaseController < ApplicationController
 
   def permitted_update_params
     permitted_params
+  end
+
+  def before_destroy_resource
   end
 
   def destroy_resource

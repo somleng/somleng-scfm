@@ -3,9 +3,14 @@ require 'rails_helper'
 RSpec.describe "Callout Participations" do
   include SomlengScfm::SpecHelpers::RequestHelpers
 
-  let(:callout) { create(:callout) }
+  let(:account_traits) { {} }
+  let(:account_attributes) { {} }
+  let(:account) { create(:account, *account_traits.keys, account_attributes) }
+  let(:access_token_model) { create(:access_token, :resource_owner => account) }
+
+  let(:callout) { create(:callout, :account => account) }
   let(:body) { {} }
-  let(:factory_attributes) { {} }
+  let(:factory_attributes) { { :callout => callout } }
   let(:callout_participation) { create(:callout_participation, factory_attributes) }
   let(:execute_request_before) { true }
 
@@ -27,6 +32,7 @@ RSpec.describe "Callout Participations" do
 
       it_behaves_like "resource_filtering" do
         let(:filter_on_factory) { :callout_participation }
+        let(:filter_factory_attributes) { factory_attributes }
       end
 
       it_behaves_like "authorization"
@@ -57,8 +63,8 @@ RSpec.describe "Callout Participations" do
       it { assert_filtered! }
     end
 
-    describe "GET '/api/contact/:contact_id/callout_participations'" do
-      let(:contact) { create(:contact) }
+    describe "GET '/api/contacts/:contact_id/callout_participations'" do
+      let(:contact) { create(:contact, :account => account) }
       let(:url) { api_contact_callout_participations_path(contact) }
       let(:factory_attributes) { { :contact => contact } }
       it { assert_filtered! }
@@ -66,7 +72,8 @@ RSpec.describe "Callout Participations" do
 
     describe "GET '/api/batch_operation/:batch_operation_id/callout_participations'" do
       let(:url) { api_batch_operation_callout_participations_path(batch_operation) }
-      let(:batch_operation) { create(batch_operation_factory) }
+      let(:batch_operation_factory_attributes) { { :account => account } }
+      let(:batch_operation) { create(batch_operation_factory, batch_operation_factory_attributes) }
 
       context "BatchOperation::CalloutPopulation" do
         let(:batch_operation_factory) { :callout_population }
@@ -91,11 +98,12 @@ RSpec.describe "Callout Participations" do
 
     describe "GET '/api/batch_operations/:batch_operation_id/preview/callout_participations'" do
       let(:url) { api_batch_operation_preview_callout_participations_path(batch_operation) }
-      let(:factory_attributes) { { :metadata => {"foo" => "bar", "bar" => "foo"} } }
+      let(:factory_attributes) { super().merge(:metadata => {"foo" => "bar", "bar" => "foo"}) }
       let(:batch_operation) {
         create(
           :phone_call_create_batch_operation,
-          :callout_participation_filter_params => factory_attributes.slice(:metadata)
+          :callout_participation_filter_params => factory_attributes.slice(:metadata),
+          :account => account
         )
       }
 
@@ -105,8 +113,8 @@ RSpec.describe "Callout Participations" do
 
       context "invalid request" do
         let(:execute_request_before) { false }
-        let(:batch_operation) { create(:callout_population) }
-        it {expect { execute_request }.to raise_error(ActiveRecord::RecordNotFound) }
+        let(:batch_operation) { create(:callout_population, :account => account) }
+        it { expect { execute_request }.to raise_error(ActiveRecord::RecordNotFound) }
       end
     end
   end
@@ -175,7 +183,7 @@ RSpec.describe "Callout Participations" do
     end
 
     describe "PATCH" do
-      let(:factory_attributes) { { "metadata" => {"bar" => "baz" }} }
+      let(:factory_attributes) { super().merge("metadata" => {"bar" => "baz" }) }
       let(:method) { :patch }
       let(:contact) { create(:contact) }
       let(:call_flow_logic) { CallFlowLogic::Application.to_s }

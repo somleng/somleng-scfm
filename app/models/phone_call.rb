@@ -58,6 +58,12 @@ class PhoneCall < ApplicationRecord
            :prefix => true,
            :allow_nil => true
 
+  delegate :account,
+           :to => :contact
+
+  delegate :platform_provider,
+           :to => :account
+
   before_validation :set_defaults, :on => :create
   before_destroy    :validate_destroy
 
@@ -174,11 +180,7 @@ class PhoneCall < ApplicationRecord
 
   def set_defaults
     self.msisdn  ||= callout_participation_msisdn
-    self.contact ||= callout_participation_contact || find_or_initialize_contact
-  end
-
-  def find_or_initialize_contact
-    Contact.where_msisdn(msisdn).first_or_initialize
+    self.contact ||= callout_participation_contact
   end
 
   def validate_destroy

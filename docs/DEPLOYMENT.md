@@ -103,6 +103,7 @@ Override default configuration by configuring additional workers/queues:
 ACTIVE_JOB_QUEUE_REMOTE_CALL_JOB_QUEUE_NAME=sqs-queue-name
 ACTIVE_JOB_FETCH_REMOTE_CALL_JOB_QUEUE_NAME=sqs-queue-name
 ACTIVE_JOB_RUN_BATCH_OPERATION_JOB_QUEUE_NAME=sqs-queue-name
+ACTIVE_JOB_ACTION_MAILER_DELIVERY_JOB_QUEUE_NAME=sqs-queue-name
 ```
 
 Follow the [active-elastic-job README](https://github.com/tawan/active-elastic-job) for more info on configuring Active Elastic Job.

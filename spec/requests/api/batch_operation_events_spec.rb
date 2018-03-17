@@ -3,7 +3,12 @@ require 'rails_helper'
 RSpec.describe "POST '/api/batch_operations/:batch_operation_id/batch_operation_events'" do
   include SomlengScfm::SpecHelpers::RequestHelpers
 
-  let(:factory_attributes) { {} }
+  let(:account_traits) { {} }
+  let(:account_attributes) { {} }
+  let(:account) { create(:account, *account_traits.keys, account_attributes) }
+  let(:access_token_model) { create(:access_token, :resource_owner => account) }
+
+  let(:factory_attributes) { { :account => account } }
   let(:batch_operation) { create(:batch_operation, factory_attributes) }
   let(:eventable) { batch_operation }
   let(:url) { api_batch_operation_batch_operation_events_path(eventable) }
@@ -18,9 +23,7 @@ RSpec.describe "POST '/api/batch_operations/:batch_operation_id/batch_operation_
     let(:body) { {:event => event} }
 
     let(:factory_attributes) {
-      {
-        :status => status
-      }
+      super().merge(:status => status)
     }
 
     def setup_scenario

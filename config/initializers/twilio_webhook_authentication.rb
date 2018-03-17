@@ -1,11 +1,11 @@
 require 'twilio-ruby'
 
-platform_provider = ENV["PLATFORM_PROVIDER"] || "TWILIO"
-auth_token_key = "#{platform_provider}_AUTH_TOKEN".upcase
-
 Rails.application.config.middleware.use(
   Rack::SomlengWebhookAuthentication,
-  ENV[auth_token_key],
+  nil,
   "api/remote_phone_call_events",
   :methods => :post
-) { |account_sid| ENV[auth_token_key] }
+) do |account_sid|
+  account = Account.by_platform_account_sid(account_sid).first
+  account && account.platform_auth_token(account_sid)
+end

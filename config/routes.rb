@@ -1,6 +1,18 @@
 Rails.application.routes.draw do
-  devise_for :users
-  root :to => redirect('https://github.com/somleng/somleng-scfm')
+  devise_scope :user do
+    get 'users/edit' => 'devise/registrations#edit', as: 'edit_user_registration'
+    put 'users' => 'devise/registrations#update', as: 'user_registration'
+  end
+
+  devise_for :users, skip: :registrations
+
+  root to: redirect('dashboard')
+
+  namespace 'dashboard' do
+    root to: 'users#index'
+    resources :users, only: :index
+    resources :access_tokens, only: :index
+  end
 
   namespace "api", :defaults => { :format => "json" } do
     defaults :format => :xml do

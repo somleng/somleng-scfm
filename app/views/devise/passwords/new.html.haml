@@ -1,0 +1,11 @@
+.container.devise-page
+  .row
+    .col-lg-4.offset-lg-4.col-md-6.offset-md-3.col-sm-8.offset-sm-2
+      .card
+        .card-body
+          %h5.card-title Forgot your password?
+          = simple_form_for resource, as: resource_name, url: password_path(resource_name), html: { method: :post } do |f|
+            = f.input :email, input_html: { autofocus: true }
+            .form-group.actions
+              = f.submit "Send reset password", class: 'btn btn-primary'
+          = render "devise/shared/links"

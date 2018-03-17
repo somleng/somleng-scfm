@@ -1,0 +1,18 @@
+.col-12
+  %ul.nav
+    %li.nav-item
+      .nav-link
+        = button_to 'Invite user', new_user_invitation_path, method: 'get', class: ' btn btn-outline-dark'
+.col-12
+  %table.table.table-hover.table-bordered
+    %thead.thead-light
+      %tr
+        %th #
+        %th Email
+        %th Last signned in
+    %tbody
+      - @user.each_with_index do |user, index|
+        %tr
+          %td= index + 1
+          %td= user.email
+          %td= user.last_sign_in_at

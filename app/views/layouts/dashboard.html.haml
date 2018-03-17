@@ -1,0 +1,15 @@
+!!!
+%html{:lang => "en"}
+  %head
+    = csrf_meta_tags
+    %meta{:content => "width=device-width, initial-scale=1, shrink-to-fit=no", :name => "viewport"}/
+    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
+    = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+  %body
+    = render 'shared/nav_bar'
+    .container-fluid
+      .row
+        = render 'shared/side_bar'
+        %main.col-12.col-md-9.col-xl-10.ml-sm-auto.pt-3.px-4
+          = render 'shared/flash_messages'
+          = yield

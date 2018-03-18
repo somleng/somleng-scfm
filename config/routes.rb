@@ -12,6 +12,7 @@ Rails.application.routes.draw do
     root to: 'users#index'
     resources :users, only: :index
     resources :access_tokens, only: :index
+    resources :contacts
   end
 
   namespace "api", :defaults => { :format => "json" } do

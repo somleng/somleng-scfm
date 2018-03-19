@@ -13,8 +13,10 @@
         %th Email
         %th Last signned in
     %tbody
-      - @user.each_with_index do |user, index|
+      - @users.each_with_index do |user, index|
         %tr
           %td= index + 1
           %td= user.email
           %td= user.last_sign_in_at
+.col-12
+  = paginate @users

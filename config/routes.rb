@@ -4,7 +4,9 @@ Rails.application.routes.draw do
     put 'users' => 'devise/registrations#update', as: 'user_registration'
   end
 
-  devise_for :users, skip: :registrations
+  devise_for :users,
+    controllers: { invitations: 'dashboard/user_invitations' },
+    skip: :registrations
 
   root to: redirect('dashboard')
 

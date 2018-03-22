@@ -1,0 +1,8 @@
+.d-flex.js-metadata-fields
+  .label
+    = f.input :attr_key, placeholder: 'Label', label: false
+  &nbsp; : &nbsp;
+  .text
+    = f.input :attr_val, placeholder: 'Text', label: false
+  = button_tag type: 'button', class: 'js-remove-metadata-fields btn btn-default' do
+    Remove

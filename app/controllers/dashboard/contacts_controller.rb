@@ -39,11 +39,11 @@ class Dashboard::ContactsController < Dashboard::BaseController
 
   private
 
-    def set_contact
-      @contact = current_account.contacts.find(params[:id])
-    end
+  def set_contact
+    @contact = current_account.contacts.find(params[:id])
+  end
 
-    def contact_params
-      params.require(:contact).permit(:id, :msisdn)
-    end
+  def contact_params
+    params.require(:contact).permit(:id, :msisdn)
+  end
 end

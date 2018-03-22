@@ -1,0 +1,15 @@
+= simple_form_for callout, url: url do |f|
+  .card
+    .card-body
+      .h5.card-title Optional data
+      = f.simple_fields_for :metadata_forms do |hf|
+        .d-flex
+          .label
+            = hf.input :attr_key, placeholder: 'Label', label: false
+          &nbsp; : &nbsp;
+          .text
+            = hf.input :attr_val, placeholder: 'Text', label: false
+  %br
+  .form-group.actions
+    = f.button :submit, class: 'btn btn-primary'
+    = link_to 'Cancel', :back, class: 'btn btn-outline-dark'

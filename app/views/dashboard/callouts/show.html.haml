@@ -1,0 +1,21 @@
+.col-12
+  .btn-toolbar{ role: 'toolbar' }
+    .btn-group.mr-2{ role: 'group' }
+      = button_to 'Back', :back, class: 'btn btn-outline-dark', method: :get
+    .btn-group.mr-2{ role: 'group' }
+      = button_to 'Edit', edit_dashboard_callout_path(@callout), class: ' btn btn-outline-dark', method: :get
+    .btn-group.mr-2{ role: 'group' }
+      = button_to 'Delete', dashboard_callout_path(@callout), class: ' btn btn-outline-dark', method: :delete, data: { confirm: 'Are you sure?' }
+  %br
+.col-lg-8.col-sm-12
+  .card
+    .card-header
+      Callout detail
+    .card-body
+      %dl.row
+        %dt.col.text-md-right ID:
+        %dd.col= @callout.id
+        %dt.col.text-md-right Meta data:
+        %dd.col= @callout.metadata
+        %dt.col.text-md-right Created at:
+        %dd.col= @callout.created_at

@@ -7,16 +7,14 @@
   %table.table.table-hover.table-bordered
     %thead.thead-light
       %tr
-        %th # ID
-        %th Meta data
+        %th #
+        %th Title
         %th Status
-        %th Created at
     %tbody
-      - @callouts.each do |callout|
+      - @callouts.each_with_index do |callout, i|
         %tr
-          %td= link_to callout.id, dashboard_callout_path(callout)
-          %td= callout.metadata
+          %td= i + 1
+          %td= link_to callout.title, dashboard_callout_path(callout)
           %td= callout.status
-          %td= callout.created_at
 .col-12
   = paginate @callouts

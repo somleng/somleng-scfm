@@ -59,4 +59,8 @@ class Callout < ApplicationRecord
       )
     end
   end
+
+  def title
+    metadata['title'] || "Calout #{id}"
+  end
 end

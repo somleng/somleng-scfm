@@ -24,4 +24,17 @@ module DashboardHelper
       data: { association: 'metadata_forms', blueprint: "#{fields}" }
     )
   end
+
+  def infinit_list(hash)
+    content_tag(:ul, class: 'ul-infinit') do
+      hash.each do |k, v|
+        if v.is_a?(Hash)
+          concat(content_tag(:li, k))
+          concat(infinit_list(v))
+        else
+          concat(content_tag(:li, "#{k}: #{v}"))
+        end
+      end
+    end
+  end
 end

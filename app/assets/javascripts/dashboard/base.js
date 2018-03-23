@@ -14,7 +14,7 @@ DashboardBase = function() {
   var onClickJSRemoveMetadataField = function() {
     $('form').on('click', '.js-remove-metadata-fields',
     function(e) {
-      parent = $(this).parent('.js-metadata-fields')
+      parent = $(this).closest('.js-metadata-fields')
       parent.find('input').val('');
       parent.removeClass('d-flex');
       parent.hide();

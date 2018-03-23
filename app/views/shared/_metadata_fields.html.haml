@@ -4,5 +4,7 @@
   &nbsp; : &nbsp;
   .text
     = f.input :attr_val, placeholder: 'Text', label: false
-  = button_tag type: 'button', class: 'js-remove-metadata-fields btn btn-default' do
-    Remove
+  &nbsp;
+  .action
+    = button_tag type: 'button', class: 'js-remove-metadata-fields btn btn-danger' do
+      Remove

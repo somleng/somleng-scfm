@@ -7,15 +7,17 @@
     .btn-group.mr-2{ role: 'group' }
       = button_to 'Delete', dashboard_callout_path(@callout), class: ' btn btn-outline-dark', method: :delete, data: { confirm: 'Are you sure?' }
   %br
-.col-lg-8.col-sm-12
+.col-12.col-md-10
   .card
     .card-header
       Callout detail
     .card-body
       %dl.row
-        %dt.col.text-md-right ID:
-        %dd.col= @callout.id
-        %dt.col.text-md-right Meta data:
-        %dd.col= @callout.metadata
-        %dt.col.text-md-right Created at:
-        %dd.col= @callout.created_at
+        %dt.col-sm-5.text-md-right ID:
+        %dd.col-sm-7= @callout.id
+      %dl.row
+        %dt.col-sm-5.text-md-right Meta data:
+        %dd.col-sm-7= infinit_list(@callout.metadata)
+      %dl.row
+        %dt.col-sm-5.text-md-right Created at:
+        %dd.col-sm-7= @callout.created_at

@@ -3,8 +3,8 @@ class MetadataForm
 
   attr_accessor :attr_key, :attr_val
 
-  validates_presence_of :attr_key, if: 'attr_val.present?'
-  validates_presence_of :attr_val, if: 'attr_key.present?'
+  validates :attr_val, presence: true, if: 'attr_key.present?'
+  validates :attr_key, presence: true, if: 'attr_val.present?'
 
   def self.unnest(hash)
     new_hash = {}

@@ -18,11 +18,13 @@ class MetadataForm
     new_hash
   end
 
-  def self.prefix_keys(prefix, hash)
-    unnest(Hash[hash.map{|key,val| [prefix + key, val]}])
-  end
-
   def to_json
     attr_key.split(':').reverse.inject(attr_val) { |v, k| { k => v }}
+  end
+
+  private
+
+  def self.prefix_keys(prefix, hash)
+    unnest(Hash[hash.map{|key,val| [prefix + key, val]}])
   end
 end

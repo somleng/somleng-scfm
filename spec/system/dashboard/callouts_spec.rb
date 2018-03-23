@@ -9,13 +9,13 @@ RSpec.describe 'Callout pages', type: :system do
 
   describe 'view all callout' do
     it 'should list all callouts of current account' do
-      account_callout = create(:callout, account: user.account)
-      other_callout = create(:callout, created_at: 1.hour.ago)
+      account_callout = create(:callout, account: user.account, metadata: { title: 'My Callout'})
+      other_callout = create(:callout, metadata: { title: 'Other Callout'})
 
       visit dashboard_callouts_path
 
-      expect(page).to have_text(account_callout.created_at.to_s)
-      expect(page).not_to have_text(other_callout.created_at.to_s)
+      expect(page).to have_text('My Callout')
+      expect(page).not_to have_text('Other Callout')
     end
 
     it 'on click new callout will open new callout page' do
@@ -86,6 +86,66 @@ RSpec.describe 'Callout pages', type: :system do
 
       expect(page).to have_text('Edit callout')
       expect(page).to have_text("can't be blank")
+    end
+  end
+
+  describe 'callout can start' do
+    it 'when successfully start' do
+      callout = create(:callout, account: user.account)
+
+      visit dashboard_callout_path(callout)
+
+      click_button 'Start'
+
+      expect(page).to have_text('Callout was successfully started.')
+    end
+
+    it 'when already started' do
+      callout = create(:callout, account: user.account, status: 'running')
+
+      visit dashboard_callout_path(callout)
+
+      expect(page).not_to have_button('Start')
+    end
+  end
+
+  describe 'callout can resume' do
+    it 'when successfully resume' do
+      callout = create(:callout, account: user.account, status: 'stopped')
+
+      visit dashboard_callout_path(callout)
+
+      click_button 'Resume'
+
+      expect(page).to have_text('Callout was successfully resumed.')
+    end
+
+    it 'when already running' do
+      callout = create(:callout, account: user.account, status: 'running')
+
+      visit dashboard_callout_path(callout)
+
+      expect(page).not_to have_button('Resume')
+    end
+  end
+
+  describe 'callout can stop' do
+    it 'when successfully stop' do
+      callout = create(:callout, account: user.account, status: 'running')
+
+      visit dashboard_callout_path(callout)
+
+      click_button 'Stop'
+
+      expect(page).to have_text('Callout was successfully stopped.')
+    end
+
+    it 'when is not running' do
+      callout = create(:callout, account: user.account)
+
+      visit dashboard_callout_path(callout)
+
+      expect(page).not_to have_button('Stop')
     end
   end
 end

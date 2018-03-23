@@ -3,9 +3,19 @@
     .btn-group.mr-2{ role: 'group' }
       = button_to 'Back', :back, class: 'btn btn-outline-dark', method: :get
     .btn-group.mr-2{ role: 'group' }
-      = button_to 'Edit', edit_dashboard_callout_path(@callout), class: ' btn btn-outline-dark', method: :get
+      = button_to 'Edit', edit_dashboard_callout_path(@callout), class: ' btn btn-outline-primary', method: :get
     .btn-group.mr-2{ role: 'group' }
-      = button_to 'Delete', dashboard_callout_path(@callout), class: ' btn btn-outline-dark', method: :delete, data: { confirm: 'Are you sure?' }
+      = button_to 'Delete', dashboard_callout_path(@callout), class: ' btn btn-outline-danger', method: :delete, data: { confirm: 'Are you sure?' }
+    - if @callout.initialized?
+      .btn-group.mr-2{ role: 'group' }
+        = button_to 'Start', start_dashboard_callout_path(@callout), class: ' btn btn-outline-warning', method: :put, data: { confirm: 'Are you sure?' }
+    - else
+      - if @callout.paused? || @callout.stopped?
+        .btn-group.mr-2{ role: 'group' }
+          = button_to 'Resume', resume_dashboard_callout_path(@callout), class: ' btn btn-outline-warning', method: :put, data: { confirm: 'Are you sure?' }
+      - if @callout.running?
+        .btn-group.mr-2{ role: 'group' }
+          = button_to 'Stop', stop_dashboard_callout_path(@callout), class: ' btn btn-outline-warning', method: :put, data: { confirm: 'Are you sure?' }
   %br
 .col-12.col-md-10
   .card
@@ -15,6 +25,9 @@
       %dl.row
         %dt.col-sm-5.text-md-right ID:
         %dd.col-sm-7= @callout.id
+      %dl.row
+        %dt.col-sm-5.text-md-right Status:
+        %dd.col-sm-7= @callout.status
       %dl.row
         %dt.col-sm-5.text-md-right Meta data:
         %dd.col-sm-7= infinit_list(@callout.metadata)

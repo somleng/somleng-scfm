@@ -15,7 +15,13 @@ Rails.application.routes.draw do
     resources :users, only: :index
     resources :access_tokens, only: :index
     resources :contacts
-    resources :callouts
+    resources :callouts do
+      member do
+        put :start
+        put :resume
+        put :stop
+      end
+    end
   end
 
   namespace "api", :defaults => { :format => "json" } do

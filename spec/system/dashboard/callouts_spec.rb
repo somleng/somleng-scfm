@@ -34,6 +34,16 @@ RSpec.describe 'Callout pages', type: :system do
 
       expect(page).to have_text('Callout was successfully created.')
     end
+
+    it 'render new page if failed to create' do
+      visit new_dashboard_callout_path
+
+      fill_in 'callout[metadata_forms_attributes][0][attr_key]', with: 'address:city'
+      click_button 'Create Callout'
+
+      expect(page).to have_text('New callout')
+      expect(page).to have_text("can't be blank")
+    end
   end
 
   describe 'callout detail' do
@@ -107,6 +117,16 @@ RSpec.describe 'Callout pages', type: :system do
 
       expect(page).not_to have_button('Start')
     end
+
+    it 'callout was already started during session' do
+      callout = create(:callout, account: user.account)
+
+      visit dashboard_callout_path(callout)
+      callout.start!
+      click_button 'Start'
+
+      expect(page).to have_text('Failed to start.')
+    end
   end
 
   describe 'callout can resume' do
@@ -127,6 +147,16 @@ RSpec.describe 'Callout pages', type: :system do
 
       expect(page).not_to have_button('Resume')
     end
+
+    it 'callout was already runned during session' do
+      callout = create(:callout, account: user.account, status: 'stopped')
+
+      visit dashboard_callout_path(callout)
+      callout.resume!
+      click_button 'Resume'
+
+      expect(page).to have_text('Failed to resume.')
+    end
   end
 
   describe 'callout can stop' do
@@ -146,6 +176,16 @@ RSpec.describe 'Callout pages', type: :system do
       visit dashboard_callout_path(callout)
 
       expect(page).not_to have_button('Stop')
+    end
+
+    it 'callout was already stopped during session' do
+      callout = create(:callout, account: user.account, status: 'running')
+
+      visit dashboard_callout_path(callout)
+      callout.stop!
+      click_button 'Stop'
+
+      expect(page).to have_text('Failed to stop.')
     end
   end
 end

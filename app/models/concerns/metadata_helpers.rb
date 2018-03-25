@@ -50,7 +50,7 @@ module MetadataHelpers
   private
 
   def valid_metadata_forms
-    if @metadata_forms.map(&:valid?).include?(false)
+    if metadata_forms.map(&:valid?).include?(false)
       errors.add(:base, 'invalid metadata')
     end
   end

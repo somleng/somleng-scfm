@@ -20,5 +20,6 @@
             Admin Management
       .card-body
         %ul.nav.flex-column
-          = nav_link 'Users', dashboard_users_path, 'users'
+          - if current_user.is_admin?
+            = nav_link 'Users', dashboard_users_path, 'users'
           = nav_link 'Api-key', dashboard_access_tokens_path, 'access_tokens'

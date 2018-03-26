@@ -36,4 +36,10 @@ RSpec.describe User do
       it { expect(subject.roles).to eq([:member]) }
     end
   end
+
+  it '#is_admin?' do
+    user = create(:user, roles: :admin)
+
+    expect(user.is_admin?).to eq true
+  end
 end

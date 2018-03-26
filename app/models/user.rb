@@ -11,4 +11,8 @@ class User < ApplicationRecord
   bitmask :roles, :as => [:member, :admin], null: false
 
   validates :roles, presence: true
+
+  def is_admin?
+    roles?(:admin)
+  end
 end

@@ -1,10 +1,20 @@
 require 'rails_helper'
 
-RSpec.describe 'User management pages', type: :system do
-  let(:user) { create(:user) }
+RSpec.describe 'User management page', type: :system do
+  let(:user) { create(:user, roles: :admin) }
 
   before :each do
     sign_in(user)
+  end
+
+  describe 'only admin can access users pages' do
+    it 'member cannot view user pages' do
+      user.update(roles: :member)
+
+      visit '/dashboard/users'
+
+      expect(page.status_code).to eq(401)
+    end
   end
 
   describe 'dashboard list users page' do
@@ -77,6 +87,7 @@ RSpec.describe 'User management pages', type: :system do
       visit edit_dashboard_user_path(user)
 
       uncheck('Member')
+      uncheck('Admin')
       click_button('Update User')
 
       expect(page).to have_text("can't be blank")

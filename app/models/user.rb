@@ -7,4 +7,8 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable, :async
 
   belongs_to :account
+
+  bitmask :roles, :as => [:member, :admin], null: false
+
+  validates :roles, presence: true
 end

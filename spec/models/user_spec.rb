@@ -28,4 +28,12 @@ RSpec.describe User do
 
     it { assert_validations! }
   end
+
+  describe "defaults" do
+    subject { create(factory) }
+
+    describe "#roles" do
+      it { expect(subject.roles).to eq([:member]) }
+    end
+  end
 end

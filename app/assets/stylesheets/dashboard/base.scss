@@ -74,12 +74,13 @@ main {
   }
 }
 
-dl.row {
-  margin-bottom: 0;
-}
-
-ul.ul-infinit {
-  padding: 0 12px;
+.form-group.check_boxes {
+  .checkbox {
+    margin-right: 12px;
+  }
+  input.check_boxes {
+    margin-right: 8px;
+  }
 }
 
 @media (min-width: 768px) {

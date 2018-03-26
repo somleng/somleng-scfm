@@ -1,0 +1,21 @@
+.col-12
+  .btn-toolbar{ role: 'toolbar' }
+    .btn-group.mr-2{ role: 'group' }
+      = button_to 'Back', :back, class: 'btn btn-outline-dark', method: :get
+    .btn-group.mr-2{ role: 'group' }
+      = button_to 'Edit', edit_dashboard_user_path(@user), class: ' btn btn-outline-dark', method: :get
+    - unless @user == current_user
+      .btn-group.mr-2{ role: 'group' }
+        = button_to 'Delete', dashboard_user_path(@user), class: ' btn btn-outline-dark', method: :delete, data: { confirm: 'Are you sure?' }
+  %br
+.col-lg-8.col-sm-12
+  .card
+    .card-header
+      User detail
+    .card-body
+      %dl.row
+        %dt.col.text-md-right Email:
+        %dd.col= @user.email
+      %dl.row
+        %dt.col.text-md-right Roles:
+        %dd.col= @user.roles.join(', ')

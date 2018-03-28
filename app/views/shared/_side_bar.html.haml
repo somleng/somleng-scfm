@@ -13,13 +13,13 @@
               Batch Operation
           = nav_link 'Contacts', dashboard_contacts_path, 'contacts'
 
-    .card
-      .card-header
-        %h5.mb-0
-          .btn.btn-default.text-muted
-            Admin Management
-      .card-body
-        %ul.nav.flex-column
-          - if current_user.is_admin?
+    - if current_user.is_admin?
+      .card
+        .card-header
+          %h5.mb-0
+            .btn.btn-default.text-muted
+              Admin Management
+        .card-body
+          %ul.nav.flex-column
             = nav_link 'Users', dashboard_users_path, 'users'
-          = nav_link 'Api-key', dashboard_access_tokens_path, 'access_tokens'
+            = nav_link 'Api-key', dashboard_access_tokens_path, 'access_tokens'

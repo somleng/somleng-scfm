@@ -20,6 +20,8 @@ ActiveRecord::Schema.define(version: 20180325171833) do
     t.jsonb "settings", default: {}, null: false
     t.string "twilio_account_sid"
     t.string "somleng_account_sid"
+    t.string "twilio_auth_token"
+    t.string "somleng_auth_token"
     t.integer "permissions", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

@@ -1,36 +1,37 @@
 require 'rails_helper'
 
 RSpec.describe 'User management page', type: :system do
-  let(:user) { create(:user, roles: :admin) }
+  let(:admin) { create(:user, roles: :admin) }
 
-  before :each do
-    sign_in(user)
-  end
+  context "when a user is not an admin tries to users page" do
+    let(:user) { create(:user) }
 
-  describe 'only admin can access users pages' do
-    it 'member cannot view user pages' do
-      user.update(roles: :member)
+    it 'render page 401' do
+      sign_in(user)
 
-      visit '/dashboard/users'
+      visit dashboard_users_path
 
       expect(page.status_code).to eq(401)
+      expect(page).to have_text("We're sorry, but you do not have permission to view this page.")
     end
   end
 
   describe 'dashboard list users page' do
+    before { sign_in(admin) }
+
     it 'show all users from same account' do
-      user2 = create(:user, email: 'bopha@somleng.com.kh', account: user.account)
+      user = create(:user, email: 'bopha@somleng.com.kh', account: admin.account)
       visit '/dashboard/users'
       expect(page).to have_text(user.email)
       expect(page).to have_text('bopha@somleng.com.kh')
     end
 
     it 'not show users from other account' do
-      user2 = create(:user, email: 'bopha@somleng.com.kh')
+      _user = create(:user, email: 'bopha@somleng.com.kh')
 
       visit '/dashboard/users'
 
-      expect(page).to have_text(user.email)
+      expect(page).to have_text(admin.email)
       expect(page).not_to have_text('bopha@somleng.com.kh')
     end
 
@@ -44,20 +45,22 @@ RSpec.describe 'User management page', type: :system do
     end
 
     it 'click user email, will open show user detail page' do
-      visit 'dashboard/users'
+      visit dashboard_users_path
 
-      click_link user.email
+      click_link admin.email
 
       expect(page).to have_text('User detail')
-      expect(page).to have_current_path(dashboard_user_url(user))
+      expect(page).to have_current_path(dashboard_user_url(admin))
     end
   end
 
   describe 'show user detail page' do
-    it 'click delete user' do
-      user2 = create(:user, account: user.account)
+    before { sign_in(admin) }
 
-      visit dashboard_user_path(user2)
+    it 'click delete user' do
+      user = create(:user, account: admin.account)
+
+      visit dashboard_user_path(user)
 
       click_button 'Delete'
 
@@ -65,26 +68,28 @@ RSpec.describe 'User management page', type: :system do
     end
 
     it 'cannot delete current_user' do
-      visit dashboard_user_path(user)
+      visit dashboard_user_path(admin)
 
       expect(page).not_to have_button('Delete')
     end
   end
 
   describe 'edit user page' do
+    before { sign_in(admin) }
+
     it 'can update user roles' do
-      visit edit_dashboard_user_path(user)
+      visit edit_dashboard_user_path(admin)
 
       check('Admin')
       click_button('Update User')
-      user.reload
+      admin.reload
 
       expect(page).to have_text('User was successfully updated.')
-      expect(user.roles?(:admin)).to eq true
+      expect(admin.roles?(:admin)).to eq true
     end
 
     it 'display error message when no roles selected' do
-      visit edit_dashboard_user_path(user)
+      visit edit_dashboard_user_path(admin)
 
       uncheck('Member')
       uncheck('Admin')

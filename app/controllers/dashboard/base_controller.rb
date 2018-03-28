@@ -12,6 +12,6 @@ class Dashboard::BaseController < ApplicationController
   end
 
   def deny_access!
-    head(:unauthorized)
+    render :file => 'public/401.html', status: :unauthorized
   end
 end

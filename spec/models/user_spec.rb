@@ -32,13 +32,13 @@ RSpec.describe User do
   describe "defaults" do
     subject { create(factory) }
 
-    describe "#roles" do
-      it { expect(subject.roles).to eq([:member]) }
+    it "has `member` role as the default" do
+      expect(User.new.roles).to eq([:member])
     end
   end
 
   it '#is_admin?' do
-    user = create(:user, roles: :admin)
+    user = build_stubbed(:user, roles: :admin)
 
     expect(user.is_admin?).to eq true
   end

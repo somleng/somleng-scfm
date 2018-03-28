@@ -12,6 +12,6 @@ class Dashboard::BaseController < ApplicationController
   end
 
   def deny_access!
-    render :file => 'public/401.html', status: :unauthorized
+    redirect_to dashboard_root_path, alert: "We're sorry, but you do not have permission to view this page."
   end
 end

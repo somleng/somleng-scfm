@@ -28,12 +28,12 @@ RSpec.describe 'Api key management', type: :system do
   context "when a user is not an admin tries to api key page" do
     let(:user) { create(:user) }
 
-    it 'render page 401' do
+    it 'redirect to default page with alert message' do
       sign_in(user)
 
       visit dashboard_access_tokens_path
 
-      expect(page.status_code).to eq(401)
+      dashboard_root_path
       expect(page).to have_text("We're sorry, but you do not have permission to view this page.")
     end
   end

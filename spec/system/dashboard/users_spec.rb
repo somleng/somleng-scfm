@@ -11,7 +11,7 @@ RSpec.describe 'User management page', type: :system do
 
       visit dashboard_users_path
 
-      expect(page.status_code).to eq(401)
+      dashboard_root_path
       expect(page).to have_text("We're sorry, but you do not have permission to view this page.")
     end
   end
@@ -21,7 +21,9 @@ RSpec.describe 'User management page', type: :system do
 
     it 'show all users from same account' do
       user = create(:user, email: 'bopha@somleng.com.kh', account: admin.account)
-      visit '/dashboard/users'
+
+      visit dashboard_users_path
+
       expect(page).to have_text(user.email)
       expect(page).to have_text('bopha@somleng.com.kh')
     end
@@ -29,14 +31,14 @@ RSpec.describe 'User management page', type: :system do
     it 'not show users from other account' do
       _user = create(:user, email: 'bopha@somleng.com.kh')
 
-      visit '/dashboard/users'
+      visit dashboard_users_path
 
       expect(page).to have_text(admin.email)
       expect(page).not_to have_text('bopha@somleng.com.kh')
     end
 
     it 'click invite, will open new inviation page' do
-      visit 'dashboard/users'
+      visit dashboard_users_path
 
       click_button 'Invite user'
 

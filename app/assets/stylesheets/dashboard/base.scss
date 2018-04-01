@@ -74,11 +74,11 @@ main {
   }
 }
 
-.form-group.check_boxes {
-  .checkbox {
+.form-group.check_boxes, .form-group.radio_buttons {
+  .checkbox, .radio {
     margin-right: 12px;
   }
-  input.check_boxes {
+  input.check_boxes, input.radio_buttons {
     margin-right: 8px;
   }
 }

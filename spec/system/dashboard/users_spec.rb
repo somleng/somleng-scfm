@@ -82,22 +82,12 @@ RSpec.describe 'User management page', type: :system do
     it 'can update user roles' do
       visit edit_dashboard_user_path(admin)
 
-      check('Admin')
+      choose('Admin')
       click_button('Update User')
       admin.reload
 
       expect(page).to have_text('User was successfully updated.')
       expect(admin.roles?(:admin)).to eq true
-    end
-
-    it 'display error message when no roles selected' do
-      visit edit_dashboard_user_path(admin)
-
-      uncheck('Member')
-      uncheck('Admin')
-      click_button('Update User')
-
-      expect(page).to have_text("can't be blank")
     end
   end
 end

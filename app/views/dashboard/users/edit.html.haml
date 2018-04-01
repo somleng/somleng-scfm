@@ -2,7 +2,7 @@
   %h5.card-title Edit User
   = simple_form_for @user, url: dashboard_user_path(@user) do |f|
     = f.input :email, input_html: { disabled: true }
-    = f.input :roles, as: :check_boxes, collection: User.values_for_roles.map{ |r| [r, r.to_s.capitalize] }, label_method: :second, value_method: :first
+    = f.input :roles, as: :radio_buttons, collection: User.values_for_roles.map{ |r| [r, r.to_s.capitalize] }, label_method: :second, value_method: :first, checked: f.object.roles
     .form-group.actions
       = f.button :submit, class: 'btn btn-primary'
       = link_to 'Cancel', :back, class: 'btn btn-outline-dark'

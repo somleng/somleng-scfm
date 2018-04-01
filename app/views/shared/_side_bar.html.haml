@@ -1,16 +1,16 @@
 %nav#left-sidebar.collapse.col-12.col-md-3.col-xl-2.bg-light.sidebar
   #accordion.sidebar-sticky
     .card
-      .card-header
-        %h5.mb-0
-          .btn.btn-default.text-muted
-            Dashboard
       .card-body
         %ul.nav.flex-column
-          = nav_link 'Callouts', dashboard_callouts_path, 'callouts'
+          = nav_link 'Emergency call', dashboard_callouts_path, 'callouts'
           %li.nav-item
             %a.nav-link{:href => "#"}
-              Batch Operation
+              Call histrory
+          - if current_user.is_admin?
+            %li.nav-item
+              %a.nav-link{:href => "#"}
+                Batch Operation
           = nav_link 'Contacts', dashboard_contacts_path, 'contacts'
 
     - if current_user.is_admin?

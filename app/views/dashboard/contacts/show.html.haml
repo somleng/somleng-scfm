@@ -2,10 +2,11 @@
   .btn-toolbar{ role: 'toolbar' }
     .btn-group.mr-2{ role: 'group' }
       = button_to 'Back', :back, class: 'btn btn-outline-dark', method: :get
-    .btn-group.mr-2{ role: 'group' }
-      = button_to 'Edit', edit_dashboard_contact_path(@contact), class: ' btn btn-outline-primary', method: :get
-    .btn-group.mr-2{ role: 'group' }
-      = button_to 'Delete', dashboard_contact_path(@contact), class: ' btn btn-outline-danger', method: :delete, data: { confirm: 'Are you sure?' }
+    - if current_user.is_admin?
+      .btn-group.mr-2{ role: 'group' }
+        = button_to 'Edit', edit_dashboard_contact_path(@contact), class: ' btn btn-outline-primary', method: :get
+      .btn-group.mr-2{ role: 'group' }
+        = button_to 'Delete', dashboard_contact_path(@contact), class: ' btn btn-outline-danger', method: :delete, data: { confirm: 'Are you sure?' }
   %br
 .col-lg-8.col-sm-12
   .card

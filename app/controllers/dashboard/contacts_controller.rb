@@ -2,7 +2,7 @@ class Dashboard::ContactsController < Dashboard::BaseController
   before_action :set_contact, only: [:show, :edit, :update, :destroy]
 
   def index
-    @contacts = current_account.contacts.page(params[:page]).per(10)
+    @contacts = current_account.contacts.page(params[:page])
   end
 
   def show; end

@@ -8,7 +8,7 @@ DashboardCallout = function() {
 }
 
 $(document).on('turbolinks:load', function() {
-  if (!(page.controller() === 'callouts')) {
+  if ((page.controller() !== 'callouts')) {
     return;
   }
 

@@ -2,7 +2,7 @@ class Dashboard::CalloutsController < Dashboard::BaseController
   before_action :set_callout, only: [:show, :edit, :update, :destroy, :start, :resume, :stop]
 
   def index
-    @callouts = current_account.callouts.page(params[:page]).per(10)
+    @callouts = current_account.callouts.page(params[:page])
   end
 
   def show; end

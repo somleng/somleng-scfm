@@ -17,13 +17,6 @@ RSpec.describe 'Callout pages', type: :system do
       expect(page).to have_text('My Callout')
       expect(page).not_to have_text('Other Callout')
     end
-
-    it 'on click new callout will open new callout page' do
-      visit 'dashboard/callouts'
-
-      click_button 'New callout'
-      expect(page).to have_current_path(new_dashboard_callout_path)
-    end
   end
 
   describe 'new callout' do

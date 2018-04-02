@@ -11,7 +11,7 @@
             %li.nav-item
               %a.nav-link{:href => "#"}
                 Batch Operation
-          = nav_link 'Contacts', dashboard_contacts_path, 'contacts'
+            = nav_link 'Contacts', dashboard_contacts_path, 'contacts'
 
     - if current_user.is_admin?
       .card

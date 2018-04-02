@@ -6,10 +6,10 @@ RSpec.describe 'Contact pages', type: :system do
 
   describe 'view all contacts' do
     it 'should list all contacts of current account' do
-      account_contact = create(:contact, account: user.account)
+      account_contact = create(:contact, account: admin.account)
       other_contact = create(:contact)
 
-      sign_in user
+      sign_in admin
       visit dashboard_contacts_path
 
       expect(page).to have_text(account_contact.msisdn)
@@ -57,9 +57,9 @@ RSpec.describe 'Contact pages', type: :system do
 
   describe 'contact detail' do
     it 'show contact detail' do
-      contact = create(:contact, account: user.account)
+      contact = create(:contact, account: admin.account)
 
-      sign_in user
+      sign_in admin
       visit dashboard_contact_path(contact)
 
       expect(page).to have_text('Contact detail')

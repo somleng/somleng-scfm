@@ -1,8 +1,7 @@
 .col-12
   .btn-toolbar{ role: 'toolbar' }
-    - if current_user.is_admin?
-      .btn-group.mr-2{ role: 'group' }
-        = button_to 'New contact', new_dashboard_contact_path, class: ' btn btn-outline-dark', method: :get
+    .btn-group.mr-2{ role: 'group' }
+      = button_to 'New contact', new_dashboard_contact_path, class: ' btn btn-outline-dark', method: :get
   %br
 .col-12
   %table.table.table-hover.table-bordered

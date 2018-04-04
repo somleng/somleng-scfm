@@ -17,7 +17,7 @@ RSpec.shared_examples_for "has_metadata" do
 
       context 'when has invalid metadata_forms' do
         it 'should not valid and return false' do
-          invalid_metadata_form = MetadataForm.new(attr_key: 'contact:name')
+          invalid_metadata_form = MetadataForm.new(attr_val: 'only value')
           subject.metadata_forms = [invalid_metadata_form]
 
           expect(subject.valid?(:dashboard)).to eq(false)

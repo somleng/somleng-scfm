@@ -1,9 +1,9 @@
 DashboardCallout = function() {
 
-  dashboardBase = new DashboardBase();
+  dashboardMetadataField = new DashboardMetadataField();
 
   this.init = function() {
-    dashboardBase.init();
+    dashboardMetadataField.init();
   }
 }
 

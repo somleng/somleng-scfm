@@ -12,7 +12,7 @@
         %th Status
     %tbody
       - @callouts.each_with_index do |callout, i|
-        %tr
+        = content_tag_for(:tr, callout) do
           %td= i + 1
           %td= link_to callout.title, dashboard_callout_path(callout)
           %td= callout.status

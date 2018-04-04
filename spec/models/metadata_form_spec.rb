@@ -2,10 +2,6 @@ require 'rails_helper'
 
 RSpec.describe MetadataForm do
   describe 'validates' do
-    context 'if attr_key presents' do
-      subject { MetadataForm.new(attr_key: 'title') }
-      it { is_expected.to validate_presence_of(:attr_val) }
-    end
     context 'if attr_val presents' do
       subject { MetadataForm.new(attr_val: 'Group 1') }
       it { is_expected.to validate_presence_of(:attr_key) }

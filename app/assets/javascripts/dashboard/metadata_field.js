@@ -1,5 +1,5 @@
-DashboardBase = function() {
-  var onCLickJSAddMetadataField = function() {
+DashboardMetadataField = function() {
+  var cLickJSAddMetadataField = function() {
     $('form').on('click', '.js-add-metadata-fields', function(e) {
       e.preventDefault();
       blueprint = $(e.target).data("blueprint");
@@ -11,7 +11,7 @@ DashboardBase = function() {
     });
   }
 
-  var onClickJSRemoveMetadataField = function() {
+  var clickJSRemoveMetadataField = function() {
     $('form').on('click', '.js-remove-metadata-fields',
     function(e) {
       parent = $(this).closest('.js-metadata-fields')
@@ -22,7 +22,7 @@ DashboardBase = function() {
   }
 
   this.init = function() {
-    onCLickJSAddMetadataField();
-    onClickJSRemoveMetadataField();
+    cLickJSAddMetadataField();
+    clickJSRemoveMetadataField();
   }
 }

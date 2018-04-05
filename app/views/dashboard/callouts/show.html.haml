@@ -6,16 +6,11 @@
       = button_to 'Edit', edit_dashboard_callout_path(@callout), class: ' btn btn-outline-primary', method: :get
     .btn-group.mr-2{ role: 'group' }
       = button_to 'Delete', dashboard_callout_path(@callout), class: ' btn btn-outline-danger', method: :delete, data: { confirm: 'Are you sure?' }
-    - if @callout.initialized?
+
+    - @callout.aasm.events.map { |event| event.name.to_s }.each do |event|
       .btn-group.mr-2{ role: 'group' }
-        = button_to 'Start', start_dashboard_callout_path(@callout), class: ' btn btn-outline-warning', method: :put, data: { confirm: 'Are you sure?' }
-    - else
-      - if @callout.paused? || @callout.stopped?
-        .btn-group.mr-2{ role: 'group' }
-          = button_to 'Resume', resume_dashboard_callout_path(@callout), class: ' btn btn-outline-warning', method: :put, data: { confirm: 'Are you sure?' }
-      - if @callout.running?
-        .btn-group.mr-2{ role: 'group' }
-          = button_to 'Stop', stop_dashboard_callout_path(@callout), class: ' btn btn-outline-warning', method: :put, data: { confirm: 'Are you sure?' }
+        = button_to event.titleize, dashboard_callout_callout_events_path(@callout, event: event), class: ' btn btn-outline-warning', method: :post, data: { confirm: 'Are you sure?' }
+
   %br
 .col-12.col-md-9.col-lg-7
   = content_tag_for(:div, @callout, class: 'card') do

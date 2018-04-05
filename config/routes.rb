@@ -16,11 +16,7 @@ Rails.application.routes.draw do
     resources :access_tokens, only: :index
     resources :contacts
     resources :callouts do
-      member do
-        put :start
-        put :resume
-        put :stop
-      end
+      resources :callout_events, :only => :create
     end
   end
 

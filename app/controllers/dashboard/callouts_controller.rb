@@ -1,5 +1,5 @@
 class Dashboard::CalloutsController < Dashboard::BaseController
-  before_action :set_callout, only: [:show, :edit, :update, :destroy, :start, :resume, :stop]
+  before_action :set_callout, only: [:show, :edit, :update, :destroy]
 
   def index
     @callouts = current_account.callouts.page(params[:page])
@@ -37,30 +37,6 @@ class Dashboard::CalloutsController < Dashboard::BaseController
     @callout.destroy
 
     redirect_to dashboard_callouts_url, notice: 'Callout was successfully destroyed.'
-  end
-
-  def start
-    if @callout.start!
-      redirect_to dashboard_callout_url(@callout), notice: 'Callout was successfully started.'
-    else
-      redirect_to dashboard_callout_url(@callout), alert: 'Failed to start.'
-    end
-  end
-
-  def resume
-    if @callout.resume!
-      redirect_to dashboard_callout_url(@callout), notice: 'Callout was successfully resumed.'
-    else
-      redirect_to dashboard_callout_url(@callout), alert: 'Failed to resume.'
-    end
-  end
-
-  def stop
-    if @callout.stop!
-      redirect_to dashboard_callout_url(@callout), notice: 'Callout was successfully stopped.'
-    else
-      redirect_to dashboard_callout_url(@callout), alert: 'Failed to stop.'
-    end
   end
 
   private

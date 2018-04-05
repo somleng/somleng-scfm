@@ -9,7 +9,7 @@
         = button_to 'Delete', dashboard_user_path(@user), class: ' btn btn-outline-dark', method: :delete, data: { confirm: 'Are you sure?' }
   %br
 .col-lg-8.col-sm-12
-  .card
+  = div_for(@user, class: 'card') do
     .card-header
       User detail
     .card-body

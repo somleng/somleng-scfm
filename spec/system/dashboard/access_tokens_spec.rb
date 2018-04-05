@@ -33,7 +33,6 @@ RSpec.describe 'Api key management', type: :system do
 
       visit dashboard_access_tokens_path
 
-      dashboard_root_path
       expect(page).to have_text("We're sorry, but you do not have permission to view this page.")
     end
   end

@@ -1,5 +1,4 @@
-class Dashboard::UsersController < Dashboard::BaseController
-  before_action :authorize_admin!
+class Dashboard::UsersController < Dashboard::AdminController
   before_action :set_user, only: [:show, :edit, :update, :destroy]
 
   def index

@@ -1,4 +1,5 @@
 class Dashboard::UserInvitationsController < Devise::InvitationsController
+  before_action :authorize_admin!, only: :new
 
   private
 

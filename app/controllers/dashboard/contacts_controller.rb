@@ -1,5 +1,4 @@
-class Dashboard::ContactsController < Dashboard::BaseController
-  before_action :authorize_admin!
+class Dashboard::ContactsController < Dashboard::AdminController
   before_action :set_contact, only: [:show, :edit, :update, :destroy]
 
   def index

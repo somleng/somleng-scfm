@@ -9,7 +9,7 @@
         = button_to 'Delete', dashboard_contact_path(@contact), class: ' btn btn-outline-danger', method: :delete, data: { confirm: 'Are you sure?' }
   %br
 .col-lg-8.col-sm-12
-  .card
+  = div_for(@contact, class: 'card') do
     .card-header
       Contact detail
     .card-body

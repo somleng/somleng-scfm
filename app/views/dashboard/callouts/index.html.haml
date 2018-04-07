@@ -1,0 +1,20 @@
+.col-12
+  .btn-toolbar{ role: 'toolbar' }
+    .btn-group.mr-2{ role: 'group' }
+      = button_to 'New callout', new_dashboard_callout_path, class: ' btn btn-outline-dark', method: :get
+  %br
+.col-12
+  %table.table.table-hover.table-bordered
+    %thead.thead-light
+      %tr
+        %th #
+        %th Title
+        %th Status
+    %tbody
+      - @callouts.each_with_index do |callout, i|
+        = content_tag_for(:tr, callout) do
+          %td= i + 1
+          %td= link_to callout.title, dashboard_callout_path(callout)
+          %td= callout.status
+.col-12
+  = paginate @callouts

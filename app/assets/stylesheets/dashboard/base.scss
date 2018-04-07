@@ -74,6 +74,14 @@ main {
   }
 }
 
+dl.row {
+  margin-bottom: 0;
+}
+
+ul.ul-infinit {
+  padding: 0 12px;
+}
+
 @media (min-width: 768px) {
   #left-sidebar.collapse {
     display: block;

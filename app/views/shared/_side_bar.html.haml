@@ -7,9 +7,7 @@
             Dashboard
       .card-body
         %ul.nav.flex-column
-          %li.nav-item
-            %a.nav-link{:href => "#"}
-              Callouts
+          = nav_link 'Callouts', dashboard_callouts_path, 'callouts'
           %li.nav-item
             %a.nav-link{:href => "#"}
               Batch Operation

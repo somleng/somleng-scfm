@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe 'User management page', type: :system do
+RSpec.describe 'User management pages', type: :system do
   let(:user) { create(:user) }
 
   before do

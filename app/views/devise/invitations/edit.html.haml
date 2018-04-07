@@ -1,0 +1,13 @@
+.container.devise-page
+  .row
+    .col-lg-4.offset-lg-4.col-md-6.offset-md-3.col-sm-8.offset-sm-2
+      .card
+        .card-body
+          %h5.card-title Set your password
+          = simple_form_for resource, as: resource_name, url: invitation_path(resource_name), html: { method: :put } do |f|
+            = f.hidden_field :invitation_token, readonly: true
+            - if f.object.class.require_password_on_accepting
+              = f.input :password, input_html: { autofocus: true }
+              = f.input :password_confirmation
+            .form-group.actions
+              = f.submit 'Save', class: 'btn btn-primary'

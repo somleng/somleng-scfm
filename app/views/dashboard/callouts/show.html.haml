@@ -1,0 +1,36 @@
+.col-12
+  .btn-toolbar{ role: 'toolbar' }
+    .btn-group.mr-2{ role: 'group' }
+      = button_to 'Back', :back, class: 'btn btn-outline-dark', method: :get
+    .btn-group.mr-2{ role: 'group' }
+      = button_to 'Edit', edit_dashboard_callout_path(@callout), class: ' btn btn-outline-primary', method: :get
+    .btn-group.mr-2{ role: 'group' }
+      = button_to 'Delete', dashboard_callout_path(@callout), class: ' btn btn-outline-danger', method: :delete, data: { confirm: 'Are you sure?' }
+
+    - @callout.aasm.events.map { |event| event.name.to_s }.each do |event|
+      .btn-group.mr-2{ role: 'group' }
+        = button_to event.titleize, dashboard_callout_callout_events_path(@callout, event: event), class: ' btn btn-outline-warning', method: :post, data: { confirm: 'Are you sure?' }
+
+  %br
+.col-12.col-md-9.col-lg-7
+  = content_tag_for(:div, @callout, class: 'card') do
+    .card-header
+      Callout detail
+    .card-body
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right ID:
+        %dd.col-sm-7.col-md-6= @callout.id
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right Status:
+        %dd.col-sm-7.col-md-6= @callout.status
+      .col-sm-5.col-md-4
+        %h5.text-md-right Meta data:
+      - @callout.metadata_forms.each do |data|
+        %dl.row
+          %dt.col-sm-5.col-md-4.text-md-right
+            = data.attr_key
+          %dd.col-sm-7.col-md-6
+            = data.attr_val
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right Created at:
+        %dd.col-sm-7.col-md-6= @callout.created_at

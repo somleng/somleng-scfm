@@ -11,6 +11,50 @@ RSpec.shared_examples_for "has_metadata" do
     end
 
     it { assert_validations! }
+
+    describe 'valid_metadata_forms' do
+      subject { create(factory, :metadata => {}) }
+
+      context 'when has invalid metadata_forms' do
+        it 'should not valid and return false' do
+          invalid_metadata_form = MetadataForm.new(attr_val: 'only value')
+          subject.metadata_forms = [invalid_metadata_form]
+
+          expect(subject.valid?(:dashboard)).to eq(false)
+          expect(subject.errors[:base]).to include('invalid metadata')
+        end
+      end
+    end
+  end
+
+  describe '#metadata_forms' do
+    subject { create(factory, metadata: {}) }
+
+    it 'return new metadata form when metadata empty' do
+      new_metadata_form = MetadataForm.new
+      allow(MetadataForm).to receive(:new).and_return(new_metadata_form)
+      expect(subject.metadata_forms).to eq([new_metadata_form])
+    end
+
+    it 'return unested data as metadata_form object' do
+      subject.metadata = { 'address' => { 'city' => 'pp' }}
+
+      metadata_form = subject.metadata_forms.first
+
+      expect(metadata_form.attr_key).to eq 'address:city'
+      expect(metadata_form.attr_val).to eq 'pp'
+    end
+  end
+
+  describe '#metadata_forms_attributes=(attributes)' do
+    subject { create(factory, :metadata => {}) }
+
+    it 'should build new metadata_form and assign to metadata' do
+      attributes = {"0"=>{"attr_key"=>"title", "attr_val"=>"call 1"}}
+
+      subject.metadata_forms_attributes=(attributes)
+      expect(subject.metadata).to eq({ 'title' => 'call 1'})
+    end
   end
 
   describe "#metadata" do

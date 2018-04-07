@@ -4,15 +4,20 @@ Rails.application.routes.draw do
     put 'users' => 'devise/registrations#update', as: 'user_registration'
   end
 
-  devise_for :users, skip: :registrations
+  devise_for :users,
+    controllers: { invitations: 'dashboard/user_invitations' },
+    skip: :registrations
 
   root to: redirect('dashboard')
 
   namespace 'dashboard' do
-    root to: 'users#index'
+    root to: 'callouts#index'
     resources :users, only: :index
     resources :access_tokens, only: :index
     resources :contacts
+    resources :callouts do
+      resources :callout_events, :only => :create
+    end
   end
 
   namespace "api", :defaults => { :format => "json" } do

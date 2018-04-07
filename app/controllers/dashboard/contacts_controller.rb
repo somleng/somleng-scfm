@@ -2,7 +2,7 @@ class Dashboard::ContactsController < Dashboard::BaseController
   before_action :set_contact, only: [:show, :edit, :update, :destroy]
 
   def index
-    @contacts = current_account.contacts
+    @contacts = current_account.contacts.page(params[:page])
   end
 
   def show; end
@@ -39,11 +39,11 @@ class Dashboard::ContactsController < Dashboard::BaseController
 
   private
 
-    def set_contact
-      @contact = current_account.contacts.find(params[:id])
-    end
+  def set_contact
+    @contact = current_account.contacts.find(params[:id])
+  end
 
-    def contact_params
-      params.require(:contact).permit(:id, :msisdn)
-    end
+  def contact_params
+    params.require(:contact).permit(:id, :msisdn)
+  end
 end

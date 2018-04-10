@@ -3,5 +3,6 @@
   = simple_form_for resource, :as => resource_name, :url => invitation_path(resource_name), :html => {:method => :post} do |f|
     - resource.class.invite_key_fields.each do |field|
       = f.input field
+      = f.input :roles, as: :radio_buttons, collection: User.values_for_roles.map{ |r| [r, r.to_s.capitalize] }, label_method: :second, value_method: :first, checked: f.object.roles
     .form-group.actions
       = f.submit 'Send an invitation', class: 'btn btn-primary'

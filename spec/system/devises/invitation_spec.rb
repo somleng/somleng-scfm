@@ -2,10 +2,9 @@ require 'rails_helper'
 
 RSpec.describe 'User invitation', type: :system do
   describe 'Send invitation', type: :system do
-    let(:user) { create(:user) }
-
     it 'will send an invitation (pending)' do
-      sign_in(user)
+      admin = create(:user, roles: 'admin')
+      sign_in(admin)
       visit new_user_invitation_path
 
       fill_in 'Email', with: 'bopha@somleng.com'

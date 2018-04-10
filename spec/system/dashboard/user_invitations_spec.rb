@@ -4,14 +4,19 @@ RSpec.describe 'User invitation', type: :system do
   context 'admin can invite new user' do
     it 'will send an invitation (pending)' do
       admin = create(:user, roles: :admin)
+      account = admin.account
 
       sign_in(admin)
       visit new_user_invitation_path
 
       fill_in 'user[email]', with: 'bopha@somleng.com'
+      choose('Admin')
       click_button 'Send an invitation'
 
+      new_user = account.users.find_by(email: 'bopha@somleng.com')
+
       expect(page).to have_text('An invitation email has been sent to bopha@somleng.com.')
+      expect(new_user.roles?(:admin)).to eq true
     end
   end
 

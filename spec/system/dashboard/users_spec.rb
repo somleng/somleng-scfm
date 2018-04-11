@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'User management page', type: :system do
-  let(:admin) { create(:user, roles: :admin) }
+  let(:admin) { create(:admin) }
 
   context "when a user is not an admin tries to users page" do
     let(:user) { create(:user) }
@@ -55,13 +55,19 @@ RSpec.describe 'User management page', type: :system do
       sign_in(admin)
       visit dashboard_user_path(user)
 
-      click_button 'Edit'
-
-      choose('Admin')
-      click_button('Update User')
-      admin.reload
+      edit_user(roles: 'Admin', location: 'Banteay Meanchey')
+      user.reload
 
       expect(page).to have_text('User was successfully updated.')
+      expect(user.roles?(:admin)).to eq true
+      expect(user.location_ids).to include_location('Banteay Meanchey')
     end
+  end
+
+  def edit_user(options = {})
+    click_button 'Edit'
+    choose options[:roles]
+    select options[:location], from: 'Locations'
+    click_button('Update User')
   end
 end

@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:invite, keys: [:roles])
+    devise_parameter_sanitizer.permit(:invite, keys: [:roles, location_ids: []])
   end
 
   private

@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe 'User invitation', type: :system do
   describe 'Send invitation', type: :system do
     it 'will send an invitation (pending)' do
-      admin = create(:user, roles: 'admin')
+      admin = create(:admin)
       sign_in(admin)
       visit new_user_invitation_path
 

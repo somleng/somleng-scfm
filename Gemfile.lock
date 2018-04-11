@@ -6,6 +6,12 @@ GIT
       concurrent-ruby (~> 1.0)
 
 GIT
+  remote: https://github.com/dwilkie/pumi.git
+  revision: 57e777cefb72215bf940f79c1c8ec96bd94f7d16
+  specs:
+    pumi (0.1.0)
+
+GIT
   remote: https://github.com/krisleech/wisper.git
   revision: b5cecbbff4651eb620fe87b561c3674f72d70393
   specs:
@@ -101,6 +107,10 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (>= 2.0, < 4.0)
+    chosen-rails (1.8.3)
+      coffee-rails (>= 3.2)
+      railties (>= 3.0)
+      sass-rails (>= 3.2)
     codeclimate-test-reporter (1.0.8)
       simplecov (<= 0.13)
     coderay (1.1.2)
@@ -348,6 +358,7 @@ DEPENDENCIES
   bitmask_attributes!
   bootstrap (~> 4.0.0)
   capybara
+  chosen-rails
   codeclimate-test-reporter (~> 1.0.0)
   coffee-rails (~> 4.2)
   devise
@@ -368,6 +379,7 @@ DEPENDENCIES
   phony_rails
   pry
   puma (~> 3.7)
+  pumi!
   rails (~> 5.1.4)
   rails-controller-testing
   record_tag_helper (~> 1.0)

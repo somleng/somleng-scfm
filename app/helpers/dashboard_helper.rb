@@ -24,4 +24,13 @@ module DashboardHelper
       data: { association: 'metadata_forms', blueprint: "#{fields}" }
     )
   end
+
+  def all_provices
+    Pumi::Province.all
+  end
+
+  def province_names(ids)
+    provinces = Pumi::Province.all.select { |p| ids.include? p.id }
+    provinces.map(&:name_en).join(', ')
+  end
 end

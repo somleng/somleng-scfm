@@ -36,6 +36,8 @@ gem 'jquery-rails'
 gem 'haml'
 gem 'simple_form'
 gem 'record_tag_helper', '~> 1.0'
+gem 'pumi', :github => "dwilkie/pumi", :require => "pumi/rails"
+gem 'chosen-rails'
 
 group :development, :test do
   gem 'pry'

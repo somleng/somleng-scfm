@@ -1,6 +1,8 @@
 class User < ApplicationRecord
   include MetadataHelpers
 
+  store_accessor :metadata, :location_ids
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :invitable, :registerable, :database_authenticatable,
@@ -11,6 +13,7 @@ class User < ApplicationRecord
   bitmask :roles, :as => [:member, :admin], null: false
 
   validates :roles, presence: true
+  validates :location_ids, array: true, if: 'location_ids.present?'
 
   def is_admin?
     roles?(:admin)

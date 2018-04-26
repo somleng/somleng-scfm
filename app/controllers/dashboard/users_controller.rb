@@ -30,6 +30,6 @@ class Dashboard::UsersController < Dashboard::AdminController
   end
 
   def user_params
-    params.require(:user).permit(:id, :roles)
+    params.require(:user).permit(:id, :roles, location_ids: [])
   end
 end

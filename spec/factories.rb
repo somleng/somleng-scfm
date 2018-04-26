@@ -154,6 +154,11 @@ FactoryBot.define do
     email
     password "secret123"
     password_confirmation { password }
+    roles :member
+
+    factory :admin do
+      roles :admin
+    end
   end
 
   factory :access_token do

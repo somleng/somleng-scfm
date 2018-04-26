@@ -5,4 +5,9 @@ module SomlengScfm::SpecHelpers::SystemHelpers
     name = record.class.name.downcase
     have_selector("##{name}_#{record.id}")
   end
+
+  def include_location(name)
+    location = Pumi::Province.where(name_en: name).first
+    include(location.id)
+  end
 end

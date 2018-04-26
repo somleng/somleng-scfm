@@ -6,4 +6,8 @@ class Dashboard::UserInvitationsController < Devise::InvitationsController
   def invite_params
     super.merge(account_id: current_inviter.account_id)
   end
+
+  def after_invite_path_for(*)
+    dashboard_users_path
+  end
 end

@@ -5,6 +5,12 @@ class Dashboard::ContactsController < Dashboard::BaseController
     @contacts = current_account.contacts.page(params[:page])
   end
 
+  def search
+    @contacts = current_account.contacts.search(params[:q]).page(params[:page])
+
+    render json: @contacts
+  end
+
   def show; end
 
   def new

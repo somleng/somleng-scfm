@@ -14,9 +14,12 @@ Rails.application.routes.draw do
     root to: 'callouts#index'
     resources :users, only: :index
     resources :access_tokens, only: :index
-    resources :contacts
+    resources :contacts do
+      get :search, on: :collection
+    end
     resources :callouts do
-      resources :callout_events, :only => :create
+      resources :callout_events, only: :create
+      resources :callout_participations, only: [:new, :create], as: :participations
     end
   end
 

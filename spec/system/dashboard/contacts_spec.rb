@@ -65,11 +65,11 @@ RSpec.describe 'Contact pages', type: :system do
       expect(page).to have_current_path(edit_dashboard_contact_path(contact))
     end
 
-    it 'click delete contact then accept alert' do
+    it 'click delete contact then accept alert', js: true do
       contact = create(:contact, account: user.account)
 
       visit dashboard_contact_path(contact)
-      click_button 'Delete'
+      page.accept_confirm { click_button 'Delete' }
       expect(page).to have_text('Contact was successfully destroyed.')
     end
   end

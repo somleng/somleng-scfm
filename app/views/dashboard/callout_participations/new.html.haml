@@ -1,0 +1,7 @@
+.col-md-6
+  %h5.card-title New callout participation
+  = simple_form_for [:dashboard, @callout_participation] do |f|
+    = f.input :contact_id, collection: [], label: 'Select Contact', input_html: { class: 'js-select2', 'data-ajax-url': search_dashboard_contacts_url }
+    .form-group.actions
+      = f.button :submit, class: 'btn btn-primary'
+      = link_to 'Cancel', :back, class: 'btn btn-outline-dark'

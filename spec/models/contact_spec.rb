@@ -23,4 +23,12 @@ RSpec.describe Contact do
 
     it { assert_associations! }
   end
+
+  describe 'scope' do
+    it 'search' do
+      contact = create(:contact, msisdn: 252662345678)
+
+      expect(Contact.search('66')).to eq [contact]
+    end
+  end
 end

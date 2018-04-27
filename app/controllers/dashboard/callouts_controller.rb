@@ -5,7 +5,9 @@ class Dashboard::CalloutsController < Dashboard::BaseController
     @callouts = current_account.callouts.page(params[:page])
   end
 
-  def show; end
+  def show
+    @participations = @callout.callout_participations.page(params[:page])
+  end
 
   def new
     @callout = Callout.new(metadata_forms: [MetadataForm.new])

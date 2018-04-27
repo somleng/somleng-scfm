@@ -18,4 +18,6 @@ class Contact < ApplicationRecord
 
   validates :msisdn,
             :uniqueness => {:scope => :account_id}
+
+  scope :search, ->(q) { where("msisdn LIKE ?", "%#{q}%") }
 end

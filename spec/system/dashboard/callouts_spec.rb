@@ -41,14 +41,35 @@ RSpec.describe 'Callout pages', type: :system do
       expect(page).to have_text('Callout was successfully updated.')
     end
 
-    it 'click delete callout then accept alert' do
+    it 'click delete callout then accept alert', js: true do
       callout = create(:callout, account: user.account)
 
       sign_in(user)
       visit dashboard_callout_path(callout)
-      click_button 'Delete'
+      page.accept_confirm { click_button 'Delete' }
 
       expect(page).to have_text('Callout was successfully destroyed.')
+    end
+  end
+
+  describe 'Callout participation' do
+    let!(:callout) { create(:callout, account: user.account) }
+    let!(:contact) { create(:contact, account: user.account) }
+
+    it 'add to callout', js: true do
+      sign_in(user)
+      visit dashboard_callout_path(callout)
+
+      create_callout_participation
+
+      expect(page).to have_text('Callout participation was successfully created.')
+      expect(callout.contacts).to include contact
+    end
+
+    def create_callout_participation
+      click_button 'New Callout Participation'
+      select2_select 'Select Contact', with: contact.msisdn
+      click_button 'Create Callout participation'
     end
   end
 

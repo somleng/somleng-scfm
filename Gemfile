@@ -59,5 +59,8 @@ group :test do
   gem "fakefs", :require => 'fakefs/safe'
   gem 'wisper-rspec'
   gem 'capybara'
+  gem 'capybara'
+  gem 'selenium-webdriver'
+  gem 'chromedriver-helper'
   gem 'rails-controller-testing'
 end

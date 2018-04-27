@@ -33,6 +33,12 @@ RSpec.configure do |config|
     driven_by :rack_test
   end
 
+  # default capybara driver for system specs with js
+  config.before(:each, type: :system, js: true) do
+    WebMock.disable_net_connect!(allow_localhost: true)
+    driven_by :selenium_chrome_headless
+  end
+
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
@@ -62,6 +68,7 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 
   config.include Devise::Test::IntegrationHelpers, type: :system
+  config.include SomlengScfm::SpecHelpers::SystemHelpers, type: :system
   config.include Devise::Test::ControllerHelpers, type: :controller
 
   config.infer_base_class_for_anonymous_controllers = false

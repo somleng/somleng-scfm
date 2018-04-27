@@ -3,6 +3,8 @@
     .btn-group.mr-2{ role: 'group' }
       = button_to 'Back', :back, class: 'btn btn-outline-dark', method: :get
     .btn-group.mr-2{ role: 'group' }
+      = button_to 'New Callout Participation', new_dashboard_callout_participation_path(callout_id: @callout.id), class: 'btn btn-outline-dark', method: :get
+    .btn-group.mr-2{ role: 'group' }
       = button_to 'Edit', edit_dashboard_callout_path(@callout), class: ' btn btn-outline-primary', method: :get
     .btn-group.mr-2{ role: 'group' }
       = button_to 'Delete', dashboard_callout_path(@callout), class: ' btn btn-outline-danger', method: :delete, data: { confirm: 'Are you sure?' }
@@ -23,8 +25,9 @@
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right Status:
         %dd.col-sm-7.col-md-6= @callout.status
-      .col-sm-5.col-md-4
-        %h5.text-md-right Meta data:
+      - if @callout.metadata.present?
+        .col-sm-5.col-md-4
+          %h5.text-md-right Meta data:
       - @callout.metadata_forms.each do |data|
         %dl.row
           %dt.col-sm-5.col-md-4.text-md-right
@@ -34,3 +37,20 @@
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right Created at:
         %dd.col-sm-7.col-md-6= @callout.created_at
+- if @participations.present?
+  %br
+  .col-12
+    %table.table.table-hover.table-bordered
+      %thead.thead-light
+        %tr
+          %th # Participation
+          %th Number
+          %th Created at
+      %tbody
+        - @participations.each_with_index do |participation, i|
+          = content_tag_for(:tr, participation) do
+            %td= i + 1
+            %td= participation.msisdn
+            %td= participation.created_at
+  .col-12
+    = paginate @participations

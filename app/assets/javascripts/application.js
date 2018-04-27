@@ -14,6 +14,7 @@
 //= require jquery3
 //= require popper
 //= require bootstrap
+//= require select2.full.min
 
 //= require rails-ujs
 //= require turbolinks

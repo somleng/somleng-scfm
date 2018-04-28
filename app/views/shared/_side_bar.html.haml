@@ -3,14 +3,14 @@
     .card
       .card-body
         %ul.nav.flex-column
-          = nav_link 'Emergency call', dashboard_callouts_path, 'callouts'
+          = nav_link 'Make Emergency Call', dashboard_callouts_path, 'callouts'
           %li.nav-item
             %a.nav-link{:href => "#"}
-              Call histrory
+              Call history
           - if current_user.is_admin?
             %li.nav-item
               %a.nav-link{:href => "#"}
-                Batch Operation
+                Batch Operations
             = nav_link 'Contacts', dashboard_contacts_path, 'contacts'
 
     - if current_user.is_admin?
@@ -22,4 +22,4 @@
         .card-body
           %ul.nav.flex-column
             = nav_link 'Users', dashboard_users_path, 'users'
-            = nav_link 'Api-key', dashboard_access_tokens_path, 'access_tokens'
+            = nav_link 'Api Keys', dashboard_access_tokens_path, 'access_tokens'

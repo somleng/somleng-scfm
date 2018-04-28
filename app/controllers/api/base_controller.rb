@@ -1,4 +1,5 @@
 class Api::BaseController < ApplicationController
+  protect_from_forgery :with => :null_session
   before_action :verify_requested_format!
 
   def create

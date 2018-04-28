@@ -1,5 +1,4 @@
 language: ruby
-dist: trusty
 cache: bundler
 addons:
   postgresql: '10'
@@ -20,7 +19,6 @@ before_install:
   - sudo chmod +x /usr/local/bin/chromedriver
 before_script:
   - google-chrome-stable --headless --disable-gpu --no-sandbox
-  - psql -c 'create database somleng_scfm_test;' -U postgres
 deploy:
   - provider: elasticbeanstalk
     region: ap-southeast-1

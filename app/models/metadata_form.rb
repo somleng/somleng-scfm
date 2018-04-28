@@ -7,7 +7,7 @@ class MetadataForm
 
   def self.unnest(hash)
     new_hash = {}
-    hash.each do |key,val|
+    hash.each do |key, val|
       if val.is_a?(Hash)
         new_hash.merge!(prefix_keys("#{key}:", val))
       else
@@ -18,12 +18,12 @@ class MetadataForm
   end
 
   def to_json
-    attr_key.split(':').reverse.inject(attr_val) { |v, k| { k => v }}
+    attr_key.split(":").reverse.inject(attr_val) { |v, k| { k => v } }
   end
 
   private
 
   def self.prefix_keys(prefix, hash)
-    unnest(Hash[hash.map{|key,val| [prefix + key, val]}])
+    unnest(Hash[hash.map { |key, val| [prefix + key, val] }])
   end
 end

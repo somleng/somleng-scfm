@@ -9,7 +9,6 @@ addons:
 env:
   global:
     - AWS_REGION=ap-southeast-1
-    - PGPORT=5433
     - secure: "G0B3FQQswbbLoAibrWIuvl/1ZvJttpsh5V1qa9a12Yig2B8vI3HeeTyoH6IFpJsi8xlWiYI5ik77u4H9GOXqNMT/II3D+n4Nivjxo8ljSV74RaXTuK0iMhlhPdH2QgZxTHoaGEw3bVXnCcUEgZ7n0PRJDq79JNYthc3jZHHg6qwNkswHe1wTHtD5slUiLlXUTvlMIgwHok/LNohVtxa0tF1WLTnR0CZXrbRVWS7Mlt8ZectKvdipCnJu9eT44LKhnxbyVIBPuvwFIY2yH/z0prCj6RSG7+43LHM02g+gH3K58IZSsibFu2+i85Ye4VT+SU7ZWJGzzxQ8yc5+wwrZgEPt8rwqtsg401oz4EouUFW+ITjJMqBvQi4NuZ21jdf5aQCw4cyodXZ+H1i2nCeCTO07K8bs4M91AUNitLc+ZjklLhFrn3tFhUJdCnl0MXhc5u8gBLu4hVy5DY1Cg6eIGBBlCGJhRSWx0wbPK1uRW71SwbknTIwC/R7kVqv2wHfZHljqhoisXSyEtMiheqJjwJ+EVbA5bFtIEXY2xW7LzN1TUxIw6IzIkM7AL4Vbn6s7B07GnPlSKJI+J0eixD6sYDl6lM7HR+cVmuAGqX1be9i8dQLCyf19BoscQlaU7cuX1TdTr/9mbdNoGsw6BZLn0zJ8DxGoMb+CLXLSOiB3hic="
 before_install:
   - wget http://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip
@@ -19,6 +18,7 @@ before_install:
   - sudo chmod +x /usr/local/bin/chromedriver
 before_script:
   - google-chrome-stable --headless --disable-gpu --no-sandbox
+  - psql -c 'create database somleng_scfm_test;' -U travis
 deploy:
   - provider: elasticbeanstalk
     region: ap-southeast-1

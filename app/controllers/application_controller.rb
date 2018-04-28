@@ -1,6 +1,5 @@
 class ApplicationController < ActionController::Base
-  protect_from_forgery :with => :exception, :if => :protect_against_forgery?
-
+  protect_from_forgery :with => :exception
   layout :layout_by_resource
 
   before_action :configure_permitted_parameters, if: :devise_controller?

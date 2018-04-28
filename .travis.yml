@@ -1,6 +1,8 @@
 language: ruby
 dist: trusty
 cache: bundler
+services:
+  - postgresql
 addons:
   postgresql: '10'
 apt:

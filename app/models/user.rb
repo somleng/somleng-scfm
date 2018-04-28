@@ -13,7 +13,7 @@ class User < ApplicationRecord
   bitmask :roles, :as => [:member, :admin], null: false
 
   validates :roles, presence: true
-  validates :location_ids, array: true, if: 'location_ids.present?'
+  validates :location_ids, array: true, if: -> { location_ids.present? }
 
   def is_admin?
     roles?(:admin)

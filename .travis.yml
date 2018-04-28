@@ -1,14 +1,12 @@
 language: ruby
 dist: trusty
 cache: bundler
-services:
-  - postgresql
 addons:
-  postgresql: '10'
-apt:
-  packages:
-    - postgresql-10
-    - postgresql-client-10
+  postgresql: '10.3'
+  apt:
+    packages:
+      - postgresql-10
+      - postgresql-client-10
 env:
   global:
     - AWS_REGION=ap-southeast-1

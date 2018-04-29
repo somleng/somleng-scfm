@@ -1,5 +1,4 @@
 class Dashboard::UserInvitationsController < Devise::InvitationsController
-
   private
 
   def invite_params

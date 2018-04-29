@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe RunBatchOperationJob do
-  include_examples("application_job")
+  include_examples("aws_sqs_queue_url")
 
   describe "#perform(batch_operation_id)" do
     let(:batch_operation_factory) { :batch_operation }

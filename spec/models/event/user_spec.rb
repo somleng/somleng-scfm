@@ -1,30 +1,27 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Event::User do
   let(:eventable_factory) { :user }
-  let(:eventable) { create(eventable_factory) }
 
-  subject { described_class.new(:eventable => eventable, :event => event) }
-
-  it_behaves_like("resource_event", :assert_status => false) do
+  it_behaves_like("resource_event", assert_status: false) do
     let(:event) { "invite" }
   end
 
   describe "#save" do
-    def setup_scenario
-      super
-      subject.save
-    end
+    it "queues a job for sending the invite" do
+      user = create(:user)
+      user_event = build_event(user, "invite")
 
-    context "event='invite'" do
-      let(:event) { "invite" }
-      let(:enqueued_job) { enqueued_jobs.first }
+      user_event.save
 
-      it {
-        expect(enqueued_job).to be_present
-        expect(enqueued_job[:job]).to eq(ActionMailer::DeliveryJob)
-        expect(enqueued_job[:queue]).to eq(ApplicationJob::DEFAULT_QUEUE_NAME)
-      }
+      enqueued_job = enqueued_jobs.first
+      expect(enqueued_job).to be_present
+      expect(enqueued_job[:job]).to eq(ActionMailer::DeliveryJob)
+      expect(enqueued_job[:queue]).to eq("queue_name")
     end
+  end
+
+  def build_event(eventable, event)
+    described_class.new(eventable: eventable, event: event)
   end
 end

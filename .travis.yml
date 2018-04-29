@@ -29,3 +29,11 @@ deploy:
     on:
       repo: somleng/somleng-scfm-pin
       branch: master
+  - provider: elasticbeanstalk
+    region: ap-southeast-1
+    app: scfm
+    env: scfm-worker
+    bucket_name: deploy.ews1294.info
+    on:
+      repo: somleng/somleng-scfm-pin
+      branch: master

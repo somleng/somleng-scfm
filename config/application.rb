@@ -27,8 +27,5 @@ module SomlengScfm
 
     # Don't generate system test files.
     config.generators.system_tests = nil
-
-    require_relative "../app/jobs/application_job"
-    config.action_mailer.deliver_later_queue_name = ApplicationJob.aws_sqs_queue_name(:action_mailer_delivery_job)
   end
 end

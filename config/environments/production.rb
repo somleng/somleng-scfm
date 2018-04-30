@@ -21,7 +21,7 @@ Rails.application.configure do
 
   # Disable serving static files from the `/public` folder by default since
   # Apache or NGINX already handles this.
-  config.public_file_server.enabled = ENV['RAILS_SERVE_STATIC_FILES'].present?
+  config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
 
   # Compress JavaScripts and CSS.
   config.assets.js_compressor = :uglifier
@@ -52,7 +52,7 @@ Rails.application.configure do
   config.log_level = :debug
 
   # Prepend all log lines with the following tags.
-  config.log_tags = [ :request_id ]
+  config.log_tags = [:request_id]
 
   # Use a different cache store in production.
   # config.cache_store = :mem_cache_store
@@ -88,4 +88,24 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  Rails.application.routes.default_url_options[:host] = Rails.application.secrets.fetch(:default_url_host)
+
+  config.action_mailer.default_url_options = {
+    host: Rails.application.secrets.fetch(:default_url_host),
+    protocol: "https"
+  }
+
+  config.action_mailer.delivery_method = Rails.application.secrets.fetch(
+    :action_mailer_delivery_method
+  ).to_sym
+
+  config.action_mailer.smtp_settings = {
+    address: Rails.application.secrets.fetch(:smtp_address),
+    port: Rails.application.secrets.fetch(:smtp_port).to_i,
+    user_name: Rails.application.secrets.fetch(:smtp_username),
+    password: Rails.application.secrets.fetch(:smtp_password),
+    authentication: Rails.application.secrets.fetch(:smtp_authentication_method).to_sym,
+    enable_starttls_auto: Rails.application.secrets.fetch(:smtp_enable_starttls_auto).to_i == 1
+  }
 end

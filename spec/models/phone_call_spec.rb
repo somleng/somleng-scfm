@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe PhoneCall do
   let(:factory) { :phone_call }
@@ -6,17 +6,14 @@ RSpec.describe PhoneCall do
   include_examples "has_call_flow_logic"
 
   describe "associations" do
-    subject { build(:phone_call, :inbound) }
-    def assert_associations!
-      is_expected.to belong_to(:callout_participation).optional
-      is_expected.to belong_to(:contact).validate(true)
-      is_expected.to belong_to(:create_batch_operation).optional
-      is_expected.to belong_to(:queue_batch_operation).optional
-      is_expected.to belong_to(:queue_remote_fetch_batch_operation).optional
-      is_expected.to have_many(:remote_phone_call_events).dependent(:restrict_with_error)
-    end
+    subject { build_stubbed(:phone_call, :inbound) }
 
-    it { assert_associations! }
+    it { is_expected.to belong_to(:callout_participation).optional }
+    it { is_expected.to belong_to(:contact).validate(true) }
+    it { is_expected.to belong_to(:create_batch_operation).optional }
+    it { is_expected.to belong_to(:queue_batch_operation).optional }
+    it { is_expected.to belong_to(:queue_remote_fetch_batch_operation).optional }
+    it { is_expected.to have_many(:remote_phone_call_events).dependent(:restrict_with_error) }
   end
 
   describe "validations" do
@@ -37,7 +34,7 @@ RSpec.describe PhoneCall do
       end
 
       context "remote_request_params" do
-        subject { build(factory, :remote_request_params => {"foo" => "bar"}) }
+        subject { build(factory, remote_request_params: { "foo" => "bar" }) }
         it { is_expected.not_to be_valid }
       end
 
@@ -99,7 +96,7 @@ RSpec.describe PhoneCall do
 
     context "not allowed to destroy" do
       let(:status) { described_class::STATE_QUEUED }
-      let(:factory_attributes) { { :status => status } }
+      let(:factory_attributes) { { status: status } }
 
       it {
         expect(described_class.find_by_id(subject.id)).to be_present
@@ -109,7 +106,7 @@ RSpec.describe PhoneCall do
         ).to eq(
           I18n.t!(
             "activerecord.errors.models.phone_call.attributes.base.restrict_destroy_status",
-            :status => status
+            status: status
           )
         )
       }
@@ -120,7 +117,7 @@ RSpec.describe PhoneCall do
     subject { create(factory, factory_attributes) }
 
     def factory_attributes
-      {:status => current_status}
+      { status: current_status }
     end
 
     def assert_transitions!
@@ -165,7 +162,7 @@ RSpec.describe PhoneCall do
         let(:asserted_new_status) { described_class::STATE_REMOTELY_QUEUED }
 
         def factory_attributes
-          super.merge(:remote_call_id => "1234")
+          super.merge(remote_call_id: "1234")
         end
 
         it { assert_transitions! }
@@ -174,7 +171,7 @@ RSpec.describe PhoneCall do
 
     describe "#queue_remote_fetch!" do
       def factory_attributes
-        super.merge(:remote_call_id => remote_call_id)
+        super.merge(remote_call_id: remote_call_id)
       end
 
       let(:event) { :queue_remote_fetch }
@@ -201,7 +198,7 @@ RSpec.describe PhoneCall do
       let(:event) { :complete }
 
       def factory_attributes
-        super.merge(:remote_status => remote_status)
+        super.merge(remote_status: remote_status)
       end
 
       context "can complete" do
@@ -216,7 +213,7 @@ RSpec.describe PhoneCall do
         # this is set when fetching the remote call
 
         def factory_attributes
-          super.merge(:new_remote_status => nil)
+          super.merge(new_remote_status: nil)
         end
 
         context "was not remotely queued (inbound call)" do
@@ -232,7 +229,7 @@ RSpec.describe PhoneCall do
           let(:remote_status) { "queued" }
 
           def factory_attributes
-            super.merge(:remotely_queued_at => Time.now)
+            super.merge(remotely_queued_at: Time.now)
           end
 
           context "current_status: 'remote_fetch_queued'" do
@@ -258,7 +255,7 @@ RSpec.describe PhoneCall do
             "failed" => described_class::STATE_FAILED,
             "no-answer" => described_class::STATE_NOT_ANSWERED,
             "canceled" => described_class::STATE_CANCELED,
-            "completed" => described_class::STATE_COMPLETED,
+            "completed" => described_class::STATE_COMPLETED
           }.each do |remote_status, asserted_new_status|
             context "remote_status: '#{remote_status}'" do
               let(:remote_status) { remote_status }
@@ -299,12 +296,12 @@ RSpec.describe PhoneCall do
 
       def factory_attributes
         {
-          :created_at => created_at
+          created_at: created_at
         }
       end
 
       let(:phone_call) { create_phone_call }
-      let(:queued_phone_call) { create_phone_call(:remotely_queued_at => remotely_queued_at) }
+      let(:queued_phone_call) { create_phone_call(remotely_queued_at: remotely_queued_at) }
 
       let(:hours) { 1 }
       let(:timestamp_column) { nil }

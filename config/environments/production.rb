@@ -63,6 +63,9 @@ Rails.application.configure do
   config.active_job.queue_adapter = :active_elastic_job
   config.action_mailer.perform_caching = false
 
+  require Rails.root.join("app/jobs/application_job")
+  config.action_mailer.deliver_later_queue_name = ApplicationJob.aws_sqs_queue_name(:action_mailer_delivery_job)
+
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
   # config.action_mailer.raise_delivery_errors = false

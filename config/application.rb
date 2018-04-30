@@ -1,4 +1,4 @@
-require_relative 'boot'
+require_relative "boot"
 
 require "rails"
 # Pick the frameworks you want:
@@ -34,9 +34,9 @@ module SomlengScfm
 
     host = ENV.fetch("SOMLENG_SCFM_HOST") { "localhost" }
     port = ENV.fetch("SOMLENG_SCFM_PORT") { "3000" }
-    config.action_mailer.default_url_options = { :host => host, :port => port }
+    config.action_mailer.default_url_options = { host: host, port: port }
 
     require_relative "../app/jobs/application_job"
-    config.action_mailer.deliver_later_queue_name = ApplicationJob.queue_name(:action_mailer_delivery_job)
+    config.action_mailer.deliver_later_queue_name = ApplicationJob.aws_sqs_queue_name(:action_mailer_delivery_job)
   end
 end

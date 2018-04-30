@@ -1,7 +1,5 @@
 FactoryBot.define do
-  sequence :somali_msisdn, 252662345678 do |n|
-    n.to_s
-  end
+  sequence :somali_msisdn, 252_662_345_678, &:to_s
 
   sequence :twilio_request_params do
     Hash[Twilio::REST::Client.new.api.account.calls.method(:create).parameters.map { |param| [param[1].to_s, param[1].to_s] }]
@@ -64,26 +62,26 @@ FactoryBot.define do
     msisdn { generate(:somali_msisdn) }
   end
 
-  factory :batch_operation_base, :class => BatchOperation::Base do
+  factory :batch_operation_base, class: BatchOperation::Base do
     account
 
-    factory :callout_population, :aliases => [:batch_operation], :class => BatchOperation::CalloutPopulation do
+    factory :callout_population, aliases: [:batch_operation], class: BatchOperation::CalloutPopulation do
       after(:build) do |callout_population|
-        callout_population.callout ||= build(:callout, :account => callout_population.account)
+        callout_population.callout ||= build(:callout, account: callout_population.account)
       end
     end
 
-    factory :batch_operation_phone_call_operation, :class => BatchOperation::PhoneCallOperation do
+    factory :batch_operation_phone_call_operation, class: BatchOperation::PhoneCallOperation do
       skip_validate_preview_presence { true }
 
-      factory :phone_call_create_batch_operation, :class => BatchOperation::PhoneCallCreate do
+      factory :phone_call_create_batch_operation, class: BatchOperation::PhoneCallCreate do
         remote_request_params { generate(:twilio_request_params) }
       end
 
-      factory :phone_call_queue_batch_operation, :class => BatchOperation::PhoneCallQueue do
+      factory :phone_call_queue_batch_operation, class: BatchOperation::PhoneCallQueue do
       end
 
-      factory :phone_call_queue_remote_fetch_batch_operation, :class => BatchOperation::PhoneCallQueueRemoteFetch do
+      factory :phone_call_queue_remote_fetch_batch_operation, class: BatchOperation::PhoneCallQueueRemoteFetch do
       end
     end
   end
@@ -98,7 +96,7 @@ FactoryBot.define do
 
     trait :with_default_provider do
       after(:build) do |phone_call|
-        phone_call.contact ||= build(:contact, :account => build(:account, :with_default_provider))
+        phone_call.contact ||= build(:contact, account: build(:account, :with_default_provider))
       end
     end
 
@@ -129,9 +127,9 @@ FactoryBot.define do
       if evaluator.build_phone_call
         remote_phone_call_event.phone_call ||= build(
           :phone_call,
-          :msisdn => remote_phone_call_event.details["From"],
-          :remote_call_id => remote_phone_call_event.remote_call_id,
-          :remote_direction => remote_phone_call_event.remote_direction
+          msisdn: remote_phone_call_event.details["From"],
+          remote_call_id: remote_phone_call_event.remote_call_id,
+          remote_direction: remote_phone_call_event.remote_direction
         )
       end
     end
@@ -162,7 +160,7 @@ FactoryBot.define do
   end
 
   factory :access_token do
-    association :resource_owner, :factory => :account
+    association :resource_owner, factory: :account
     created_by { resource_owner }
   end
 end

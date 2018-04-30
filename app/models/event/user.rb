@@ -1,11 +1,11 @@
 class Event::User < Event::Base
-  VALID_EVENTS = ["invite"]
+  VALID_EVENTS = ['invite'].freeze
 
   private
 
   def fire_event!
     case event
-    when "invite"
+    when 'invite'
       eventable.invite!
     end
     true

@@ -1,21 +1,21 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe FetchRemoteCallJob do
-  include_examples("application_job")
+  include_examples("aws_sqs_queue_url")
 
   describe "#perform(phone_call_id)" do
     include SomlengScfm::SpecHelpers::SomlengClientHelpers
 
     let(:remote_call_id) { "call-sid" }
 
-    let(:phone_call) {
+    let(:phone_call) do
       create(
         :phone_call,
         :with_default_provider,
-        :status => PhoneCall::STATE_REMOTE_FETCH_QUEUED,
-        :remote_call_id => remote_call_id,
+        status: PhoneCall::STATE_REMOTE_FETCH_QUEUED,
+        remote_call_id: remote_call_id
       )
-    }
+    end
 
     def asserted_remote_api_endpoint
       super("Calls/#{remote_call_id}")

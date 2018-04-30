@@ -1,37 +1,37 @@
 class PhoneCall < ApplicationRecord
   TWILIO_CALL_STATUSES = {
-    :queued => "queued",
-    :ringing => "ringing",
-    :in_progress => "in-progress",
-    :canceled => "canceled",
-    :completed => "completed",
-    :busy => "busy",
-    :failed => "failed",
-    :not_answered => "no-answer"
-  }
+    queued: "queued",
+    ringing: "ringing",
+    in_progress: "in-progress",
+    canceled: "canceled",
+    completed: "completed",
+    busy: "busy",
+    failed: "failed",
+    not_answered: "no-answer"
+  }.freeze
 
   # https://www.twilio.com/docs/api/voice/call#resource-properties
   TWILIO_DIRECTIONS = {
-    :inbound => "inbound"
-  }
+    inbound: "inbound"
+  }.freeze
 
   belongs_to :create_batch_operation,
-             :class_name => "BatchOperation::PhoneCallCreate",
-             :optional => true
+             class_name: "BatchOperation::PhoneCallCreate",
+             optional: true
 
   belongs_to :queue_batch_operation,
-             :class_name => "BatchOperation::PhoneCallQueue",
-             :optional => true
+             class_name: "BatchOperation::PhoneCallQueue",
+             optional: true
 
   belongs_to :queue_remote_fetch_batch_operation,
-             :class_name => "BatchOperation::PhoneCallQueueRemoteFetch",
-             :optional => true
+             class_name: "BatchOperation::PhoneCallQueueRemoteFetch",
+             optional: true
 
   belongs_to :callout_participation,
-             :optional => true
+             optional: true
 
-  belongs_to :contact, :validate => true
-  has_many   :remote_phone_call_events, :dependent => :restrict_with_error
+  belongs_to :contact, validate: true
+  has_many   :remote_phone_call_events, dependent: :restrict_with_error
 
   include MetadataHelpers
   include Wisper::Publisher
@@ -42,37 +42,37 @@ class PhoneCall < ApplicationRecord
   conditionally_serialize(:remote_request_params, JSON)
   conditionally_serialize(:remote_queue_response, JSON)
 
-  validates :remote_call_id, :uniqueness => {:case_sensitive => false, :allow_nil => true}
-  validates :status, :presence => true
-  validates :callout_participation, :presence => true, :unless => :inbound?
+  validates :remote_call_id, uniqueness: { case_sensitive: false, allow_nil: true }
+  validates :status, presence: true
+  validates :callout_participation, presence: true, unless: :inbound?
   validates :remote_request_params,
-            :presence => true,
-            :twilio_request_params => true,
-            :unless => :inbound?
+            presence: true,
+            twilio_request_params: true,
+            unless: :inbound?
 
-  delegate :call_flow_logic, :to => :callout_participation, :prefix => true, :allow_nil => true
+  delegate :call_flow_logic, to: :callout_participation, prefix: true, allow_nil: true
 
   delegate :contact,
            :msisdn,
-           :to => :callout_participation,
-           :prefix => true,
-           :allow_nil => true
+           to: :callout_participation,
+           prefix: true,
+           allow_nil: true
 
   delegate :account,
-           :to => :contact
+           to: :contact
 
   delegate :platform_provider,
-           :to => :account
+           to: :account
 
-  before_validation :set_defaults, :on => :create
+  before_validation :set_defaults, on: :create
   before_destroy    :validate_destroy
 
   attr_accessor :new_remote_status
 
   include AASM
 
-  aasm :column => :status, :whiny_transitions => false do
-    state :created, :initial => true
+  aasm column: :status, whiny_transitions: false do
+    state :created, initial: true
     state :queued
     state :remotely_queued
     state :errored
@@ -84,62 +84,62 @@ class PhoneCall < ApplicationRecord
     state :canceled
     state :completed
 
-    event :queue, :after_commit => :publish_queued do
+    event :queue, after_commit: :publish_queued do
       transitions(
-        :from => :created,
-        :to => :queued
+        from: :created,
+        to: :queued
       )
     end
 
-    event :queue_remote, :after_commit => :touch_remotely_queued_at do
+    event :queue_remote, after_commit: :touch_remotely_queued_at do
       transitions(
-        :from => :queued,
-        :to => :remotely_queued,
-        :if => :has_remote_call_id?
+        from: :queued,
+        to: :remotely_queued,
+        if: :has_remote_call_id?
       )
 
       transitions(
-        :from => :queued,
-        :to => :errored
-      )
-    end
-
-    event :queue_remote_fetch, :after_commit => :publish_remote_fetch_queued do
-      transitions(
-        :from => :remotely_queued,
-        :to => :remote_fetch_queued,
-        :if => :has_remote_call_id?
+        from: :queued,
+        to: :errored
       )
     end
 
-    event :complete, :after_commit => :publish_completed do
-      transitions :from => [:created, :remotely_queued, :remote_fetch_queued, :in_progress],
-                  :to => :in_progress,
-                  :if => :remote_status_in_progress?
+    event :queue_remote_fetch, after_commit: :publish_remote_fetch_queued do
+      transitions(
+        from: :remotely_queued,
+        to: :remote_fetch_queued,
+        if: :has_remote_call_id?
+      )
+    end
 
-      transitions :from => [:created, :remotely_queued, :remote_fetch_queued, :in_progress],
-                  :to => :busy,
-                  :if => :remote_status_busy?
+    event :complete, after_commit: :publish_completed do
+      transitions from: %i[created remotely_queued remote_fetch_queued in_progress],
+                  to: :in_progress,
+                  if: :remote_status_in_progress?
 
-      transitions :from => [:created, :remotely_queued, :remote_fetch_queued, :in_progress],
-                  :to => :failed,
-                  :if => :remote_status_failed?
+      transitions from: %i[created remotely_queued remote_fetch_queued in_progress],
+                  to: :busy,
+                  if: :remote_status_busy?
 
-      transitions :from => [:created, :remotely_queued, :remote_fetch_queued, :in_progress],
-                  :to => :not_answered,
-                  :if => :remote_status_not_answered?
+      transitions from: %i[created remotely_queued remote_fetch_queued in_progress],
+                  to: :failed,
+                  if: :remote_status_failed?
 
-      transitions :from => [:created, :remotely_queued, :remote_fetch_queued, :in_progress],
-                  :to => :canceled,
-                  :if => :remote_status_canceled?
+      transitions from: %i[created remotely_queued remote_fetch_queued in_progress],
+                  to: :not_answered,
+                  if: :remote_status_not_answered?
 
-      transitions :from => [:created, :remotely_queued, :remote_fetch_queued, :in_progress],
-                  :to => :completed,
-                  :if => :remote_status_completed?
+      transitions from: %i[created remotely_queued remote_fetch_queued in_progress],
+                  to: :canceled,
+                  if: :remote_status_canceled?
 
-      transitions :from => :remote_fetch_queued,
-                  :to =>   :remotely_queued,
-                  :if =>   :was_remotely_queued_and_new_remote_status_unknown?
+      transitions from: %i[created remotely_queued remote_fetch_queued in_progress],
+                  to: :completed,
+                  if: :remote_status_completed?
+
+      transitions from: :remote_fetch_queued,
+                  to: :remotely_queued,
+                  if: :was_remotely_queued_and_new_remote_status_unknown?
     end
   end
 
@@ -168,7 +168,7 @@ class PhoneCall < ApplicationRecord
     ].include?(remote_status)
   end
 
-  [:busy, :failed, :not_answered, :canceled, :completed].each do |status|
+  %i[busy failed not_answered canceled completed].each do |status|
     define_method("remote_status_#{status}?") do
       remote_status == TWILIO_CALL_STATUSES.fetch(status)
     end
@@ -185,7 +185,7 @@ class PhoneCall < ApplicationRecord
 
   def validate_destroy
     return true if created?
-    errors.add(:base, :restrict_destroy_status, :status => status)
+    errors.add(:base, :restrict_destroy_status, status: status)
     throw(:abort)
   end
 

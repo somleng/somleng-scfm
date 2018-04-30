@@ -25,16 +25,8 @@ module SomlengScfm
     # Application configuration should go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded.
 
-    if Rails.env.production? && ENV["ACTIVE_JOB_ADAPTER"] == "active_elastic_job"
-      config.active_job.queue_adapter = :active_elastic_job
-    end
-
     # Don't generate system test files.
     config.generators.system_tests = nil
-
-    host = ENV.fetch("SOMLENG_SCFM_HOST") { "localhost" }
-    port = ENV.fetch("SOMLENG_SCFM_PORT") { "3000" }
-    config.action_mailer.default_url_options = { host: host, port: port }
 
     require_relative "../app/jobs/application_job"
     config.action_mailer.deliver_later_queue_name = ApplicationJob.aws_sqs_queue_name(:action_mailer_delivery_job)

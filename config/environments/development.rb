@@ -54,6 +54,8 @@ Rails.application.configure do
 
   Rails.application.routes.default_url_options[:host] = Rails.application.secrets.fetch(:default_url_host)
 
+  config.action_mailer.default_url_options = { :host => "localhost", :port => "3000" }
+
   # use mailcatcher
   config.action_mailer.delivery_method = Rails.application.secrets.fetch(
     :action_mailer_delivery_method

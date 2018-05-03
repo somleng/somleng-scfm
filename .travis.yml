@@ -27,7 +27,7 @@ deploy:
     env: scfm-webserver
     bucket_name: deploy.ews1294.info
     on:
-      repo: somleng/somleng-scfm-pin
+      repo: PIN-Cambodia/somleng-scfm
       branch: master
   - provider: elasticbeanstalk
     region: ap-southeast-1
@@ -35,5 +35,5 @@ deploy:
     env: scfm-worker
     bucket_name: deploy.ews1294.info
     on:
-      repo: somleng/somleng-scfm-pin
+      repo: PIN-Cambodia/somleng-scfm
       branch: master

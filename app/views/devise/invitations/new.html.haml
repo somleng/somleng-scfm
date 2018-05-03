@@ -4,6 +4,7 @@
     - resource.class.invite_key_fields.each do |field|
       = f.input field
       = f.input :roles, as: :radio_buttons, collection: User.values_for_roles, label_method: ->(r) { r.to_s.capitalize }, checked: f.object.roles
-      = f.input :location_ids, collection: all_provices, label_method: :name_en, value_method: :id, selected: f.object.location_ids, include_blank: false, label: 'Locations', input_html: { multiple: 'multiple', class: 'js-chosen-select' }
+      = f.input :location_ids, collection: all_provices, label_method: :name_en, value_method: :id, selected: f.object.location_ids, include_blank: false, label: 'Locations', input_html: { multiple: 'multiple', class: 'js-basic-multiple-select' }
+
     .form-group.actions
       = f.submit 'Send an invitation', class: 'btn btn-primary'

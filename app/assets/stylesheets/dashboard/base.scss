@@ -83,6 +83,10 @@ main {
   }
 }
 
+.select2-results__option[aria-selected=true] {
+  display: none;
+}
+
 @media (min-width: 768px) {
   #left-sidebar.collapse {
     display: block;

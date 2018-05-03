@@ -1,16 +1,13 @@
 source "https://rubygems.org"
+git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-git_source(:github) do |repo_name|
-  repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
-  "https://github.com/#{repo_name}.git"
-end
-
-gem "rails", "~> 5.1.6"
+gem "rails", "~> 5.2.0"
 # support both sqlite3 and pg
 gem "aasm", github: "aasm/aasm"
 gem "active_elastic_job", github: "tawan/active-elastic-job"
 gem "api-pagination"
 gem "bitmask_attributes", github: "numerex/bitmask_attributes"
+gem "bootsnap", ">= 1.1.0", require: false
 gem "bootstrap", "~> 4.0.0"
 gem "coffee-rails", "~> 4.2"
 gem "devise"

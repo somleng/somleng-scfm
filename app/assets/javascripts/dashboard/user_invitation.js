@@ -1,9 +1,11 @@
 DashboardUserInvitation = function() {
 
-  chosenSelect = new ChosenSelect();
+  singleSelect2 = function() {
+    $('.js-basic-multiple-select').select2();
+  }
 
   this.init = function() {
-    chosenSelect.init();
+    singleSelect2();
   }
 }
 

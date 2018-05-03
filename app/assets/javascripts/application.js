@@ -14,7 +14,7 @@
 //= require jquery3
 //= require popper
 //= require bootstrap
-//= require chosen-jquery
+//= require select2.full.min
 
 //= require rails-ujs
 //= require activestorage

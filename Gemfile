@@ -9,7 +9,6 @@ gem "api-pagination"
 gem "bitmask_attributes", github: "numerex/bitmask_attributes"
 gem "bootsnap", ">= 1.1.0", require: false
 gem "bootstrap", "~> 4.0.0"
-gem "chosen-rails"
 gem "coffee-rails", "~> 4.2"
 gem "devise"
 gem "devise-async"

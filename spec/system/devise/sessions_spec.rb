@@ -1,8 +1,6 @@
 require "rails_helper"
 
 RSpec.describe "User sign in" do
-  let(:user) { create(:user, password: "mysecret") }
-
   it "can sign in" do
     user = create(:user, password: "mysecret")
 
@@ -17,5 +15,18 @@ RSpec.describe "User sign in" do
     click_action_button(:create, key: :user_sessions)
 
     expect(page).to have_text("Signed in successfully.")
+  end
+
+  it "can sign out" do
+    user = create(:user)
+
+    sign_in(user)
+    visit dashboard_root_path
+
+    within("#user_menu") do
+      click_action_button(:destroy, key: :user_sessions, type: :link)
+    end
+
+    expect(current_path).to eq(new_user_session_path)
   end
 end

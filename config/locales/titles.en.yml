@@ -43,3 +43,4 @@ en:
     user_sessions:
       new: "Sign In"
       create: "Sign In"
+      destroy: "Sign Out"

@@ -4,7 +4,7 @@
       %span.navbar-toggler-icon
     Somleng SCFM
 
-  %ul.navbar-nav.px-3
+  %ul#user_menu.navbar-nav.px-3
     %li
       %span.oi.oi-person{"aria-hidden" => "true", :title => "person"}
       .btn-group
@@ -12,6 +12,8 @@
           = octicon "person"
         .dropdown-menu.dropdown-menu-right
           = link_to edit_user_registration_path do
-            %button.dropdown-item{:type => "button"} Change Password
-          = link_to destroy_user_session_path, method: :delete, data: { confirm: 'Are you sure?' } do
-            %button.dropdown-item{:type => "button"} Sign Out
+            %button.dropdown-item{:type => "button"}
+              = translate(:"titles.user_registrations.edit")
+          = link_to destroy_user_session_path, method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") } do
+            %button.dropdown-item{:type => "button"}
+              = translate(:"titles.user_sessions.destroy")

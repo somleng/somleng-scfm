@@ -1,101 +1,136 @@
 require "rails_helper"
 
-RSpec.describe "Contact pages", type: :system do
-  let(:user) { create(:user) }
+RSpec.describe "Contacts", :aggregate_failures do
+  it "can list all contacts" do
+    user = create(:user)
+    contact = create(:contact, account: user.account)
+    other_contact = create(:contact)
 
-  before do
     sign_in(user)
-  end
+    visit dashboard_contacts_path
 
-  describe "view all contacts" do
-    it "should list all contacts of current account" do
-      account_contact = create(:contact, account: user.account)
-      other_contact = create(:contact)
-
-      visit dashboard_contacts_path
-
-      expect(page).to have_text(account_contact.msisdn)
-      expect(page).not_to have_text(other_contact.msisdn)
+    within("#page_title") do
+      expect(page).to have_content(I18n.translate!(:"titles.contacts.index"))
     end
 
-    it "on click new contact will open new contact page" do
-      visit "dashboard/contacts"
-
-      click_button "New Contact"
-      expect(page).to have_current_path(new_dashboard_contact_path)
-    end
-  end
-
-  describe "new contact" do
-    it "successfully create new contact" do
-      visit new_dashboard_contact_path
-
-      fill_in "contact[msisdn]", with: generate(:somali_msisdn)
-      click_button "Create Contact"
-
-      expect(page).to have_text("Contact was successfully created.")
+    within("#button_toolbar") do
+      expect(page).to have_link_to_action(
+        :new, key: :contacts, href: new_dashboard_contact_path
+      )
     end
 
-    it "on valid, will render the same page with error message" do
-      visit new_dashboard_contact_path
-
-      fill_in "contact[msisdn]", with: ""
-      click_button "Create Contact"
-
-      expect(page).to have_text("New Contact")
-      expect(page).to have_text("can't be blank")
+    within("#contacts") do
+      expect(page).to have_content(contact.id)
+      expect(page).to have_no_content(other_contact.id)
+      expect(page).to have_content("#")
+      expect(page).to have_link(
+        contact.id,
+        href: dashboard_contact_path(contact)
+      )
+      expect(page).to have_content("Phone Number")
     end
   end
 
-  describe "contact detail" do
-    it "show contact detail" do
-      contact = create(:contact, account: user.account)
+  it "can create a new contact" do
+    user = create(:user)
+    phone_number = generate(:somali_msisdn)
 
-      visit dashboard_contact_path(contact)
+    sign_in(user)
+    visit new_dashboard_contact_path
 
-      expect(page).to have_text("Contact detail")
+    within("#page_title") do
+      expect(page).to have_content(I18n.translate!(:"titles.contacts.new"))
     end
 
-    it "click edit will open edit page" do
-      contact = create(:contact, account: user.account)
+    expect(page).to have_link_to_action(:cancel)
 
-      visit dashboard_contact_path(contact)
-      click_button "Edit"
+    click_action_button(:create, key: :contacts)
 
-      expect(page).to have_current_path(edit_dashboard_contact_path(contact))
-    end
+    expect(page).to have_content("Phone Number can't be blank")
 
-    it "click delete contact then accept alert" do
-      contact = create(:contact, account: user.account)
+    fill_in("Phone Number", with: phone_number)
+    fill_in_metadata(with: { key: "name", value: "Bob Chann" })
+    click_action_button(:create, key: :contacts)
 
-      visit dashboard_contact_path(contact)
-      click_button "Delete"
-      expect(page).to have_text("Contact was successfully destroyed.")
-    end
+    expect(page).to have_text("Contact was successfully created.")
+    new_contact = user.account.contacts.last!
+    expect(new_contact.msisdn).to match(phone_number)
+    expect(new_contact.metadata).to eq("name" => "Bob Chann")
   end
 
-  describe "edit contact" do
-    it "successfully edit contact" do
-      contact = create(:contact, account: user.account)
+  it "can update a contact" do
+    user = create(:user)
+    contact = create(
+      :contact,
+      account: user.account,
+      metadata: { "location" => { "country" => "kh" } }
+    )
 
-      visit edit_dashboard_contact_path(contact)
+    sign_in(user)
+    visit edit_dashboard_contact_path(contact)
 
-      fill_in "contact[msisdn]", with: generate(:somali_msisdn)
-      click_button "Update Contact"
-
-      expect(page).to have_text("Contact was successfully updated.")
+    within("#page_title") do
+      expect(page).to have_content(I18n.translate!(:"titles.contacts.edit"))
     end
 
-    it "on valid, will render the same page with error message" do
-      contact = create(:contact, account: user.account)
+    expect(page).to have_link_to_action(:cancel)
 
-      visit edit_dashboard_contact_path(contact)
+    updated_phone_number = generate(:somali_msisdn)
+    fill_in("Phone Number", with: updated_phone_number)
+    fill_in_metadata with: { key: "gender", value: "f" }
+    click_action_button(:update, key: :contacts)
 
-      fill_in "contact[msisdn]", with: ""
-      click_button "Update Contact"
+    expect(current_path).to eq(dashboard_contact_path(contact))
+    expect(page).to have_text("Contact was successfully updated.")
+    expect(contact.reload.msisdn).to match(updated_phone_number)
+    expect(contact.metadata).to eq("gender" => "f")
+  end
 
-      expect(page).to have_text("Edit contact")
-      expect(page).to have_text("can't be blank")
+  it "can delete a contact" do
+    user = create(:user)
+    contact = create(:contact, account: user.account)
+
+    sign_in(user)
+    visit dashboard_contact_path(contact)
+
+    click_action_button(:delete, type: :link)
+
+    expect(current_path).to eq(dashboard_contacts_path)
+    expect(page).to have_text("Contact was successfully destroyed.")
+  end
+
+  it "can show a contact" do
+    user = create(:user)
+    phone_number = generate(:somali_msisdn)
+    contact = create(
+      :contact,
+      account: user.account,
+      msisdn: phone_number,
+      metadata: { "location" => { "country" => "Cambodia" } }
+    )
+
+    sign_in(user)
+    visit dashboard_contact_path(contact)
+
+    within("#button_toolbar") do
+      expect(page).to have_link_to_action(
+        :edit,
+        href: edit_dashboard_contact_path(contact)
+      )
+    end
+
+    within("#contact") do
+      expect(page).to have_link(
+        contact.id,
+        href: dashboard_contact_path(contact)
+      )
+
+      expect(page).to have_content("#")
+      expect(page).to have_content("Phone Number")
+      expect(page).to have_content(phone_number)
+      expect(page).to have_content("Metadata")
+      expect(page).to have_content("location:country")
+      expect(page).to have_content("Cambodia")
     end
   end
 end

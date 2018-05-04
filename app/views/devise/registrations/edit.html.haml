@@ -1,8 +1,9 @@
 .col-md-6
-  %h5.card-title Change password
-  = simple_form_for resource, as: resource_name, url: registration_path(resource_name), html: { method: :put } do |f|
-    = f.input :password, label: 'New password'
-    = f.input :password_confirmation, label: 'Confirm new password'
+  %h5#page_title.card-title
+    = translate(:"titles.user_registrations.edit")
+  = simple_form_for resource, as: resource_name, url: registration_path(resource_name), html: { method: :patch } do |f|
     = f.input :current_password
+    = f.input :password
+    = f.input :password_confirmation
     .form-group.actions
-      = f.submit "Save", class: 'btn btn-primary'
+      = f.submit translate(:"titles.user_registrations.update"), class: 'btn btn-primary'

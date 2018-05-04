@@ -1,0 +1,16 @@
+en:
+  activerecord:
+    attributes:
+      access_token:
+        token: "API Key"
+      contact:
+        msisdn: "Phone Number"
+      user:
+        last_sign_in_at: "Last Signed In"
+  activemodel:
+    attributes:
+      metadata_form:
+        attr_key: "Key"
+        attr_value: "Value"
+    models:
+      event/base: "Event"

@@ -1,7 +1,8 @@
 .col-md-6
-  %h5.card-title Send invitation
+  %h5#page_title.card-title
+    = translate(:"titles.user_invitations.new")
   = simple_form_for resource, :as => resource_name, :url => invitation_path(resource_name), :html => {:method => :post} do |f|
     - resource.class.invite_key_fields.each do |field|
       = f.input field
     .form-group.actions
-      = f.submit 'Send an invitation', class: 'btn btn-primary'
+      = f.submit translate(:"titles.user_invitations.create"), class: 'btn btn-primary'

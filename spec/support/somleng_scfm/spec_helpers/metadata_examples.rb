@@ -4,7 +4,7 @@ RSpec.shared_examples_for "has_metadata" do
 
     def assert_validations!
       is_expected.not_to allow_value("foo").for(:metadata)
-      is_expected.to allow_value({"foo" => "bar"}).for(:metadata)
+      is_expected.to allow_value("foo" => "bar").for(:metadata)
       subject.metadata = nil
       is_expected.not_to be_valid
       expect(subject.errors[:metadata]).not_to be_empty
@@ -12,68 +12,63 @@ RSpec.shared_examples_for "has_metadata" do
 
     it { assert_validations! }
 
-    describe 'valid_metadata_forms' do
-      subject { create(factory, :metadata => {}) }
+    it "should validate metadata for dashboard context" do
+      subject.metadata_forms_attributes = {
+        "0" => { "attr_key" => "", "attr_val" => "kh" }
+      }
 
-      context 'when has invalid metadata_forms' do
-        it 'should not valid and return false' do
-          invalid_metadata_form = MetadataForm.new(attr_val: 'only value')
-          subject.metadata_forms = [invalid_metadata_form]
-
-          expect(subject.valid?(:dashboard)).to eq(false)
-          expect(subject.errors[:base]).to include('invalid metadata')
-        end
-      end
+      expect(subject.valid?(:dashboard)).to eq(false)
+      expect(subject.errors[:metadata]).to be_present
     end
   end
 
-  describe '#metadata_forms' do
+  describe "#metadata_forms" do
     subject { create(factory, metadata: {}) }
 
-    it 'return new metadata form when metadata empty' do
+    it "return new metadata form when metadata empty" do
       new_metadata_form = MetadataForm.new
       allow(MetadataForm).to receive(:new).and_return(new_metadata_form)
       expect(subject.metadata_forms).to eq([new_metadata_form])
     end
 
-    it 'return unested data as metadata_form object' do
-      subject.metadata = { 'address' => { 'city' => 'pp' }}
+    it "return unested data as metadata_form object" do
+      subject.metadata = { "address" => { "city" => "pp" } }
 
       metadata_form = subject.metadata_forms.first
 
-      expect(metadata_form.attr_key).to eq 'address:city'
-      expect(metadata_form.attr_val).to eq 'pp'
+      expect(metadata_form.attr_key).to eq "address:city"
+      expect(metadata_form.attr_val).to eq "pp"
     end
   end
 
-  describe '#metadata_forms_attributes=(attributes)' do
-    subject { create(factory, :metadata => {}) }
+  describe "#metadata_forms_attributes=(attributes)" do
+    subject { create(factory, metadata: {}) }
 
-    it 'should build new metadata_form and assign to metadata' do
-      attributes = {"0"=>{"attr_key"=>"title", "attr_val"=>"call 1"}}
+    it "should build new metadata_form and assign to metadata" do
+      attributes = { "0" => { "attr_key" => "title", "attr_val" => "call 1" } }
 
-      subject.metadata_forms_attributes=(attributes)
-      expect(subject.metadata).to eq({ 'title' => 'call 1'})
+      subject.metadata_forms_attributes = attributes
+      expect(subject.metadata).to eq("title" => "call 1")
     end
   end
 
   describe "#metadata" do
-    subject { create(factory, :metadata => {}) }
+    subject { create(factory, metadata: {}) }
     it { expect(subject.metadata).to eq({}) }
   end
 
   describe "#metadata=(value)" do
-    let(:existing_metadata) { {"a" => "b", "foo" => "bar", "baz" => {"c" => [1, 2, 3] }} }
-    let(:new_metadata) { { "foo" => "baz", "bar" => "baz", "baz" => {"x" => [4, 5, 6] }} }
+    let(:existing_metadata) { { "a" => "b", "foo" => "bar", "baz" => { "c" => [1, 2, 3] } } }
+    let(:new_metadata) { { "foo" => "baz", "bar" => "baz", "baz" => { "x" => [4, 5, 6] } } }
     let(:metadata_merge_mode) { nil }
 
-    subject {
+    subject do
       build(
         factory,
-        :metadata_merge_mode => metadata_merge_mode,
-        :metadata => existing_metadata
+        metadata_merge_mode: metadata_merge_mode,
+        metadata: existing_metadata
       )
-    }
+    end
 
     def setup_scenario
       subject.metadata = new_metadata

@@ -1,3 +1,23 @@
 en:
   titles:
-    access_tokens: "API Keys"
+    actions:
+      edit: "Edit"
+      delete: "Delete"
+      data_confirm: "Are you sure?"
+    admin_management: "Admin"
+    access_tokens:
+      index: "API Keys"
+    callouts:
+      index: "Callouts"
+      new: "New Callout"
+      create: "Create Callout"
+      edit: "Edit Callout"
+      update: "Update Callout"
+      destroy: "Delete"
+      start_callout: "Start Callout"
+      stop_callout: "Stop Callout"
+      resume_callout: "Resume Callout"
+    contacts:
+      index: "Contacts"
+    users:
+      index: "Users"

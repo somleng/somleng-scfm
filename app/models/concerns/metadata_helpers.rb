@@ -1,5 +1,6 @@
 module MetadataHelpers
   extend ActiveSupport::Concern
+
   include ConditionalSerialization
   include JsonQueryHelpers
 
@@ -12,30 +13,15 @@ module MetadataHelpers
     METADATA_MERGE_MODE_MERGE,
     METADATA_MERGE_MODE_REPLACE,
     METADATA_MERGE_MODE_DEEP_MERGE
-  ]
+  ].freeze
 
   included do
-    attr_accessor :metadata_merge_mode, :metadata_forms
+    attr_accessor :metadata_merge_mode
 
     conditionally_serialize(:metadata, JSON)
     validates :metadata,
-              :json => true
+              json: true
     validate :valid_metadata_forms, on: :dashboard
-
-    def metadata_forms
-      @metadata_forms ||= unnest_metadata
-    end
-
-    def metadata_forms_attributes=(attributes)
-      @metadata_forms = []
-
-      attributes.each do |i, metadata_forms_params|
-        metadata_form = MetadataForm.new(metadata_forms_params)
-        @metadata_forms.push(metadata_form)
-      end
-
-      assign_metadata
-    end
   end
 
   def metadata=(value)
@@ -47,28 +33,46 @@ module MetadataHelpers
     end
   end
 
+  def metadata_forms
+    @metadata_forms ||= build_metadata_forms
+  end
+
+  def metadata_forms_attributes=(attributes)
+    @metadata_forms = []
+
+    attributes.each do |_i, metadata_forms_params|
+      @metadata_forms << MetadataForm.new(metadata_forms_params)
+    end
+
+    assign_metadata
+  end
+
   private
 
   def valid_metadata_forms
-    if metadata_forms.map(&:valid?).include?(false)
-      errors.add(:base, 'invalid metadata')
-    end
+    errors.add(:metadata, :invalid) if metadata_forms.map(&:valid?).include?(false)
   end
 
   def assign_metadata
-    new_metadata = tranform_metadata_forms_to_hash
-    metadata.public_send(:replace, new_metadata)
+    new_metadata = transform_metadata_forms_to_hash
+    metadata.replace(new_metadata)
   end
 
-  def tranform_metadata_forms_to_hash
-    metadata_forms.reject{ |m| !m.valid? }
+  def transform_metadata_forms_to_hash
+    metadata_forms.select(&:valid?)
                   .map(&:to_json).reject(&:blank?)
-                  .reduce(Hash.new, :deep_merge)
+                  .reduce({}, :deep_merge)
   end
 
-  def unnest_metadata
-    return [MetadataForm.new] if metadata.blank?
-    MetadataForm.unnest(metadata).map{|k, v| MetadataForm.new(attr_key: k, attr_val: v) }
+  def build_metadata_forms
+    return [MetadataForm.new] if metadata.empty?
+    metadata_form_utils.flatten_hash(metadata).map do |k, v|
+      MetadataForm.new(attr_key: k, attr_val: v)
+    end
+  end
+
+  def metadata_form_utils
+    @metadata_form_utils ||= MetadataForm::Utils.new
   end
 
   def metadata_merge_mode_or_default

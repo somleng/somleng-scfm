@@ -1,14 +1,16 @@
 class ApplicationController < ActionController::Base
-  protect_from_forgery :with => :exception
+  respond_to :html
+
+  protect_from_forgery with: :exception
   layout :layout_by_resource
 
   private
 
   def layout_by_resource
     if user_signed_in?
-      'dashboard'
+      "dashboard"
     else
-      'application'
+      "application"
     end
   end
 end

@@ -1,11 +1,11 @@
-= simple_form_for [:dashboard, callout] do |f|
-  = f.hidden_field :id
+= simple_form_for([:dashboard, callout]) do |f|
   .card
     .card-body
-      .h5.card-title Optional data
+      %h5.card-title
+        Metadata
       .js-metadata-container
         = f.simple_fields_for :metadata_forms do |hf|
-          = render partial: 'shared/metadata_fields', locals: { f: hf }
+          = render(partial: 'shared/metadata_fields', locals: { f: hf })
       = link_to_add_metadata_fields 'Add more', f, 'shared/metadata_fields'
   %br
   .form-group.actions

@@ -37,6 +37,9 @@ FactoryBot.define do
   factory :callout do
     account
 
+    trait :initialized do
+    end
+
     trait :can_start do
     end
 

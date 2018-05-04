@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "API Key Management", type: :system do
+RSpec.describe "API Key Management" do
   it "shows all api keys for current account" do
     user = create(:user)
     sign_in(user)
@@ -10,7 +10,7 @@ RSpec.describe "API Key Management", type: :system do
     visit(dashboard_access_tokens_path)
 
     within("#page_title") do
-      expect(page).to have_text("API Keys")
+      expect(page).to have_text(I18n.translate!(:"titles.access_tokens.index"))
     end
 
     within("#access_tokens") do

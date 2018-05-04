@@ -1,9 +1,9 @@
-.d-flex.js-metadata-fields
+#metadata_fields.d-flex.js-metadata-fields
   .label
-    = f.input :attr_key, placeholder: 'Label', label: false
+    = f.input(:attr_key, placeholder: MetadataForm.human_attribute_name(:attr_key), label: false)
   &nbsp; : &nbsp;
   .text
-    = f.input :attr_val, placeholder: 'Text', label: false
+    = f.input(:attr_val, placeholder: MetadataForm.human_attribute_name(:attr_value), label: false)
   &nbsp;
   .action
     = button_tag type: 'button', class: 'js-remove-metadata-fields btn btn-danger' do

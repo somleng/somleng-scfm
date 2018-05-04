@@ -3,3 +3,10 @@ en:
     attributes:
       access_token:
         token: "API Key"
+  activemodel:
+    attributes:
+      metadata_form:
+        attr_key: "Key"
+        attr_value: "Value"
+    models:
+      event/base: "Event"

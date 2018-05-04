@@ -1,9 +1,13 @@
 DashboardCallout = function() {
 
-  dashboardMetadataField = new DashboardMetadataField();
+  singleSelect2 = function() {
+    $('.js-basic-select').select2().on('change', function(){
+      $('input#'+$(this).attr('id')).val($(this).val());
+    });
+  }
 
   this.init = function() {
-    dashboardMetadataField.init();
+    singleSelect2();
   }
 }
 

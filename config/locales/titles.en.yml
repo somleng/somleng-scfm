@@ -27,3 +27,19 @@ en:
       update: "Update Contact"
     users:
       index: "Users"
+    user_invitations:
+      new: "Invite User"
+      create: "Send Invitation"
+      edit: "Set your password"
+      update: "Save"
+    user_passwords:
+      new: "Forgot your password?"
+      create: "Send Reset Instructions"
+      edit: "Change Password"
+      update: "Save"
+    user_registrations:
+      edit: "Change Password"
+      update: "Save"
+    user_sessions:
+      new: "Sign In"
+      create: "Sign In"

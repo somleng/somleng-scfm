@@ -42,7 +42,7 @@ class Dashboard::CalloutsController < Dashboard::BaseController
 
   def callout_params
     params.require(:callout).permit(
-      :id, metadata_forms_attributes: %i[attr_key attr_val]
+      metadata_forms_attributes: %i[attr_key attr_val]
     )
   end
 end

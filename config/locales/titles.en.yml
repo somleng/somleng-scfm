@@ -4,6 +4,9 @@ en:
       edit: "Edit"
       delete: "Delete"
       data_confirm: "Are you sure?"
+      cancel: "Cancel"
+      add_metadata: "Add Metadata"
+      remove_metadata: "Remove"
     admin_management: "Admin"
     access_tokens:
       index: "API Keys"
@@ -13,11 +16,14 @@ en:
       create: "Create Callout"
       edit: "Edit Callout"
       update: "Update Callout"
-      destroy: "Delete"
       start_callout: "Start Callout"
       stop_callout: "Stop Callout"
       resume_callout: "Resume Callout"
     contacts:
       index: "Contacts"
+      new: "New Contact"
+      create: "Create Contact"
+      edit: "Edit Contact"
+      update: "Update Contact"
     users:
       index: "Users"

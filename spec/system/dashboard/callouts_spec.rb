@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Callouts" do
+RSpec.describe "Callouts", :aggregate_failures do
   it "can list callouts" do
     user = create(:user)
     callout = create(:callout, :initialized, account: user.account)
@@ -22,12 +22,13 @@ RSpec.describe "Callouts" do
     within("#callouts") do
       expect(page).to have_callout(callout)
       expect(page).not_to have_callout(other_callout)
-      expect(page).to have_content("Status")
-      expect(page).to have_content("Initialized")
+      expect(page).to have_content("#")
       expect(page).to have_link(
         callout.id,
         href: dashboard_callout_path(callout)
       )
+      expect(page).to have_content("Status")
+      expect(page).to have_content("Initialized")
     end
   end
 
@@ -41,13 +42,15 @@ RSpec.describe "Callouts" do
       expect(page).to have_content(I18n.translate!(:"titles.callouts.new"))
     end
 
-    fill_in_metadata with: { value: "kh" }
-    click_action_button(:create)
+    expect(page).to have_link_to_action(:cancel)
 
-    expect(page).to have_text("Key can't be blank")
+    fill_in_metadata with: { value: "kh" }
+    click_action_button(:create, key: :callouts)
+
+    expect(page).to have_content("Key can't be blank")
 
     fill_in_metadata with: { key: "location:country" }
-    click_action_button(:create)
+    click_action_button(:create, key: :callouts)
 
     new_callout = Callout.last!
     expect(current_path).to eq(dashboard_callout_path(new_callout))
@@ -70,8 +73,10 @@ RSpec.describe "Callouts" do
       expect(page).to have_content(I18n.translate!(:"titles.callouts.edit"))
     end
 
+    expect(page).to have_link_to_action(:cancel)
+
     fill_in_metadata with: { key: "gender", value: "f" }
-    click_action_button(:update)
+    click_action_button(:update, key: :callouts)
 
     expect(current_path).to eq(dashboard_callout_path(callout))
     expect(page).to have_text("Callout was successfully updated.")
@@ -85,7 +90,7 @@ RSpec.describe "Callouts" do
     sign_in(user)
     visit dashboard_callout_path(callout)
 
-    click_action_button(:destroy, type: :link)
+    click_action_button(:delete, type: :link)
 
     expect(current_path).to eq(dashboard_callouts_path)
     expect(page).to have_text("Callout was successfully destroyed.")
@@ -107,16 +112,6 @@ RSpec.describe "Callouts" do
       expect(page).to have_link_to_action(
         :edit,
         href: edit_dashboard_callout_path(callout)
-      )
-
-      expect(page).to have_link_to_action(
-        :delete,
-        href: dashboard_callout_path(callout)
-      )
-
-      expect(page).to have_link(
-        I18n.translate!(:"titles.callouts.start_callout"),
-        href: dashboard_callout_callout_events_path(callout, event: :start)
       )
     end
 
@@ -146,45 +141,25 @@ RSpec.describe "Callouts" do
     sign_in(user)
     visit dashboard_callout_path(callout)
 
-    click_action_button(:start_callout, type: :link)
+    click_action_button(:start_callout, key: :callouts, type: :link)
 
     expect(callout.reload).to be_running
     expect(page).to have_text("Event was successfully created.")
     expect(page).not_to have_link_to_action(:start_callout, key: :callouts)
 
-    click_action_button(:stop_callout, type: :link)
+    click_action_button(:stop_callout, key: :callouts, type: :link)
 
     expect(callout.reload).to be_stopped
     expect(page).not_to have_link_to_action(:stop_callout, key: :callouts)
 
-    click_action_button(:resume_callout, type: :link)
+    click_action_button(:resume_callout, key: :callouts, type: :link)
 
     expect(callout.reload).to be_running
     expect(page).not_to have_link_to_action(:resume_callout, key: :callouts)
     expect(page).to have_link_to_action(:stop_callout, key: :callouts)
   end
 
-  def have_link_to_action(action, key: nil, href: nil)
-    key ||= :actions
-    have_link(
-      I18n.translate!(:"titles.#{key}.#{action}"),
-      { href: href }.compact
-    )
-  end
-
   def have_callout(callout)
     have_selector("#callout_#{callout.id}")
-  end
-
-  def click_action_button(action, type: nil)
-    type ||= :button
-    public_send("click_#{type}", I18n.translate!(:"titles.callouts.#{action}"))
-  end
-
-  def fill_in_metadata(with:)
-    within("#metadata_fields") do
-      fill_in("Key", with: with[:key]) if with.key?(:key)
-      fill_in("Value", with: with[:value]) if with.key?(:value)
-    end
   end
 end

@@ -1,13 +1,10 @@
-= simple_form_for([:dashboard, callout]) do |f|
-  .card
-    .card-body
-      %h5.card-title
-        Metadata
-      .js-metadata-container
-        = f.simple_fields_for :metadata_forms do |hf|
-          = render(partial: 'shared/metadata_fields', locals: { f: hf })
-      = link_to_add_metadata_fields 'Add more', f, 'shared/metadata_fields'
+= simple_form_for([:dashboard, @callout]) do |f|
+  = f.label(:metadata)
+  .js-metadata-container
+    = f.simple_fields_for :metadata_forms do |hf|
+      = render(partial: 'shared/metadata_fields', locals: { f: hf })
+  = link_to_add_metadata_fields(translate(:"titles.actions.add_metadata"), f, 'shared/metadata_fields')
   %br
   .form-group.actions
     = f.button :submit, class: 'btn btn-primary'
-    = link_to 'Cancel', :back, class: 'btn btn-outline-dark'
+    = link_to(translate(:"titles.actions.cancel"), :back, class: 'btn btn-outline-dark')

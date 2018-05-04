@@ -3,6 +3,8 @@ en:
     attributes:
       access_token:
         token: "API Key"
+      contact:
+        msisdn: "Phone Number"
   activemodel:
     attributes:
       metadata_form:

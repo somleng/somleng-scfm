@@ -1,20 +1,29 @@
+.col-12.col-md-8
+  %h5#page_title.card-title
+    = translate(:"titles.contacts.index")
+
 .col-12
-  .btn-toolbar{ role: 'toolbar' }
+  #button_toolbar.btn-toolbar{ role: 'toolbar' }
     .btn-group.mr-2{ role: 'group' }
-      = button_to 'New Contact', new_dashboard_contact_path, class: 'btn btn-outline-dark', method: :get
+      = link_to(translate(:"titles.contacts.new"), new_dashboard_contact_path, class: 'btn btn-outline-dark')
   %br
 .col-12
-  %table.table.table-hover.table-bordered
+  %table#contacts.table.table-hover.table-bordered
     %thead.thead-light
       %tr
         %th #
-        %th Number
-        %th Created at
+        %th
+          = Contact.human_attribute_name(:msisdn)
+        %th
+          = Contact.human_attribute_name(:created_at)
     %tbody
       - @contacts.each_with_index do |contact, index|
         %tr
-          %td= index + 1
-          %td= link_to contact.msisdn, dashboard_contact_path(contact)
-          %td= contact.created_at
+          %td
+            = link_to(contact.id, dashboard_contact_path(contact))
+          %td
+            = contact.msisdn
+          %td
+            = contact.created_at
 .col-12
   = paginate @contacts

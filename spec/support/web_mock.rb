@@ -21,6 +21,7 @@ module WebMockLastRequest
 end
 
 WebMock.extend(WebMockLastRequest)
+WebMock.disable_net_connect!(allow_localhost: true)
 
 WebMock.after_request do |request_signature, response|
   WebMock.last_request = request_signature
@@ -38,4 +39,3 @@ end
 RSpec.configure do |config|
   config.include(WebMockHelpers)
 end
-

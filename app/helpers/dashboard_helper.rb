@@ -33,4 +33,24 @@ module DashboardHelper
     provinces = Pumi::Province.all.select { |p| ids.include? p.id }
     provinces.map(&:name_en).join(', ')
   end
+
+  def province_name(id)
+    province = Pumi::Province.find_by_id(id)
+    province ? province.name_en : '-'
+  end
+
+  def district_name(id)
+    district = Pumi::District.find_by_id(id)
+    district ? district.name_en : '-'
+  end
+
+  def commune_name(id)
+    commune = Pumi::Commune.find_by_id(id)
+    commune ? commune.name_en : '-'
+  end
+
+  def village_name(id)
+    village = Pumi::Village.find_by_id(id)
+    village ? village.name_en : '-'
+  end
 end

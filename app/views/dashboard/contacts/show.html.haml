@@ -22,6 +22,21 @@
           = @contact.msisdn
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
+          = Contact.human_attribute_name(:province_id)
+        %dd.col-sm-7.col-md-6
+          = province_name(@contact.province_id)
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Contact.human_attribute_name(:district_id)
+        %dd.col-sm-7.col-md-6
+          = district_name(@contact.district_id)
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Contact.human_attribute_name(:commune_id)
+        %dd.col-sm-7.col-md-6
+          = commune_name(@contact.commune_id)
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
           = Contact.human_attribute_name(:created_at)
         %dd.col-sm-7.col-md-6
           = @contact.created_at

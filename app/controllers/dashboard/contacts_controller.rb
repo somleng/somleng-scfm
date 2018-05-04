@@ -41,6 +41,8 @@ class Dashboard::ContactsController < Dashboard::AdminController
   end
 
   def contact_params
-    params.require(:contact).permit(:msisdn, metadata_forms_attributes: %i[attr_key attr_val])
+    params.require(:contact).permit(
+      :msisdn, :province_id, :district_id, :commune_id
+    )
   end
 end

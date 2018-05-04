@@ -31,7 +31,7 @@ RSpec.describe "Contacts", :aggregate_failures do
     end
   end
 
-  it "can create a new contact" do
+  it "can create a new contact", :js do
     user = create(:admin)
     phone_number = generate(:somali_msisdn)
 
@@ -48,7 +48,7 @@ RSpec.describe "Contacts", :aggregate_failures do
 
     expect(page).to have_content("Phone Number can't be blank")
 
-    fill_in("Phone Number", with: phone_number)
+    fill_in_contact_information(phone_number)
     click_action_button(:create, key: :contacts)
 
     expect(page).to have_text("Contact was successfully created.")
@@ -56,7 +56,7 @@ RSpec.describe "Contacts", :aggregate_failures do
     expect(new_contact.msisdn).to match(phone_number)
   end
 
-  it "can update a contact" do
+  it "can update a contact", :js do
     user = create(:admin)
     contact = create(
       :contact,
@@ -73,7 +73,7 @@ RSpec.describe "Contacts", :aggregate_failures do
     expect(page).to have_link_to_action(:cancel)
 
     updated_phone_number = generate(:somali_msisdn)
-    fill_in("Phone Number", with: updated_phone_number)
+    fill_in_contact_information(updated_phone_number)
     click_action_button(:update, key: :contacts)
 
     expect(current_path).to eq(dashboard_contact_path(contact))
@@ -123,5 +123,12 @@ RSpec.describe "Contacts", :aggregate_failures do
       expect(page).to have_content("Phone Number")
       expect(page).to have_content(phone_number)
     end
+  end
+
+  def fill_in_contact_information(phone_number)
+    fill_in("Phone Number", with: phone_number)
+    select 'Battambang', from: 'Province'
+    select 'Banan', from: 'District'
+    select 'Kantueu Pir', from: 'Commune'
   end
 end

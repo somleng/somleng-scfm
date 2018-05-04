@@ -15,6 +15,7 @@
 //= require popper
 //= require bootstrap
 //= require select2.full.min
+//= require pumi
 
 //= require rails-ujs
 //= require activestorage

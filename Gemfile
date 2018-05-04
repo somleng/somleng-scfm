@@ -24,7 +24,7 @@ gem "okcomputer"
 gem "pg"
 gem "phony"
 gem "phony_rails"
-gem "puma", "~> 3.7"
+gem "puma"
 gem "pumi", github: "dwilkie/pumi", require: "pumi/rails"
 gem "record_tag_helper", "~> 1.0"
 gem "responders"
@@ -51,6 +51,7 @@ end
 
 group :test do
   gem "capybara"
+  gem 'selenium-webdriver'
   gem "codeclimate-test-reporter", "~> 1.0.0"
   gem "email_spec"
   gem "factory_bot_rails"

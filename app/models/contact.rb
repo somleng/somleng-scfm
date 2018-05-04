@@ -2,6 +2,8 @@ class Contact < ApplicationRecord
   include MsisdnHelpers
   include MetadataHelpers
 
+  store_accessor :metadata, :province_id, :district_id, :commune_id, :village_id
+
   belongs_to :account
 
   has_many :callout_participations,

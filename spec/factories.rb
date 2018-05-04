@@ -62,7 +62,7 @@ FactoryBot.define do
 
   factory :contact do
     account
-    msisdn { generate(:somali_msisdn) }
+    msisdn   { generate(:somali_msisdn) }
   end
 
   factory :batch_operation_base, class: BatchOperation::Base do

@@ -19,6 +19,9 @@ class Callout < ApplicationRecord
   has_many :contacts,
            :through => :callout_participations
 
+  has_one_attached :voice
+  store_accessor :metadata, :province_id, :district_id, :commune_id, :village_id
+
   alias_attribute :calls, :phone_calls
 
   validates :status, :presence => true

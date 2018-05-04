@@ -23,14 +23,27 @@
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right Status:
         %dd.col-sm-7.col-md-6= @callout.status
-      .col-sm-5.col-md-4
-        %h5.text-md-right Meta data:
-      - @callout.metadata_forms.each do |data|
+      - if @callout.voice.attached?
         %dl.row
-          %dt.col-sm-5.col-md-4.text-md-right
-            = data.attr_key
+          %dt.col-sm-5.col-md-4.text-md-right Sound File:
           %dd.col-sm-7.col-md-6
-            = data.attr_val
+            = link_to @callout.voice.blob.filename, url_for(@callout.voice)
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right Province:
+        %dd.col-sm-7.col-md-6
+          = province_name(@callout.province_id)
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right District:
+        %dd.col-sm-7.col-md-6
+          = district_name(@callout.district_id)
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right Commune:
+        %dd.col-sm-7.col-md-6
+          = commune_name(@callout.commune_id)
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right Village:
+        %dd.col-sm-7.col-md-6
+          = village_name(@callout.village_id)
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right Created at:
         %dd.col-sm-7.col-md-6= @callout.created_at

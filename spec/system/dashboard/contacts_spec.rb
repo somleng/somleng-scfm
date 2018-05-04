@@ -16,13 +16,13 @@ RSpec.describe 'Contact pages', type: :system do
       expect(page).not_to have_record(other_contact)
     end
 
-    it 'can create new contact' do
+    it 'can create new contact', js: true do
       sign_in admin
       visit dashboard_contacts_path
 
       click_button 'New contact'
 
-      fill_in 'contact[msisdn]', with: generate(:somali_msisdn)
+      fill_in_contact_informations
       click_button 'Create Contact'
 
       expect(page).to have_text('Contact was successfully created.')
@@ -51,17 +51,29 @@ RSpec.describe 'Contact pages', type: :system do
   end
 
   describe 'edit contact' do
-    it 'successfully edit contact' do
+    it 'successfully edit contact', js: true do
       contact = create(:contact, account: admin.account)
 
       sign_in admin
       visit dashboard_contact_path(contact)
       click_button 'Edit'
 
-      fill_in 'contact[msisdn]', with: generate(:somali_msisdn)
+      fill_in_contact_informations
       click_button 'Update Contact'
 
       expect(page).to have_text('Contact was successfully updated.')
     end
+  end
+
+  def fill_in_contact_informations
+    fill_in 'contact[msisdn]', with: generate(:somali_msisdn)
+    wait_for_ajax
+    select 'Battambang', from: 'Province'
+    wait_for_ajax
+    select 'Banan', from: 'District'
+    wait_for_ajax
+    select 'Kantueu Pir', from: 'Commune'
+    wait_for_ajax
+    select 'Post Kantueu', from: 'Village'
   end
 end

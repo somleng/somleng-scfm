@@ -1,11 +1,11 @@
 DashboardUser = function() {
 
-  singleSelect2 = function() {
+  multiSelect2 = function() {
     $('.js-basic-multiple-select').select2();
   }
 
   this.init = function() {
-    singleSelect2();
+    multiSelect2();
   }
 }
 

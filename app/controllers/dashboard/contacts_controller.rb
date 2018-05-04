@@ -5,7 +5,9 @@ class Dashboard::ContactsController < Dashboard::AdminController
     @contacts = current_account.contacts.page(params[:page])
   end
 
-  def show; end
+  def show
+    @contact_village = Pumi::Village.find_by_id(@contact.village_id)
+  end
 
   def new
     @contact = Contact.new
@@ -44,6 +46,9 @@ class Dashboard::ContactsController < Dashboard::AdminController
   end
 
   def contact_params
-    params.require(:contact).permit(:id, :msisdn)
+    params.require(:contact).permit(
+      :id, :msisdn, :province_id, :district_id, :commune_id,
+      :village_id
+    )
   end
 end

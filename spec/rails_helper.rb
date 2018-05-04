@@ -33,6 +33,12 @@ RSpec.configure do |config|
     driven_by :rack_test
   end
 
+  # default capybara driver for system specs with js
+  config.before(:each, type: :system, js: true) do
+    WebMock.disable_net_connect!(allow_localhost: true)
+    driven_by :selenium_chrome_headless
+  end
+
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 

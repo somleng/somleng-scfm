@@ -16,3 +16,15 @@
       %dl.row
         %dt.col.text-md-right Phone Number:
         %dd.col= @contact.msisdn
+      %dl.row
+        %dt.col.text-md-right Province:
+        %dd.col= province_name(@contact.province_id)
+      %dl.row
+        %dt.col.text-md-right District:
+        %dd.col= district_name(@contact.district_id)
+      %dl.row
+        %dt.col.text-md-right Commune:
+        %dd.col= commune_name(@contact.commune_id)
+      %dl.row
+        %dt.col.text-md-right Village:
+        %dd.col= village_name(@contact.village_id)

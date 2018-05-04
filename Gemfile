@@ -51,6 +51,8 @@ end
 
 group :test do
   gem "capybara"
+  gem 'selenium-webdriver'
+  gem 'chromedriver-helper'
   gem "codeclimate-test-reporter", "~> 1.0.0"
   gem "email_spec"
   gem "factory_bot_rails"

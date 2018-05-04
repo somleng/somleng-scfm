@@ -1,8 +1,8 @@
 class Account < ApplicationRecord
   DEFAULT_PERMISSIONS_BITMASK = 0
-  TWILIO_ACCOUNT_SID_PREFIX = "AC"
-  DEFAULT_PLATFORM_PROVIDER = "twilio"
-  PLATFORM_PROVIDERS = [DEFAULT_PLATFORM_PROVIDER, "somleng"]
+  TWILIO_ACCOUNT_SID_PREFIX = "AC".freeze
+  DEFAULT_PLATFORM_PROVIDER = "twilio".freeze
+  PLATFORM_PROVIDERS = [DEFAULT_PLATFORM_PROVIDER, "somleng"].freeze
 
   include MetadataHelpers
 
@@ -12,43 +12,43 @@ class Account < ApplicationRecord
                  :platform_provider_name
 
   bitmask :permissions,
-          :as => [
-            :super_admin,
+          as: [
+            :super_admin
           ],
-          :null => false
+          null: false
 
   has_many :access_tokens,
-           :foreign_key => :resource_owner_id,
-           :dependent => :restrict_with_error
+           foreign_key: :resource_owner_id,
+           dependent: :restrict_with_error
 
   has_many :users,
-           :dependent => :restrict_with_error
+           dependent: :restrict_with_error
 
   has_many :contacts,
-           :dependent => :restrict_with_error
+           dependent: :restrict_with_error
 
   has_many :callouts,
-           :dependent => :restrict_with_error
+           dependent: :restrict_with_error
 
   has_many :batch_operations,
-           :class_name => "BatchOperation::Base",
-           :dependent => :restrict_with_error
+           class_name: "BatchOperation::Base",
+           dependent: :restrict_with_error
 
   has_many :callout_participations,
-           :through => :callouts
+           through: :callouts
 
   has_many :phone_calls,
-           :through => :callout_participations
+           through: :callout_participations
 
   has_many :remote_phone_call_events,
-           :through => :phone_calls
+           through: :phone_calls
 
-  delegate :twilio_account_sid?, :to => :class
+  delegate :twilio_account_sid?, to: :class
 
   validates :platform_provider_name,
-            :inclusion => {
-              :in => PLATFORM_PROVIDERS
-            }, :allow_nil => true
+            inclusion: {
+              in: PLATFORM_PROVIDERS
+            }, allow_nil: true
 
   def super_admin?
     permissions?(:super_admin)

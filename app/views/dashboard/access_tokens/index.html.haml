@@ -1,16 +1,26 @@
+.col-12.col-md-8
+  %h5#page_title.card-title
+    = translate(:"titles.access_tokens")
+
 .col-12
   .btn-toolbar{ role: 'toolbar' }
   %br
 .col-12
-  %table.table.table-hover.table-bordered
+  %table#access_tokens.table.table-hover.table-bordered
     %thead.thead-light
       %tr
         %th #
-        %th Token
-        %th Created at
+        %th
+          = AccessToken.human_attribute_name(:token)
+        %th
+          = AccessToken.human_attribute_name(:created_at)
     %tbody
       - @access_tokens.each_with_index do |access_token, index|
         %tr
-          %td= index + 1
-          %td= access_token.token
-          %td= access_token.created_at
+          %td
+            = index + 1
+          %td
+            %code
+              = access_token.token
+          %td
+            = access_token.created_at

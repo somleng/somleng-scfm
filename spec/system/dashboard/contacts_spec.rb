@@ -1,67 +1,127 @@
-require 'rails_helper'
+require "rails_helper"
 
-RSpec.describe 'Contact pages', type: :system do
-  let(:user) { create(:user) }
-  let(:admin) { create(:user, roles: :admin) }
+RSpec.describe "Contacts", :aggregate_failures do
+  it "can list all contacts" do
+    user = create(:admin)
+    contact = create(:contact, account: user.account)
+    other_contact = create(:contact)
 
-  describe 'view all contacts' do
-    it 'should list all contacts of current account' do
-      contact = create(:contact, account: admin.account)
-      other_contact = create(:contact)
+    sign_in(user)
+    visit dashboard_contacts_path
 
-      sign_in admin
-      visit dashboard_contacts_path
-
-      expect(page).to have_record(contact)
-      expect(page).not_to have_record(other_contact)
+    within("#page_title") do
+      expect(page).to have_content(I18n.translate!(:"titles.contacts.index"))
     end
 
-    it 'can create new contact' do
-      sign_in admin
-      visit dashboard_contacts_path
-
-      click_button 'New contact'
-
-      fill_in 'contact[msisdn]', with: generate(:somali_msisdn)
-      click_button 'Create Contact'
-
-      expect(page).to have_text('Contact was successfully created.')
-    end
-  end
-
-  describe 'contact detail' do
-    it 'show contact detail' do
-      contact = create(:contact, account: admin.account)
-
-      sign_in admin
-      visit dashboard_contact_path(contact)
-
-      expect(page).to have_record(contact)
+    within("#button_toolbar") do
+      expect(page).to have_link_to_action(
+        :new, key: :contacts, href: new_dashboard_contact_path
+      )
     end
 
-    it 'click delete contact then accept alert' do
-      contact = create(:contact, account: admin.account)
-
-      sign_in admin
-      visit dashboard_contact_path(contact)
-      click_button 'Delete'
-
-      expect(page).to have_text('Contact was successfully destroyed.')
+    within("#contacts") do
+      expect(page).to have_content(contact.id)
+      expect(page).to have_no_content(other_contact.id)
+      expect(page).to have_content("#")
+      expect(page).to have_link(
+        contact.id,
+        href: dashboard_contact_path(contact)
+      )
+      expect(page).to have_content("Phone Number")
     end
   end
 
-  describe 'edit contact' do
-    it 'successfully edit contact' do
-      contact = create(:contact, account: admin.account)
+  it "can create a new contact" do
+    user = create(:admin)
+    phone_number = generate(:somali_msisdn)
 
-      sign_in admin
-      visit dashboard_contact_path(contact)
-      click_button 'Edit'
+    sign_in(user)
+    visit new_dashboard_contact_path
 
-      fill_in 'contact[msisdn]', with: generate(:somali_msisdn)
-      click_button 'Update Contact'
+    within("#page_title") do
+      expect(page).to have_content(I18n.translate!(:"titles.contacts.new"))
+    end
 
-      expect(page).to have_text('Contact was successfully updated.')
+    expect(page).to have_link_to_action(:cancel)
+
+    click_action_button(:create, key: :contacts)
+
+    expect(page).to have_content("Phone Number can't be blank")
+
+    fill_in("Phone Number", with: phone_number)
+    click_action_button(:create, key: :contacts)
+
+    expect(page).to have_text("Contact was successfully created.")
+    new_contact = user.account.contacts.last!
+    expect(new_contact.msisdn).to match(phone_number)
+  end
+
+  it "can update a contact" do
+    user = create(:admin)
+    contact = create(
+      :contact,
+      account: user.account
+    )
+
+    sign_in(user)
+    visit edit_dashboard_contact_path(contact)
+
+    within("#page_title") do
+      expect(page).to have_content(I18n.translate!(:"titles.contacts.edit"))
+    end
+
+    expect(page).to have_link_to_action(:cancel)
+
+    updated_phone_number = generate(:somali_msisdn)
+    fill_in("Phone Number", with: updated_phone_number)
+    click_action_button(:update, key: :contacts)
+
+    expect(current_path).to eq(dashboard_contact_path(contact))
+    expect(page).to have_text("Contact was successfully updated.")
+    expect(contact.reload.msisdn).to match(updated_phone_number)
+  end
+
+  it "can delete a contact" do
+    user = create(:admin)
+    contact = create(:contact, account: user.account)
+
+    sign_in(user)
+    visit dashboard_contact_path(contact)
+
+    click_action_button(:delete, type: :link)
+
+    expect(current_path).to eq(dashboard_contacts_path)
+    expect(page).to have_text("Contact was successfully destroyed.")
+  end
+
+  it "can show a contact" do
+    user = create(:admin)
+    phone_number = generate(:somali_msisdn)
+    contact = create(
+      :contact,
+      account: user.account,
+      msisdn: phone_number
+    )
+
+    sign_in(user)
+    visit dashboard_contact_path(contact)
+
+    within("#button_toolbar") do
+      expect(page).to have_link_to_action(
+        :edit,
+        href: edit_dashboard_contact_path(contact)
+      )
+    end
+
+    within("#contact_#{contact.id}") do
+      expect(page).to have_link(
+        contact.id,
+        href: dashboard_contact_path(contact)
+      )
+
+      expect(page).to have_content("#")
+      expect(page).to have_content("Phone Number")
+      expect(page).to have_content(phone_number)
     end
   end
 end

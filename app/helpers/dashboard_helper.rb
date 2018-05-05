@@ -1,10 +1,10 @@
 module DashboardHelper
   def nav_link(link_text, link_path, controllers)
-    class_name = 'nav-link'
-    class_name += controllers.include?(controller_name) ? ' active' : ''
+    class_names = ["nav-link"]
+    class_names << "active" if controllers.include?(controller_name)
 
-    content_tag(:li, class: 'nav-item') do
-      link_to link_text, link_path, class: class_name
+    content_tag(:li, class: "nav-item") do
+      link_to(link_text, link_path, class: class_names.join(" "))
     end
   end
 
@@ -21,7 +21,7 @@ module DashboardHelper
 
     link_to(
       name, "#", class: "js-add-metadata-fields",
-      data: { association: 'metadata_forms', blueprint: "#{fields}" }
+                 data: { association: "metadata_forms", blueprint: fields.to_s }
     )
   end
 

@@ -31,3 +31,6 @@ vendor/ruby
 
 # Ignore encrypted secrets key file.
 config/secrets.yml.key
+
+# RSpec
+examples.txt

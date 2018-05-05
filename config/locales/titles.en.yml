@@ -1,0 +1,46 @@
+en:
+  titles:
+    actions:
+      edit: "Edit"
+      delete: "Delete"
+      data_confirm: "Are you sure?"
+      cancel: "Cancel"
+      add_metadata: "Add Metadata"
+      remove_metadata: "Remove"
+    admin_management: "Admin"
+    access_tokens:
+      index: "API Keys"
+    callouts:
+      index: "Callouts"
+      new: "New Callout"
+      create: "Create Callout"
+      edit: "Edit Callout"
+      update: "Update Callout"
+      start_callout: "Start Callout"
+      stop_callout: "Stop Callout"
+      resume_callout: "Resume Callout"
+    contacts:
+      index: "Contacts"
+      new: "New Contact"
+      create: "Create Contact"
+      edit: "Edit Contact"
+      update: "Update Contact"
+    users:
+      index: "Users"
+    user_invitations:
+      new: "Invite User"
+      create: "Send Invitation"
+      edit: "Set your password"
+      update: "Save"
+    user_passwords:
+      new: "Forgot your password?"
+      create: "Send Reset Instructions"
+      edit: "Change Password"
+      update: "Save"
+    user_registrations:
+      edit: "Change Password"
+      update: "Save"
+    user_sessions:
+      new: "Sign In"
+      create: "Sign In"
+      destroy: "Sign Out"

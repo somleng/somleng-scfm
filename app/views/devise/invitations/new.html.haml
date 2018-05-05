@@ -1,9 +1,10 @@
 .col-md-6
-  %h5.card-title Send invitation
+  %h5#page_title.card-title
+    = translate(:"titles.user_invitations.new")
   = simple_form_for resource, :as => resource_name, :url => invitation_path(resource_name), :html => {:method => :post} do |f|
     - resource.class.invite_key_fields.each do |field|
       = f.input field
       = f.input :roles, as: :radio_buttons, collection: User.values_for_roles, label_method: ->(r) { r.to_s.capitalize }, checked: f.object.roles
       = f.input :location_ids, collection: all_provices, label_method: :name_en, value_method: :id, selected: f.object.location_ids, include_blank: false, label: 'Locations', input_html: { multiple: 'multiple', class: 'js-chosen-select' }
     .form-group.actions
-      = f.submit 'Send an invitation', class: 'btn btn-primary'
+      = f.submit translate(:"titles.user_invitations.create"), class: 'btn btn-primary'

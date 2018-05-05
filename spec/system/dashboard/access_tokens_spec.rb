@@ -1,20 +1,27 @@
-require 'rails_helper'
+require "rails_helper"
 
-RSpec.describe 'Api key management', type: :system do
+RSpec.describe "API Key Management" do
   let(:admin) { create(:user, roles: :admin) }
 
-  it 'show all api keys of current user account' do
-    access_token_1 = create(:access_token, resource_owner: admin.account)
-    access_token_2 = create(:access_token, resource_owner: admin.account)
+  it "shows all api keys for current account" do
+    access_token1 = create(:access_token, resource_owner: admin.account)
+    access_token2 = create(:access_token, resource_owner: admin.account)
 
     sign_in(admin)
-    visit dashboard_access_tokens_path
+    visit(dashboard_access_tokens_path)
 
-    expect(page).to have_text(access_token_1.token)
-    expect(page).to have_text(access_token_2.token)
+    within("#page_title") do
+      expect(page).to have_text(I18n.translate!(:"titles.access_tokens.index"))
+    end
+
+    within("#access_tokens") do
+      expect(page).to have_text("API Key")
+      expect(page).to have_text(access_token1.token)
+      expect(page).to have_text(access_token2.token)
+    end
   end
 
-  it 'not show api keys from other account' do
+  it "does not show api keys from other accounts" do
     access_token = create(:access_token, resource_owner: admin.account)
     other_access_token = create(:access_token)
 
@@ -28,7 +35,7 @@ RSpec.describe 'Api key management', type: :system do
   context "when a user is not an admin tries to api key page" do
     let(:user) { create(:user) }
 
-    it 'redirect to default page with alert message' do
+    it "redirect to default page with alert message" do
       sign_in(user)
 
       visit dashboard_access_tokens_path

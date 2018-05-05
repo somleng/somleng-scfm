@@ -2,11 +2,11 @@ class Event::Base
   include ActiveModel::Validations
   attr_accessor :eventable, :event
 
-  validates :eventable, :presence => true
+  validates :eventable, presence: true
 
   validates :event,
-            :inclusion => {
-              :in => :valid_events
+            inclusion: {
+              in: :valid_events
             }
 
   def initialize(options = {})

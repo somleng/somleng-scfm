@@ -1,45 +1,40 @@
 class Dashboard::CalloutsController < Dashboard::BaseController
-  before_action :set_callout, only: [:show, :edit, :update, :destroy]
+  before_action :set_callout, only: %i[show edit update destroy]
 
   def index
     @callouts = current_account.callouts.page(params[:page])
   end
 
-  def show; end
-
   def new
-    @callout = Callout.new(metadata_forms: [MetadataForm.new])
+    @callout = current_account.callouts.build
   end
-
-  def edit; end
 
   def create
     @callout = current_account.callouts.build(callout_params)
-
-    if @callout.save(context: :dashboard)
-      redirect_to dashboard_callout_url(@callout), notice: 'Callout was successfully created.'
-    else
-      render :new
-    end
+    save_callout
+    respond_with_callout
   end
 
   def update
     @callout.assign_attributes(callout_params)
-
-    if @callout.save(context: :dashboard)
-      redirect_to dashboard_callout_url(@callout), notice: 'Callout was successfully updated.'
-    else
-      render :edit
-    end
+    save_callout
+    respond_with_callout
   end
 
   def destroy
     @callout.destroy
-
-    redirect_to dashboard_callouts_url, notice: 'Callout was successfully destroyed.'
+    respond_with_callout location: dashboard_callouts_path
   end
 
   private
+
+  def save_callout
+    @callout.save(context: :dashboard)
+  end
+
+  def respond_with_callout(location: nil)
+    respond_with @callout, location: -> { location || dashboard_callout_path(@callout) }
+  end
 
   def set_callout
     @callout = current_account.callouts.find(params[:id])
@@ -47,7 +42,7 @@ class Dashboard::CalloutsController < Dashboard::BaseController
 
   def callout_params
     params.require(:callout).permit(
-      :id, metadata_forms_attributes: [:attr_key, :attr_val]
+      metadata_forms_attributes: %i[attr_key attr_val]
     )
   end
 end

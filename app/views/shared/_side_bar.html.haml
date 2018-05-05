@@ -1,25 +1,17 @@
-%nav#left-sidebar.collapse.col-12.col-md-3.col-xl-2.bg-light.sidebar
+%nav#side_navigation.collapse.col-12.col-md-3.col-xl-2.bg-light.sidebar
   #accordion.sidebar-sticky
-    .card
+    #main_nav.card
       .card-body
         %ul.nav.flex-column
-          = nav_link 'Make Emergency Call', dashboard_callouts_path, 'callouts'
-          %li.nav-item
-            %a.nav-link{:href => "#"}
-              Call History
-          - if current_user.is_admin?
-            %li.nav-item
-              %a.nav-link{:href => "#"}
-                Batch Operations
-            = nav_link 'Contacts', dashboard_contacts_path, 'contacts'
-
+          = nav_link(translate(:"titles.callouts.index"), dashboard_callouts_path, 'callouts')
     - if current_user.is_admin?
-      .card
+      #admin_nav.card
         .card-header
           %h5.mb-0
             .btn.btn-default.text-muted
-              Admin Management
+              = translate(:"titles.admin_management")
         .card-body
           %ul.nav.flex-column
-            = nav_link 'Users', dashboard_users_path, 'users'
-            = nav_link 'Api Keys', dashboard_access_tokens_path, 'access_tokens'
+            = nav_link(translate(:"titles.access_tokens.index"), dashboard_access_tokens_path, 'access_tokens')
+            = nav_link(translate(:"titles.contacts.index"), dashboard_contacts_path, 'contacts')
+            = nav_link(translate(:"titles.users.index"), dashboard_users_path, 'users')

@@ -1,20 +1,29 @@
+.col-12.col-md-8
+  %h5#page_title.card-title
+    = translate(:"titles.callouts.index")
+
 .col-12
-  .btn-toolbar{ role: 'toolbar' }
+  #button_toolbar.btn-toolbar{ role: 'toolbar' }
     .btn-group.mr-2{ role: 'group' }
-      = button_to 'New callout', new_dashboard_callout_path, class: ' btn btn-outline-dark', method: :get
+      = link_to(translate(:"titles.callouts.new"), new_dashboard_callout_path, class: 'btn btn-outline-dark')
   %br
 .col-12
-  %table.table.table-hover.table-bordered
+  %table#callouts.table.table-hover.table-bordered
     %thead.thead-light
       %tr
         %th #
-        %th Title
-        %th Status
+        %th
+          = Callout.human_attribute_name(:status)
+        %th
+          = Callout.human_attribute_name(:created_at)
     %tbody
       - @callouts.each_with_index do |callout, i|
         = content_tag_for(:tr, callout) do
-          %td= i + 1
-          %td= link_to callout.title, dashboard_callout_path(callout)
-          %td= callout.status
+          %td
+            = link_to(callout.id, dashboard_callout_path(callout))
+          %td
+            = callout.status.humanize
+          %td
+            = callout.created_at
 .col-12
   = paginate @callouts

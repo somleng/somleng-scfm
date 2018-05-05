@@ -1,22 +1,31 @@
 .col-12
   .col-12
-    .btn-toolbar{ role: 'toolbar' }
+    #button_toolbar.btn-toolbar{ role: 'toolbar' }
       .btn-group.mr-2{ role: 'group' }
-        = button_to 'Invite user', new_user_invitation_path, method: 'get', class: ' btn btn-outline-dark'
+        = link_to(translate(:"titles.user_invitations.new"), new_user_invitation_path, class: 'btn btn-outline-success')
     %br
 
 .col-12
-  %table.table.table-hover.table-bordered
+  %table#users.table.table-hover.table-bordered
     %thead.thead-light
       %tr
         %th #
-        %th Email
-        %th Invitation accepted at
+        %th
+          = User.human_attribute_name(:email)
+        %th
+          = User.human_attribute_name(:invitation_accepted_at)
+        %th
+          = User.human_attribute_name(:last_sign_in_at)
     %tbody
-      - @users.each_with_index do |user, index|
+      - @users.each do |user|
         = content_tag_for(:tr, user) do
-          %td= index + 1
-          %td= link_to user.email, dashboard_user_path(user)
-          %td= user.invitation_accepted_at
+          %td
+            = user.id
+          %td
+            = user.email
+          %td
+            = user.invitation_accepted_at
+          %td
+            = user.last_sign_in_at            
 .col-12
   = paginate @users

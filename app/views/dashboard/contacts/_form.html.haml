@@ -1,5 +1,6 @@
-= simple_form_for contact, url: url do |f|
-  = f.input :msisdn, input_html: { autofocus: true }, label: 'Phone number'
+= simple_form_for [:dashboard, @contact] do |f|
+  = f.input :msisdn, input_html: { autofocus: true }
+  %br
   .form-group.actions
     = f.button :submit, class: 'btn btn-primary'
-    = link_to 'Cancel', :back, class: 'btn btn-outline-dark'
+    = link_to(translate(:"titles.actions.cancel"), :back, class: 'btn btn-outline-dark')

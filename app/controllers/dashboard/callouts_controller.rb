@@ -5,10 +5,6 @@ class Dashboard::CalloutsController < Dashboard::BaseController
     @callouts = current_account.callouts.page(params[:page])
   end
 
-  def show
-    @commune = Pumi::Commune.find_by_id(@callout.commune_id)
-  end
-
   def new
     @callout = current_account.callouts.build
   end
@@ -46,7 +42,7 @@ class Dashboard::CalloutsController < Dashboard::BaseController
 
   def callout_params
     params.require(:callout).permit(
-      :voice, :province_id, :district_id, :commune_id
+      :voice, :province_id, commune_ids: []
     )
   end
 end

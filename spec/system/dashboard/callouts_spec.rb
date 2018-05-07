@@ -47,7 +47,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     fill_in_callout_informations
     click_action_button(:create, key: :callouts)
 
-    expect(page).to have_text('Callout was successfully created.')
+    expect(page).to have_text("Callout was successfully created.")
 
     callout = Callout.first
     expect(callout.voice.attached?).to eq true
@@ -69,7 +69,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     fill_in_callout_informations
     click_action_button(:update, key: :callouts)
 
-    expect(page).to have_text('Callout was successfully updated.')
+    expect(page).to have_text("Callout was successfully updated.")
     expect(callout.voice.attached?).to eq true
   end
 
@@ -150,11 +150,10 @@ RSpec.describe "Callouts", :aggregate_failures do
   end
 
   def fill_in_callout_informations
-    file_path = Rails.root + 'spec/support/test_files/test.mp3'
+    file_path = Rails.root + "spec/support/test_files/test.mp3"
     attach_file label_name(:voice), file_path
-    select 'Battambang', from: label_name(:province_id)
-    select 'Banan', from: label_name(:district_id)
-    select 'Kantueu Pir', from: label_name(:commune_id)
+    select_selectize("#province", "Battambang")
+    select_selectize("#communes", "Kantueu Pir")
   end
 
   def label_name(attr)

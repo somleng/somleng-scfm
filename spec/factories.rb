@@ -60,7 +60,8 @@ FactoryBot.define do
     end
 
     factory :dashboard_callout do
-      commune_id '040202'
+      province_id ["04"]
+      commune_ids ["040202"]
     end
   end
 
@@ -69,7 +70,7 @@ FactoryBot.define do
     msisdn  { generate(:somali_msisdn) }
 
     factory :dashboard_contact do
-      commune_id '040202'
+      commune_id "040202"
     end
   end
 

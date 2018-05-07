@@ -6,14 +6,11 @@
         .form-control-file
           = f.file_field :voice, direct_upload: true
       #province
-        = f.hidden_field :province_id, class: 'pumi-default-value'
-        = f.input :province_id, collection: [], prompt: 'Select a province', input_html: { class: 'js-basic-select', style: "width: 100%",  data: { pumi_select_target: "district", pumi_select_collection_url: pumi.provinces_path, pumi_select_collection_label_method: "name_en", pumi_select_collection_value_method: "id", pumi_select_populate_on_load: true, pumi_select_has_hidden_value: true }}
-      #district
-        = f.hidden_field :district_id, class: 'pumi-default-value'
-        = f.input :district_id, collection: [], promt: 'Select a district', input_html: { class: 'js-basic-select', style: "width: 100%",  data: { pumi_select_id: "district", pumi_select_target: "commune", pumi_select_collection_url: pumi.districts_path(province_id: "FILTER"), pumi_select_collection_url_filter_interpolation_key: "FILTER", pumi_select_collection_label_method: "name_en", pumi_select_collection_value_method: "id", pumi_select_disabled_target: "#district", pumi_select_has_hidden_value: true }}
-      #commune
-        = f.hidden_field :commune_id, class: 'pumi-default-value'
-        = f.input :commune_id, collection: [], promt: 'Select a commune', input_html: { class: 'js-basic-select', style: "width: 100%",  data: { pumi_select_id: "commune", pumi_select_target: "village", pumi_select_collection_url: pumi.communes_path(district_id: "FILTER"), pumi_select_collection_url_filter_interpolation_key: "FILTER", pumi_select_collection_label_method: "name_en", pumi_select_collection_value_method: "id", pumi_select_disabled_target: "#commune", pumi_select_has_hidden_value: true }}
+        = f.input :province_id, collection: [], prompt: 'Select a province', input_html: { class: 'js-select-province', data: { default_value: f.object.province_id.to_s, province_url: pumi.provinces_url, pumi_district_collection_url: pumi.districts_url, pumi_commune_collection_url: pumi.communes_url }}, required: true, label: Contact.human_attribute_name(:province_id)
+
+      #communes
+        = f.input :commune_ids, collection: [], input_html: { class: 'js-select-communes', style: "width: 100%", multiple: 'multiple', data: { default_value: f.object.commune_ids } }, required: true, include_blank: false, label: Contact.human_attribute_name(:commune_ids)
+
   %br
   .form-group.actions
     = f.button :submit, class: 'btn btn-primary'

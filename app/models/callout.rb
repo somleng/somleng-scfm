@@ -20,12 +20,14 @@ class Callout < ApplicationRecord
            through: :callout_participations
 
   has_one_attached :voice
-  store_accessor :metadata, :province_id, :district_id, :commune_id, :village_id
+  store_accessor :metadata, :province_id, :commune_ids
 
   alias_attribute :calls, :phone_calls
 
   validates :status, presence: true
-  validates :commune_id, presence: true, on: :dashboard
+  validates :province_id, presence: true, on: :dashboard
+  validates :commune_ids, array: true, on: :dashboard
+  validate  :validate_commune_ids, on: :dashboard
 
   include AASM
 
@@ -66,5 +68,18 @@ class Callout < ApplicationRecord
 
   def title
     metadata["title"] || "Calout #{id}"
+  end
+
+  private
+
+  def validate_commune_ids
+    if commune_ids.blank? || commune_ids.reject!(&:empty?).blank?
+      errors.add(:commune_ids, :blank)
+    else
+      commune_ids.each do |commune_id|
+        next if commune_id =~ /^#{province_id}/
+        errors.add(:commune_ids)
+      end
+    end
   end
 end

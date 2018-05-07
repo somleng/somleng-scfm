@@ -29,6 +29,7 @@ gem "pumi", github: "dwilkie/pumi", require: "pumi/rails"
 gem "record_tag_helper", "~> 1.0"
 gem "responders"
 gem "sass-rails", "~> 5.0"
+gem "selectize-rails"
 gem "simple_form"
 gem "sqlite3"
 gem "turbolinks", "~> 5"
@@ -51,12 +52,12 @@ end
 
 group :test do
   gem "capybara"
-  gem 'selenium-webdriver'
   gem "codeclimate-test-reporter", "~> 1.0.0"
   gem "email_spec"
   gem "factory_bot_rails"
   gem "fakefs", require: "fakefs/safe"
   gem "rails-controller-testing"
+  gem "selenium-webdriver"
   gem "shoulda-matchers", github: "thoughtbot/shoulda-matchers"
   gem "simplecov", require: false
   gem "webmock"

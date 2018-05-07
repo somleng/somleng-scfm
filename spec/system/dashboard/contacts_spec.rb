@@ -83,7 +83,7 @@ RSpec.describe "Contacts", :aggregate_failures do
 
   it "can delete a contact" do
     user = create(:admin)
-    contact = create(:contact, account: user.account)
+    contact = create(:dashboard_contact, account: user.account)
 
     sign_in(user)
     visit dashboard_contact_path(contact)
@@ -98,7 +98,7 @@ RSpec.describe "Contacts", :aggregate_failures do
     user = create(:admin)
     phone_number = generate(:somali_msisdn)
     contact = create(
-      :contact,
+      :dashboard_contact,
       account: user.account,
       msisdn: phone_number
     )

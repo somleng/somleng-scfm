@@ -25,6 +25,7 @@ class Callout < ApplicationRecord
   alias_attribute :calls, :phone_calls
 
   validates :status, presence: true
+  validates :commune_id, presence: true, on: :dashboard
 
   include AASM
 

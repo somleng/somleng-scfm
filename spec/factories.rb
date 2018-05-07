@@ -58,11 +58,19 @@ FactoryBot.define do
     trait :running do
       status Callout::STATE_RUNNING
     end
+
+    factory :dashboard_callout do
+      commune_id '040202'
+    end
   end
 
   factory :contact do
     account
-    msisdn   { generate(:somali_msisdn) }
+    msisdn  { generate(:somali_msisdn) }
+
+    factory :dashboard_contact do
+      commune_id '040202'
+    end
   end
 
   factory :batch_operation_base, class: BatchOperation::Base do

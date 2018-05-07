@@ -1,13 +1,13 @@
 .col-12
-  #button_toolbar.btn-toolbar{ role: 'toolbar' }
+  #button_toolbar.btn-toolbar{ role: "toolbar" }
     - if current_user.is_admin?
-      .btn-group.mr-2{ role: 'group' }
-        = link_to(translate(:"titles.actions.edit"), edit_dashboard_contact_path(@contact), class: 'btn btn-outline-primary')
-      .btn-group.mr-2{ role: 'group' }
-        = link_to(translate(:"titles.actions.delete"), dashboard_contact_path(@contact), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+      .btn-group.mr-2{ role: "group" }
+        = link_to(translate(:"titles.actions.edit"), edit_dashboard_contact_path(@contact), class: "btn btn-outline-primary")
+      .btn-group.mr-2{ role: "group" }
+        = link_to(translate(:"titles.actions.delete"), dashboard_contact_path(@contact), class: "btn btn-outline-danger", method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
   %br
 .col-lg-8.col-sm-12
-  = div_for(@contact, class: 'card') do
+  = div_for(@contact, class: "card") do
     .card-header
       = link_to(Contact.model_name.human + " ##{@contact.id}", dashboard_contact_path(@contact))
     .card-body
@@ -24,17 +24,17 @@
         %dt.col-sm-5.col-md-4.text-md-right
           = Contact.human_attribute_name(:province_id)
         %dd.col-sm-7.col-md-6
-          = province_name(@contact.province_id)
+          = @commune.province.name_en
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Contact.human_attribute_name(:district_id)
         %dd.col-sm-7.col-md-6
-          = district_name(@contact.district_id)
+          = @commune.district.name_en
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Contact.human_attribute_name(:commune_id)
         %dd.col-sm-7.col-md-6
-          = commune_name(@contact.commune_id)
+          = @commune.name_en
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Contact.human_attribute_name(:created_at)

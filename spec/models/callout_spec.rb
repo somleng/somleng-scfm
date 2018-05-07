@@ -21,6 +21,7 @@ RSpec.describe Callout do
   describe "validations" do
     def assert_validations!
       is_expected.to validate_presence_of(:status)
+      is_expected.to validate_presence_of(:commune_id).on(:dashboard)
     end
 
     it { assert_validations! }

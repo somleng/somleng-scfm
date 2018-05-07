@@ -2,7 +2,7 @@ class Contact < ApplicationRecord
   include MsisdnHelpers
   include MetadataHelpers
 
-  store_accessor :metadata, :province_id, :district_id, :commune_id, :village_id
+  store_accessor :metadata, :province_id, :district_id, :commune_id
 
   belongs_to :account
 
@@ -20,4 +20,6 @@ class Contact < ApplicationRecord
 
   validates :msisdn,
             :uniqueness => {:scope => :account_id}
+
+  validates :commune_id, presence: true, on: :dashboard
 end

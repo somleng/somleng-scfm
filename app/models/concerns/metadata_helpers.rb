@@ -21,7 +21,6 @@ module MetadataHelpers
     conditionally_serialize(:metadata, JSON)
     validates :metadata,
               json: true
-    validate :valid_metadata_forms, on: :dashboard
   end
 
   def metadata=(value)
@@ -33,25 +32,7 @@ module MetadataHelpers
     end
   end
 
-  def metadata_forms
-    @metadata_forms ||= build_metadata_forms
-  end
-
-  def metadata_forms_attributes=(attributes)
-    @metadata_forms = []
-
-    attributes.each do |_i, metadata_forms_params|
-      @metadata_forms << MetadataForm.new(metadata_forms_params)
-    end
-
-    assign_metadata
-  end
-
   private
-
-  def valid_metadata_forms
-    errors.add(:metadata, :invalid) if metadata_forms.map(&:valid?).include?(false)
-  end
 
   def assign_metadata
     new_metadata = transform_metadata_forms_to_hash

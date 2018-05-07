@@ -11,50 +11,11 @@ RSpec.shared_examples_for "has_metadata" do
     end
 
     it { assert_validations! }
-
-    it "should validate metadata for dashboard context" do
-      subject.metadata_forms_attributes = {
-        "0" => { "attr_key" => "", "attr_val" => "kh" }
-      }
-
-      expect(subject.valid?(:dashboard)).to eq(false)
-      expect(subject.errors[:metadata]).to be_present
-    end
-  end
-
-  describe "#metadata_forms" do
-    subject { create(factory, metadata: {}) }
-
-    it "return new metadata form when metadata empty" do
-      new_metadata_form = MetadataForm.new
-      allow(MetadataForm).to receive(:new).and_return(new_metadata_form)
-      expect(subject.metadata_forms).to eq([new_metadata_form])
-    end
-
-    it "return unested data as metadata_form object" do
-      subject.metadata = { "address" => { "city" => "pp" } }
-
-      metadata_form = subject.metadata_forms.first
-
-      expect(metadata_form.attr_key).to eq "address:city"
-      expect(metadata_form.attr_val).to eq "pp"
-    end
-  end
-
-  describe "#metadata_forms_attributes=(attributes)" do
-    subject { create(factory, metadata: {}) }
-
-    it "should build new metadata_form and assign to metadata" do
-      attributes = { "0" => { "attr_key" => "title", "attr_val" => "call 1" } }
-
-      subject.metadata_forms_attributes = attributes
-      expect(subject.metadata).to eq("title" => "call 1")
-    end
   end
 
   describe "#metadata" do
-    subject { create(factory, metadata: {}) }
-    it { expect(subject.metadata).to eq({}) }
+    subject { create(factory, :metadata => {}) }
+    it { expect(subject.metadata).to include({}) }
   end
 
   describe "#metadata=(value)" do

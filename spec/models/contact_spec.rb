@@ -10,7 +10,7 @@ RSpec.describe Contact do
   end
 
   include_examples "has_metadata"
-  it_behaves_like "has_msisdn"
+  it_behaves_like  "has_msisdn"
 
   describe "associations" do
     def assert_associations!
@@ -24,19 +24,25 @@ RSpec.describe Contact do
     it { assert_associations! }
   end
 
-  describe 'store_accessors' do
-    it 'store locations metadata' do
-      contact = build(:contact, metadata: {
-        province_id: '01',
-        district_id: '0102',
-        commune_id:  '010203',
-        village_id:  '01020305'
-      })
+  describe "validations" do
+    def assert_validations!
+      is_expected.to validate_presence_of(:commune_id).on(:dashboard)
+    end
 
-      expect(contact.province_id).to eq '01'
-      expect(contact.district_id).to eq '0102'
-      expect(contact.commune_id).to  eq '010203'
-      expect(contact.village_id).to  eq '01020305'
+    it { assert_validations! }
+  end
+
+  describe "store_accessors" do
+    it "store locations metadata" do
+      contact = build(:contact,
+        "province_id" => "01",
+        "district_id" => "0102",
+        "commune_id"  => "010203"
+      )
+
+      expect(contact.province_id).to eq "01"
+      expect(contact.district_id).to eq "0102"
+      expect(contact.commune_id).to  eq "010203"
     end
   end
 end

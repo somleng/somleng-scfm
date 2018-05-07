@@ -75,7 +75,7 @@ RSpec.describe "Callouts", :aggregate_failures do
 
   it "can delete a callout" do
     user = create(:user)
-    callout = create(:callout, account: user.account)
+    callout = create(:dashboard_callout, account: user.account)
 
     sign_in(user)
     visit dashboard_callout_path(callout)
@@ -89,7 +89,7 @@ RSpec.describe "Callouts", :aggregate_failures do
   it "can show a callout" do
     user = create(:user)
     callout = create(
-      :callout,
+      :dashboard_callout,
       :initialized,
       account: user.account
     )
@@ -119,7 +119,7 @@ RSpec.describe "Callouts", :aggregate_failures do
   it "can perform actions on callouts" do
     user = create(:user)
     callout = create(
-      :callout,
+      :dashboard_callout,
       :initialized,
       account: user.account
     )

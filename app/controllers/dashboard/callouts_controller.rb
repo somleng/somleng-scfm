@@ -5,6 +5,10 @@ class Dashboard::CalloutsController < Dashboard::BaseController
     @callouts = current_account.callouts.page(params[:page])
   end
 
+  def show
+    @commune = Pumi::Commune.find_by_id(@callout.commune_id)
+  end
+
   def new
     @callout = current_account.callouts.build
   end

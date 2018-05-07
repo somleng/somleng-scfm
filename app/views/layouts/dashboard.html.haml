@@ -3,14 +3,15 @@
   %head
     = csrf_meta_tags
     %meta{:content => "width=device-width, initial-scale=1, shrink-to-fit=no", :name => "viewport"}/
-    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
-    = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+    %meta{:content => "reload", :name => "turbolinks-visit-control"}/
+    = stylesheet_link_tag "application", media: "all", "data-turbolinks-track": 'reload'
+    = javascript_include_tag "application", "data-turbolinks-track": "reload"
 
   = content_tag :body, data: { action: action_name, controller: controller_name } do
-    = render 'shared/nav_bar'
+    = render "shared/nav_bar"
     .container-fluid
       .row
-        = render 'shared/side_bar'
+        = render "shared/side_bar"
         %main.col-12.col-md-9.col-xl-10.ml-sm-auto.pt-3.px-4
-          = render 'shared/flash_messages'
+          = render "shared/flash_messages"
           = yield

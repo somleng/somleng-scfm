@@ -3,9 +3,9 @@
     = translate(:"titles.callouts.index")
 
 .col-12
-  #button_toolbar.btn-toolbar{ role: 'toolbar' }
-    .btn-group.mr-2{ role: 'group' }
-      = link_to(translate(:"titles.callouts.new"), new_dashboard_callout_path, class: 'btn btn-outline-dark')
+  #button_toolbar.btn-toolbar{ role: "toolbar" }
+    .btn-group.mr-2{ role: "group" }
+      = link_to(translate(:"titles.callouts.new"), new_dashboard_callout_path, class: "btn btn-outline-dark", data: { turbolinks: false })
   %br
 .col-12
   %table#callouts.table.table-hover.table-bordered

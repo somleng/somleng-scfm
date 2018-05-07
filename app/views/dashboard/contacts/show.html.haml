@@ -2,7 +2,7 @@
   #button_toolbar.btn-toolbar{ role: "toolbar" }
     - if current_user.is_admin?
       .btn-group.mr-2{ role: "group" }
-        = link_to(translate(:"titles.actions.edit"), edit_dashboard_contact_path(@contact), class: "btn btn-outline-primary")
+        = link_to(translate(:"titles.actions.edit"), edit_dashboard_contact_path(@contact), class: "btn btn-outline-primary", data: { turbolinks: false })
       .btn-group.mr-2{ role: "group" }
         = link_to(translate(:"titles.actions.delete"), dashboard_contact_path(@contact), class: "btn btn-outline-danger", method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
   %br

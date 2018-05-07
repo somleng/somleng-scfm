@@ -19,6 +19,10 @@ module SystemSpecHelpers
       { href: href }.compact
     )
   end
+
+  def have_content_tag_for(model, model_name: nil)
+    have_selector("##{model_name || model.class.to_s.underscore.tr('/', '_')}_#{model.id}")
+  end
 end
 
 RSpec.configure do |config|

@@ -1,0 +1,29 @@
+.col-12.col-md-8
+  %h5#page_title.card-title
+    = translate(:"titles.batch_operations.index")
+
+.col-12
+  #button_toolbar.btn-toolbar{ role: 'toolbar' }
+    .btn-group.mr-2{ role: 'group' }
+      = link_to(translate(:"titles.batch_operations.new"), new_dashboard_batch_operation_path, class: 'btn btn-outline-dark')
+  %br
+.col-12
+  %table#batch_operations.table.table-hover.table-bordered
+    %thead.thead-light
+      %tr
+        %th #
+        %th
+          = BatchOperation::Base.human_attribute_name(:status)
+        %th
+          = BatchOperation::Base.human_attribute_name(:created_at)
+    %tbody
+      - @batch_operations.each do |batch_operation|
+        = content_tag_for(:tr, batch_operation) do
+          %td
+            = link_to(batch_operation.id, dashboard_batch_operation_path(batch_operation))
+          %td
+            = batch_operation.status.humanize
+          %td
+            = batch_operation.created_at
+.col-12
+  = paginate @batch_operations

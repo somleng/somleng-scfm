@@ -1,6 +1,13 @@
 class BatchOperation::Base < ApplicationRecord
   self.table_name = :batch_operations
 
+  PERMITTED_API_TYPES = [
+    "BatchOperation::CalloutPopulation",
+    "BatchOperation::PhoneCallCreate",
+    "BatchOperation::PhoneCallQueue",
+    "BatchOperation::PhoneCallQueueRemoteFetch"
+  ].freeze
+
   include CustomStoreReaders
   include MetadataHelpers
   include Wisper::Publisher
@@ -9,42 +16,50 @@ class BatchOperation::Base < ApplicationRecord
 
   conditionally_serialize(:parameters, JSON)
 
-  validates :type, :presence => true
-  validates :parameters, :json => true
+  validates :type, presence: true
+  validates :parameters, json: true
 
   include AASM
 
-  aasm :column => :status, :skip_validation_on_save => true do
-    state :preview, :initial => true
+  def self.model_name
+    ActiveModel::Name.new(self, nil, "BatchOperation")
+  end
+
+  def self.from_type_param(type)
+    PERMITTED_API_TYPES.include?(type) ? type.constantize : self
+  end
+
+  aasm column: :status, skip_validation_on_save: true do
+    state :preview, initial: true
     state :queued
     state :running
     state :finished
 
-    event :queue, :after_commit => :publish_queued do
+    event :queue, after_commit: :publish_queued do
       transitions(
-        :from => :preview,
-        :to => :queued
+        from: :preview,
+        to: :queued
       )
     end
 
     event :start do
       transitions(
-        :from => :queued,
-        :to => :running
+        from: :queued,
+        to: :running
       )
     end
 
     event :finish do
       transitions(
-        :from => :running,
-        :to => :finished
+        from: :running,
+        to: :finished
       )
     end
 
-    event :requeue, :after_commit => :publish_queued do
+    event :requeue, after_commit: :publish_queued do
       transitions(
-        :from => :finished,
-        :to => :queued
+        from: :finished,
+        to: :queued
       )
     end
   end
@@ -53,7 +68,7 @@ class BatchOperation::Base < ApplicationRecord
     options ||= {}
     super(
       {
-        :methods => :type
+        methods: :type
       }.merge(options)
     )
   end

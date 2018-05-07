@@ -10,6 +10,10 @@ en:
     admin_management: "Admin"
     access_tokens:
       index: "API Keys"
+    batch_operations:
+      index: "Batch Operations"
+      new: "New Batch Operation"
+      create: "Create Batch Operation"
     callouts:
       index: "Callouts"
       new: "New Callout"

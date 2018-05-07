@@ -20,8 +20,8 @@ RSpec.describe "Callouts", :aggregate_failures do
     end
 
     within("#callouts") do
-      expect(page).to have_callout(callout)
-      expect(page).not_to have_callout(other_callout)
+      expect(page).to have_content_tag_for(callout)
+      expect(page).not_to have_content_tag_for(other_callout)
       expect(page).to have_content("#")
       expect(page).to have_link(
         callout.id,
@@ -157,9 +157,5 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(callout.reload).to be_running
     expect(page).not_to have_link_to_action(:resume_callout, key: :callouts)
     expect(page).to have_link_to_action(:stop_callout, key: :callouts)
-  end
-
-  def have_callout(callout)
-    have_selector("#callout_#{callout.id}")
   end
 end

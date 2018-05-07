@@ -10,3 +10,10 @@ en:
     labels:
       defaults:
         phone_number: 'Phone Number'
+    options:
+      batch_operation:
+        type:
+          "BatchOperation::CalloutPopulation": 'Populate a Callout'
+          "BatchOperation::PhoneCallCreate": 'Create Calls'
+          "BatchOperation::PhoneCallQueue": 'Queue Calls'
+          "BatchOperation::PhoneCallQueueRemoteFetch": 'Fetch Call Results'

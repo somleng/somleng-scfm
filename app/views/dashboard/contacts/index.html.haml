@@ -18,7 +18,7 @@
           = Contact.human_attribute_name(:created_at)
     %tbody
       - @contacts.each_with_index do |contact, index|
-        %tr
+        = content_tag_for(:tr, contact) do
           %td
             = link_to(contact.id, dashboard_contact_path(contact))
           %td

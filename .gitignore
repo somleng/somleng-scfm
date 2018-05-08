@@ -28,3 +28,9 @@ vendor/ruby
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+# Ignore encrypted secrets key file.
+config/secrets.yml.key
+
+# RSpec
+examples.txt

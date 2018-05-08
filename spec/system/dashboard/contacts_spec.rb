@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Contacts", :aggregate_failures do
   it "can list all contacts" do
-    user = create(:user)
+    user = create(:admin)
     contact = create(:contact, account: user.account)
     other_contact = create(:contact)
 
@@ -32,7 +32,7 @@ RSpec.describe "Contacts", :aggregate_failures do
   end
 
   it "can create a new contact" do
-    user = create(:user)
+    user = create(:admin)
     phone_number = generate(:somali_msisdn)
 
     sign_in(user)
@@ -49,21 +49,18 @@ RSpec.describe "Contacts", :aggregate_failures do
     expect(page).to have_content("Phone Number can't be blank")
 
     fill_in("Phone Number", with: phone_number)
-    fill_in_metadata(with: { key: "name", value: "Bob Chann" })
     click_action_button(:create, key: :contacts)
 
     expect(page).to have_text("Contact was successfully created.")
     new_contact = user.account.contacts.last!
     expect(new_contact.msisdn).to match(phone_number)
-    expect(new_contact.metadata).to eq("name" => "Bob Chann")
   end
 
   it "can update a contact" do
-    user = create(:user)
+    user = create(:admin)
     contact = create(
       :contact,
-      account: user.account,
-      metadata: { "location" => { "country" => "kh" } }
+      account: user.account
     )
 
     sign_in(user)
@@ -77,17 +74,15 @@ RSpec.describe "Contacts", :aggregate_failures do
 
     updated_phone_number = generate(:somali_msisdn)
     fill_in("Phone Number", with: updated_phone_number)
-    fill_in_metadata with: { key: "gender", value: "f" }
     click_action_button(:update, key: :contacts)
 
     expect(current_path).to eq(dashboard_contact_path(contact))
     expect(page).to have_text("Contact was successfully updated.")
     expect(contact.reload.msisdn).to match(updated_phone_number)
-    expect(contact.metadata).to eq("gender" => "f")
   end
 
   it "can delete a contact" do
-    user = create(:user)
+    user = create(:admin)
     contact = create(:contact, account: user.account)
 
     sign_in(user)
@@ -100,13 +95,12 @@ RSpec.describe "Contacts", :aggregate_failures do
   end
 
   it "can show a contact" do
-    user = create(:user)
+    user = create(:admin)
     phone_number = generate(:somali_msisdn)
     contact = create(
       :contact,
       account: user.account,
-      msisdn: phone_number,
-      metadata: { "location" => { "country" => "Cambodia" } }
+      msisdn: phone_number
     )
 
     sign_in(user)
@@ -119,7 +113,7 @@ RSpec.describe "Contacts", :aggregate_failures do
       )
     end
 
-    within("#contact") do
+    within("#contact_#{contact.id}") do
       expect(page).to have_link(
         contact.id,
         href: dashboard_contact_path(contact)
@@ -128,9 +122,6 @@ RSpec.describe "Contacts", :aggregate_failures do
       expect(page).to have_content("#")
       expect(page).to have_content("Phone Number")
       expect(page).to have_content(phone_number)
-      expect(page).to have_content("Metadata")
-      expect(page).to have_content("location:country")
-      expect(page).to have_content("Cambodia")
     end
   end
 end

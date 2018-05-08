@@ -1,0 +1,25 @@
+.col-12
+  .btn-toolbar{ role: 'toolbar' }
+    .btn-group.mr-2{ role: 'group' }
+      = button_to 'Back', :back, class: 'btn btn-outline-dark', method: :get
+    .btn-group.mr-2{ role: 'group' }
+      = button_to 'Edit', edit_dashboard_user_path(@user), class: ' btn btn-outline-dark', method: :get
+    - unless @user == current_user
+      .btn-group.mr-2{ role: 'group' }
+        = button_to 'Delete', dashboard_user_path(@user), class: ' btn btn-outline-dark', method: :delete, data: { confirm: 'Are you sure?' }
+  %br
+.col-12.col-md-9.col-lg-7
+  = div_for(@user, class: 'card') do
+    .card-header
+      User detail
+    .card-body
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right Email:
+        %dd.col-sm-7.col-md-6= @user.email
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right Roles:
+        %dd.col-sm-7.col-md-6= @user.roles.join(', ')
+      - if @user.location_ids.present?
+        %dl.row
+          %dt.col-sm-5.col-md-4.text-md-right Manageble Locations:
+          %dd.col-sm-7.col-md-6= province_names(@user.location_ids)

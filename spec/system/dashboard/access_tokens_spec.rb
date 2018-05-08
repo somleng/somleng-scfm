@@ -1,12 +1,13 @@
 require "rails_helper"
 
 RSpec.describe "API Key Management" do
-  it "shows all api keys for current account" do
-    user = create(:user)
-    sign_in(user)
-    access_token1 = create(:access_token, resource_owner: user.account)
-    access_token2 = create(:access_token, resource_owner: user.account)
+  let(:admin) { create(:user, roles: :admin) }
 
+  it "shows all api keys for current account" do
+    access_token1 = create(:access_token, resource_owner: admin.account)
+    access_token2 = create(:access_token, resource_owner: admin.account)
+
+    sign_in(admin)
     visit(dashboard_access_tokens_path)
 
     within("#page_title") do
@@ -21,14 +22,25 @@ RSpec.describe "API Key Management" do
   end
 
   it "does not show api keys from other accounts" do
-    user = create(:user)
-    sign_in(user)
-    access_token = create(:access_token, resource_owner: user.account)
+    access_token = create(:access_token, resource_owner: admin.account)
     other_access_token = create(:access_token)
 
-    visit(dashboard_access_tokens_path)
+    sign_in(admin)
+    visit dashboard_access_tokens_path
 
     expect(page).to have_text(access_token.token)
     expect(page).not_to have_text(other_access_token.token)
+  end
+
+  context "when a user is not an admin tries to api key page" do
+    let(:user) { create(:user) }
+
+    it "redirect to default page with alert message" do
+      sign_in(user)
+
+      visit dashboard_access_tokens_path
+
+      expect(page).to have_text("We're sorry, but you do not have permission to view this page.")
+    end
   end
 end

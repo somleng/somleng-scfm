@@ -4,14 +4,14 @@
       .card-body
         %ul.nav.flex-column
           = nav_link(translate(:"titles.callouts.index"), dashboard_callouts_path, 'callouts')
-          = nav_link(translate(:"titles.contacts.index"), dashboard_contacts_path, 'contacts')
-
-    #admin_nav.card
-      .card-header
-        %h5.mb-0
-          .btn.btn-default.text-muted
-            = translate(:"titles.admin_management")
-      .card-body
-        %ul.nav.flex-column
-          = nav_link(translate(:"titles.access_tokens.index"), dashboard_access_tokens_path, 'access_tokens')
-          = nav_link(translate(:"titles.users.index"), dashboard_users_path, 'users')
+    - if current_user.is_admin?
+      #admin_nav.card
+        .card-header
+          %h5.mb-0
+            .btn.btn-default.text-muted
+              = translate(:"titles.admin_management")
+        .card-body
+          %ul.nav.flex-column
+            = nav_link(translate(:"titles.access_tokens.index"), dashboard_access_tokens_path, 'access_tokens')
+            = nav_link(translate(:"titles.contacts.index"), dashboard_contacts_path, 'contacts')
+            = nav_link(translate(:"titles.users.index"), dashboard_users_path, 'users')

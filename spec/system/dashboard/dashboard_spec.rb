@@ -12,28 +12,34 @@ RSpec.describe "Dashboard" do
           I18n.translate!(:"titles.callouts.index"),
           href: dashboard_callouts_path
         )
-
-        expect(page).to have_link(
-          I18n.translate!(:"titles.contacts.index"),
-          href: dashboard_contacts_path
-        )
       end
+    end
+  end
 
-      within("#admin_nav") do
-        expect(page).to have_content(
-          I18n.translate!(:"titles.admin_management")
-        )
+  it "has side navigation links for admin" do
+    user = create(:admin)
+    sign_in(user)
+    visit(root_path)
 
-        expect(page).to have_link(
-          I18n.translate!(:"titles.access_tokens.index"),
-          href: dashboard_access_tokens_path
-        )
+    within("#admin_nav") do
+      expect(page).to have_content(
+        I18n.translate!(:"titles.admin_management")
+      )
 
-        expect(page).to have_link(
-          I18n.translate!(:"titles.users.index"),
-          href: dashboard_users_path
-        )
-      end
+      expect(page).to have_link(
+        I18n.translate!(:"titles.contacts.index"),
+        href: dashboard_contacts_path
+      )
+
+      expect(page).to have_link(
+        I18n.translate!(:"titles.access_tokens.index"),
+        href: dashboard_access_tokens_path
+      )
+
+      expect(page).to have_link(
+        I18n.translate!(:"titles.users.index"),
+        href: dashboard_users_path
+      )
     end
   end
 end

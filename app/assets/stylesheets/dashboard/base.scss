@@ -3,7 +3,7 @@ body {
 }
 
 main {
-  overflow-x: scroll;
+  overflow-x: visible;
 }
 
 .navbar-brand {
@@ -74,12 +74,13 @@ main {
   }
 }
 
-dl.row {
-  margin-bottom: 0;
-}
-
-ul.ul-infinit {
-  padding: 0 12px;
+.form-group.check_boxes, .form-group.radio_buttons {
+  .checkbox, .radio {
+    margin-right: 12px;
+  }
+  input.check_boxes, input.radio_buttons {
+    margin-right: 8px;
+  }
 }
 
 @media (min-width: 768px) {

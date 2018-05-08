@@ -4,8 +4,9 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 gem "rails", "~> 5.2.0"
 # support both sqlite3 and pg
 gem "aasm", github: "aasm/aasm"
-gem "active_elastic_job", github: "tawan/active-elastic-job"
+gem "active_elastic_job", github: "samnang/active-elastic-job", branch: "upgrade_to_aws_sdk_3"
 gem "api-pagination"
+gem "aws-sdk-s3", require: false
 gem "bitmask_attributes", github: "numerex/bitmask_attributes"
 gem "bootsnap", ">= 1.1.0", require: false
 gem "bootstrap", "~> 4.0.0"

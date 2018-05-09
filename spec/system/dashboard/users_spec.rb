@@ -54,7 +54,7 @@ RSpec.describe "Users" do
       expect(page).to have_text("User was successfully destroyed.")
     end
 
-    it "can update user roles" do
+    it "can update user information", :js do
       user = create(:user, account: admin.account)
 
       sign_in(admin)
@@ -72,7 +72,7 @@ RSpec.describe "Users" do
   def edit_user(options = {})
     click_button "Edit"
     choose options[:roles]
-    select options[:location], from: "Locations"
+    select_selectize("#locations", options[:location])
     click_button("Update User")
   end
 end

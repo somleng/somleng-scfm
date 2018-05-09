@@ -1,15 +1,13 @@
-DashboardUser = function() {
+DashboardUser = function () {
 
-  multiSelect2 = function() {
-    $('.js-basic-multiple-select').select2();
-  }
+  pumiSelectize = new PumiSelectize();
 
-  this.init = function() {
-    multiSelect2();
-  }
-}
+  this.init = function () {
+    pumiSelectize.init();
+  };
+};
 
-$(document).on('turbolinks:load', function() {
+$(document).on('turbolinks:load', function () {
   if ((page.controller() !== 'users')) {
     return;
   }

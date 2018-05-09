@@ -38,7 +38,7 @@ DashboardCallout = function () {
           })
         ).done(function () {
           if (_this.provinceId) {
-            _this.provincetize.setValue(_this.$province.data('defaultValue'));
+            _this.provincetize.setValue(_this.provinceId);
             _this.provinceId = null;
           }
         });

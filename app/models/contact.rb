@@ -2,7 +2,8 @@ class Contact < ApplicationRecord
   include MsisdnHelpers
   include MetadataHelpers
 
-  store_accessor :metadata, :province_id, :district_id, :commune_id
+  store_accessor :metadata, :commune_id
+  attr_accessor :province_id, :district_id
 
   belongs_to :account
 
@@ -22,4 +23,16 @@ class Contact < ApplicationRecord
             uniqueness: { scope: :account_id }
 
   validates :commune_id, presence: true, on: :dashboard
+
+  def commune
+    @commune ||= Pumi::Commune.find_by_id(commune_id)
+  end
+
+  def province_id
+    @province_id ||= commune&.province&.id
+  end
+
+  def district_id
+    @district_id ||= commune&.district&.id
+  end
 end

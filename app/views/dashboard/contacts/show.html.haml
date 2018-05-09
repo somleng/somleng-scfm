@@ -24,17 +24,17 @@
         %dt.col-sm-5.col-md-4.text-md-right
           = Contact.human_attribute_name(:province_id)
         %dd.col-sm-7.col-md-6
-          = @commune.province.name_en
+          = @contact.commune.province.name_en
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Contact.human_attribute_name(:district_id)
         %dd.col-sm-7.col-md-6
-          = @commune.district.name_en
+          = @contact.commune.district.name_en
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Contact.human_attribute_name(:commune_id)
         %dd.col-sm-7.col-md-6
-          = @commune.name_en
+          = @contact.commune.name_en
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Contact.human_attribute_name(:created_at)

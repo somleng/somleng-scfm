@@ -14,6 +14,6 @@ module DashboardHelper
 
   def province_names(ids)
     provinces = Pumi::Province.all.select { |p| ids.include? p.id }
-    provinces.map(&:name_en).join(', ')
+    provinces.map(&:name_en).join(", ")
   end
 end

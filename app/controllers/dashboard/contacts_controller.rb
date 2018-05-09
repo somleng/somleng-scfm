@@ -5,10 +5,6 @@ class Dashboard::ContactsController < Dashboard::AdminController
     @contacts = current_account.contacts.page(params[:page])
   end
 
-  def show
-    @commune = Pumi::Commune.find_by_id(@contact.commune_id)
-  end
-
   def new
     @contact = Contact.new
   end

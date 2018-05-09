@@ -5,7 +5,8 @@
     - resource.class.invite_key_fields.each do |field|
       = f.input field
       = f.input :roles, as: :radio_buttons, collection: User.values_for_roles, label_method: ->(r) { r.to_s.capitalize }, checked: f.object.roles
-      = f.input :location_ids, collection: all_provices, label_method: :name_en, value_method: :id, selected: f.object.location_ids, include_blank: false, label: 'Locations', input_html: { multiple: 'multiple', class: 'js-basic-multiple-select' }
+      #locations
+        = f.input :location_ids, collection: [], label: User.human_attribute_name(:location_ids), input_html: { multiple: 'multiple', class: 'js-pumi-selectize', data: { default_value: f.object.location_ids, pumi_url: pumi.provinces_url }}
 
     .form-group.actions
       = f.submit translate(:"titles.user_invitations.create"), class: 'btn btn-primary'

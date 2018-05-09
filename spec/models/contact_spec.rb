@@ -45,4 +45,10 @@ RSpec.describe Contact do
       expect(contact.commune_id).to  eq "010203"
     end
   end
+
+  it "#commune" do
+    location = Pumi::Commune.all.first
+    contact = build(:contact, commune_id: location.id)
+    expect(contact.commune).to eq location
+  end
 end

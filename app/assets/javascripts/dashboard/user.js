@@ -1,6 +1,6 @@
 DashboardUser = function () {
 
-  pumiSelectize = new PumiSelectize();
+  pumiSelectize = new PumiSelectize('.js-pumi-selectize');
 
   this.init = function () {
     pumiSelectize.init();
@@ -8,7 +8,7 @@ DashboardUser = function () {
 };
 
 $(document).on('turbolinks:load', function () {
-  if ((page.controller() !== 'users')) {
+  if ((page.controller() !== 'users') || (page.action() !== 'edit')) {
     return;
   }
 

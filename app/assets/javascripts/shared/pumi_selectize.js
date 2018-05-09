@@ -1,6 +1,6 @@
-PumiSelectize = function () {
+PumiSelectize = function (element) {
   _this = this;
-  _this.$selectizer = $('.js-pumi-selectize');
+  _this.$selectizer = $(element);
   _this.defaultValue = _this.$selectizer.data('defaultValue');
   _this.dataUrl = _this.$selectizer.data('pumiUrl');
   _this.preload = _this.$selectizer.data('preload');

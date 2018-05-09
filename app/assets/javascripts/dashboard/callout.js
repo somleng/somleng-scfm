@@ -14,42 +14,27 @@ DashboardCallout = function () {
       preload: true,
       searchField: ['name_en', 'name_km'],
       render: {
-        item: function (item, escape) {
-          return '<div>' + (item.name_en ? '<span class="english">' +
-            escape(item.name_en) + '&nbsp;</span>' : '') +
-            (item.name_km ? '<span class="khmer">' + escape(item.name_km) +
-            '</span>' : '') + '</div>';
-        },
-
-        option: function (item, escape) {
-          var label = item.name_en;
-          var caption = item.name_km;
-          return '<div>' +
-              '<span class="label">' + escape(label) + '</span></br>' +
-              (caption ? '<span class="caption">' + escape(caption) + '</span>' : '') +
-          '</div>';
-        },
+        item: renderItem,
+        option: renderOption,
       },
-
-      load: function (query, callback) {
-        $.when(
-          $.getJSON(_this.$province.data('provinceUrl'), function (data) {
-            callback(data);
-          })
-        ).done(function () {
-          if (_this.provinceId) {
-            _this.provincetize.setValue(_this.provinceId);
-            _this.provinceId = null;
-          }
-        });
-      },
-
-      onChange: function (value) {
-        getdistrictsCommunes(value);
-      },
+      load: loadProvinces,
+      onChange: getdistrictsCommunes,
     });
 
     _this.provincetize = _this.$province[0].selectize;
+  };
+
+  loadProvinces = function (query, callback) {
+    $.when(
+      $.getJSON(_this.$province.data('provinceUrl'), function (data) {
+        callback(data);
+      })
+    ).done(function () {
+      if (_this.provinceId) {
+        _this.provincetize.setValue(_this.provinceId);
+        _this.provinceId = null;
+      }
+    });
   };
 
   initSelectCommunes = function () {
@@ -62,50 +47,53 @@ DashboardCallout = function () {
       searchField: ['name_en', 'name_km'],
       closeAfterSelect: false,
       render: {
-        optgroup_header: function (item, escape) {
-          return '<div data-selectable data-value="' +
-            escape(item.commune_ids) + '" class="optgroup-header">' +
-            escape(item.name_en) + ' <span class="khmer">&nbsp;' +
-            escape(item.name_km) + '</span></div>';
-        },
-
-        item: function (item, escape) {
-          return '<div>' + (item.name_en ? '<span class="english">' +
-            escape(item.name_en) + '&nbsp;</span>' : '') +
-            (item.name_km ? '<span class="khmer">' + escape(item.name_km) +
-            '</span>' : '') + '</div>';
-        },
-
-        option: function (item, escape) {
-          var label = item.name_en;
-          var caption = item.name_km;
-          return '<div class=' + (item.district ? 'd-none' : '') + '>' +
-              '<span class="label">' + escape(label) + '</span></br>' +
-              (caption ? '<span class="caption">' + escape(caption) + '</span>' : '') +
-          '</div>';
-        },
+        optgroup_header: renderOptGroupHeader,
+        item: renderItem,
+        option: renderOption,
       },
-    });
-
-    _this.$communes.on('change', function (e) {
-      val1 = $(e.currentTarget).val();
-      val2 = [];
-
-      $.when(
-        $.map(val1, function (value, index) {
-          $.each(value.split(','), function (index, val) {
-            val2.push(val);
-          });
-        })
-      ).done(function (data) {
-        same = $(val1).not(val2).length === 0 && $(val2).not(val1).length === 0;
-        if (!same) {
-          _this.communestize.setValue(val2);
-        }
-      });
+      onChange: updateCommuneIds,
     });
 
     _this.communestize = _this.$communes[0].selectize;
+  };
+
+  updateCommuneIds = function (value) {
+    newValue = [];
+    $.when(
+      $.map(value, function (value, index) {
+        $.each(value.split(','), function (index, val) {
+          newValue.push(val);
+        });
+      })
+    ).done(function (data) {
+      comparation = $(value).not(newValue).length === 0 && $(newValue).not(value).length === 0;
+      if (!comparation) {
+        _this.communestize.setValue(newValue);
+      }
+    });
+  };
+
+  renderOptGroupHeader = function (item, escape) {
+    return '<div data-selectable data-value="' +
+      escape(item.commune_ids) + '" class="optgroup-header">' +
+      escape(item.name_en) + ' <span class="khmer">&nbsp;' +
+      escape(item.name_km) + '</span></div>';
+  };
+
+  renderItem = function (item, escape) {
+    return '<div>' + (item.name_en ? '<span class="english">' +
+      escape(item.name_en) + '&nbsp;</span>' : '') +
+      (item.name_km ? '<span class="khmer">' + escape(item.name_km) +
+      '</span>' : '') + '</div>';
+  };
+
+  renderOption = function (item, escape) {
+    var label = item.name_en;
+    var caption = item.name_km;
+    return '<div>' +
+        '<span class="label">' + escape(label) + '</span></br>' +
+        (caption ? '<span class="caption">' + escape(caption) + '</span>' : '') +
+    '</div>';
   };
 
   getdistrictsCommunes = function (provinceId) {
@@ -167,7 +155,8 @@ DashboardCallout = function () {
 };
 
 $(document).on('turbolinks:load', function () {
-  if ((page.controller() !== 'callouts')) {
+  actions = ['new', 'create', 'edit', 'update'];
+  if ((page.controller() !== 'callouts') || !actions.includes(page.action())) {
     return;
   }
 

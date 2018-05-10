@@ -2,7 +2,7 @@
   .card
     .card-body
       .form-group
-        = f.input :voice, as: :file, input_html: { direct_upload: true },  label: Contact.human_attribute_name(:voice)
+        = f.input :voice, as: :file, input_html: { direct_upload: true, accept: "audio/mpeg, audio/wav" },  label: Contact.human_attribute_name(:voice)
 
       #province
         = f.input :province_id, collection: [], prompt: 'Select a province', input_html: { class: 'js-select-province', data: { default_value: f.object.province_id.to_s, province_url: pumi.provinces_url, pumi_district_collection_url: pumi.districts_url, pumi_commune_collection_url: pumi.communes_url }}, required: true, label: Contact.human_attribute_name(:province_id)

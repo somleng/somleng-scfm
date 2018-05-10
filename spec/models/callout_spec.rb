@@ -31,15 +31,45 @@ RSpec.describe Callout do
       it "has to be an array" do
         callout = build(:callout, commune_ids: nil)
 
-        expect(callout.valid?(:dashboard)).to eq(false)
+        callout.valid?(:dashboard)
+
         expect(callout.errors[:commune_ids]).not_to eq nil
       end
 
       it "have to match with province_id" do
         callout = build(:callout, province_id: "04", commune_ids: ["030101"])
 
-        expect(callout.valid?(:dashboard)).to eq(false)
+        callout.valid?(:dashboard)
+
         expect(callout.errors[:commune_ids]).not_to eq nil
+      end
+    end
+
+    context "voice" do
+      it "must be present" do
+        callout = build(:callout, voice: nil)
+
+        callout.valid?(:dashboard)
+
+        expect(callout.errors[:voice]).to include "can't be blank"
+      end
+
+      it "must be audio file" do
+        callout = build(:callout)
+        attach_file(callout, "image.jpg")
+
+        callout.valid?(:dashboard)
+
+        expect(callout.errors[:voice]).to include "can only be audio file"
+      end
+
+      it "file cannot be bigger than 5MB" do
+        callout = build(:callout)
+        attach_file(callout, "big_file.mp3")
+
+        callout.valid?(:dashboard)
+
+        expect(callout.errors[:voice]).to include "maximum size is 5 Megabytes"
       end
     end
   end
@@ -94,5 +124,10 @@ RSpec.describe Callout do
         end
       end
     end
+  end
+
+  def attach_file(callout, file_name)
+    file = File.join(Rails.root, "spec", "support", "test_files", file_name)
+    callout.voice.attach(io: File.open(file), filename: file_name)
   end
 end

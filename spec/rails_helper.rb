@@ -60,4 +60,9 @@ RSpec.configure do |config|
   config.include Devise::Test::ControllerHelpers, type: :controller
 
   config.infer_base_class_for_anonymous_controllers = false
+
+  # remove all test uploaded files
+  config.after(:all) do
+    FileUtils.rm_rf("#{Rails.root}/tmp/storage_test")
+  end
 end

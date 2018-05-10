@@ -19,14 +19,17 @@ class Callout < ApplicationRecord
   has_many :contacts,
            through: :callout_participations
 
-  has_one_attached :voice
   store_accessor :metadata, :province_id, :commune_ids
+
+  has_one_attached :voice
 
   alias_attribute :calls, :phone_calls
 
   validates :status, presence: true
   validates :province_id, presence: true, on: :dashboard
   validates :commune_ids, array: true, on: :dashboard
+
+  validate  :validate_voice, on: :dashboard
   validate  :validate_commune_ids, on: :dashboard
 
   include AASM
@@ -81,5 +84,16 @@ class Callout < ApplicationRecord
         errors.add(:commune_ids)
       end
     end
+  end
+
+  # https://github.com/rails/rails/issues/31656
+  def validate_voice
+    if voice.attached?
+      errors.add(:voice, :audio_type) unless voice.blob.audio?
+      errors.add(:voice, :audio_size) if voice.blob.byte_size.bytes > 5.megabytes
+    else
+      errors.add(:voice, :blank)
+    end
+    voice.purge_later if errors[:voice].present?
   end
 end

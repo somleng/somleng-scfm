@@ -31,6 +31,10 @@ module SystemSpecHelpers
       execute_script("document.activeElement.blur()")
     end
   end
+
+  def remove_uploaded_files
+    FileUtils.rm_rf("#{Rails.root}/tmp/storage_test")
+  end
 end
 
 RSpec.configure do |config|

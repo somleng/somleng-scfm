@@ -1,0 +1,4 @@
+.col-12.col-md-8
+  %h5#page_title.card-title
+    = translate(:"titles.callout_populations.new")
+  = render("form", url: dashboard_callout_callout_populations_path(callout), action: :create)

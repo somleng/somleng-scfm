@@ -107,6 +107,9 @@ GEM
       rack (>= 1.0.0)
       rack-test (>= 0.5.4)
       xpath (>= 2.0, < 4.0)
+    childprocess (0.9.0)
+      ffi (~> 1.0, >= 1.0.11)
+    cocoon (1.2.11)
     codeclimate-test-reporter (1.0.8)
       simplecov (<= 0.13)
     coderay (1.1.2)
@@ -286,6 +289,7 @@ GEM
       rspec-support (~> 3.7.0)
     rspec-support (3.7.1)
     ruby_dep (1.5.0)
+    rubyzip (1.2.1)
     safe_yaml (1.0.4)
     sass (3.5.5)
       sass-listen (~> 4.0.0)
@@ -298,6 +302,9 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (>= 1.1, < 3)
+    selenium-webdriver (3.12.0)
+      childprocess (~> 0.5)
+      rubyzip (~> 1.2)
     simple_form (4.0.0)
       actionpack (> 4)
       activemodel (> 4)
@@ -325,9 +332,9 @@ GEM
     thor (0.20.0)
     thread_safe (0.3.6)
     tilt (2.0.8)
-    turbolinks (5.0.1)
-      turbolinks-source (~> 5)
-    turbolinks-source (5.0.3)
+    turbolinks (5.1.1)
+      turbolinks-source (~> 5.1)
+    turbolinks-source (5.1.0)
     twilio-ruby (5.2.3)
       faraday (~> 0.9)
       jwt (~> 1.5)
@@ -365,6 +372,7 @@ DEPENDENCIES
   bootsnap (>= 1.1.0)
   bootstrap (~> 4.0.0)
   capybara
+  cocoon
   codeclimate-test-reporter (~> 1.0.0)
   coffee-rails (~> 4.2)
   devise
@@ -393,6 +401,7 @@ DEPENDENCIES
   responders
   rspec-rails
   sass-rails (~> 5.0)
+  selenium-webdriver
   shoulda-matchers!
   simple_form
   simplecov

@@ -1,35 +1,27 @@
 .col-12
   #button_toolbar.btn-toolbar{ role: 'toolbar' }
     .btn-group.mr-2{ role: 'group' }
-      = link_to(translate(:"titles.actions.edit"), edit_dashboard_contact_path(@contact), class: 'btn btn-outline-primary')
+      = link_to(translate(:"titles.actions.edit"), edit_dashboard_contact_path(resource), class: 'btn btn-outline-primary')
     .btn-group.mr-2{ role: 'group' }
-      = link_to(translate(:"titles.actions.delete"), dashboard_contact_path(@contact), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+      = link_to(translate(:"titles.actions.delete"), dashboard_contact_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
   %br
 .col-lg-8.col-sm-12
   #contact.card
     .card-header
-      = link_to(Contact.model_name.human + " ##{@contact.id}", dashboard_contact_path(@contact))
+      = link_to(Contact.model_name.human + " ##{resource.id}", dashboard_contact_path(resource))
     .card-body
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right #
         %dd.col-sm-7.col-md-6
-          = link_to(@contact.id, dashboard_contact_path(@contact))
+          = link_to(resource.id, dashboard_contact_path(resource))
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Contact.human_attribute_name(:msisdn)
         %dd.col-sm-7.col-md-6
-          = @contact.msisdn
+          = resource.msisdn
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Contact.human_attribute_name(:created_at)
         %dd.col-sm-7.col-md-6
-          = @contact.created_at
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = Contact.human_attribute_name(:metadata)
-      - @contact.metadata_forms.each do |data|
-        %dl.row
-          %dt.col-sm-5.col-md-4.text-md-right
-            = data.attr_key
-          %dd.col-sm-7.col-md-6
-            = data.attr_val
+          = resource.created_at
+      = render("shared/key_value_attributes", attribute: :metadata)

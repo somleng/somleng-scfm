@@ -1,46 +1,23 @@
 class Dashboard::ContactsController < Dashboard::BaseController
-  before_action :set_contact, only: %i[show edit update destroy]
-
-  def index
-    @contacts = current_account.contacts.page(params[:page])
-  end
-
-  def new
-    @contact = Contact.new
-  end
-
-  def create
-    @contact = current_account.contacts.build(contact_params)
-    save_contact
-    respond_with_contact
-  end
-
-  def update
-    @contact.assign_attributes(contact_params)
-    save_contact
-    respond_with_contact
-  end
-
-  def destroy
-    @contact.destroy
-    respond_with_contact location: dashboard_contacts_path
-  end
-
   private
 
-  def set_contact
-    @contact = current_account.contacts.find(params[:id])
+  def association_chain
+    current_account.contacts
   end
 
-  def save_contact
-    @contact.save
+  def permitted_params
+    params.require(:contact).permit(:msisdn, METADATA_FIELDS_ATTRIBUTES)
   end
 
-  def respond_with_contact(location: nil)
-    respond_with @contact, location: -> { location || dashboard_contact_path(@contact) }
+  def prepare_resource_for_update
+    clear_metadata
   end
 
-  def contact_params
-    params.require(:contact).permit(:msisdn, metadata_forms_attributes: %i[attr_key attr_val])
+  def resources_path
+    dashboard_contacts_path
+  end
+
+  def build_key_value_fields
+    build_metadata_field
   end
 end

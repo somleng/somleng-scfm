@@ -21,10 +21,6 @@ class BatchOperation::Base < ApplicationRecord
 
   include AASM
 
-  def self.model_name
-    ActiveModel::Name.new(self, nil, "BatchOperation")
-  end
-
   def self.from_type_param(type)
     PERMITTED_API_TYPES.include?(type) ? type.constantize : self
   end

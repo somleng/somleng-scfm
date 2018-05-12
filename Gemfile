@@ -9,6 +9,7 @@ gem "api-pagination"
 gem "bitmask_attributes", github: "numerex/bitmask_attributes"
 gem "bootsnap", ">= 1.1.0", require: false
 gem "bootstrap", "~> 4.0.0"
+gem "cocoon"
 gem "coffee-rails", "~> 4.2"
 gem "devise"
 gem "devise-async"
@@ -55,6 +56,7 @@ group :test do
   gem "factory_bot_rails"
   gem "fakefs", require: "fakefs/safe"
   gem "rails-controller-testing"
+  gem "selenium-webdriver"
   gem "shoulda-matchers", github: "thoughtbot/shoulda-matchers"
   gem "simplecov", require: false
   gem "webmock"

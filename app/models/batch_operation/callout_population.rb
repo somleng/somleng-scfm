@@ -12,6 +12,8 @@ class BatchOperation::CalloutPopulation < BatchOperation::Base
 
   hash_store_reader :contact_filter_params
 
+  accepts_nested_key_value_fields_for :contact_filter_metadata
+
   def run!
     contacts_preview.find_each do |contact|
       create_callout_participation(contact)
@@ -20,6 +22,15 @@ class BatchOperation::CalloutPopulation < BatchOperation::Base
 
   def contacts_preview
     preview.contacts
+  end
+
+  def contact_filter_metadata
+    contact_filter_params.with_indifferent_access[:metadata] || {}
+  end
+
+  def contact_filter_metadata=(attributes)
+    return if attributes.blank?
+    self.contact_filter_params = { "metadata" => attributes }
   end
 
   private

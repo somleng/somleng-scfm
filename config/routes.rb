@@ -17,8 +17,8 @@ Rails.application.routes.draw do
     resources :contacts
     resources :callouts do
       resources :callout_events, only: :create
+      resources :callout_populations
     end
-    resources :batch_operations
   end
 
   namespace "api", defaults: { format: "json" } do

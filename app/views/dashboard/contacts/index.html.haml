@@ -17,13 +17,13 @@
         %th
           = Contact.human_attribute_name(:created_at)
     %tbody
-      - @contacts.each_with_index do |contact, index|
+      - resources.each do |resource|
         %tr
           %td
-            = link_to(contact.id, dashboard_contact_path(contact))
+            = link_to(resource.id, show_location(resource))
           %td
-            = contact.msisdn
+            = resource.msisdn
           %td
-            = contact.created_at
+            = resource.created_at
 .col-12
-  = paginate @contacts
+  = paginate resources

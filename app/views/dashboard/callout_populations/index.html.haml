@@ -1,21 +1,22 @@
 .col-12.col-md-8
   %h5#page_title.card-title
-    = translate(:"titles.callouts.index")
+    = translate(:"titles.callout_populations.index")
 
 .col-12
   #button_toolbar.btn-toolbar{ role: 'toolbar' }
     .btn-group.mr-2{ role: 'group' }
-      = link_to(translate(:"titles.callouts.new"), new_dashboard_callout_path, class: 'btn btn-outline-dark')
+      = link_to(translate(:"titles.callout_populations.new"), new_dashboard_callout_callout_population_path(callout), class: 'btn btn-outline-dark')
   %br
+
 .col-12
-  %table#callouts.table.table-hover.table-bordered
+  %table#resources.table.table-hover.table-bordered
     %thead.thead-light
       %tr
         %th #
         %th
-          = Callout.human_attribute_name(:status)
+          = BatchOperation::CalloutPopulation.human_attribute_name(:status)
         %th
-          = Callout.human_attribute_name(:created_at)
+          = BatchOperation::CalloutPopulation.human_attribute_name(:created_at)
     %tbody
       - resources.each do |resource|
         = content_tag_for(:tr, resource) do

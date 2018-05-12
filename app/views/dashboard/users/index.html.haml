@@ -13,15 +13,19 @@
         %th
           = User.human_attribute_name(:email)
         %th
+          = User.human_attribute_name(:invitation_accepted_at)
+        %th
           = User.human_attribute_name(:last_sign_in_at)
     %tbody
-      - @users.each_with_index do |user, index|
+      - resources.each do |resource|
         %tr
           %td
-            = user.id
+            = resource.id
           %td
-            = user.email
+            = resource.email
           %td
-            = user.last_sign_in_at
+            = resource.invitation_accepted_at
+          %td
+            = resource.last_sign_in_at
 .col-12
-  = paginate @users
+  = paginate resources

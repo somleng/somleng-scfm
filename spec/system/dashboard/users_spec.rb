@@ -31,6 +31,7 @@ RSpec.describe "Users" do
       expect(page).to have_content(other_user.email)
       expect(page).to have_no_content(different_user.email)
       expect(page).to have_content("Last Signed In")
+      expect(page).to have_content("Invitation Accepted")
     end
   end
 end

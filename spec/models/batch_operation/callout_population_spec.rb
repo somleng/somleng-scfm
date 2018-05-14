@@ -31,7 +31,7 @@ RSpec.describe BatchOperation::CalloutPopulation do
     }
   end
 
-  fdescribe "#contact_filter_metadata" do
+  describe "#contact_filter_metadata" do
     it "sets the contact filter metadata in the parameters attribute" do
       subject = described_class.new
       subject.contact_filter_metadata = { "gender" => "m" }

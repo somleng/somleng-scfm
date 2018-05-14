@@ -13,14 +13,11 @@ RSpec.describe "Callout Populations" do
     sign_in(user)
     visit(dashboard_callout_callout_populations_path(callout))
 
-    within("#page_title") do
-      expect(page).to have_content(I18n.translate!(:"titles.callout_populations.index"))
-    end
-
     within("#button_toolbar") do
       expect(page).to have_link_to_action(
         :new, key: :callout_populations, href: new_dashboard_callout_callout_population_path(callout)
       )
+      expect(page).to have_link_to_action(:index, key: :callout_populations)
     end
 
     within("#resources") do

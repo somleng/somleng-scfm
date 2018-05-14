@@ -1,12 +1,6 @@
 class Api::PhoneCallsController < Api::FilteredController
   include BatchOperationResource
 
-  PERMITTED_BATCH_OPERATION_TYPES = [
-    "BatchOperation::PhoneCallCreate",
-    "BatchOperation::PhoneCallQueue",
-    "BatchOperation::PhoneCallQueueRemoteFetch"
-  ]
-
   private
 
   def find_resources_association_chain
@@ -32,7 +26,10 @@ class Api::PhoneCallsController < Api::FilteredController
   end
 
   def permitted_params
-    params.permit(:call_flow_logic, :msisdn, :metadata_merge_mode, :metadata => {}, :remote_request_params => {})
+    params.permit(
+      :call_flow_logic, :msisdn,
+      :metadata_merge_mode, metadata: {}, remote_request_params: {}
+    )
   end
 
   def resource_location
@@ -44,7 +41,9 @@ class Api::PhoneCallsController < Api::FilteredController
   end
 
   def callout_participation
-    @callout_participation ||= current_account.callout_participations.find(params[:callout_participation_id])
+    @callout_participation ||= current_account.callout_participations.find(
+      params[:callout_participation_id]
+    )
   end
 
   def callout
@@ -55,7 +54,7 @@ class Api::PhoneCallsController < Api::FilteredController
     @contact ||= current_account.contacts.find(params[:contact_id])
   end
 
-  def permitted_batch_operation_types
-    PERMITTED_BATCH_OPERATION_TYPES
+  def batch_operation_scope
+    current_account.batch_operations.applies_on_phone_calls
   end
 end

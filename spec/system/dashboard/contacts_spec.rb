@@ -17,8 +17,8 @@ RSpec.describe "Contacts", :aggregate_failures do
     end
 
     within("#resources") do
-      expect(page).to have_content(contact.id)
-      expect(page).to have_no_content(other_contact.id)
+      expect(page).to have_content_tag_for(contact)
+      expect(page).not_to have_content_tag_for(other_contact)
       expect(page).to have_content("#")
       expect(page).to have_link(
         contact.id,

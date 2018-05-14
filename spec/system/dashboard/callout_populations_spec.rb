@@ -17,7 +17,7 @@ RSpec.describe "Callout Populations" do
       expect(page).to have_link_to_action(
         :new, key: :callout_populations, href: new_dashboard_callout_callout_population_path(callout)
       )
-      expect(page).to have_link_to_action(:index, key: :callout_populations)
+      expect(page).to have_link_to_action(:back, href: dashboard_callout_path(callout))
     end
 
     within("#resources") do
@@ -102,7 +102,7 @@ RSpec.describe "Callout Populations" do
     user = create(:user)
     callout = create(:callout, account: user.account)
     callout_population = create(
-      :batch_operation,
+      :callout_population,
       contact_filter_metadata: {
         location: {
           country: "Cambodia"
@@ -119,6 +119,10 @@ RSpec.describe "Callout Populations" do
       expect(page).to have_link_to_action(
         :edit,
         href: edit_dashboard_callout_callout_population_path(callout, callout_population)
+      )
+      expect(page).to have_link_to_action(
+        :preview,
+        href: dashboard_batch_operation_preview_contacts_path(callout_population)
       )
     end
 
@@ -149,5 +153,46 @@ RSpec.describe "Callout Populations" do
 
     expect(current_path).to eq(dashboard_callout_callout_populations_path(callout))
     expect(page).to have_text("Callout population was successfully destroyed.")
+  end
+
+  it "can preview a callout population" do
+    user = create(:user)
+    female_contact = create_contact(user.account, "gender" => "f")
+    male_contact = create_contact(user.account, "gender" => "m")
+    callout_population = create_callout_population(
+      user.account, "gender": "f"
+    )
+
+    sign_in(user)
+    visit dashboard_batch_operation_preview_contacts_path(callout_population)
+
+    within("#button_toolbar") do
+      expect(page).to have_link_to_action(:preview)
+      expect(page).to have_link_to_action(
+        :back,
+        href: dashboard_callout_callout_population_path(
+          callout_population.callout, callout_population
+        )
+      )
+    end
+
+    expect(page).to have_content_tag_for(female_contact)
+    expect(page).not_to have_content_tag_for(male_contact)
+  end
+
+  def create_callout_population(account, contact_filter_metadata)
+    create(
+      :callout_population,
+      account: account,
+      contact_filter_metadata: contact_filter_metadata
+    )
+  end
+
+  def create_contact(account, metadata)
+    create(
+      :contact,
+      account: account,
+      metadata: metadata
+    )
   end
 end

@@ -19,6 +19,11 @@ Rails.application.routes.draw do
       resources :callout_events, only: :create
       resources :callout_populations
     end
+    resources :batch_operations, only: [] do
+      namespace :preview, module: "batch_operation_preview" do
+        resources :contacts, only: :index
+      end
+    end
   end
 
   namespace "api", defaults: { format: "json" } do

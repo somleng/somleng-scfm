@@ -5,8 +5,8 @@ en:
       delete: "Delete"
       data_confirm: "Are you sure?"
       cancel: "Cancel"
-      add_metadata: "Add Metadata"
-      remove_metadata: "Remove"
+      preview: "Preview"
+      back: "Back"
     admin_management: "Admin"
     access_tokens:
       index: "API Keys"
@@ -26,6 +26,7 @@ en:
       edit: "Edit Callout Population"
       update: "Update Callout Population"
       index: "Callout Populations"
+      show: "Callout Population"
     contacts:
       index: "Contacts"
       new: "New Contact"

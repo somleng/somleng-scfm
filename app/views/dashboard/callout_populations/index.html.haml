@@ -1,7 +1,7 @@
 - content_for(:button_toolbar) do
   = render("shared/button_to_index", url: dashboard_callout_callout_populations_path(callout), button_text: translate(:"titles.callout_populations.index"), count: resources.count)
   .btn-group.mr-2{ role: 'group' }
-    = link_to(translate(:"titles.callouts.show"), dashboard_callout_path(callout), class: 'btn btn-outline-info')
+    = link_to(translate(:"titles.actions.back"), dashboard_callout_path(callout), class: 'btn btn-outline-dark')
   .btn-group.mr-2{ role: 'group' }
     = link_to(translate(:"titles.callout_populations.new"), new_dashboard_callout_callout_population_path(callout), class: 'btn btn-outline-success')
 

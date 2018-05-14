@@ -15,7 +15,7 @@ RSpec.shared_examples_for "batch_operation" do
     def assert_validations!
       is_expected.to validate_presence_of(:type)
       is_expected.not_to allow_value("foo").for(:parameters)
-      is_expected.to allow_value({"foo" => "bar"}).for(:parameters)
+      is_expected.to allow_value("foo" => "bar").for(:parameters)
       subject.parameters = nil
       is_expected.not_to be_valid
       expect(subject.errors[:parameters]).not_to be_empty
@@ -24,11 +24,35 @@ RSpec.shared_examples_for "batch_operation" do
     it { assert_validations! }
   end
 
+  describe ".from_type_param" do
+    context "invalid type" do
+      it "returns the base batch operation" do
+        expect(
+          BatchOperation::Base.from_type_param(nil)
+        ).to eq(BatchOperation::Base)
+
+        expect(
+          BatchOperation::Base.from_type_param("foo")
+        ).to eq(BatchOperation::Base)
+      end
+    end
+
+    context "valid type" do
+      it "returns the subclassed batch operation" do
+        expect(
+          BatchOperation::Base.from_type_param(
+            "BatchOperation::CalloutPopulation"
+          )
+        ).to eq(BatchOperation::CalloutPopulation)
+      end
+    end
+  end
+
   describe "state_machine" do
     subject { create(factory, factory_attributes) }
 
     def factory_attributes
-      {:status => current_status}
+      { status: current_status }
     end
 
     def assert_transitions!

@@ -19,6 +19,12 @@ en:
       start_callout: "Start Callout"
       stop_callout: "Stop Callout"
       resume_callout: "Resume Callout"
+    callout_populations:
+      new: "New Callout Population"
+      create: "Create Callout Population"
+      edit: "Edit Callout Population"
+      update: "Update Callout Population"
+      index: "Callout Populations"
     contacts:
       index: "Contacts"
       new: "New Contact"

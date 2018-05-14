@@ -11,44 +11,41 @@ RSpec.shared_examples_for "has_metadata" do
     end
 
     it { assert_validations! }
-
-    it "should validate metadata for dashboard context" do
-      subject.metadata_forms_attributes = {
-        "0" => { "attr_key" => "", "attr_val" => "kh" }
-      }
-
-      expect(subject.valid?(:dashboard)).to eq(false)
-      expect(subject.errors[:metadata]).to be_present
-    end
   end
 
-  describe "#metadata_forms" do
-    subject { create(factory, metadata: {}) }
-
-    it "return new metadata form when metadata empty" do
-      new_metadata_form = MetadataForm.new
-      allow(MetadataForm).to receive(:new).and_return(new_metadata_form)
-      expect(subject.metadata_forms).to eq([new_metadata_form])
-    end
-
-    it "return unested data as metadata_form object" do
+  describe "#metadata_fields" do
+    it "returns key value fields" do
+      subject = build_stubbed(factory)
       subject.metadata = { "address" => { "city" => "pp" } }
 
-      metadata_form = subject.metadata_forms.first
+      metadata_fields = subject.metadata_fields
 
-      expect(metadata_form.attr_key).to eq "address:city"
-      expect(metadata_form.attr_val).to eq "pp"
+      expect(metadata_fields.first.key).to eq "address:city"
+      expect(metadata_fields.first.value).to eq "pp"
     end
   end
 
-  describe "#metadata_forms_attributes=(attributes)" do
-    subject { create(factory, metadata: {}) }
+  describe "#metadata_fields_attributes=(attributes)" do
+    it "builds new metadata_form and assign to metadata" do
+      subject = build_stubbed(factory)
+      attributes = { "0" => { "key" => "title", "value" => "call 1" } }
 
-    it "should build new metadata_form and assign to metadata" do
-      attributes = { "0" => { "attr_key" => "title", "attr_val" => "call 1" } }
+      subject.metadata_fields_attributes = attributes
 
-      subject.metadata_forms_attributes = attributes
       expect(subject.metadata).to eq("title" => "call 1")
+    end
+  end
+
+  describe "#build_metadata_field" do
+    it "build a new key value field" do
+      subject = build_stubbed(factory)
+
+      result = subject.build_metadata_field
+
+      # method must return a new KeyValueField
+      expect(result).to be_a(KeyValueField)
+      expect(subject.metadata_fields.size).to eq(1)
+      expect(subject.metadata_fields[0]).to be_a(KeyValueField)
     end
   end
 

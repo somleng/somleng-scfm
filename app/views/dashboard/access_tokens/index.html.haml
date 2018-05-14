@@ -15,12 +15,14 @@
         %th
           = AccessToken.human_attribute_name(:created_at)
     %tbody
-      - @access_tokens.each_with_index do |access_token, index|
+      - resources.each_with_index do |resource, index|
         %tr
           %td
             = index + 1
           %td
             %code
-              = access_token.token
+              = resource.token
           %td
-            = access_token.created_at
+            = resource.created_at
+.col-12
+  = paginate resources

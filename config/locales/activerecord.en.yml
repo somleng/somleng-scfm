@@ -7,10 +7,14 @@ en:
         msisdn: "Phone Number"
       user:
         last_sign_in_at: "Last Signed In"
+        invitation_accepted_at: "Invitation Accepted"
+      batch_operation/callout_population:
+        contact_filter_metadata: "Contact Filter Metadata"
   activemodel:
     attributes:
-      metadata_form:
-        attr_key: "Key"
-        attr_value: "Value"
+      key_value_field:
+        key: "Key"
+        value: "Value"
     models:
       event/base: "Event"
+      batch_operation/callout_population: "Callout Population"

@@ -5,10 +5,22 @@ module SystemSpecHelpers
     public_send("click_#{type}", I18n.translate!(:"titles.#{key}.#{action}"))
   end
 
-  def fill_in_metadata(with:)
-    within("#metadata_fields") do
-      fill_in("Key", with: with[:key]) if with.key?(:key)
-      fill_in("Value", with: with[:value]) if with.key?(:value)
+  def fill_in_key_value_for(attribute, with:, index: 0)
+    within("##{attribute}_fields") do
+      page.all("input[placeholder='Key']")[index].set(with[:key]) if with.key?(:key)
+      page.all("input[placeholder='Value']")[index].set(with[:value]) if with.key?(:value)
+    end
+  end
+
+  def remove_key_value_for(attribute, index: 0)
+    within("##{attribute}_fields") do
+      page.all(:xpath, "//a[text()[contains(.,'Remove')]]")[index].click
+    end
+  end
+
+  def add_key_value_for(attribute)
+    within("##{attribute}_fields") do
+      click_link("Add")
     end
   end
 
@@ -18,6 +30,10 @@ module SystemSpecHelpers
       I18n.translate!(:"titles.#{key}.#{action}"),
       { href: href }.compact
     )
+  end
+
+  def have_content_tag_for(model, model_name: nil)
+    have_selector("##{model_name || model.class.to_s.underscore.tr('/', '_')}_#{model.id}")
   end
 end
 

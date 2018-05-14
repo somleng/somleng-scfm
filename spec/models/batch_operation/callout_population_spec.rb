@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe BatchOperation::CalloutPopulation do
   let(:factory) { :callout_population }
@@ -29,5 +29,17 @@ RSpec.describe BatchOperation::CalloutPopulation do
     it {
       expect(subject.reload.contacts).to eq([contact])
     }
+  end
+
+  describe "#contact_filter_metadata" do
+    it "sets the contact filter metadata in the parameters attribute" do
+      subject = described_class.new
+      subject.contact_filter_metadata = { "gender" => "m" }
+
+      expect(subject.contact_filter_metadata).to eq("gender" => "m")
+      expect(subject.parameters).to eq(
+        "contact_filter_params" => { "metadata" => { "gender" => "m" } }
+      )
+    end
   end
 end

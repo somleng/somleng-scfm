@@ -26,7 +26,7 @@ module CustomStoreReaders
         _accessors_module.module_eval do
           define_method(key) do
             raw = read_custom_store_reader(store_attribute, key)
-            raw && raw.to_i
+            raw&.to_i
           end
         end
       end
@@ -61,7 +61,7 @@ module CustomStoreReaders
       end
     end
 
-    def _keys_for_stored_attribute(keys, &block)
+    def _keys_for_stored_attribute(keys)
       stored_attributes.each do |store_attribute, attributes|
         (attributes & keys).each do |key|
           yield(store_attribute, key)

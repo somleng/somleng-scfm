@@ -1,20 +1,27 @@
 language: ruby
-dist: trusty
-sudo: false
 cache: bundler
-services:
-  - postgresql
-env:
-  matrix:
-    - RAILS_DB_ADAPTER=postgresql START_SIMPLECOV=1
 addons:
-  postgresql: '9.6'
-  code_climate:
-    repo_token:
-      secure: "PIV3i6vp+43fisDQoODIlWuH/rEDmTzMC4/85XLuCSagqfD34sLj6rNETfPl75dVwvsV/OQRmb5Lvy4ba4xFN0ga2GfWt3Pr3jnVmvnLr/HP80y4Z1X/4HeXRBK9NUUlu43iCXmPyXq+aPyW7TtXBTD0Olxz1ow/vwAlAIsJX3RNE1z8QUqDYdVyI9GRdQ5zLbQNUFvwtXgZCZW1GvJs5dDPJ3dpmAV8igzPW+rvakwQDOg11wS2dkK+4b17ktnfw9n5gviD6A79gveL8aM86a2kgLGaaYp/krvDpcqy2MykwjpgcH0jQtSfUV6VDj88DE0OTzpvJon2dFUnCbuIj8jgGBNxtcfHqgFC7FeO+9ZD2YJ5mEBb+mT1T/uwE9UxLz1JviGJg7iQ4L9HIGyQMzwHCOUBOJhVbBLm3SEyt8RKKUZUThOn8mFQI0cPcZaUeiZCOicdya0RCtQ/T8JlI3wlKXARcO2IBNr+ydvkw3zwkTrs6cP1j8A/OLrWznD160+cvGdghK71JdxTdgV5Tex0eubSmjhfDHs5Monj9mO/BudKxVNIt0Kn+JmAQDLV8XYt0INRcvzU/w7kRj1pzRGX5uvDsRX91B42SFAnMa9Gu61Qkc929Kw+qleN9R6+9kCEFUHtjcS45Wq1tiZst8T4+mm4YTUGEWVZ6TC4uVk="
+  postgresql: '10'
+  apt:
+    packages:
+      - postgresql-10
+      - postgresql-client-10
+env:
+  global:
+    - AWS_REGION=ap-southeast-1
+    - PGPORT=5433
+    - CC_TEST_REPORTER_ID=d99f01c52006e27c30fcd5f4f2840fa04597d4eca56cbbc36a9f795d8466ee3f
+before_install:
+  - wget http://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip
+  - unzip chromedriver_linux64.zip
+  - rm chromedriver_linux64.zip
+  - sudo mv -f chromedriver /usr/local/bin/
+  - sudo chmod +x /usr/local/bin/chromedriver
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
 before_script:
-  - bash -c 'if [[ "${DOCKER}" != "1" ]]; then psql -c "create database somleng_scfm_test;" -U postgres; fi'
-script:
-  - bash -c 'if [[ "${DOCKER}" = "1" ]]; then sudo docker run --rm -e RAILS_DB_ADAPTER=sqlite3 dwilkie/somleng-scfm:spec /bin/sh -c "bundle exec rake db:migrate && bundle exec rake db:test:prepare && bundle exec rake"; else bundle exec rake db:migrate && bundle exec rake db:test:prepare && bundle exec rake; fi'
+  - google-chrome-stable --headless --disable-gpu --no-sandbox
+  - psql -c 'create database somleng_scfm_test;' -U travis
+  - ./cc-test-reporter before-build
 after_success:
-  - bash -c 'if [[ "${START_SIMPLECOV}" = "1" ]]; then bundle exec codeclimate-test-reporter; fi'
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT

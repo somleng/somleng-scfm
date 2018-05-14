@@ -1,0 +1,5 @@
+= simple_form_for(resource, url: url) do |f|
+  = render("shared/key_value_fields", attribute: :contact_filter_metadata, f: f)
+  .form-group.actions
+    = f.submit translate(:"titles.callout_populations.#{action}"), class: 'btn btn-primary'
+    = link_to(translate(:"titles.actions.cancel"), :back, class: 'btn btn-outline-dark')

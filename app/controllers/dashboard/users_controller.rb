@@ -1,5 +1,7 @@
 class Dashboard::UsersController < Dashboard::BaseController
-  def index
-    @users = current_account.users.page(params[:page])
+  private
+
+  def association_chain
+    current_account.users
   end
 end

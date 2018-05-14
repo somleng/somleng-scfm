@@ -1,48 +1,23 @@
 class Dashboard::CalloutsController < Dashboard::BaseController
-  before_action :set_callout, only: %i[show edit update destroy]
-
-  def index
-    @callouts = current_account.callouts.page(params[:page])
-  end
-
-  def new
-    @callout = current_account.callouts.build
-  end
-
-  def create
-    @callout = current_account.callouts.build(callout_params)
-    save_callout
-    respond_with_callout
-  end
-
-  def update
-    @callout.assign_attributes(callout_params)
-    save_callout
-    respond_with_callout
-  end
-
-  def destroy
-    @callout.destroy
-    respond_with_callout location: dashboard_callouts_path
-  end
-
   private
 
-  def save_callout
-    @callout.save(context: :dashboard)
+  def association_chain
+    current_account.callouts
   end
 
-  def respond_with_callout(location: nil)
-    respond_with @callout, location: -> { location || dashboard_callout_path(@callout) }
+  def permitted_params
+    params.fetch(:callout, {}).permit(METADATA_FIELDS_ATTRIBUTES)
   end
 
-  def set_callout
-    @callout = current_account.callouts.find(params[:id])
+  def prepare_resource_for_update
+    clear_metadata
   end
 
-  def callout_params
-    params.require(:callout).permit(
-      metadata_forms_attributes: %i[attr_key attr_val]
-    )
+  def resources_path
+    dashboard_callouts_path
+  end
+
+  def build_key_value_fields
+    build_metadata_field
   end
 end

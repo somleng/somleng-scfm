@@ -1,12 +1,12 @@
 class BatchOperation::PhoneCallOperation < BatchOperation::Base
   DEFAULT_MAX_PER_PERIOD_HOURS = 24
-  DEFAULT_MAX_PER_PERIOD_TIMESTAMP_ATTRIBUTE = "remotely_queued_at"
+  DEFAULT_MAX_PER_PERIOD_TIMESTAMP_ATTRIBUTE = "remotely_queued_at".freeze
 
   MAX_PER_PERIOD_TIMESTAMP_ATTRIBUTES = [
     DEFAULT_MAX_PER_PERIOD_TIMESTAMP_ATTRIBUTE,
     "created_at",
     "updated_at"
-  ]
+  ].freeze
 
   store_accessor :parameters,
                  :callout_filter_params,
@@ -57,7 +57,7 @@ class BatchOperation::PhoneCallOperation < BatchOperation::Base
   end
 
   def whitelisted(value, list)
-    Hash[list.map {|k| [k, k] }][value]
+    Hash[list.map { |k| [k, k] }][value]
   end
 
   def calls_remaining_in_period
@@ -66,7 +66,7 @@ class BatchOperation::PhoneCallOperation < BatchOperation::Base
 
   def calls_in_period
     scope = PhoneCall.in_last_hours(max_per_period_hours, max_per_period_timestamp_attribute)
-    scope = scope.where(:status => split_values(max_per_period_statuses)) if max_per_period_statuses
+    scope = scope.where(status: split_values(max_per_period_statuses)) if max_per_period_statuses
     scope
   end
 end

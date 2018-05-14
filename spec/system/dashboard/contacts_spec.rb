@@ -49,21 +49,23 @@ RSpec.describe "Contacts", :aggregate_failures do
     expect(page).to have_content("Phone Number can't be blank")
 
     fill_in("Phone Number", with: phone_number)
-    fill_in_metadata(with: { key: "name", value: "Bob Chann" })
+    fill_in_key_value_for(:metadata, with: { key: "name", value: "Bob Chann" })
     click_action_button(:create, key: :contacts)
 
     expect(page).to have_text("Contact was successfully created.")
-    new_contact = user.account.contacts.last!
+    new_contact = user.reload.account.contacts.last!
     expect(new_contact.msisdn).to match(phone_number)
     expect(new_contact.metadata).to eq("name" => "Bob Chann")
   end
 
-  it "can update a contact" do
+  it "can update a contact", :js do
     user = create(:user)
     contact = create(
       :contact,
       account: user.account,
-      metadata: { "location" => { "country" => "kh" } }
+      metadata: {
+        "location" => { "country" => "kh", "city" => "Phnom Penh" }
+      }
     )
 
     sign_in(user)
@@ -77,7 +79,10 @@ RSpec.describe "Contacts", :aggregate_failures do
 
     updated_phone_number = generate(:somali_msisdn)
     fill_in("Phone Number", with: updated_phone_number)
-    fill_in_metadata with: { key: "gender", value: "f" }
+    remove_key_value_for(:metadata)
+    remove_key_value_for(:metadata)
+    add_key_value_for(:metadata)
+    fill_in_key_value_for(:metadata, with: { key: "gender", value: "f" })
     click_action_button(:update, key: :contacts)
 
     expect(current_path).to eq(dashboard_contact_path(contact))

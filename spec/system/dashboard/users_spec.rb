@@ -20,9 +20,10 @@ RSpec.describe "Users" do
       expect(page).to have_link_to_action(
         :new, key: :user_invitations, href: new_user_invitation_path
       )
+      expect(page).to have_link_to_action(:index, key: :users)
     end
 
-    within("#users") do
+    within("#resources") do
       expect(page).to have_content("#")
       expect(page).to have_content(user.id)
       expect(page).to have_content(other_user.id)

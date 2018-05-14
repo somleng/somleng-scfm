@@ -3,7 +3,7 @@
     .btn-group.mr-2{ role: 'group' }
       = link_to(translate(:"titles.actions.edit"), edit_dashboard_callout_path(resource), class: 'btn btn-outline-primary')
     .btn-group.mr-2{ role: 'group' }
-      = link_to(translate(:"titles.callout_populations.index"), dashboard_callout_callout_populations_path(resource), class: 'btn btn-outline-primary')
+      = render("shared/button_with_count", url: dashboard_callout_callout_populations_path(resource), button_text: translate(:"titles.callout_populations.index"), count: resource.callout_populations.count)
     .btn-group.mr-2{ role: 'group' }
       - if resource.may_start?
         = link_to(translate(:"titles.callouts.start_callout"), dashboard_callout_callout_events_path(resource, event: :start),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })

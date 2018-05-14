@@ -1,0 +1,7 @@
+= content_tag_for(:tr, callout_population) do
+  %td
+    = link_to(callout_population.id, show_location(callout_population))
+  %td
+    = callout_population.status.humanize
+  %td
+    = callout_population.created_at

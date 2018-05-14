@@ -9,17 +9,14 @@ RSpec.describe "Contacts", :aggregate_failures do
     sign_in(user)
     visit dashboard_contacts_path
 
-    within("#page_title") do
-      expect(page).to have_content(I18n.translate!(:"titles.contacts.index"))
-    end
-
     within("#button_toolbar") do
       expect(page).to have_link_to_action(
         :new, key: :contacts, href: new_dashboard_contact_path
       )
+      expect(page).to have_link_to_action(:index, key: :contacts)
     end
 
-    within("#contacts") do
+    within("#resources") do
       expect(page).to have_content(contact.id)
       expect(page).to have_no_content(other_contact.id)
       expect(page).to have_content("#")

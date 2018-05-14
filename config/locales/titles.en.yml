@@ -16,6 +16,7 @@ en:
       create: "Create Callout"
       edit: "Edit Callout"
       update: "Update Callout"
+      show: "Callout"
       start_callout: "Start Callout"
       stop_callout: "Stop Callout"
       resume_callout: "Resume Callout"

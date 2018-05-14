@@ -1,0 +1,6 @@
+= link_to(url, {class: (Array(local_assigns[:class]) + ["btn", "btn-outline-info"]).join(" "), role: "button"}.merge(local_assigns[:html_options] || {})) do
+  = button_text
+  %span.badge.badge-info
+    = count
+  .sr-only
+    = button_text

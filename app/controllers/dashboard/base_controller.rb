@@ -13,7 +13,7 @@ class Dashboard::BaseController < ApplicationController
   before_action :authenticate_user!
   before_action :find_resource, only: %i[show edit update destroy]
 
-  helper_method :resource, :resources, :show_location
+  helper_method :resource, :resources, :show_location, :current_account
 
   def index
     find_resources

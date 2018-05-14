@@ -9,17 +9,14 @@ RSpec.describe "Callouts", :aggregate_failures do
     sign_in(user)
     visit dashboard_callouts_path
 
-    within("#page_title") do
-      expect(page).to have_content(I18n.translate!(:"titles.callouts.index"))
-    end
-
     within("#button_toolbar") do
       expect(page).to have_link_to_action(
         :new, key: :callouts, href: new_dashboard_callout_path
       )
+      expect(page).to have_link_to_action(:index, key: :callouts)
     end
 
-    within("#callouts") do
+    within("#resources") do
       expect(page).to have_content_tag_for(callout)
       expect(page).not_to have_content_tag_for(other_callout)
       expect(page).to have_content("#")

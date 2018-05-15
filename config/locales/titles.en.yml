@@ -10,6 +10,7 @@ en:
     admin_management: "Admin"
     access_tokens:
       index: "API Keys"
+      create: "Create API Key"
     batch_operations:
       index: "Batch Operations"
       show: "Batch Operation"

@@ -13,7 +13,7 @@ Rails.application.routes.draw do
   namespace "dashboard" do
     root to: "callouts#index"
     resources :users, only: :index
-    resources :access_tokens, only: :index
+    resources :access_tokens, only: %i[index create destroy]
     resources :contacts
     resources :callouts do
       resources :callout_events, only: :create

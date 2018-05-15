@@ -1,8 +1,12 @@
-.col-md-6
-  %h5#page_title.card-title
-    = translate(:"titles.user_invitations.new")
-  = simple_form_for resource, :as => resource_name, :url => invitation_path(resource_name), :html => {:method => :post} do |f|
-    - resource.class.invite_key_fields.each do |field|
-      = f.input field
-    .form-group.actions
-      = f.submit translate(:"titles.user_invitations.create"), class: 'btn btn-primary'
+.col
+  #button_toolbar.btn-toolbar.mb-2{ role: 'toolbar' }
+    = render("shared/disabled_button", url: new_user_invitation_path, button_text: translate(:"titles.user_invitations.new"), button_class: "btn-outline-success")
+.col
+  .card
+    .card-body
+      = simple_form_for(resource, :as => resource_name, :url => invitation_path(resource_name), :html => {:method => :post}) do |f|
+        - resource.class.invite_key_fields.each do |field|
+          = f.input field
+        .form-group.actions
+          = f.submit translate(:"titles.user_invitations.create"), class: 'btn btn-primary'
+          = link_to(translate(:"titles.actions.cancel"), :back, class: 'btn btn-outline-dark')

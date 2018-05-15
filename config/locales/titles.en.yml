@@ -35,9 +35,11 @@ en:
       new: "New Contact"
       create: "Create Contact"
       edit: "Edit Contact"
-      update: "Update Contact"
+      update: "Save"
     users:
       index: "Users"
+      edit: "Edit User"
+      update: "Save"
     user_invitations:
       new: "Invite User"
       create: "Send Invitation"

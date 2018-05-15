@@ -1,8 +1,8 @@
 .card
   .card-body
     = simple_form_for [:dashboard, resource] do |f|
-      = f.input :msisdn, input_html: { autofocus: true }
+      = f.input :email, input_html: { disabled: true }
       = render("shared/key_value_fields", attribute: :metadata, f: f)
       .form-group.actions
-        = f.submit translate(:"titles.contacts.#{action}"), class: 'btn btn-primary'
+        = f.submit translate(:"titles.users.update"), class: 'btn btn-primary'
         = link_to(translate(:"titles.actions.cancel"), :back, class: 'btn btn-outline-dark')

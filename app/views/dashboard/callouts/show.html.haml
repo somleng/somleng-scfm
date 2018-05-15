@@ -1,5 +1,5 @@
 .col-12
-  #button_toolbar.btn-toolbar{ role: 'toolbar' }
+  #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
     = render("shared/disabled_button", url: dashboard_callout_path(resource), button_text: resource.model_name.human, count: resource.id)
     .btn-group.mr-2{ role: 'group' }
       = render("shared/button_with_count", url: dashboard_callout_batch_operations_path(resource), button_text: translate(:"titles.batch_operations.index"), count: resource.callout_populations.count)
@@ -14,7 +14,6 @@
       = link_to(translate(:"titles.actions.edit"), edit_dashboard_callout_path(resource), class: 'btn btn-outline-primary')
     .btn-group.mr-2{ role: 'group' }
       = link_to(translate(:"titles.actions.delete"), dashboard_callout_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
-  %br
 .col-12.col-md-9.col-lg-7
   #callout.card
     .card-body

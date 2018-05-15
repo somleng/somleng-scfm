@@ -45,6 +45,7 @@ class Dashboard::BaseController < ApplicationController
   end
 
   def destroy
+    prepare_resource_for_destroy
     destroy_resource
     respond_with_destroyed_resource
   end
@@ -84,6 +85,8 @@ class Dashboard::BaseController < ApplicationController
   def prepare_resource_for_create; end
 
   def prepare_resource_for_update; end
+
+  def prepare_resource_for_destroy; end
 
   def prepare_for_render_on_create
     build_key_value_fields

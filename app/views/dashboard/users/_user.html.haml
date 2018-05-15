@@ -1,6 +1,6 @@
 = content_tag_for(:tr, user) do
   %td
-    = user.id
+    = link_to(user.id, dashboard_user_path(user))
   %td
     = user.email
   %td

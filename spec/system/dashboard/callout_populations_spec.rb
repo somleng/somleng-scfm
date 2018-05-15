@@ -149,7 +149,7 @@ RSpec.describe "Callout Populations" do
       expect(page).to have_content("Preview")
       expect(page).to have_content("Callout")
       expect(page).to have_content("Created at")
-      expect(page).to have_content("Contact Filter Metadata")
+      expect(page).to have_content("Contact filter metadata")
       expect(page).to have_content("location:country")
       expect(page).to have_content("Cambodia")
     end

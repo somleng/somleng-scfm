@@ -32,6 +32,7 @@ Rails.application.routes.draw do
       namespace :preview, module: "batch_operation_preview" do
         resources :contacts, only: :index
       end
+      resources :batch_operation_events, only: :create
     end
   end
 

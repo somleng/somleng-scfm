@@ -14,6 +14,8 @@ en:
     batch_operations:
       index: "Batch Operations"
       show: "Batch Operation"
+      queue: "Start"
+      requeue: "Restart"
     callouts:
       index: "Callouts"
       new: "New Callout"

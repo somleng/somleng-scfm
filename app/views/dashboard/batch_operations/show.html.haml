@@ -4,6 +4,12 @@
     - if resource.is_a?(BatchOperation::CalloutPopulation)
       .btn-group.mr-2{ role: 'group' }
         = render("shared/button_with_count", button_text: translate(:"titles.actions.preview"), url: dashboard_batch_operation_preview_contacts_path(resource), count: resource.contacts_preview.count)
+    - if resource.may_queue?
+      .btn-group.mr-2{ role: 'group' }
+        = link_to(translate(:"titles.batch_operations.queue"), dashboard_batch_operation_batch_operation_events_path(resource, event: :queue), method: :post, class: 'btn btn-outline-success', data: { confirm: translate(:"titles.actions.data_confirm") })
+    - if resource.may_requeue?
+      .btn-group.mr-2{ role: 'group' }
+        = link_to(translate(:"titles.batch_operations.requeue"), dashboard_batch_operation_batch_operation_events_path(resource, event: :requeue), method: :post, class: 'btn btn-outline-warning', data: { confirm: translate(:"titles.actions.data_confirm") })
     - if resource.is_a?(BatchOperation::CalloutPopulation)
       .btn-group.mr-2{ role: 'group' }
         = link_to(translate(:"titles.actions.edit"), edit_dashboard_batch_operation_callout_population_path(resource), class: 'btn btn-outline-primary')

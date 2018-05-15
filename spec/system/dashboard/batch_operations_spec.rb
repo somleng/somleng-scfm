@@ -58,16 +58,47 @@ RSpec.describe "Batch Operations" do
 
     sign_in(user)
     visit dashboard_batch_operation_path(batch_operation)
-
     click_action_button(:delete, type: :link)
 
     expect(current_path).to eq(dashboard_batch_operations_path)
     expect(page).to have_text("successfully destroyed.")
   end
 
-  def create_batch_operation(options = {})
+  it "can perform actions on the batch operations" do
+    user = create(:user)
+    batch_operation = create_batch_operation(
+      :preview,
+      account: user.account
+    )
+
+    sign_in(user)
+    visit dashboard_batch_operation_path(batch_operation)
+    clear_enqueued_jobs
+
+    perform_enqueued_jobs do
+      within("#button_toolbar") do
+        click_action_button(:queue, key: :batch_operations, type: :link)
+      end
+    end
+
+    expect(current_path).to eq(dashboard_batch_operation_path(batch_operation))
+    expect(batch_operation.reload).to be_finished
+
+    perform_enqueued_jobs do
+      within("#button_toolbar") do
+        click_action_button(:requeue, key: :batch_operations, type: :link)
+      end
+    end
+
+    expect(current_path).to eq(dashboard_batch_operation_path(batch_operation))
+    expect(batch_operation.reload).to be_finished
+  end
+
+  def create_batch_operation(*args)
+    options = args.extract_options!
     create(
       :phone_call_create_batch_operation,
+      *args,
       options
     )
   end

@@ -1,5 +1,5 @@
 - content_for(:button_toolbar) do
-  = render("shared/button_to_index", url: dashboard_callouts_path, button_text: translate(:"titles.callouts.index"), count: resources.running.count)
+  = render("shared/disabled_button", url: dashboard_callouts_path, button_text: translate(:"titles.callouts.index"), count: resources.running.count)
   .btn-group.mr-2{ role: 'group' }
     = link_to(translate(:"titles.callouts.new"), new_dashboard_callout_path, class: 'btn btn-outline-success')
 

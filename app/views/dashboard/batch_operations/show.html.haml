@@ -1,0 +1,46 @@
+.col-12
+  #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
+    = render("shared/disabled_button", url: dashboard_batch_operation_path(resource), button_text: resource.model_name.human, count: resource.id)
+    - if resource.is_a?(BatchOperation::CalloutPopulation)
+      .btn-group.mr-2{ role: 'group' }
+        = render("shared/button_with_count", button_text: translate(:"titles.actions.preview"), url: dashboard_batch_operation_preview_contacts_path(resource), count: resource.contacts_preview.count)
+    - if resource.is_a?(BatchOperation::CalloutPopulation)
+      .btn-group.mr-2{ role: 'group' }
+        = link_to(translate(:"titles.actions.edit"), edit_dashboard_batch_operation_callout_population_path(resource), class: 'btn btn-outline-primary')
+    .btn-group.mr-2{ role: 'group' }
+      - url = resource.is_a?(BatchOperation::CalloutPopulation) && resource.callout ? dashboard_callout_batch_operation_path(resource.callout, resource) : dashboard_batch_operation_path(resource)
+      = link_to(translate(:"titles.actions.delete"), url, class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+.col-lg-8.col-sm-12
+  #resource.card
+    .card-body
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right #
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.id
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = resource.class.human_attribute_name(:type)
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.model_name.human
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = resource.class.human_attribute_name(:status)
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.status.humanize
+      - if resource.is_a?(BatchOperation::CalloutPopulation) && resource.callout
+        %dl.row
+          %dt.col-sm-5.col-md-4.text-md-right
+            = resource.class.human_attribute_name(:callout)
+          %dd.col-sm-7.col-md-6
+            = link_to(resource.callout.id, dashboard_callout_path(resource.callout))
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = resource.class.human_attribute_name(:created_at)
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.created_at
+      - if resource.is_a?(BatchOperation::CalloutPopulation)
+        = render("shared/key_value_attributes", attribute: :contact_filter_metadata)

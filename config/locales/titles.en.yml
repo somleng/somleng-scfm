@@ -10,6 +10,9 @@ en:
     admin_management: "Admin"
     access_tokens:
       index: "API Keys"
+    batch_operations:
+      index: "Batch Operations"
+      show: "Batch Operation"
     callouts:
       index: "Callouts"
       new: "New Callout"
@@ -25,7 +28,6 @@ en:
       create: "Create Callout Population"
       edit: "Edit Callout Population"
       update: "Update Callout Population"
-      index: "Callout Populations"
       show: "Callout Population"
     contacts:
       index: "Contacts"

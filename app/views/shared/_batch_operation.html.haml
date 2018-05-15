@@ -1,0 +1,9 @@
+= content_tag_for(:tr, batch_operation) do
+  %td
+    = link_to(batch_operation.id, show_location(batch_operation))
+  %td
+    = batch_operation.model_name.human
+  %td
+    = batch_operation.status.humanize
+  %td
+    = batch_operation.created_at

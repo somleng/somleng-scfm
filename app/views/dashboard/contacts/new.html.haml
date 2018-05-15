@@ -1,4 +1,4 @@
-.col-md-6
-  %h5#page_title.card-title
-    = translate(:"titles.contacts.new")
+.col
+  #button_toolbar.btn-toolbar.mb-2{ role: 'toolbar' }
+    = render("shared/disabled_button", url: new_dashboard_contact_path, button_text: translate(:"titles.contacts.new"), button_class: "btn-outline-success")
   = render "form"

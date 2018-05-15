@@ -35,8 +35,11 @@ RSpec.describe "Contacts", :aggregate_failures do
     sign_in(user)
     visit new_dashboard_contact_path
 
-    within("#page_title") do
-      expect(page).to have_content(I18n.translate!(:"titles.contacts.new"))
+    within("#button_toolbar") do
+      expect(page).to have_link(
+        I18n.translate!(:"titles.contacts.new"),
+        href: new_dashboard_contact_path
+      )
     end
 
     expect(page).to have_link_to_action(:cancel)
@@ -68,8 +71,11 @@ RSpec.describe "Contacts", :aggregate_failures do
     sign_in(user)
     visit edit_dashboard_contact_path(contact)
 
-    within("#page_title") do
-      expect(page).to have_content(I18n.translate!(:"titles.contacts.edit"))
+    within("#button_toolbar") do
+      expect(page).to have_link(
+        I18n.translate!(:"titles.contacts.edit"),
+        href: edit_dashboard_contact_path(contact)
+      )
     end
 
     expect(page).to have_link_to_action(:cancel)
@@ -122,11 +128,7 @@ RSpec.describe "Contacts", :aggregate_failures do
     end
 
     within("#contact") do
-      expect(page).to have_link(
-        contact.id,
-        href: dashboard_contact_path(contact)
-      )
-
+      expect(page).to have_content(contact.id)
       expect(page).to have_content("#")
       expect(page).to have_content("Phone Number")
       expect(page).to have_content(phone_number)

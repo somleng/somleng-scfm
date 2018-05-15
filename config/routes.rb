@@ -17,9 +17,18 @@ Rails.application.routes.draw do
     resources :contacts
     resources :callouts do
       resources :callout_events, only: :create
-      resources :callout_populations
+      resources :batch_operations, only: %i[index destroy]
+
+      namespace :batch_operation do
+        resources :callout_populations, only: %i[new create]
+      end
     end
-    resources :batch_operations, only: [] do
+
+    namespace :batch_operation do
+      resources :callout_populations, only: %i[edit update]
+    end
+
+    resources :batch_operations, only: %i[index show destroy] do
       namespace :preview, module: "batch_operation_preview" do
         resources :contacts, only: :index
       end

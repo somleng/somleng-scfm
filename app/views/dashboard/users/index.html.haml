@@ -1,5 +1,5 @@
 - content_for(:button_toolbar) do
-  = render("shared/button_to_index", url: dashboard_users_path, button_text: translate(:"titles.users.index"), count: resources.count)
+  = render("shared/disabled_button", url: dashboard_users_path, button_text: translate(:"titles.users.index"), count: resources.count)
   .btn-group.mr-2{ role: 'group' }
     = link_to(translate(:"titles.user_invitations.new"), new_user_invitation_path, class: 'btn btn-outline-success')
 

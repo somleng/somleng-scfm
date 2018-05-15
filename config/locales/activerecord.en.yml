@@ -5,11 +5,8 @@ en:
         token: "API Key"
       contact:
         msisdn: "Phone Number"
-      user:
-        last_sign_in_at: "Last Signed In"
-        invitation_accepted_at: "Invitation Accepted"
-      batch_operation/callout_population:
-        contact_filter_metadata: "Contact Filter Metadata"
+    models:
+      batch_operation/callout_population: "Callout Population"
   activemodel:
     attributes:
       key_value_field:
@@ -17,4 +14,3 @@ en:
         value: "Value"
     models:
       event/base: "Event"
-      batch_operation/callout_population: "Callout Population"

@@ -5,11 +5,17 @@ en:
       delete: "Delete"
       data_confirm: "Are you sure?"
       cancel: "Cancel"
-      add_metadata: "Add Metadata"
-      remove_metadata: "Remove"
+      preview: "Preview"
+      back: "Back"
     admin_management: "Admin"
     access_tokens:
       index: "API Keys"
+      create: "Create API Key"
+    batch_operations:
+      index: "Batch Operations"
+      show: "Batch Operation"
+      queue: "Start"
+      requeue: "Restart"
     callouts:
       index: "Callouts"
       new: "New Callout"
@@ -25,15 +31,17 @@ en:
       create: "Create Callout Population"
       edit: "Edit Callout Population"
       update: "Update Callout Population"
-      index: "Callout Populations"
+      show: "Callout Population"
     contacts:
       index: "Contacts"
       new: "New Contact"
       create: "Create Contact"
       edit: "Edit Contact"
-      update: "Update Contact"
+      update: "Save"
     users:
       index: "Users"
+      edit: "Edit User"
+      update: "Save"
     user_invitations:
       new: "Invite User"
       create: "Send Invitation"

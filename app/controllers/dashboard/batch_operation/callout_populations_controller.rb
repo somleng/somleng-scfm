@@ -1,4 +1,4 @@
-class Dashboard::CalloutPopulationsController < Dashboard::BaseController
+class Dashboard::BatchOperation::CalloutPopulationsController < Dashboard::BaseController
   helper_method :callout
 
   private
@@ -6,7 +6,11 @@ class Dashboard::CalloutPopulationsController < Dashboard::BaseController
   attr_accessor :callout
 
   def association_chain
-    find_callout.callout_populations
+    if params[:callout_id]
+      find_callout.callout_populations
+    else
+      current_account.batch_operations
+    end
   end
 
   def permitted_params
@@ -16,11 +20,7 @@ class Dashboard::CalloutPopulationsController < Dashboard::BaseController
   end
 
   def show_location(resource)
-    dashboard_callout_callout_population_path(callout, resource)
-  end
-
-  def resources_path
-    dashboard_callout_callout_populations_path(callout)
+    dashboard_batch_operation_path(resource)
   end
 
   def prepare_resource_for_create

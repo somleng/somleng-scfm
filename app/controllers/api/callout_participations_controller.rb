@@ -1,11 +1,6 @@
 class Api::CalloutParticipationsController < Api::FilteredController
   include BatchOperationResource
 
-  PERMITTED_BATCH_OPERATION_TYPES = [
-    "BatchOperation::CalloutPopulation",
-    "BatchOperation::PhoneCallCreate"
-  ]
-
   private
 
   def build_resource_association_chain
@@ -40,16 +35,19 @@ class Api::CalloutParticipationsController < Api::FilteredController
     @contact ||= current_account.contacts.find(params[:contact_id])
   end
 
-  def permitted_batch_operation_types
-    PERMITTED_BATCH_OPERATION_TYPES
+  def batch_operation_scope
+    current_account.batch_operations.can_preview_contacts
   end
 
   def permitted_build_params
-    params.permit(:contact_id, :msisdn, :call_flow_logic, :metadata => {})
+    params.permit(:contact_id, :msisdn, :call_flow_logic, metadata: {})
   end
 
   def permitted_update_params
-    params.permit(:call_flow_logic, :msisdn, :metadata_merge_mode, :metadata => {})
+    params.permit(
+      :call_flow_logic, :msisdn,
+      :metadata_merge_mode, metadata: {}
+    )
   end
 
   def resource_location

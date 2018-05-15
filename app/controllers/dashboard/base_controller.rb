@@ -29,7 +29,7 @@ class Dashboard::BaseController < ApplicationController
     prepare_resource_for_create
     save_resource
     prepare_for_render_on_create
-    respond_with_resource
+    respond_with_created_resource
   end
 
   def edit
@@ -41,12 +41,13 @@ class Dashboard::BaseController < ApplicationController
     update_resource_attributes
     save_resource
     prepare_for_render_on_update
-    respond_with_resource
+    respond_with_updated_resource
   end
 
   def destroy
+    prepare_resource_for_destroy
     destroy_resource
-    respond_with_resource(location: resources_path)
+    respond_with_destroyed_resource
   end
 
   private
@@ -55,6 +56,18 @@ class Dashboard::BaseController < ApplicationController
 
   def build_new_resource
     @resource = association_chain.new
+  end
+
+  def respond_with_created_resource
+    respond_with_resource
+  end
+
+  def respond_with_updated_resource
+    respond_with_resource
+  end
+
+  def respond_with_destroyed_resource
+    respond_with_resource(location: resources_path)
   end
 
   def prepare_new_resource
@@ -72,6 +85,8 @@ class Dashboard::BaseController < ApplicationController
   def prepare_resource_for_create; end
 
   def prepare_resource_for_update; end
+
+  def prepare_resource_for_destroy; end
 
   def prepare_for_render_on_create
     build_key_value_fields

@@ -35,8 +35,11 @@ RSpec.describe "Callouts", :aggregate_failures do
     sign_in(user)
     visit new_dashboard_callout_path
 
-    within("#page_title") do
-      expect(page).to have_content(I18n.translate!(:"titles.callouts.new"))
+    within("#button_toolbar") do
+      expect(page).to have_link(
+        I18n.translate!(:"titles.callouts.new"),
+        href: new_dashboard_callout_path
+      )
     end
 
     expect(page).to have_link_to_action(:cancel)
@@ -61,8 +64,11 @@ RSpec.describe "Callouts", :aggregate_failures do
     sign_in(user)
     visit edit_dashboard_callout_path(callout)
 
-    within("#page_title") do
-      expect(page).to have_content(I18n.translate!(:"titles.callouts.edit"))
+    within("#button_toolbar") do
+      expect(page).to have_link(
+        I18n.translate!(:"titles.callouts.edit"),
+        href: edit_dashboard_callout_path(callout)
+      )
     end
 
     expect(page).to have_link_to_action(:cancel)
@@ -109,17 +115,13 @@ RSpec.describe "Callouts", :aggregate_failures do
 
       expect(page).to have_link_to_action(
         :index,
-        key: :callout_populations,
-        href: dashboard_callout_callout_populations_path(callout)
+        key: :batch_operations,
+        href: dashboard_callout_batch_operations_path(callout)
       )
     end
 
     within("#callout") do
-      expect(page).to have_link(
-        callout.id,
-        href: dashboard_callout_path(callout)
-      )
-
+      expect(page).to have_content(callout.id)
       expect(page).to have_content("Status")
       expect(page).to have_content("Initialized")
       expect(page).to have_content("Created at")

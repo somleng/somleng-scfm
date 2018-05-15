@@ -8,6 +8,26 @@ class BatchOperation::Base < ApplicationRecord
     "BatchOperation::PhoneCallQueueRemoteFetch"
   ].freeze
 
+  PREVIEW_CONTACTS_TYPES = [
+    "BatchOperation::CalloutPopulation",
+    "BatchOperation::PhoneCallCreate"
+  ].freeze
+
+  PREVIEW_CALLOUT_PARTICIPATIONS_TYPES = [
+    "BatchOperation::PhoneCallCreate"
+  ].freeze
+
+  PREVIEW_PHONE_CALLS_TYPES = [
+    "BatchOperation::PhoneCallQueue",
+    "BatchOperation::PhoneCallQueueRemoteFetch"
+  ].freeze
+
+  APPLIES_ON_PHONE_CALLS_TYPES = [
+    "BatchOperation::PhoneCallCreate",
+    "BatchOperation::PhoneCallQueue",
+    "BatchOperation::PhoneCallQueueRemoteFetch"
+  ].freeze
+
   include CustomStoreReaders
   include MetadataHelpers
   include Wisper::Publisher
@@ -23,6 +43,22 @@ class BatchOperation::Base < ApplicationRecord
 
   def self.from_type_param(type)
     PERMITTED_API_TYPES.include?(type) ? type.constantize : self
+  end
+
+  def self.can_preview_contacts
+    where(type: PREVIEW_CONTACTS_TYPES)
+  end
+
+  def self.can_preview_callout_participations
+    where(type: PREVIEW_CALLOUT_PARTICIPATIONS_TYPES)
+  end
+
+  def self.can_preview_phone_calls
+    where(type: PREVIEW_PHONE_CALLS_TYPES)
+  end
+
+  def self.applies_on_phone_calls
+    where(type: APPLIES_ON_PHONE_CALLS_TYPES)
   end
 
   aasm column: :status, skip_validation_on_save: true do

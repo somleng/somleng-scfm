@@ -6,8 +6,11 @@ RSpec.describe "User Invitations" do
     sign_in(user)
     visit new_user_invitation_path
 
-    within("#page_title") do
-      expect(page).to have_content(I18n.translate!(:"titles.user_invitations.new"))
+    within("#button_toolbar") do
+      expect(page).to have_link(
+        I18n.translate!(:"titles.user_invitations.new"),
+        href: new_user_invitation_path
+      )
     end
 
     fill_in "Email", with: "bopha@somleng.com"

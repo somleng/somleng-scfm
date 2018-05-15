@@ -1,28 +1,9 @@
-.col-12.col-md-8
-  %h5#page_title.card-title
-    = translate(:"titles.access_tokens.index")
+- content_for(:button_toolbar) do
+  = render("shared/disabled_button", url: dashboard_access_tokens_path, button_text: translate(:"titles.access_tokens.index"), count: resources.count)
+  .btn-group.mr-2{ role: 'group' }
+    = link_to(translate(:"titles.access_tokens.create"), dashboard_access_tokens_path, class: 'btn btn-outline-success', method: "post")
 
-.col-12
-  .btn-toolbar{ role: 'toolbar' }
-  %br
-.col-12
-  %table#access_tokens.table.table-hover.table-bordered
-    %thead.thead-light
-      %tr
-        %th #
-        %th
-          = AccessToken.human_attribute_name(:token)
-        %th
-          = AccessToken.human_attribute_name(:created_at)
-    %tbody
-      - resources.each_with_index do |resource, index|
-        %tr
-          %td
-            = index + 1
-          %td
-            %code
-              = resource.token
-          %td
-            = resource.created_at
-.col-12
-  = paginate resources
+- content_for(:resources_table) do
+  = render("shared/resources_table", resource_class: AccessToken, columns: [:token, :created_at, :actions])
+
+= render("shared/index")

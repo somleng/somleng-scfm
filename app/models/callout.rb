@@ -2,7 +2,7 @@ class Callout < ApplicationRecord
   include MetadataHelpers
   include HasCallFlowLogic
 
-  AUDIO_CONTENT_TYPES = %w(audio/mpeg audio/mp3 audio/wav)
+  AUDIO_CONTENT_TYPES = %w[audio/mpeg audio/mp3 audio/wav].freeze
 
   belongs_to :account
 
@@ -81,10 +81,10 @@ class Callout < ApplicationRecord
   end
 
   # https://github.com/rails/rails/issues/31656
-  def validate_voice    
+  def validate_voice
     if voice.attached?
       errors.add(:voice, :audio_type) unless voice.blob.content_type.in?(AUDIO_CONTENT_TYPES)
-      errors.add(:voice, :audio_size) if voice.blob.byte_size.bytes > 5.megabytes
+      errors.add(:voice, :audio_size) if voice.blob.byte_size.bytes > 10.megabytes
     else
       errors.add(:voice, :blank)
     end

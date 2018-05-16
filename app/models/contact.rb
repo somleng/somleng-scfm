@@ -24,15 +24,12 @@ class Contact < ApplicationRecord
 
   validates :commune_id, presence: true, on: :dashboard
 
+  delegate :province, :district, to: :commune, allow_nil: true
+  delegate :name_en, to: :commune, prefix: true, allow_nil: true
+  delegate :id, :name_en, to: :province, prefix: true, allow_nil: true
+  delegate :id, :name_en, to: :district, prefix: true, allow_nil: true
+
   def commune
     @commune ||= Pumi::Commune.find_by_id(commune_id)
-  end
-
-  def province_id
-    @province_id ||= commune&.province&.id
-  end
-
-  def district_id
-    @district_id ||= commune&.district&.id
   end
 end

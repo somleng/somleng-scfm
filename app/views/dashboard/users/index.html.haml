@@ -1,31 +1,9 @@
-.col-12
-  .col-12
-    #button_toolbar.btn-toolbar{ role: 'toolbar' }
-      .btn-group.mr-2{ role: 'group' }
-        = link_to(translate(:"titles.user_invitations.new"), new_user_invitation_path, class: 'btn btn-outline-success')
-    %br
+- content_for(:button_toolbar) do
+  = render("shared/disabled_button", url: dashboard_users_path, button_text: translate(:"titles.users.index"), count: resources.count)
+  .btn-group.mr-2{ role: 'group' }
+    = link_to(translate(:"titles.user_invitations.new"), new_user_invitation_path, class: 'btn btn-outline-success')
 
-.col-12
-  %table#users.table.table-hover.table-bordered
-    %thead.thead-light
-      %tr
-        %th #
-        %th
-          = User.human_attribute_name(:email)
-        %th
-          = User.human_attribute_name(:invitation_accepted_at)
-        %th
-          = User.human_attribute_name(:last_sign_in_at)
-    %tbody
-      - @users.each do |user|
-        = content_tag_for(:tr, user) do
-          %td
-            = user.id
-          %td
-            = user.email
-          %td
-            = user.invitation_accepted_at
-          %td
-            = user.last_sign_in_at            
-.col-12
-  = paginate @users
+- content_for(:resources_table) do
+  = render("shared/resources_table", resource_class: User, columns: [:email, :invitation_accepted_at, :last_sign_in_at])
+
+= render("shared/index")

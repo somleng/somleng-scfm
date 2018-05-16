@@ -1,42 +1,43 @@
-.col-12
-  #button_toolbar.btn-toolbar{ role: "toolbar" }
+.col
+  #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
+    = render("shared/disabled_button", url: dashboard_contact_path(resource), button_text: resource.model_name.human, count: resource.id)
     - if current_user.is_admin?
-      .btn-group.mr-2{ role: "group" }
-        = link_to(translate(:"titles.actions.edit"), edit_dashboard_contact_path(@contact), class: "btn btn-outline-primary", data: { turbolinks: false })
-      .btn-group.mr-2{ role: "group" }
-        = link_to(translate(:"titles.actions.delete"), dashboard_contact_path(@contact), class: "btn btn-outline-danger", method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
-  %br
+      .btn-group.mr-2{ role: 'group' }
+        = link_to(translate(:"titles.actions.edit"), edit_dashboard_contact_path(resource), class: 'btn btn-outline-primary')
+      .btn-group.mr-2{ role: 'group' }
+        = link_to(translate(:"titles.actions.delete"), dashboard_contact_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
 .col-lg-8.col-sm-12
-  = div_for(@contact, class: "card") do
-    .card-header
-      = link_to(Contact.model_name.human + " ##{@contact.id}", dashboard_contact_path(@contact))
+  #contact.card
     .card-body
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right #
         %dd.col-sm-7.col-md-6
-          = link_to(@contact.id, dashboard_contact_path(@contact))
+          %code
+            = resource.id
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Contact.human_attribute_name(:msisdn)
         %dd.col-sm-7.col-md-6
-          = @contact.msisdn
+          %code
+            = resource.msisdn
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Contact.human_attribute_name(:province_id)
         %dd.col-sm-7.col-md-6
-          = @contact.commune.province.name_en
+          = resource.province_name_en
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Contact.human_attribute_name(:district_id)
         %dd.col-sm-7.col-md-6
-          = @contact.commune.district.name_en
+          = resource.district_name_en
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Contact.human_attribute_name(:commune_id)
         %dd.col-sm-7.col-md-6
-          = @contact.commune.name_en
+          = resource.commune_name_en
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Contact.human_attribute_name(:created_at)
         %dd.col-sm-7.col-md-6
-          = @contact.created_at
+          %code
+            = resource.created_at

@@ -1,0 +1,9 @@
+= content_tag_for(:tr, user) do
+  %td
+    = link_to(user.id, dashboard_user_path(user))
+  %td
+    = user.email
+  %td
+    = user.invitation_accepted_at
+  %td
+    = user.last_sign_in_at

@@ -1,15 +1,16 @@
-= simple_form_for [:dashboard, @contact] do |f|
-  = f.input :msisdn, input_html: { autofocus: true }
-  #province
-    = f.hidden_field :province_id, class: 'pumi-default-value'
-    = f.input :province_id, collection: [], prompt: 'Select a province', input_html: { style: "width: 100%", data: { pumi_select_target: "district", pumi_select_collection_url: pumi.provinces_path, pumi_select_collection_label_method: "name_en", pumi_select_collection_value_method: "id", pumi_select_populate_on_load: true, pumi_select_has_hidden_value: true }}
-  #district
-    = f.hidden_field :district_id, class: 'pumi-default-value'
-    = f.input :district_id, collection: [], promt: 'Select a district', input_html: { style: "width: 100%", data: { pumi_select_id: "district", pumi_select_target: "commune", pumi_select_collection_url: pumi.districts_path(province_id: "FILTER"), pumi_select_collection_url_filter_interpolation_key: "FILTER", pumi_select_collection_label_method: "name_en", pumi_select_collection_value_method: "id", pumi_select_disabled_target: "#district", pumi_select_has_hidden_value: true }}
-  #commune
-    = f.hidden_field :commune_id, class: 'pumi-default-value'
-    = f.input :commune_id, collection: [], promt: 'Select a commune', input_html: { style: "width: 100%", data: { pumi_select_id: "commune", pumi_select_target: "village", pumi_select_collection_url: pumi.communes_path(district_id: "FILTER"), pumi_select_collection_url_filter_interpolation_key: "FILTER", pumi_select_collection_label_method: "name_en", pumi_select_collection_value_method: "id", pumi_select_disabled_target: "#commune", pumi_select_has_hidden_value: true }}, required: true
-
-  .form-group.actions
-    = f.button :submit, class: 'btn btn-primary'
-    = link_to(translate(:"titles.actions.cancel"), :back, class: 'btn btn-outline-dark')
+.card
+  .card-body
+    = simple_form_for [:dashboard, resource] do |f|
+      = f.input :msisdn, input_html: { autofocus: true }
+      #province
+        = f.hidden_field :province_id, class: 'pumi-default-value'
+        = f.input :province_id, collection: [], require: true, prompt: true, input_html: { data: { pumi_select_target: "district", pumi_select_collection_url: pumi.provinces_path, pumi_select_collection_label_method: "name_en", pumi_select_collection_value_method: "id", pumi_select_populate_on_load: true, pumi_select_has_hidden_value: true }}
+      #district
+        = f.hidden_field :district_id, class: 'pumi-default-value'
+        = f.input :district_id, collection: [], require: true, prompt: true, input_html: { data: { pumi_select_id: "district", pumi_select_target: "commune", pumi_select_collection_url: pumi.districts_path(province_id: "FILTER"), pumi_select_collection_url_filter_interpolation_key: "FILTER", pumi_select_collection_label_method: "name_en", pumi_select_collection_value_method: "id", pumi_select_disabled_target: "#district", pumi_select_has_hidden_value: true }}
+      #commune
+        = f.hidden_field :commune_id, class: 'pumi-default-value'
+        = f.input :commune_id, collection: [], require: true, prompt: true, input_html: { data: { pumi_select_id: "commune", pumi_select_target: "village", pumi_select_collection_url: pumi.communes_path(district_id: "FILTER"), pumi_select_collection_url_filter_interpolation_key: "FILTER", pumi_select_collection_label_method: "name_en", pumi_select_collection_value_method: "id", pumi_select_disabled_target: "#commune", pumi_select_has_hidden_value: true }}
+      .form-group.actions
+        = f.submit translate(:"titles.contacts.#{action}"), class: 'btn btn-primary'
+        = link_to(translate(:"titles.actions.cancel"), :back, class: 'btn btn-outline-dark')

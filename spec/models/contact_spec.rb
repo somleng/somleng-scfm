@@ -9,7 +9,6 @@ RSpec.describe Contact do
     super.scoped_to(:account_id)
   end
 
-  include_examples "has_metadata"
   it_behaves_like  "has_msisdn"
 
   describe "associations" do

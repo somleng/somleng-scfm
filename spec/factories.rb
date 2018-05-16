@@ -36,6 +36,11 @@ FactoryBot.define do
 
   factory :callout do
     account
+    commune_ids ["040202"]
+
+    transient do
+      voice_file "test.mp3"
+    end
 
     trait :initialized do
     end
@@ -59,23 +64,26 @@ FactoryBot.define do
       status Callout::STATE_RUNNING
     end
 
-    factory :dashboard_callout do
-      province_id ["04"]
-      commune_ids ["040202"]
+    after(:build) do |callout, evaluator|
+      if evaluator.voice_file.present?
+        callout.voice.attach(
+          io: File.open(ActiveSupport::TestCase.fixture_path + "/files/#{evaluator.voice_file}"),
+          filename: evaluator.voice_file
+        )
+      end
     end
   end
 
   factory :contact do
     account
-    msisdn  { generate(:somali_msisdn) }
-
-    factory :dashboard_contact do
-      commune_id "040202"
-    end
+    msisdn { generate(:somali_msisdn) }
   end
 
   factory :batch_operation_base, class: BatchOperation::Base do
     account
+
+    trait :preview do
+    end
 
     factory :callout_population, aliases: [:batch_operation], class: BatchOperation::CalloutPopulation do
       after(:build) do |callout_population|

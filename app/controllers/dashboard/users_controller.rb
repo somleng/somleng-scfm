@@ -1,35 +1,19 @@
 class Dashboard::UsersController < Dashboard::AdminController
-  before_action :set_user, only: [:show, :edit, :update, :destroy]
-
-  def index
-    @users = current_account.users.page(params[:page])
-  end
-
-  def show; end
-
-  def edit; end
-
-  def update
-    if @user.update(user_params)
-      redirect_to dashboard_user_url(@user), notice: 'User was successfully updated.'
-    else
-      render :edit
-    end
-  end
-
-  def destroy
-    @user.destroy
-
-    redirect_to dashboard_users_url, notice: 'User was successfully destroyed.'
-  end
-
   private
 
-  def set_user
-    @user = current_account.users.find(params[:id])
+  def association_chain
+    current_account.users
   end
 
-  def user_params
-    params.require(:user).permit(:id, :roles, location_ids: [])
+  def permitted_params
+    params.require(:user).permit(:roles, location_ids: [])
+  end
+
+  def resources_path
+    dashboard_users_path
+  end
+
+  def show_location(resource)
+    dashboard_user_path(resource)
   end
 end

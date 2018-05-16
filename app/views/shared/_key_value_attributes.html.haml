@@ -1,0 +1,10 @@
+%dl.row
+  %dt.col-sm-5.col-md-4.text-md-right
+    = resource.class.human_attribute_name(attribute)
+- resource.public_send(:"#{attribute}_fields").each do |key_value_field|
+  %dl.row
+    %dt.col-sm-5.col-md-4.text-md-right
+      = key_value_field.key
+    %dd.col-sm-7.col-md-6
+      %code
+        = key_value_field.value

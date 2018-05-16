@@ -1,0 +1,8 @@
+.card.mb-3
+  .card-body{id: "#{attribute}_fields"}
+    %h6.card-title
+      = resource.class.human_attribute_name(attribute)
+    = f.simple_fields_for(:"#{attribute}_fields") do |fields|
+      = render("shared/key_value_field", f: fields)
+    .links
+      = link_to_add_association(f, :"#{attribute}_fields", partial: "shared/key_value_field")

@@ -3,6 +3,7 @@ module MetadataHelpers
 
   include ConditionalSerialization
   include JsonQueryHelpers
+  include KeyValueFieldsFor
 
   METADATA_MERGE_MODE_MERGE = :merge
   METADATA_MERGE_MODE_REPLACE = :replace
@@ -19,8 +20,11 @@ module MetadataHelpers
     attr_accessor :metadata_merge_mode
 
     conditionally_serialize(:metadata, JSON)
+
     validates :metadata,
               json: true
+
+    accepts_nested_key_value_fields_for :metadata
   end
 
   def metadata=(value)
@@ -33,28 +37,6 @@ module MetadataHelpers
   end
 
   private
-
-  def assign_metadata
-    new_metadata = transform_metadata_forms_to_hash
-    metadata.replace(new_metadata)
-  end
-
-  def transform_metadata_forms_to_hash
-    metadata_forms.select(&:valid?)
-                  .map(&:to_json).reject(&:blank?)
-                  .reduce({}, :deep_merge)
-  end
-
-  def build_metadata_forms
-    return [MetadataForm.new] if metadata.empty?
-    metadata_form_utils.flatten_hash(metadata).map do |k, v|
-      MetadataForm.new(attr_key: k, attr_val: v)
-    end
-  end
-
-  def metadata_form_utils
-    @metadata_form_utils ||= MetadataForm::Utils.new
-  end
 
   def metadata_merge_mode_or_default
     metadata_merge_mode && METADATA_MERGE_MODES.include?(metadata_merge_mode.to_sym) ? metadata_merge_mode.to_sym : DEFAULT_METADATA_MERGE_MODE

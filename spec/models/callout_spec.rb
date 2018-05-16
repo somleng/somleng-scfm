@@ -2,7 +2,6 @@ require "rails_helper"
 
 RSpec.describe Callout do
   let(:factory) { :callout }
-  include_examples "has_metadata"
   include_examples "has_call_flow_logic"
 
   describe "associations" do
@@ -10,6 +9,7 @@ RSpec.describe Callout do
       is_expected.to belong_to(:account)
       is_expected.to have_many(:callout_participations).dependent(:restrict_with_error)
       is_expected.to have_many(:batch_operations).dependent(:restrict_with_error)
+      is_expected.to have_many(:callout_populations)
       is_expected.to have_many(:contacts)
       is_expected.to have_many(:phone_calls)
       is_expected.to have_many(:remote_phone_call_events)
@@ -21,55 +21,34 @@ RSpec.describe Callout do
   describe "validations" do
     def assert_validations!
       is_expected.to validate_presence_of(:status)
-      is_expected.to validate_presence_of(:province_id).on(:dashboard)
-      is_expected.to validate_presence_of(:commune_ids).on(:dashboard)
+      is_expected.to validate_presence_of(:commune_ids)
     end
 
     it { assert_validations! }
 
-    context "commune_ids" do
-      it "has to be an array" do
-        callout = build(:callout, commune_ids: nil)
-
-        callout.valid?(:dashboard)
-
-        expect(callout.errors[:commune_ids]).not_to eq nil
-      end
-
-      it "have to match with province_id" do
-        callout = build(:callout, province_id: "04", commune_ids: ["030101"])
-
-        callout.valid?(:dashboard)
-
-        expect(callout.errors[:commune_ids]).not_to eq nil
-      end
-    end
-
     context "voice" do
       it "must be present" do
-        callout = build(:callout, voice: nil)
+        callout = build(:callout, voice_file: nil)
 
-        callout.valid?(:dashboard)
+        callout.valid?
 
-        expect(callout.errors[:voice]).to include "can't be blank"
+        expect(callout.errors[:voice]).to be_present
       end
 
       it "must be audio file" do
-        callout = build(:callout)
-        attach_file(callout, "image.jpg")
+        callout = build(:callout, voice_file: "image.jpg")
 
-        callout.valid?(:dashboard)
+        callout.valid?
 
-        expect(callout.errors[:voice]).to include "can only be audio file"
+        expect(callout.errors[:voice]).to be_present
       end
 
       it "file cannot be bigger than 5MB" do
-        callout = build(:callout)
-        attach_file(callout, "big_file.mp3")
+        callout = build(:callout, voice_file: "big_file.mp3")
 
-        callout.valid?(:dashboard)
+        callout.valid?
 
-        expect(callout.errors[:voice]).to include "maximum size is 5 Megabytes"
+        expect(callout.errors[:voice]).to be_present
       end
     end
   end
@@ -124,10 +103,5 @@ RSpec.describe Callout do
         end
       end
     end
-  end
-
-  def attach_file(callout, file_name)
-    file = File.join(Rails.root, "spec", "support", "test_files", file_name)
-    callout.voice.attach(io: File.open(file), filename: file_name)
   end
 end

@@ -1,29 +1,9 @@
-.col-12.col-md-8
-  %h5#page_title.card-title
-    = translate(:"titles.contacts.index")
+- content_for(:button_toolbar) do
+  = render("shared/disabled_button", url: dashboard_contacts_path, button_text: translate(:"titles.contacts.index"), count: resources.count)
+  .btn-group.mr-2{ role: 'group' }
+    = link_to(translate(:"titles.contacts.new"), new_dashboard_contact_path, class: 'btn btn-outline-success')
 
-.col-12
-  #button_toolbar.btn-toolbar{ role: "toolbar" }
-    .btn-group.mr-2{ role: "group" }
-      = link_to(translate(:"titles.contacts.new"), new_dashboard_contact_path, class: "btn btn-outline-dark", data: { turbolinks: false })
-  %br
-.col-12
-  %table#contacts.table.table-hover.table-bordered
-    %thead.thead-light
-      %tr
-        %th #
-        %th
-          = Contact.human_attribute_name(:msisdn)
-        %th
-          = Contact.human_attribute_name(:created_at)
-    %tbody
-      - @contacts.each_with_index do |contact, index|
-        = content_tag_for(:tr, contact) do
-          %td
-            = link_to(contact.id, dashboard_contact_path(contact))
-          %td
-            = contact.msisdn
-          %td
-            = contact.created_at
-.col-12
-  = paginate @contacts
+- content_for(:resources_table) do
+  = render("shared/resources_table", resource_class: Contact, columns: [:msisdn, :created_at])
+
+= render("shared/index")

@@ -1,62 +1,41 @@
 .col-12
-  #button_toolbar.btn-toolbar{ role: 'toolbar' }
+  #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
+    = render("shared/disabled_button", url: dashboard_callout_path(resource), button_text: resource.model_name.human, count: resource.id)
     .btn-group.mr-2{ role: 'group' }
-      = link_to(translate(:"titles.actions.edit"), edit_dashboard_callout_path(@callout), class: 'btn btn-outline-primary', data: { turbolinks: false })
+      = render("shared/button_with_count", url: dashboard_callout_batch_operations_path(resource), button_text: translate(:"titles.batch_operations.index"), count: resource.callout_populations.count)
     .btn-group.mr-2{ role: 'group' }
-      = link_to(translate(:"titles.actions.delete"), dashboard_callout_path(@callout), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+      - if resource.may_start?
+        = link_to(translate(:"titles.callouts.start_callout"), dashboard_callout_callout_events_path(resource, event: :start),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
+      - if resource.may_stop?
+        = link_to(translate(:"titles.callouts.stop_callout"), dashboard_callout_callout_events_path(resource, event: :stop),  class: 'btn btn-outline-danger', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
+      - if resource.may_resume?
+        = link_to(translate(:"titles.callouts.resume_callout"), dashboard_callout_callout_events_path(resource, event: :resume),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
     .btn-group.mr-2{ role: 'group' }
-      - if @callout.may_start?
-        = link_to(translate(:"titles.callouts.start_callout"), dashboard_callout_callout_events_path(@callout, event: :start),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
-      - if @callout.may_stop?
-        = link_to(translate(:"titles.callouts.stop_callout"), dashboard_callout_callout_events_path(@callout, event: :stop),  class: 'btn btn-outline-danger', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
-      - if @callout.may_resume?
-        = link_to(translate(:"titles.callouts.resume_callout"), dashboard_callout_callout_events_path(@callout, event: :resume),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
-  %br
+      = link_to(translate(:"titles.actions.edit"), edit_dashboard_callout_path(resource), class: 'btn btn-outline-primary')
+    .btn-group.mr-2{ role: 'group' }
+      = link_to(translate(:"titles.actions.delete"), dashboard_callout_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
 .col-12.col-md-9.col-lg-7
   #callout.card
-    .card-header
-      = link_to(Callout.model_name.human + " ##{@callout.id}", dashboard_callout_path(@callout))
     .card-body
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right #
         %dd.col-sm-7.col-md-6
-          = link_to(@callout.id, dashboard_callout_path(@callout))
+          %code
+            = resource.id
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Callout.human_attribute_name(:status)
         %dd.col-sm-7.col-md-6
-          = @callout.status.humanize
+          %code
+            = resource.status.humanize
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Callout.human_attribute_name(:voice)
+        %dd.col-sm-7.col-md-6
+          = link_to resource.voice.blob.filename, url_for(resource.voice)
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Callout.human_attribute_name(:created_at)
         %dd.col-sm-7.col-md-6
-          = @callout.created_at
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = Callout.human_attribute_name(:metadata)
-      - if @callout.voice.attached?
-        %dl.row
-          %dt.col-sm-5.col-md-4.text-md-right
-            = Callout.human_attribute_name(:voice)
-          %dd.col-sm-7.col-md-6
-            = link_to @callout.voice.blob.filename, url_for(@callout.voice)
-      -# %dl.row
-      -#   %dt.col-sm-5.col-md-4.text-md-right
-      -#     = Callout.human_attribute_name(:province_id)
-      -#   %dd.col-sm-7.col-md-6
-      -#     = @commune.province.name_en
-      -# %dl.row
-      -#   %dt.col-sm-5.col-md-4.text-md-right
-      -#     = Callout.human_attribute_name(:district_id)
-      -#   %dd.col-sm-7.col-md-6
-      -#     = @commune.district.name_en
-      -# %dl.row
-      -#   %dt.col-sm-5.col-md-4.text-md-right
-      -#     = Callout.human_attribute_name(:commune_id)
-      -#   %dd.col-sm-7.col-md-6
-      -#     = @commune.name_en
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = Callout.human_attribute_name(:created_at)
-        %dd.col-sm-7.col-md-6
-          = @callout.created_at
+          %code
+            = resource.created_at          

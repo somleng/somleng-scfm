@@ -1,0 +1,12 @@
+%table#resources.table.table-hover.table-bordered
+  %thead.thead-light
+    %tr
+      %th #
+      - columns.each do |column|
+        %th
+          = resource_class.human_attribute_name(column.to_sym)
+  %tbody
+    - if local_assigns[:partial]
+      = render(partial: partial, collection: resources)
+    - else
+      = render(resources)

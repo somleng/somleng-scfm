@@ -1,5 +1,5 @@
 class Api::BaseController < ApplicationController
-  protect_from_forgery :with => :null_session
+  protect_from_forgery with: :null_session
   before_action :verify_requested_format!
 
   def create
@@ -39,7 +39,7 @@ class Api::BaseController < ApplicationController
   end
 
   def respond_with_create_resource_options
-    resource.persisted? ? {:location => resource_location} : {}
+    resource.persisted? ? { location: resource_location } : {}
   end
 
   def find_resource
@@ -62,15 +62,13 @@ class Api::BaseController < ApplicationController
     association_chain
   end
 
-  def setup_resource
-  end
+  def setup_resource; end
 
   def save_resource
     resource.save
   end
 
-  def after_save_resource
-  end
+  def after_save_resource; end
 
   def update_resource
     resource.update_attributes(permitted_update_params)
@@ -80,22 +78,11 @@ class Api::BaseController < ApplicationController
     permitted_params
   end
 
-  def before_destroy_resource
-  end
+  def before_destroy_resource; end
 
   def destroy_resource
     resource.destroy
   end
 
-  def resource
-    @resource
-  end
-
-  def resources
-    @resources
-  end
-
-  def protect_from_forgery?
-    false
-  end
+  attr_reader :resource, :resources
 end

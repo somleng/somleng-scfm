@@ -1,13 +1,6 @@
 class Api::BatchOperationsController < Api::FilteredController
   respond_to :json
 
-  PERMITTED_TYPES = [
-    "BatchOperation::CalloutPopulation",
-    "BatchOperation::PhoneCallCreate",
-    "BatchOperation::PhoneCallQueue",
-    "BatchOperation::PhoneCallQueueRemoteFetch"
-  ]
-
   private
 
   def filter_class
@@ -24,22 +17,20 @@ class Api::BatchOperationsController < Api::FilteredController
 
   def nested_resources_association_chain
     if params[:callout_id]
-      association_chain.where(:callout_id => params[:callout_id])
+      association_chain.where(callout_id: params[:callout_id])
     else
       association_chain
     end
   end
 
   def association_chain
-    (permitted_types.include?(params[:type]) ? params[:type].constantize : BatchOperation::Base).where(:account_id => current_account.id)
-  end
-
-  def permitted_types
-    PERMITTED_TYPES
+    BatchOperation::Base.from_type_param(
+      params[:type]
+    ).where(account_id: current_account.id)
   end
 
   def permitted_params
-    params.permit(:metadata_merge_mode, :metadata => {}, :parameters => {})
+    params.permit(:metadata_merge_mode, metadata: {}, parameters: {})
   end
 
   def resource_location

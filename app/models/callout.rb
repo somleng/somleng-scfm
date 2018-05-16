@@ -2,6 +2,8 @@ class Callout < ApplicationRecord
   include MetadataHelpers
   include HasCallFlowLogic
 
+  AUDIO_CONTENT_TYPES = %w(audio/mpeg audio/mp3 audio/wav)
+
   belongs_to :account
 
   has_many :callout_participations, dependent: :restrict_with_error
@@ -9,6 +11,9 @@ class Callout < ApplicationRecord
   has_many :batch_operations,
            class_name: "BatchOperation::Base",
            dependent: :restrict_with_error
+
+  has_many :callout_populations,
+           class_name: "BatchOperation::CalloutPopulation"
 
   has_many :phone_calls,
            through: :callout_participations
@@ -25,12 +30,12 @@ class Callout < ApplicationRecord
 
   alias_attribute :calls, :phone_calls
 
-  validates :status, presence: true
-  validates :province_id, presence: true, on: :dashboard
-  validates :commune_ids, array: true, on: :dashboard
+  before_validation :remove_empty_commune_ids
 
-  validate  :validate_voice, on: :dashboard
-  validate  :validate_commune_ids, on: :dashboard
+  validates :status, presence: true
+  validates :commune_ids, presence: true
+
+  validate  :validate_voice
 
   include AASM
 
@@ -69,31 +74,19 @@ class Callout < ApplicationRecord
     end
   end
 
-  def title
-    metadata["title"] || "Calout #{id}"
-  end
-
   private
 
-  def validate_commune_ids
-    if commune_ids.blank? || commune_ids.reject!(&:empty?).blank?
-      errors.add(:commune_ids, :blank)
-    else
-      commune_ids.each do |commune_id|
-        next if commune_id =~ /^#{province_id}/
-        errors.add(:commune_ids)
-      end
-    end
+  def remove_empty_commune_ids
+    self.commune_ids = Array(commune_ids).reject(&:blank?)
   end
 
   # https://github.com/rails/rails/issues/31656
-  def validate_voice
+  def validate_voice    
     if voice.attached?
-      errors.add(:voice, :audio_type) unless voice.blob.audio?
+      errors.add(:voice, :audio_type) unless voice.blob.content_type.in?(AUDIO_CONTENT_TYPES)
       errors.add(:voice, :audio_size) if voice.blob.byte_size.bytes > 5.megabytes
     else
       errors.add(:voice, :blank)
     end
-    voice.purge_later if errors[:voice].present?
   end
 end

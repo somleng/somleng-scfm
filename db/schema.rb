@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_05_04_084433) do
+ActiveRecord::Schema.define(version: 2018_05_04_072914) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,11 +20,11 @@ ActiveRecord::Schema.define(version: 2018_05_04_084433) do
     t.jsonb "settings", default: {}, null: false
     t.string "twilio_account_sid"
     t.string "somleng_account_sid"
+    t.string "twilio_auth_token"
+    t.string "somleng_auth_token"
     t.integer "permissions", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "twilio_auth_token"
-    t.string "somleng_auth_token"
     t.index ["somleng_account_sid"], name: "index_accounts_on_somleng_account_sid", unique: true
     t.index ["twilio_account_sid"], name: "index_accounts_on_twilio_account_sid", unique: true
   end

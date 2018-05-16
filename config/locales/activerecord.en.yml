@@ -5,12 +5,16 @@ en:
         token: "API Key"
       contact:
         msisdn: "Phone Number"
+      callout:
+        voice: "Voice file"
       user:
-        last_sign_in_at: "Last Signed In"
+        location_ids: "Provinces"
+    models:
+      batch_operation/callout_population: "Callout Population"
   activemodel:
     attributes:
-      metadata_form:
-        attr_key: "Key"
-        attr_value: "Value"
+      key_value_field:
+        key: "Key"
+        value: "Value"
     models:
       event/base: "Event"

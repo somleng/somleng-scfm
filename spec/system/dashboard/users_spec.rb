@@ -1,8 +1,6 @@
 require "rails_helper"
 
 RSpec.describe "Users" do
-  let(:admin) { create(:admin) }
-
   context "when a user is not an admin tries to users page" do
     let(:user) { create(:user) }
 
@@ -21,58 +19,96 @@ RSpec.describe "Users" do
     different_user = create(:user)
 
     sign_in(user)
-
     visit dashboard_users_path
 
     within("#button_toolbar") do
       expect(page).to have_link_to_action(
         :new, key: :user_invitations, href: new_user_invitation_path
       )
+      expect(page).to have_link_to_action(:index, key: :users)
     end
 
-    within("#users") do
+    within("#resources") do
       expect(page).to have_content("#")
-      expect(page).to have_content(user.id)
-      expect(page).to have_content(other_user.id)
+
+      expect(page).to have_link(
+        other_user.id,
+        href: dashboard_user_path(other_user)
+      )
+
       expect(page).to have_content("Email")
       expect(page).to have_content(user.email)
       expect(page).to have_content(other_user.email)
       expect(page).to have_no_content(different_user.email)
-      expect(page).to have_content("Last Signed In")
+      expect(page).to have_content("Last sign in at")
+      expect(page).to have_content("Invitation accepted at")
     end
   end
 
-  describe "show user detail page" do
-    it "click delete user" do
-      user = create(:user, account: admin.account)
+  it "can show a user" do
+    user = create(:admin)
 
-      sign_in(admin)
-      visit dashboard_user_path(user)
+    sign_in(user)
+    visit dashboard_user_path(user)
 
-      click_button "Delete"
-
-      expect(page).to have_text("User was successfully destroyed.")
+    within("#button_toolbar") do
+      expect(page).to have_link_to_action(
+        :edit,
+        href: edit_dashboard_user_path(user)
+      )
     end
 
-    it "can update user information", :js do
-      user = create(:user, account: admin.account)
-
-      sign_in(admin)
-      visit dashboard_user_path(user)
-
-      edit_user(roles: "Admin", location: "Banteay Meanchey")
-      user.reload
-
-      expect(page).to have_text("User was successfully updated.")
-      expect(user.roles?(:admin)).to eq true
-      expect(user.location_ids).to include_location("Banteay Meanchey")
+    within("#user") do
+      expect(page).to have_content("#")
+      expect(page).to have_content(user.id)
+      expect(page).to have_content("Email")
+      expect(page).to have_content(user.email)
+      expect(page).to have_content("Created at")
+      expect(page).to have_content("Last sign in at")
+      expect(page).to have_content("Invitation accepted at")
     end
   end
 
-  def edit_user(options = {})
-    click_button "Edit"
-    choose options[:roles]
-    select_selectize("#locations", options[:location])
-    click_button("Update User")
+  it "can update a user", :js do
+    user = create(:admin)
+    other_user = create(:user, account: user.account)
+
+    sign_in(user)
+    visit edit_dashboard_user_path(other_user)
+
+    within("#button_toolbar") do
+      expect(page).to have_link_to_action(
+        :edit,
+        key: :users,
+        href: edit_dashboard_user_path(other_user)
+      )
+    end
+
+    expect(page).to have_link_to_action(:cancel)
+
+    choose "Admin"
+    select_selectize("#locations", "Banteay Meanchey")
+    click_action_button(:update, key: :users)
+
+    other_user.reload
+    expect(current_path).to eq(dashboard_user_path(other_user))
+    expect(page).to have_text("User was successfully updated.")
+    expect(other_user.roles?(:admin)).to eq true
+    expect(other_user.location_ids).to include_location("Banteay Meanchey")
+  end
+
+  it "can delete a user" do
+    user = create(:admin)
+    other_user = create(:user, account: user.account)
+
+    sign_in(user)
+    visit dashboard_user_path(other_user)
+
+    within("#button_toolbar") do
+      click_action_button(:delete, type: :link)
+    end
+
+    expect(current_path).to eq(dashboard_users_path)
+    expect(page).to have_text("User was successfully destroyed.")
   end
 end

@@ -1,16 +1,14 @@
-= simple_form_for([:dashboard, @callout]) do |f|
-  .card
-    .card-body
-      .form-group
-        = f.input :voice, as: :file, input_html: { direct_upload: true, accept: "audio/mpeg, audio/wav" },  label: Contact.human_attribute_name(:voice)
-
+.card
+  .card-body
+    = simple_form_for([:dashboard, resource]) do |f|
+      = f.input :voice, as: :file, input_html: { direct_upload: true, accept: Callout::AUDIO_CONTENT_TYPES.join(", ") }
       #province
-        = f.input :province_id, collection: [], prompt: 'Select a province', input_html: { class: 'js-select-province', data: { default_value: f.object.province_id.to_s, province_url: pumi.provinces_url, pumi_district_collection_url: pumi.districts_url, pumi_commune_collection_url: pumi.communes_url }}, required: true, label: Contact.human_attribute_name(:province_id)
+        = f.input :province_id, collection: [], prompt: true, required: true,
+                  input_html: { class: 'js-select-province', data: { default_value: f.object.province_id.to_s, province_url: pumi.provinces_url, pumi_district_collection_url: pumi.districts_url, pumi_commune_collection_url: pumi.communes_url }}
 
       #communes
-        = f.input :commune_ids, collection: [], input_html: { class: 'js-select-communes', style: "width: 100%", multiple: 'multiple', data: { default_value: f.object.commune_ids } }, required: true, include_blank: false, label: Contact.human_attribute_name(:commune_ids)
-
-  %br
-  .form-group.actions
-    = f.button :submit, class: 'btn btn-primary'
-    = link_to(translate(:"titles.actions.cancel"), :back, class: 'btn btn-outline-dark')
+        = f.input :commune_ids, collection: [], required: true, include_blank: false,
+                  input_html: { class: 'js-select-communes', style: "width: 100%", multiple: 'multiple', data: { default_value: f.object.commune_ids } }
+      .form-group.actions
+        = f.button :submit, class: 'btn btn-primary'
+        = link_to(translate(:"titles.actions.cancel"), :back, class: 'btn btn-outline-dark')

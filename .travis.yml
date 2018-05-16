@@ -10,6 +10,7 @@ env:
   global:
     - AWS_REGION=ap-southeast-1
     - PGPORT=5433
+    - CC_TEST_REPORTER_ID=41e826dd9951b8e8d9fb24d346d4b4b01c14d2c682569a782e24626018b58a08
     - secure: "QghhtS6GvcHJLTjWGeYySi1OWL48akqtqhGls8pv6tdYeMm6WEzGAlVwNOX9ngZuV9JswahFFk4Jik9DsMs63patsMhuSG1+g78wexVDzeGcEu27m3n8oTklh5QEZmmaxRMXjpFB/3A7C3xhDfNns3qr1MM2388m0HA9YEveGd5km5QHKb3ZB5Sn9jdGX8vVgT3KY1EzrNhgWywkx0aaqNWGXe9TF5XxqsxAfkYK3Q/9En9FKQGv4GAeyZoc6tMsRtGS0DCEtd2F6UiYKZ109bBm6zSzN32TlFatS33KmvMTU0YghyXwm1XT17R5OkZcjvM5K48Ckkqkx2V7boebrl2ikAvZDaSkyi+EChsHCW5rCn50cH3o8agI9KYwcfNyMojyPWJ6Plq/b622A6YAByAZ2Ggj2VncIElXAT5HPJpemyEVgdJASdlzBj4BmkbLxSZlv5TCGzfJUEtRi9txmyyAvd/3nftMpzsk/gUQwzj4zz42TOCtSch26sNTwzfH+1W33Gh+XnPlLDnMorah3tHEysMqE0B5lHBnqnibuYZXZ8RVyc0TnvLg1svoCuw5PL4OiN6Xj1oFjrUP/4qSlhAOUB4KyUzDM6no44/+g6Szl/jj7YcyUY6qEwYbd9PdpiVoKvuovbXaGDFlzG4dmTa1KgCzYtzIMGT9Pvc7jws="
 before_install:
   - wget http://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip
@@ -17,9 +18,14 @@ before_install:
   - rm chromedriver_linux64.zip
   - sudo mv -f chromedriver /usr/local/bin/
   - sudo chmod +x /usr/local/bin/chromedriver
+  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+  - chmod +x ./cc-test-reporter
 before_script:
   - google-chrome-stable --headless --disable-gpu --no-sandbox
   - psql -c 'create database somleng_scfm_test;' -U travis
+  - ./cc-test-reporter before-build
+after_success:
+  - ./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT
 deploy:
   - provider: elasticbeanstalk
     region: ap-southeast-1

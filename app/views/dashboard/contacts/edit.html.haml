@@ -1,4 +1,4 @@
-.col-md-6
-  %h5#page_title.card-title
-    = translate(:"titles.contacts.edit")
-  = render "form"
+.col
+  #button_toolbar.btn-toolbar.mb-2{ role: 'toolbar' }
+    = render("shared/disabled_button", url: edit_dashboard_contact_path(resource), button_text: translate(:"titles.contacts.edit"), count: resource.id, button_class: "btn-outline-primary", badge_class: "badge-primary")
+  = render("form", action: :update)

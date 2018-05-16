@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "Batch Operations" do
   include SomlengScfm::SpecHelpers::RequestHelpers
@@ -6,9 +6,9 @@ RSpec.describe "Batch Operations" do
   let(:account_traits) { {} }
   let(:account_attributes) { {} }
   let(:account) { create(:account, *account_traits.keys, account_attributes) }
-  let(:access_token_model) { create(:access_token, :resource_owner => account) }
+  let(:access_token_model) { create(:access_token, resource_owner: account) }
 
-  let(:factory_attributes) { { :account => account } }
+  let(:factory_attributes) { { account: account } }
   let(:batch_operation) { create(:batch_operation, factory_attributes) }
 
   let(:body) { {} }
@@ -28,23 +28,23 @@ RSpec.describe "Batch Operations" do
       let(:method) { :post }
       let(:asserted_type) { type }
 
-      let(:body) {
+      let(:body) do
         {
-          :metadata => metadata,
-          :parameters => parameters,
-          :type => type
+          metadata: metadata,
+          parameters: parameters,
+          type: type
         }
-      }
+      end
 
       context "successful requests" do
         let(:asserted_created_batch_operation) { BatchOperation::Base.last }
         let(:parsed_response) { JSON.parse(response.body) }
 
-        let(:parameters) {
+        let(:parameters) do
           {
             "skip_validate_preview_presence" => "1"
           }
-        }
+        end
 
         def assert_created!
           expect(response.code).to eq("201")
@@ -96,13 +96,13 @@ RSpec.describe "Batch Operations" do
   end
 
   describe "'/api/callout/:callout_id/batch_operations'" do
-    let(:callout) { create(:callout, :account => account) }
+    let(:callout) { create(:callout, account: account) }
     let(:url) { api_callout_batch_operations_path(callout) }
 
     describe "POST" do
       let(:method) { :post }
       let(:type) { "BatchOperation::CalloutPopulation" }
-      let(:body) { { :type => type } }
+      let(:body) { { type: type } }
 
       def assert_created!
         expect(response.code).to eq("201")
@@ -114,19 +114,19 @@ RSpec.describe "Batch Operations" do
 
     describe "GET" do
       let(:method) { :get }
-      let(:callout_population) {
+      let(:callout_population) do
         create(
           :callout_population,
-          :account => account,
-          :callout => callout
+          account: account,
+          callout: callout
         )
-      }
+      end
 
       let(:parsed_response) { JSON.parse(response.body) }
 
       def setup_scenario
         callout_population
-        create(:callout_population, :account => account)
+        create(:callout_population, account: account)
         super
       end
 
@@ -158,13 +158,13 @@ RSpec.describe "Batch Operations" do
       let(:factory_attributes) { super().merge("metadata" => existing_metadata) }
       let(:method) { :patch }
 
-      let(:body) {
+      let(:body) do
         {
-          :metadata => metadata,
-          :metadata_merge_mode => "replace",
-          :parameters => parameters
+          metadata: metadata,
+          metadata_merge_mode: "replace",
+          parameters: parameters
         }
-      }
+      end
 
       def assert_update!
         expect(response.code).to eq("204")
@@ -189,7 +189,7 @@ RSpec.describe "Batch Operations" do
 
       context "invalid request" do
         def setup_scenario
-          create(:callout_participation, :callout_population => batch_operation)
+          create(:callout_participation, callout_population: batch_operation)
           super
         end
 

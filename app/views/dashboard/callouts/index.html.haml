@@ -1,29 +1,9 @@
-.col-12.col-md-8
-  %h5#page_title.card-title
-    = translate(:"titles.callouts.index")
+- content_for(:button_toolbar) do
+  = render("shared/disabled_button", url: dashboard_callouts_path, button_text: translate(:"titles.callouts.index"), count: resources.running.count)
+  .btn-group.mr-2{ role: 'group' }
+    = link_to(translate(:"titles.callouts.new"), new_dashboard_callout_path, class: 'btn btn-outline-success')
 
-.col-12
-  #button_toolbar.btn-toolbar{ role: 'toolbar' }
-    .btn-group.mr-2{ role: 'group' }
-      = link_to(translate(:"titles.callouts.new"), new_dashboard_callout_path, class: 'btn btn-outline-dark')
-  %br
-.col-12
-  %table#callouts.table.table-hover.table-bordered
-    %thead.thead-light
-      %tr
-        %th #
-        %th
-          = Callout.human_attribute_name(:status)
-        %th
-          = Callout.human_attribute_name(:created_at)
-    %tbody
-      - @callouts.each_with_index do |callout, i|
-        = content_tag_for(:tr, callout) do
-          %td
-            = link_to(callout.id, dashboard_callout_path(callout))
-          %td
-            = callout.status.humanize
-          %td
-            = callout.created_at
-.col-12
-  = paginate @callouts
+- content_for(:resources_table) do
+  = render("shared/resources_table", resource_class: Callout, columns: [:status, :created_at])
+
+= render("shared/index")

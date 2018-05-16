@@ -1,0 +1,7 @@
+.col-12
+  #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
+    = yield(:button_toolbar)
+.col-12
+  = yield(:resources_table)
+.col-12
+  = paginate(resources)

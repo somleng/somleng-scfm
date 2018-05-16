@@ -12,11 +12,27 @@ Rails.application.routes.draw do
 
   namespace "dashboard" do
     root to: "callouts#index"
-    resources :users, only: %i[index show edit update destroy]
-    resources :access_tokens, only: :index
+    resources :users, except: %i[new create]
+    resources :access_tokens, only: %i[index create destroy]
     resources :contacts
     resources :callouts do
       resources :callout_events, only: :create
+      resources :batch_operations, only: %i[index destroy]
+
+      namespace :batch_operation do
+        resources :callout_populations, only: %i[new create]
+      end
+    end
+
+    namespace :batch_operation do
+      resources :callout_populations, only: %i[edit update]
+    end
+
+    resources :batch_operations, only: %i[index show destroy] do
+      namespace :preview, module: "batch_operation_preview" do
+        resources :contacts, only: :index
+      end
+      resources :batch_operation_events, only: :create
     end
   end
 

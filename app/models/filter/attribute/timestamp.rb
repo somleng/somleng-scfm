@@ -35,10 +35,10 @@ class Filter::Attribute::Timestamp < Filter::Attribute::Base
 
   def filter_query_mappings
     {
-      :before => :lt,
-      :or_before => :lteq,
-      :after => :gt,
-      :or_after => :gteq
+      before: :lt,
+      or_before: :lteq,
+      after: :gt,
+      or_after: :gteq
     }
   end
 
@@ -47,6 +47,8 @@ class Filter::Attribute::Timestamp < Filter::Attribute::Base
   end
 
   def parse_filter_value(raw_value)
-    raw_value && DateTime.parse(raw_value) rescue nil
+    raw_value && DateTime.parse(raw_value)
+  rescue StandardError
+    nil
   end
 end

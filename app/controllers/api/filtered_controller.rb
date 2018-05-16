@@ -34,13 +34,12 @@ class Api::FilteredController < Api::AuthenticatedController
   end
 
   def permitted_query_params
-    params.permit(:q => {})
+    params.permit(q: {})
   end
 
-  def filter_class
-  end
+  def filter_class; end
 
   def filter_options
-    {:association_chain => find_resources_association_chain}
+    { association_chain: find_resources_association_chain }
   end
 end

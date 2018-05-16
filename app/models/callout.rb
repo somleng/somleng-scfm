@@ -10,6 +10,9 @@ class Callout < ApplicationRecord
            class_name: "BatchOperation::Base",
            dependent: :restrict_with_error
 
+  has_many :callout_populations,
+           class_name: "BatchOperation::CalloutPopulation"
+
   has_many :phone_calls,
            through: :callout_participations
 

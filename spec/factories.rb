@@ -68,6 +68,9 @@ FactoryBot.define do
   factory :batch_operation_base, class: BatchOperation::Base do
     account
 
+    trait :preview do
+    end
+
     factory :callout_population, aliases: [:batch_operation], class: BatchOperation::CalloutPopulation do
       after(:build) do |callout_population|
         callout_population.callout ||= build(:callout, account: callout_population.account)

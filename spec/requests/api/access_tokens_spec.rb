@@ -1,11 +1,11 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "Access Tokens" do
   include SomlengScfm::SpecHelpers::RequestHelpers
   let(:account_traits) { {} }
   let(:account_attributes) { {} }
   let(:account) { create(:account, *account_traits.keys, account_attributes) }
-  let(:factory_attributes) { { :resource_owner => account } }
+  let(:factory_attributes) { { resource_owner: account } }
   let(:access_token_model) { create(:access_token, factory_attributes) }
 
   let(:body) { {} }
@@ -36,12 +36,12 @@ RSpec.describe "Access Tokens" do
       let(:method) { :post }
       let(:created_access_token) { AccessToken.last }
 
-      let(:body) {
+      let(:body) do
         {
-          :email => generate(:email),
-          :password => "secret123"
+          email: generate(:email),
+          password: "secret123"
         }
-      }
+      end
 
       def assert_create!
         expect(response.code).to eq("201")
@@ -50,11 +50,11 @@ RSpec.describe "Access Tokens" do
       end
 
       context "super admin account" do
-        let(:account_traits) { super().merge(:super_admin => nil) }
+        let(:account_traits) { super().merge(super_admin: nil) }
         let(:another_account) { create(:account) }
         let(:asserted_account) { another_account }
         let(:asserted_created_by) { account }
-        let(:body) { super().merge(:account_id => another_account.id) }
+        let(:body) { super().merge(account_id: another_account.id) }
 
         it { assert_create! }
       end
@@ -84,13 +84,13 @@ RSpec.describe "Access Tokens" do
     describe "PATCH" do
       let(:method) { :patch }
       let(:metadata) { { "foo" => "bar" } }
-      let(:factory_attributes) { super().merge("metadata" => {"bar" => "baz" }) }
-      let(:body) {
+      let(:factory_attributes) { super().merge("metadata" => { "bar" => "baz" }) }
+      let(:body) do
         {
-          :metadata => metadata,
-          :metadata_merge_mode => "replace"
+          metadata: metadata,
+          metadata_merge_mode: "replace"
         }
-      }
+      end
 
       def assert_update!
         expect(response.code).to eq("204")
@@ -113,7 +113,7 @@ RSpec.describe "Access Tokens" do
       end
 
       context "invalid request" do
-        let(:factory_attributes) { { :created_by => create(:account) } }
+        let(:factory_attributes) { { created_by: create(:account) } }
 
         def assert_invalid!
           expect(response.code).to eq("422")
@@ -125,13 +125,13 @@ RSpec.describe "Access Tokens" do
   end
 
   describe "nested indexes" do
-    let(:account_traits) { super().merge(:super_admin => nil) }
+    let(:account_traits) { super().merge(super_admin: nil) }
     let(:method) { :get }
     let(:another_account) { create(:account) }
-    let(:factory_attributes) { super().merge(:resource_owner => another_account) }
+    let(:factory_attributes) { super().merge(resource_owner: another_account) }
 
     def setup_scenario
-      create(:access_token, :resource_owner => account)
+      create(:access_token, resource_owner: account)
       super
     end
 

@@ -1,4 +1,4 @@
-.col-12.col-md-8
-  %h5#page_title.card-title
-    = translate(:"titles.callouts.edit")
+.col
+  #button_toolbar.btn-toolbar.mb-2{ role: 'toolbar' }
+    = render("shared/disabled_button", url: edit_dashboard_callout_path, button_text: translate(:"titles.callouts.edit"), count: resource.id, button_class: "btn-outline-primary", badge_class: "badge-primary")
   = render "form"

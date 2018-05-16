@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Callout do
   let(:factory) { :callout }
@@ -10,6 +10,7 @@ RSpec.describe Callout do
       is_expected.to belong_to(:account)
       is_expected.to have_many(:callout_participations).dependent(:restrict_with_error)
       is_expected.to have_many(:batch_operations).dependent(:restrict_with_error)
+      is_expected.to have_many(:callout_populations)
       is_expected.to have_many(:contacts)
       is_expected.to have_many(:phone_calls)
       is_expected.to have_many(:remote_phone_call_events)
@@ -30,7 +31,7 @@ RSpec.describe Callout do
     subject { create(factory, factory_attributes) }
 
     def factory_attributes
-      {:status => current_status}
+      { status: current_status }
     end
 
     def assert_transitions!
@@ -57,7 +58,7 @@ RSpec.describe Callout do
       let(:asserted_new_status) { :running }
       let(:event) { :resume }
 
-      [:paused, :stopped].each do |current_status|
+      %i[paused stopped].each do |current_status|
         context "status: '#{current_status}'" do
           let(:current_status) { current_status }
           it { assert_transitions! }
@@ -69,7 +70,7 @@ RSpec.describe Callout do
       let(:asserted_new_status) { :stopped }
       let(:event) { :stop }
 
-      [:running, :paused].each do |current_status|
+      %i[running paused].each do |current_status|
         context "status: '#{current_status}'" do
           let(:current_status) { current_status }
           it { assert_transitions! }

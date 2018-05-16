@@ -1,6 +1,7 @@
-= simple_form_for [:dashboard, @contact] do |f|
-  = f.input :msisdn, input_html: { autofocus: true }
-  %br
-  .form-group.actions
-    = f.button :submit, class: 'btn btn-primary'
-    = link_to(translate(:"titles.actions.cancel"), :back, class: 'btn btn-outline-dark')
+.card
+  .card-body
+    = simple_form_for [:dashboard, resource] do |f|
+      = f.input :msisdn, input_html: { autofocus: true }
+      .form-group.actions
+        = f.submit translate(:"titles.contacts.#{action}"), class: 'btn btn-primary'
+        = link_to(translate(:"titles.actions.cancel"), :back, class: 'btn btn-outline-dark')

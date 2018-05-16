@@ -1,8 +1,8 @@
 class BatchOperation::PhoneCallQueueRemoteFetch < BatchOperation::PhoneCallEventOperation
   has_many :phone_calls,
-           :class_name => "PhoneCall",
-           :foreign_key => :queue_remote_fetch_batch_operation_id,
-           :dependent => :restrict_with_error
+           class_name: "PhoneCall",
+           foreign_key: :queue_remote_fetch_batch_operation_id,
+           dependent: :restrict_with_error
 
   private
 

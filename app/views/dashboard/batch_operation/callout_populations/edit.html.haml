@@ -1,4 +1,4 @@
 .col
   #button_toolbar.btn-toolbar.mb-2{ role: 'toolbar' }
-    = render("shared/disabled_button", url: edit_dashboard_batch_operation_callout_population_path, button_text: translate(:"titles.callout_populations.edit"), count: resource.id, button_class: "btn-outline-primary", badge_class: "btn-primary")
+    = render("shared/disabled_button", url: edit_dashboard_batch_operation_callout_population_path, button_text: translate(:"titles.callout_populations.edit"), button_class: "btn-outline-primary", badge_class: "btn-primary")
   = render("form", url: dashboard_batch_operation_callout_population_path(resource), action: :update)

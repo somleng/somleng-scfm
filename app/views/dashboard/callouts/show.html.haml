@@ -1,6 +1,6 @@
 .col-12
   #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
-    = render("shared/disabled_button", url: dashboard_callout_path(resource), button_text: resource.model_name.human, count: resource.id)
+    = render("shared/disabled_button", url: dashboard_callout_path(resource), button_text: resource.model_name.human)
     .btn-group.mr-2{ role: 'group' }
       = render("shared/button_with_count", url: dashboard_callout_batch_operations_path(resource), button_text: translate(:"titles.batch_operations.index"), count: resource.callout_populations.count)
     .btn-group.mr-2{ role: 'group' }

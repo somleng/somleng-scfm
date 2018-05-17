@@ -91,10 +91,18 @@ class Callout < ApplicationRecord
   # https://github.com/rails/rails/issues/31656
   def validate_voice
     if voice.attached?
-      errors.add(:voice, :audio_type) unless voice.blob.content_type.in?(AUDIO_CONTENT_TYPES)
-      errors.add(:voice, :audio_size) if voice.blob.byte_size.bytes > 10.megabytes
+      errors.add(:voice, :audio_type) unless audio_file?
+      errors.add(:voice, :audio_size) if file_too_big?
     else
       errors.add(:voice, :blank)
     end
+  end
+
+  def audio_file?
+    voice.blob.content_type.in?(AUDIO_CONTENT_TYPES)
+  end
+
+  def file_too_big?
+    voice.blob.byte_size.bytes > 10.megabytes
   end
 end

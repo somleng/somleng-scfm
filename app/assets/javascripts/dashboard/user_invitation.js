@@ -3,6 +3,6 @@ $(document).on('turbolinks:load', function () {
     return;
   }
 
-  dashboardUser = new DashboardUser();
-  dashboardUser.init();
+  pumiSelectize = new PumiSelectize('.js-pumi-selectize');
+  pumiSelectize.init();
 });

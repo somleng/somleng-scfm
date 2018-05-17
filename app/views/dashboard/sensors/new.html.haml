@@ -1,0 +1,4 @@
+.col-lg-10.col-xl-8
+  #button_toolbar.btn-toolbar.mb-2{ role: 'toolbar' }
+    = render("shared/disabled_button", url: new_dashboard_sensor_path, button_text: translate(:"titles.sensors.new"), button_class: "btn-outline-success")
+  = render "form"

@@ -1,0 +1,39 @@
+.col-12
+  #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
+    = render("shared/disabled_button", url: dashboard_sensor_path(resource), button_text: resource.model_name.human)
+    .btn-group.mr-2{ role: 'group' }
+      = link_to(translate(:"titles.actions.back"), dashboard_sensor_path(resource.sensor), class: 'btn btn-outline-dark')
+    .btn-group.mr-2{ role: 'group' }
+      = link_to(translate(:"titles.actions.edit"), edit_dashboard_sensor_rule_path(resource), class: 'btn btn-outline-primary')
+    .btn-group.mr-2{ role: 'group' }
+      = link_to(translate(:"titles.actions.delete"), dashboard_sensor_rule_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+.col-lg-10.col-xl-8
+  #sensor.card
+    .card-body
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right #
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.id
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = resource.class.human_attribute_name(:sensor)
+        %dd.col-sm-7.col-md-6
+          = link_to(resource.sensor.id, dashboard_sensor_path(resource.sensor))
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = resource.class.human_attribute_name(:level)
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.level
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = resource.class.human_attribute_name(:voice)
+        %dd.col-sm-7.col-md-6
+          = link_to resource.voice.blob.filename, url_for(resource.voice)
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = resource.class.human_attribute_name(:created_at)
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.created_at

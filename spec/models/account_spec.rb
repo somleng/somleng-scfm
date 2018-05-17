@@ -14,6 +14,8 @@ RSpec.describe Account do
       is_expected.to have_many(:phone_calls)
       is_expected.to have_many(:remote_phone_call_events)
       is_expected.to have_many(:access_tokens).dependent(:restrict_with_error)
+      is_expected.to have_many(:sensors)
+      is_expected.to have_many(:sensor_rules).through(:sensors)
     end
 
     it { assert_associations! }

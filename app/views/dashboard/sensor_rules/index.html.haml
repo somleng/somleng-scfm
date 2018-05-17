@@ -1,0 +1,11 @@
+- content_for(:button_toolbar) do
+  = render("shared/disabled_button", url: dashboard_sensor_sensor_rules_path, button_text: translate(:"titles.sensor_rules.index"), count: resources.count)
+  .btn-group.mr-2{ role: 'group' }
+    = link_to(translate(:"titles.actions.back"), dashboard_sensor_path(sensor), class: 'btn btn-outline-dark')
+  .btn-group.mr-2{ role: 'group' }
+    = link_to(translate(:"titles.sensor_rules.new"), new_dashboard_sensor_sensor_rule_path(sensor), class: 'btn btn-outline-success')
+
+- content_for(:resources_table) do
+  = render("shared/resources_table", resource_class: SensorRule, columns: [:level, :province, :created_at])
+
+= render("shared/index")

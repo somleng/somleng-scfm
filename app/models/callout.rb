@@ -36,7 +36,10 @@ class Callout < ApplicationRecord
   validates :status, presence: true
   validates :commune_ids, presence: true
 
-  validate  :validate_voice
+  validates :voice, file: {
+    presence: true, type: AUDIO_CONTENT_TYPES,
+    size: 10.megabytes
+  }
 
   delegate :id, :name_en, :name_km, to: :province, prefix: true, allow_nil: true
 
@@ -86,23 +89,5 @@ class Callout < ApplicationRecord
 
   def remove_empty_commune_ids
     self.commune_ids = Array(commune_ids).reject(&:blank?)
-  end
-
-  # https://github.com/rails/rails/issues/31656
-  def validate_voice
-    if voice.attached?
-      errors.add(:voice, :audio_type) unless audio_file?
-      errors.add(:voice, :audio_size) if file_too_big?
-    else
-      errors.add(:voice, :blank)
-    end
-  end
-
-  def audio_file?
-    voice.blob.content_type.in?(AUDIO_CONTENT_TYPES)
-  end
-
-  def file_too_big?
-    voice.blob.byte_size.bytes > 10.megabytes
   end
 end

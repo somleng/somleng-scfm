@@ -13,6 +13,7 @@ DashboardCallout = function () {
       valueField: 'id',
       preload: true,
       searchField: ['name_en', 'name_km'],
+      closeAfterSelect: true,
       render: {
         item: renderItem,
         option: renderOption,
@@ -45,7 +46,7 @@ DashboardCallout = function () {
       optgroupField: 'district_id',
       optgroupValueField: 'id',
       searchField: ['name_en', 'name_km'],
-      closeAfterSelect: false,
+      closeAfterSelect: true,
       render: {
         optgroup_header: renderOptGroupHeader,
         item: renderItem,

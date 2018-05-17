@@ -10,6 +10,7 @@ PumiSelectize = function (element) {
       valueField: 'id',
       searchField: ['name_en', 'name_km'],
       preload: true,
+      closeAfterSelect: true,
       render: {
         item: renderItem,
         option: renderOption,

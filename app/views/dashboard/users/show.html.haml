@@ -48,4 +48,4 @@
           = User.human_attribute_name(:location_ids)
         %dd.col-sm-7.col-md-6
           %code
-            = province_names(resource.location_ids)
+            = location_names(resource.location_ids, 'province')

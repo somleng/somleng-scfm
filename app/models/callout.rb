@@ -24,7 +24,8 @@ class Callout < ApplicationRecord
   has_many :contacts,
            through: :callout_participations
 
-  store_accessor :metadata, :province_id, :commune_ids
+  store_accessor :metadata, :commune_ids
+  attr_accessor :province_id
 
   has_one_attached :voice
 
@@ -36,6 +37,8 @@ class Callout < ApplicationRecord
   validates :commune_ids, presence: true
 
   validate  :validate_voice
+
+  delegate :id, :name_en, :name_km, to: :province, prefix: true, allow_nil: true
 
   include AASM
 
@@ -72,6 +75,11 @@ class Callout < ApplicationRecord
         to: :stopped
       )
     end
+  end
+
+  def province
+    return if commune_ids.blank?
+    Pumi::Province.find_by_id(commune_ids.first[0..1])
   end
 
   private

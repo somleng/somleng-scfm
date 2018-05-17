@@ -43,7 +43,7 @@ RSpec.describe Callout do
         expect(callout.errors[:voice]).to be_present
       end
 
-      it "file cannot be bigger than 5MB" do
+      it "file cannot be bigger than 10MB" do
         callout = build(:callout, voice_file: "big_file.mp3")
 
         callout.valid?

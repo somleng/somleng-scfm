@@ -26,6 +26,8 @@ RSpec.describe "Callouts", :aggregate_failures do
       )
       expect(page).to have_content("Status")
       expect(page).to have_content("Initialized")
+      expect(page).to have_content(callout.province_name_en)
+      expect(page).to have_content(callout.province_name_km)
     end
   end
 
@@ -69,6 +71,8 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     expect(page).to have_link_to_action(:cancel)
 
+    # wait for selectize default selected
+    sleep 1
     fill_in_callout_information
     click_action_button(:update, key: :callouts)
 

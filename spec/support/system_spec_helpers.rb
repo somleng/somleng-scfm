@@ -45,9 +45,8 @@ module SystemSpecHelpers
   # http://climber2002.github.io/blog/2014/09/22/capybara-integration-tests-with-jquery-selectize/
   def select_selectize(id, text)
     within(id) do
-      first("div.selectize-input").click
+      find("div.selectize-input").click
       find("div[data-selectable]", text: text).click
-      execute_script("document.activeElement.blur()")
     end
   end
 

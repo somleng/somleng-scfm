@@ -2,15 +2,11 @@
   .card-body
     = simple_form_for [:dashboard, resource] do |f|
       = f.input :msisdn, input_html: { autofocus: true }
-      #province
-        = f.hidden_field :province_id, class: 'pumi-default-value'
-        = f.input :province_id, collection: [], require: true, prompt: true, input_html: { data: { pumi_select_target: "district", pumi_select_collection_url: pumi.provinces_path, pumi_select_collection_label_method: "name_en", pumi_select_collection_value_method: "id", pumi_select_populate_on_load: true, pumi_select_has_hidden_value: true }}
-      #district
-        = f.hidden_field :district_id, class: 'pumi-default-value'
-        = f.input :district_id, collection: [], require: true, prompt: true, input_html: { data: { pumi_select_id: "district", pumi_select_target: "commune", pumi_select_collection_url: pumi.districts_path(province_id: "FILTER"), pumi_select_collection_url_filter_interpolation_key: "FILTER", pumi_select_collection_label_method: "name_en", pumi_select_collection_value_method: "id", pumi_select_disabled_target: "#district", pumi_select_has_hidden_value: true }}
-      #commune
-        = f.hidden_field :commune_id, class: 'pumi-default-value'
-        = f.input :commune_id, collection: [], require: true, prompt: true, input_html: { data: { pumi_select_id: "commune", pumi_select_target: "village", pumi_select_collection_url: pumi.communes_path(district_id: "FILTER"), pumi_select_collection_url_filter_interpolation_key: "FILTER", pumi_select_collection_label_method: "name_en", pumi_select_collection_value_method: "id", pumi_select_disabled_target: "#commune", pumi_select_has_hidden_value: true }}
+      = f.input :province_id, collection: [], wrapper_html: { id: 'province' }, input_html: { class: 'js-province-selectize', data: { default_value: f.object.province_id, pumi_url: pumi.provinces_url, preload: true }}
+
+      = f.input :district_id, collection: [], wrapper_html: { id: 'district' }, input_html: { class: 'js-district-selectize', data: { default_value: f.object.district_id, pumi_url: pumi.districts_url(province_id: "FILTER"), preload: true }}
+
+      = f.input :commune_id, collection: [], wrapper_html: { id: 'commune' }, input_html: { class: 'js-cummune-selectize', data: { default_value: f.object.commune_id, pumi_url: pumi.communes_url(district_id: "FILTER"), preload: true }}
       .form-group.actions
         = f.submit translate(:"titles.contacts.#{action}"), class: 'btn btn-primary'
         = link_to(translate(:"titles.actions.cancel"), :back, class: 'btn btn-outline-dark')

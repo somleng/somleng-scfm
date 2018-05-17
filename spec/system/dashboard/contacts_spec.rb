@@ -56,7 +56,7 @@ RSpec.describe "Contacts", :aggregate_failures do
     expect(new_contact.msisdn).to match(phone_number)
   end
 
-  xit "can update a contact", :js do
+  it "can update a contact", :js do
     user = create(:admin)
     contact = create(
       :contact,
@@ -126,8 +126,8 @@ RSpec.describe "Contacts", :aggregate_failures do
 
   def fill_in_contact_information(phone_number)
     fill_in("Phone Number", with: phone_number)
-    select 'Battambang', from: 'Province'
-    select 'Banan', from: 'District'
-    select 'Kantueu Pir', from: 'Commune'
+    select_selectize("#province", "Battambang")
+    select_selectize("#district", "Banan")
+    select_selectize("#commune", "Kantueu Pir")
   end
 end

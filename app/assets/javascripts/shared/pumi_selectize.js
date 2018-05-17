@@ -1,24 +1,30 @@
 PumiSelectize = function (element) {
-  _this = this;
-  _this.$selectizer = $(element);
-  _this.defaultValue = _this.$selectizer.data('defaultValue');
-  _this.dataUrl = _this.$selectizer.data('pumiUrl');
-  _this.preload = _this.$selectizer.data('preload');
+  loadData = function (selector, url) {
+    $.when(
+      $.getJSON(url, function (data) {
+        $(selector)[0].selectize.clearOptions();
+        $(selector)[0].selectize.addOption(data);
+      })
+    ).done(function (data) {
+      if ($(selector).data('defaultValue') && data.length) {
+        $(selector)[0].selectize.setValue($(selector).data('defaultValue'));
+        $(selector).data('defaultValue', null);
+      }
+    });
+  };
 
   initSelect = function () {
-    _this.$selectizer.selectize({
+    $(element).selectize({
       valueField: 'id',
       searchField: ['name_en', 'name_km'],
-      preload: true,
       closeAfterSelect: true,
       render: {
         item: renderItem,
         option: renderOption,
       },
-      load: loadData,
     });
 
-    _this.selectizer = _this.$selectizer[0].selectize;
+    loadData(element, $(element).data('pumiUrl'));
   };
 
   renderItem = function (item, escape) {
@@ -35,19 +41,6 @@ PumiSelectize = function (element) {
         '<span class="label">' + escape(label) + '</span></br>' +
         (caption ? '<span class="caption">' + escape(caption) + '</span>' : '') +
     '</div>';
-  };
-
-  loadData = function (query, callback) {
-    $.when(
-      $.getJSON(_this.dataUrl, function (data) {
-        callback(data);
-      })
-    ).done(function (data) {
-      if (_this.defaultValue && data.length) {
-        _this.selectizer.setValue(_this.defaultValue);
-        _this.defaultValue = null;
-      }
-    });
   };
 
   this.init = function () {

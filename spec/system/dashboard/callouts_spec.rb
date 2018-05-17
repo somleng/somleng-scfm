@@ -109,12 +109,6 @@ RSpec.describe "Callouts", :aggregate_failures do
         :edit,
         href: edit_dashboard_callout_path(callout)
       )
-
-      expect(page).to have_link_to_action(
-        :index,
-        key: :batch_operations,
-        href: dashboard_callout_batch_operations_path(callout)
-      )
     end
 
     within("#callout") do

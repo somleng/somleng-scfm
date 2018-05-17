@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "User Invitations" do
-  it "can send an invitation" do
+  it "can send an invitation", :js do
     user = create(:admin)
     sign_in(user)
     visit new_user_invitation_path
@@ -15,7 +15,7 @@ RSpec.describe "User Invitations" do
 
     fill_in "Email", with: "bopha@somleng.com"
     choose "Admin"
-    select "Banteay Meanchey", from: "Provinces"
+    select_selectize("#locations", "Banteay Meanchey")
     clear_enqueued_jobs
 
     perform_enqueued_jobs do

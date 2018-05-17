@@ -10,8 +10,12 @@ module DashboardHelper
     end
   end
 
-  def province_names(ids)
-    provinces = Pumi::Province.all.select { |p| Array(ids).include? p.id }
-    provinces.map(&:name_en).join(', ')
+  def location_names(ids, type)
+    locations = "pumi/#{type}".camelize.constantize.all.map do |location|
+      next if Array(ids).exclude? location.id
+      "#{location.name_en} (#{location.name_km})"
+    end
+
+    Array(locations).reject(&:blank?).join(", ")
   end
 end

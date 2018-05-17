@@ -1,4 +1,6 @@
 @import 'bootstrap';
-@import 'dashboard/base';
 @import 'devise_page';
-@import 'component-chosen.min';
+@import 'dashboard/base';
+@import 'shared/direct_upload';
+@import 'selectize';
+@import 'selectize.bootstrap3';

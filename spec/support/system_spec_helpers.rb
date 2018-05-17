@@ -32,6 +32,28 @@ module SystemSpecHelpers
     )
   end
 
+  def have_record(record)
+    name = record.class.name.downcase
+    have_selector("##{name}_#{record.id}")
+  end
+
+  def include_location(name)
+    location = Pumi::Province.where(name_en: name).first
+    include(location.id)
+  end
+
+  # http://climber2002.github.io/blog/2014/09/22/capybara-integration-tests-with-jquery-selectize/
+  def select_selectize(id, text)
+    within(id) do
+      find("div.selectize-input").click
+      find("div[data-selectable]", text: text).click
+    end
+  end
+
+  def remove_uploaded_files
+    FileUtils.rm_rf("#{Rails.root}/tmp/storage_test")
+  end
+
   def have_content_tag_for(model, model_name: nil)
     have_selector("##{model_name || model.class.to_s.underscore.tr('/', '_')}_#{model.id}")
   end

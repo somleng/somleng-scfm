@@ -4,4 +4,7 @@
   %td
     = callout.status.humanize
   %td
+    %code
+      = location_names(callout.province_id, 'province')
+  %td
     = callout.created_at

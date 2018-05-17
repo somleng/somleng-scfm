@@ -22,6 +22,25 @@
             = resource.msisdn
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
+          = Contact.human_attribute_name(:province_id)
+        %dd.col-sm-7.col-md-6
+          %code
+            = location_names(resource.province_id, 'province')
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Contact.human_attribute_name(:district_id)
+        %dd.col-sm-7.col-md-6
+          %code
+            = location_names(resource.district_id, 'district')
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Contact.human_attribute_name(:commune_id)
+        %dd.col-sm-7.col-md-6
+          %code
+            = location_names(resource.commune_id, 'commune')
+
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
           = Contact.human_attribute_name(:created_at)
         %dd.col-sm-7.col-md-6
           %code

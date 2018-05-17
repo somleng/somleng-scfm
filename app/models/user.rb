@@ -12,10 +12,17 @@ class User < ApplicationRecord
 
   bitmask :roles, :as => [:member, :admin], null: false
 
+  before_validation :remove_empty_location_ids
+
   validates :roles, presence: true
-  validates :location_ids, array: true, if: -> { location_ids.present? }
 
   def is_admin?
     roles?(:admin)
+  end
+
+  private
+
+  def remove_empty_location_ids
+    self.location_ids = Array(location_ids).reject(&:blank?).presence
   end
 end

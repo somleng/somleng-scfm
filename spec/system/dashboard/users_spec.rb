@@ -69,7 +69,7 @@ RSpec.describe "Users" do
     end
   end
 
-  it "can update a user" do
+  it "can update a user", :js do
     user = create(:admin)
     other_user = create(:user, account: user.account)
 
@@ -87,7 +87,7 @@ RSpec.describe "Users" do
     expect(page).to have_link_to_action(:cancel)
 
     choose "Admin"
-    select "Banteay Meanchey", from: "Locations"
+    select_selectize("#locations", "Banteay Meanchey")
     click_action_button(:update, key: :users)
 
     other_user.reload

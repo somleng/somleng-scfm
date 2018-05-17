@@ -25,11 +25,12 @@ GIT
       activerecord (>= 3.1)
 
 GIT
-  remote: https://github.com/tawan/active-elastic-job.git
-  revision: 9c748eae1077a90a0f803a02cc7b08d4f12bd3d3
+  remote: https://github.com/samnang/active-elastic-job.git
+  revision: db55463b46e9ea0a66c33d5e81d602fda9289243
+  branch: upgrade_to_aws_sdk_3
   specs:
-    active_elastic_job (2.0.0)
-      aws-sdk (~> 2)
+    active_elastic_job (2.0.1)
+      aws-sdk-sqs (~> 1)
       rails (>= 4.2)
 
 GIT
@@ -89,13 +90,21 @@ GEM
     arel (9.0.0)
     autoprefixer-rails (8.0.0)
       execjs
-    aws-sdk (2.10.81)
-      aws-sdk-resources (= 2.10.81)
-    aws-sdk-core (2.10.81)
+    aws-partitions (1.84.0)
+    aws-sdk-core (3.20.2)
+      aws-partitions (~> 1.0)
       aws-sigv4 (~> 1.0)
       jmespath (~> 1.0)
-    aws-sdk-resources (2.10.81)
-      aws-sdk-core (= 2.10.81)
+    aws-sdk-kms (1.5.0)
+      aws-sdk-core (~> 3)
+      aws-sigv4 (~> 1.0)
+    aws-sdk-s3 (1.10.0)
+      aws-sdk-core (~> 3)
+      aws-sdk-kms (~> 1)
+      aws-sigv4 (~> 1.0)
+    aws-sdk-sqs (1.3.0)
+      aws-sdk-core (~> 3)
+      aws-sigv4 (~> 1.0)
     aws-sigv4 (1.0.2)
     bcrypt (3.1.11)
     bindex (0.5.0)
@@ -183,7 +192,7 @@ GEM
     jbuilder (2.7.0)
       activesupport (>= 4.2.0)
       multi_json (>= 1.2)
-    jmespath (1.3.1)
+    jmespath (1.4.0)
     jquery-rails (4.3.1)
       rails-dom-testing (>= 1, < 3)
       railties (>= 4.2.0)
@@ -245,7 +254,7 @@ GEM
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
     public_suffix (3.0.0)
-    puma (3.10.0)
+    puma (3.11.4)
     rack (2.0.5)
     rack-test (1.0.0)
       rack (>= 1.0, < 3)
@@ -317,7 +326,8 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (>= 1.1, < 3)
-    selenium-webdriver (3.12.0)
+    selectize-rails (0.12.4.1)
+    selenium-webdriver (3.11.0)
       childprocess (~> 0.5)
       rubyzip (~> 1.2)
     simple_form (4.0.0)
@@ -384,6 +394,7 @@ DEPENDENCIES
   aasm!
   active_elastic_job!
   api-pagination
+  aws-sdk-s3
   bitmask_attributes!
   bootsnap (>= 1.1.0)
   bootstrap (~> 4.0.0)
@@ -412,7 +423,7 @@ DEPENDENCIES
   phony
   phony_rails
   pry
-  puma (~> 3.7)
+  puma
   pumi!
   rails (~> 5.2.0)
   rails-controller-testing
@@ -420,6 +431,7 @@ DEPENDENCIES
   responders
   rspec-rails
   sass-rails (~> 5.0)
+  selectize-rails
   selenium-webdriver
   shoulda-matchers!
   simple_form

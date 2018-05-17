@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount Pumi::Engine => "/pumi"
+
   devise_scope :user do
     get "users/edit" => "devise/registrations#edit", as: "edit_user_registration"
     patch "users" => "devise/registrations#update", as: "user_registration"

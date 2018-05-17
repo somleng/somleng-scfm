@@ -1,17 +1,8 @@
-DashboardUserInvitation = function() {
-
-  chosenSelect = new ChosenSelect();
-
-  this.init = function() {
-    chosenSelect.init();
-  }
-}
-
-$(document).on('turbolinks:load', function() {
-  if ((page.controller() !== 'user_invitations')) {
+$(document).on('turbolinks:load', function () {
+  if ((page.controller() !== 'user_invitations') || (page.action() !== 'new')) {
     return;
   }
 
-  dashboardUserInvitation = new DashboardUserInvitation();
-  dashboardUserInvitation.init();
+  dashboardUser = new DashboardUser();
+  dashboardUser.init();
 });

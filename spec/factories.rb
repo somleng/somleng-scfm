@@ -36,6 +36,11 @@ FactoryBot.define do
 
   factory :callout do
     account
+    commune_ids ["040202"]
+
+    transient do
+      voice_file "test.mp3"
+    end
 
     trait :initialized do
     end
@@ -57,6 +62,15 @@ FactoryBot.define do
 
     trait :running do
       status Callout::STATE_RUNNING
+    end
+
+    after(:build) do |callout, evaluator|
+      if evaluator.voice_file.present?
+        callout.voice.attach(
+          io: File.open(ActiveSupport::TestCase.fixture_path + "/files/#{evaluator.voice_file}"),
+          filename: evaluator.voice_file
+        )
+      end
     end
   end
 

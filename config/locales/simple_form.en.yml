@@ -10,3 +10,8 @@ en:
     labels:
       defaults:
         phone_number: 'Phone Number'
+    prompts:
+      defaults:
+        province_id: 'Select a province'
+        district_id: 'Select a district'
+        commune_id: 'Select a commune'

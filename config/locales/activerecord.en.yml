@@ -5,6 +5,8 @@ en:
         token: "API Key"
       contact:
         msisdn: "Phone Number"
+      callout:
+        voice: "Voice file"
       user:
         location_ids: "Provinces"
     models:

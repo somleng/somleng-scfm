@@ -6,7 +6,7 @@ class Dashboard::CalloutsController < Dashboard::BaseController
   end
 
   def permitted_params
-    params.fetch(:callout, {}).permit(METADATA_FIELDS_ATTRIBUTES)
+    params.require(:callout).permit(:voice, commune_ids: [])
   end
 
   def prepare_resource_for_update
@@ -15,9 +15,5 @@ class Dashboard::CalloutsController < Dashboard::BaseController
 
   def resources_path
     dashboard_callouts_path
-  end
-
-  def build_key_value_fields
-    build_metadata_field
   end
 end

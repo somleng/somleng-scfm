@@ -1,14 +1,14 @@
-DashboardUser = function() {
+DashboardUser = function () {
 
-  chosenSelect = new ChosenSelect();
+  pumiSelectize = new PumiSelectize('.js-pumi-selectize');
 
-  this.init = function() {
-    chosenSelect.init();
-  }
-}
+  this.init = function () {
+    pumiSelectize.init();
+  };
+};
 
-$(document).on('turbolinks:load', function() {
-  if ((page.controller() !== 'users')) {
+$(document).on('turbolinks:load', function () {
+  if ((page.controller() !== 'users') || (page.action() !== 'edit')) {
     return;
   }
 

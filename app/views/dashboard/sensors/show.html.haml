@@ -1,0 +1,27 @@
+.col-12
+  #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
+    = render("shared/disabled_button", url: dashboard_sensor_path(resource), button_text: resource.model_name.human)
+    .btn-group.mr-2{ role: 'group' }
+      = link_to(translate(:"titles.actions.edit"), edit_dashboard_sensor_path(resource), class: 'btn btn-outline-primary')
+    .btn-group.mr-2{ role: 'group' }
+      = link_to(translate(:"titles.actions.delete"), dashboard_sensor_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+.col-12.col-md-9.col-lg-7
+  #sensor.card
+    .card-body
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right #
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.id
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Sensor.human_attribute_name(:province_id)
+        %dd.col-sm-7.col-md-6
+          %code
+            = location_names(resource.province_id, 'province')
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Callout.human_attribute_name(:created_at)
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.created_at

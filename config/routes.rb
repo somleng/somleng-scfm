@@ -36,6 +36,8 @@ Rails.application.routes.draw do
       end
       resources :batch_operation_events, only: :create
     end
+
+    resources :sensors
   end
 
   namespace "api", defaults: { format: "json" } do

@@ -43,6 +43,8 @@ class Account < ApplicationRecord
   has_many :remote_phone_call_events,
            through: :phone_calls
 
+  has_many :sensors
+
   delegate :twilio_account_sid?, to: :class
 
   validates :platform_provider_name,

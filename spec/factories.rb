@@ -183,4 +183,9 @@ FactoryBot.define do
     association :resource_owner, factory: :account
     created_by { resource_owner }
   end
+
+  factory :sensor do
+    account
+    province_id "04"
+  end
 end

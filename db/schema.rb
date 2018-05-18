@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_05_04_072914) do
+ActiveRecord::Schema.define(version: 2018_05_18_061859) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,11 +20,11 @@ ActiveRecord::Schema.define(version: 2018_05_04_072914) do
     t.jsonb "settings", default: {}, null: false
     t.string "twilio_account_sid"
     t.string "somleng_account_sid"
-    t.string "twilio_auth_token"
-    t.string "somleng_auth_token"
     t.integer "permissions", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "twilio_auth_token"
+    t.string "somleng_auth_token"
     t.index ["somleng_account_sid"], name: "index_accounts_on_somleng_account_sid", unique: true
     t.index ["twilio_account_sid"], name: "index_accounts_on_twilio_account_sid", unique: true
   end
@@ -186,6 +186,14 @@ ActiveRecord::Schema.define(version: 2018_05_04_072914) do
     t.index ["phone_call_id"], name: "index_remote_phone_call_events_on_phone_call_id"
   end
 
+  create_table "sensors", force: :cascade do |t|
+    t.jsonb "metadata"
+    t.bigint "account_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_sensors_on_account_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.jsonb "metadata", default: {}, null: false
@@ -243,6 +251,7 @@ ActiveRecord::Schema.define(version: 2018_05_04_072914) do
   add_foreign_key "phone_calls", "callout_participations"
   add_foreign_key "phone_calls", "contacts"
   add_foreign_key "remote_phone_call_events", "phone_calls"
+  add_foreign_key "sensors", "accounts"
   add_foreign_key "users", "accounts"
   add_foreign_key "users", "users", column: "invited_by_id"
 end

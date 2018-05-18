@@ -1,5 +1,6 @@
 $(document).on('turbolinks:load', function () {
-  if ((page.controller() !== 'user_invitations') || (page.action() !== 'new')) {
+  actions = ['new', 'create', 'edit', 'update'];
+  if ((page.controller() !== 'sensors') || !actions.includes(page.action())) {
     return;
   }
 

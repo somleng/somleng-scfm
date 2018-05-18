@@ -38,6 +38,12 @@ en:
       create: "Create Contact"
       edit: "Edit Contact"
       update: "Save"
+    sensors:
+      index: "Sensors"
+      new: "New Sensor"
+      create: "Create Sensor"
+      edit: "Edit Sensor"
+      update: "Save"
     users:
       index: "Users"
       edit: "Edit User"

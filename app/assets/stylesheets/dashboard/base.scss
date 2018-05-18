@@ -3,7 +3,7 @@ body {
 }
 
 main {
-  overflow-x: scroll;
+  overflow-x: visible;
 }
 
 .navbar-brand {
@@ -74,12 +74,28 @@ main {
   }
 }
 
-dl.row {
-  margin-bottom: 0;
+.form-group.check_boxes, .form-group.radio_buttons {
+  .checkbox, .radio {
+    margin-right: 12px;
+  }
+  input.check_boxes, input.radio_buttons {
+    margin-right: 8px;
+  }
 }
 
-ul.ul-infinit {
-  padding: 0 12px;
+.select2-container--default .select2-selection--single {
+  height: 38px;
+  .select2-selection__rendered {
+    line-height: 38px;
+    font-size: 16px;
+  }
+}
+
+.badge-danger {
+  a, a:hover {
+    color: white;
+    text-decoration: none;
+  }
 }
 
 @media (min-width: 768px) {

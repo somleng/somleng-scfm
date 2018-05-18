@@ -10,3 +10,6 @@ en:
           attributes:
             base:
               restrict_destroy_status: "Cannot delete record because the destroyer is not the creator"
+      messages:
+        file_type: "can only be audio file"
+        file_size: "maximum size is %{size}"

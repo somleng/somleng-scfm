@@ -1,0 +1,12 @@
+.nested-fields.card
+  .card-body
+    .row
+      .col-8
+        = f.input :level
+      .col-4
+        %span.badge.badge-pill.badge-danger
+          = link_to_remove_association t(:'cacoon.remove'), f
+    .row
+      .col-8
+        = f.input :voice, as: :file, input_html: { direct_upload: true, accept: SensorRule::AUDIO_CONTENT_TYPES.join(", ") }
+%br

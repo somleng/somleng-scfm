@@ -36,6 +36,11 @@ FactoryBot.define do
 
   factory :callout do
     account
+    commune_ids ["040202"]
+
+    transient do
+      voice_file "test.mp3"
+    end
 
     trait :initialized do
     end
@@ -57,6 +62,10 @@ FactoryBot.define do
 
     trait :running do
       status Callout::STATE_RUNNING
+    end
+
+    after(:build) do |callout, evaluator|
+      callout.voice.attach(fixture_file(evaluator.voice_file)) if evaluator.voice_file.present?
     end
   end
 
@@ -158,10 +167,43 @@ FactoryBot.define do
     email
     password "secret123"
     password_confirmation { password }
+    roles :member
+
+    factory :admin do
+      roles :admin
+    end
   end
 
   factory :access_token do
     association :resource_owner, factory: :account
     created_by { resource_owner }
+  end
+
+  factory :sensor do
+    account
+    province_id "04"
+
+    trait :with_rules do
+      transient do
+        rules_count 1
+      end
+
+      after(:create) do |sensor, evaluator|
+        create_list(:sensor_rule, evaluator.rules_count, sensor: sensor)
+      end
+    end
+  end
+
+  factory :sensor_rule do
+    sensor
+    level 500
+
+    transient do
+      voice_file "test.mp3"
+    end
+
+    after(:build) do |sensor_rule, evaluator|
+      sensor_rule.voice.attach(fixture_file(evaluator.voice_file)) if evaluator.voice_file.present?
+    end
   end
 end

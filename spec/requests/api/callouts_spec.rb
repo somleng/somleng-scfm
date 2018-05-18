@@ -10,7 +10,7 @@ RSpec.describe "Callouts" do
   let(:factory_attributes) { { :account => account } }
 
   let(:body) { {} }
-  let(:metadata) { { "foo" => "bar" } }
+  let(:metadata) { { "foo" => "bar", "commune_ids" => ["040202"] } }
   let(:callout) { create(:callout, factory_attributes) }
 
   def setup_scenario
@@ -36,7 +36,7 @@ RSpec.describe "Callouts" do
     describe "POST" do
       let(:method) { :post }
       let(:call_flow_logic) { CallFlowLogic::Application.to_s }
-      let(:body) { { :metadata => metadata, :call_flow_logic => call_flow_logic } }
+      let(:body) { { voice: fixture_file_upload("files/test.mp3", 'audio/mp3'), :metadata => metadata, :call_flow_logic => call_flow_logic } }
       let(:asserted_created_callout) { Callout.last }
       let(:parsed_response) { JSON.parse(response.body) }
 

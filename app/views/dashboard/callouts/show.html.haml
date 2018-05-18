@@ -2,8 +2,6 @@
   #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
     = render("shared/disabled_button", url: dashboard_callout_path(resource), button_text: resource.model_name.human)
     .btn-group.mr-2{ role: 'group' }
-      = render("shared/button_with_count", url: dashboard_callout_batch_operations_path(resource), button_text: translate(:"titles.batch_operations.index"), count: resource.callout_populations.count)
-    .btn-group.mr-2{ role: 'group' }
       - if resource.may_start?
         = link_to(translate(:"titles.callouts.start_callout"), dashboard_callout_callout_events_path(resource, event: :start),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
       - if resource.may_stop?
@@ -14,7 +12,7 @@
       = link_to(translate(:"titles.actions.edit"), edit_dashboard_callout_path(resource), class: 'btn btn-outline-primary')
     .btn-group.mr-2{ role: 'group' }
       = link_to(translate(:"titles.actions.delete"), dashboard_callout_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
-.col-12.col-md-9.col-lg-7
+.col-lg-10.col-xl-8
   #callout.card
     .card-body
       %dl.row
@@ -30,8 +28,24 @@
             = resource.status.humanize
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
+          = Callout.human_attribute_name(:voice)
+        %dd.col-sm-7.col-md-6
+          = link_to resource.voice.blob.filename, url_for(resource.voice)
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Callout.human_attribute_name(:province_id)
+        %dd.col-sm-7.col-md-6
+          %code
+            = location_names(resource.province_id, 'province')
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Contact.human_attribute_name(:commune_ids)
+        %dd.col-sm-7.col-md-6
+          %code
+            = location_names(resource.commune_ids, 'commune')
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
           = Callout.human_attribute_name(:created_at)
         %dd.col-sm-7.col-md-6
           %code
             = resource.created_at
-      = render("shared/key_value_attributes", attribute: :metadata)

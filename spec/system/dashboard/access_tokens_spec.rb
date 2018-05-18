@@ -1,13 +1,14 @@
 require "rails_helper"
 
 RSpec.describe "API Key Management" do
+  let(:user) { create(:admin) }
+
   it "shows all api keys for current account" do
-    user = create(:user)
-    sign_in(user)
     access_token1 = create(:access_token, resource_owner: user.account)
     access_token2 = create(:access_token, resource_owner: user.account)
     other_access_token = create(:access_token)
 
+    sign_in(user)
     visit(dashboard_access_tokens_path)
 
     within("#button_toolbar") do
@@ -32,8 +33,6 @@ RSpec.describe "API Key Management" do
   end
 
   it "can create a new access token" do
-    user = create(:user)
-
     sign_in(user)
     visit(dashboard_access_tokens_path)
 
@@ -47,7 +46,6 @@ RSpec.describe "API Key Management" do
   end
 
   it "can delete an access token" do
-    user = create(:user)
     access_token = create(:access_token, resource_owner: user.account)
 
     sign_in(user)
@@ -59,5 +57,17 @@ RSpec.describe "API Key Management" do
 
     expect(current_path).to eq(dashboard_access_tokens_path)
     expect(page).not_to have_content_tag_for(access_token)
+  end
+
+  context "when a user is not an admin tries to api key page" do
+    let(:user) { create(:user) }
+
+    it "redirect to default page with alert message" do
+      sign_in(user)
+
+      visit dashboard_access_tokens_path
+
+      expect(page).to have_text("We're sorry, but you do not have permission to view this page.")
+    end
   end
 end

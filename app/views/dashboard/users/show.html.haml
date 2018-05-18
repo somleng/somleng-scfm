@@ -5,7 +5,7 @@
       = link_to(translate(:"titles.actions.edit"), edit_dashboard_user_path(resource), class: 'btn btn-outline-primary')
     .btn-group.mr-2{ role: 'group' }
       = link_to(translate(:"titles.actions.delete"), dashboard_user_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
-.col-lg-8.col-sm-12
+.col-lg-10.col-xl-8
   #user.card
     .card-body
       %dl.row
@@ -21,20 +21,31 @@
             = resource.email
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
-          = Contact.human_attribute_name(:created_at)
+          = User.human_attribute_name(:created_at)
         %dd.col-sm-7.col-md-6
           %code
             = resource.created_at
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
-          = Contact.human_attribute_name(:last_sign_in_at)
+          = User.human_attribute_name(:last_sign_in_at)
         %dd.col-sm-7.col-md-6
           %code
             = resource.last_sign_in_at
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
-          = Contact.human_attribute_name(:invitation_accepted_at)
+          = User.human_attribute_name(:invitation_accepted_at)
         %dd.col-sm-7.col-md-6
           %code
             = resource.invitation_accepted_at
-      = render("shared/key_value_attributes", attribute: :metadata)
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = User.human_attribute_name(:roles)
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.roles.join(', ')
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = User.human_attribute_name(:location_ids)
+        %dd.col-sm-7.col-md-6
+          %code
+            = location_names(resource.location_ids, 'province')

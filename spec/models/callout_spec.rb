@@ -2,7 +2,6 @@ require "rails_helper"
 
 RSpec.describe Callout do
   let(:factory) { :callout }
-  include_examples "has_metadata"
   include_examples "has_call_flow_logic"
 
   describe "associations" do
@@ -22,9 +21,36 @@ RSpec.describe Callout do
   describe "validations" do
     def assert_validations!
       is_expected.to validate_presence_of(:status)
+      is_expected.to validate_presence_of(:commune_ids)
     end
 
     it { assert_validations! }
+
+    context "voice" do
+      it "must be present" do
+        callout = build(:callout, voice_file: nil)
+
+        callout.valid?
+
+        expect(callout.errors[:voice]).to be_present
+      end
+
+      it "must be audio file" do
+        callout = build(:callout, voice_file: "image.jpg")
+
+        callout.valid?
+
+        expect(callout.errors[:voice]).to be_present
+      end
+
+      it "file cannot be bigger than 10MB" do
+        callout = build(:callout, voice_file: "big_file.mp3")
+
+        callout.valid?
+
+        expect(callout.errors[:voice]).to be_present
+      end
+    end
   end
 
   describe "state_machine" do

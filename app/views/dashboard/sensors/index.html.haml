@@ -1,0 +1,9 @@
+- content_for(:button_toolbar) do
+  = render("shared/disabled_button", url: dashboard_sensors_path, button_text: translate(:"titles.sensors.index"), count: resources.count)
+  .btn-group.mr-2{ role: 'group' }
+    = link_to(translate(:"titles.sensors.new"), new_dashboard_sensor_path, class: 'btn btn-outline-success')
+
+- content_for(:resources_table) do
+  = render("shared/resources_table", resource_class: Sensor, columns: [:province, :sensor_rules, :created_at])
+
+= render("shared/index")

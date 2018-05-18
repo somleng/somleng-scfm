@@ -1,10 +1,20 @@
 require "rails_helper"
 
 RSpec.describe "Users" do
-  let(:user) { create(:user) }
+  context "when a user is not an admin tries to users page" do
+    let(:user) { create(:user) }
+
+    it "render page 401" do
+      sign_in(user)
+
+      visit dashboard_users_path
+
+      expect(page).to have_text("We're sorry, but you do not have permission to view this page.")
+    end
+  end
 
   it "can list all users" do
-    user = create(:user)
+    user = create(:admin)
     other_user = create(:user, account: user.account)
     different_user = create(:user)
 
@@ -36,7 +46,7 @@ RSpec.describe "Users" do
   end
 
   it "can show a user" do
-    user = create(:user)
+    user = create(:admin)
 
     sign_in(user)
     visit dashboard_user_path(user)
@@ -59,8 +69,8 @@ RSpec.describe "Users" do
     end
   end
 
-  it "can update a user" do
-    user = create(:user)
+  it "can update a user", :js do
+    user = create(:admin)
     other_user = create(:user, account: user.account)
 
     sign_in(user)
@@ -76,16 +86,19 @@ RSpec.describe "Users" do
 
     expect(page).to have_link_to_action(:cancel)
 
-    fill_in_key_value_for(:metadata, with: { key: "name", value: "Bob Chann" })
+    choose "Admin"
+    select_selectize("#locations", "Banteay Meanchey")
     click_action_button(:update, key: :users)
 
+    other_user.reload
     expect(current_path).to eq(dashboard_user_path(other_user))
     expect(page).to have_text("User was successfully updated.")
-    expect(other_user.reload.metadata).to eq("name" => "Bob Chann")
+    expect(other_user.roles?(:admin)).to eq true
+    expect(other_user.location_ids).to include_location("Banteay Meanchey")
   end
 
   it "can delete a user" do
-    user = create(:user)
+    user = create(:admin)
     other_user = create(:user, account: user.account)
 
     sign_in(user)

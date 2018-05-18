@@ -3,11 +3,7 @@ RSpec.shared_examples_for "has_metadata" do
     subject { build(factory) }
 
     def assert_validations!
-      is_expected.not_to allow_value("foo").for(:metadata)
       is_expected.to allow_value("foo" => "bar").for(:metadata)
-      subject.metadata = nil
-      is_expected.not_to be_valid
-      expect(subject.errors[:metadata]).not_to be_empty
     end
 
     it { assert_validations! }
@@ -50,8 +46,8 @@ RSpec.shared_examples_for "has_metadata" do
   end
 
   describe "#metadata" do
-    subject { create(factory, metadata: {}) }
-    it { expect(subject.metadata).to eq({}) }
+    subject { create(factory, :metadata => {}) }
+    it { expect(subject.metadata).to include({}) }
   end
 
   describe "#metadata=(value)" do

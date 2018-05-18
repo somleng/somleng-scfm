@@ -37,10 +37,7 @@ RSpec.describe "Contacts" do
       let(:msisdn) { generate(:somali_msisdn) }
 
       let(:body) {
-        {
-          :metadata => metadata,
-          :msisdn => msisdn
-        }
+        attributes_for(:contact, msisdn: msisdn, :metadata => metadata)
       }
 
       context "valid request" do

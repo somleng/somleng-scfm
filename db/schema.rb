@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171226101503) do
+ActiveRecord::Schema.define(version: 2018_05_18_072400) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -20,13 +20,34 @@ ActiveRecord::Schema.define(version: 20171226101503) do
     t.jsonb "settings", default: {}, null: false
     t.string "twilio_account_sid"
     t.string "somleng_account_sid"
-    t.string "twilio_auth_token"
-    t.string "somleng_auth_token"
     t.integer "permissions", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "twilio_auth_token"
+    t.string "somleng_auth_token"
     t.index ["somleng_account_sid"], name: "index_accounts_on_somleng_account_sid", unique: true
     t.index ["twilio_account_sid"], name: "index_accounts_on_twilio_account_sid", unique: true
+  end
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.bigint "byte_size", null: false
+    t.string "checksum", null: false
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
 
   create_table "batch_operations", force: :cascade do |t|
@@ -165,6 +186,22 @@ ActiveRecord::Schema.define(version: 20171226101503) do
     t.index ["phone_call_id"], name: "index_remote_phone_call_events_on_phone_call_id"
   end
 
+  create_table "sensor_rules", force: :cascade do |t|
+    t.bigint "sensor_id"
+    t.jsonb "metadata"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sensor_id"], name: "index_sensor_rules_on_sensor_id"
+  end
+
+  create_table "sensors", force: :cascade do |t|
+    t.jsonb "metadata"
+    t.bigint "account_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_sensors_on_account_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.jsonb "metadata", default: {}, null: false
@@ -194,6 +231,7 @@ ActiveRecord::Schema.define(version: 20171226101503) do
     t.integer "invitation_limit"
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
+    t.integer "roles", default: 1, null: false
     t.index ["account_id"], name: "index_users_on_account_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true
@@ -221,6 +259,8 @@ ActiveRecord::Schema.define(version: 20171226101503) do
   add_foreign_key "phone_calls", "callout_participations"
   add_foreign_key "phone_calls", "contacts"
   add_foreign_key "remote_phone_call_events", "phone_calls"
+  add_foreign_key "sensor_rules", "sensors"
+  add_foreign_key "sensors", "accounts"
   add_foreign_key "users", "accounts"
   add_foreign_key "users", "users", column: "invited_by_id"
 end

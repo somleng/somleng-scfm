@@ -72,7 +72,7 @@ Rails.application.configure do
 
   require Rails.root.join("app/jobs/application_job")
   config.action_mailer.deliver_later_queue_name = ApplicationJob.aws_sqs_queue_name(:action_mailer_delivery_job)
-  ActiveStorage.queue = ApplicationJob.aws_sqs_queue_name(:active_storage_job)
+  config.active_storage.queue = ApplicationJob.aws_sqs_queue_name(:active_storage_job)
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.

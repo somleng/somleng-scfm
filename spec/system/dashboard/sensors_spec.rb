@@ -27,6 +27,7 @@ RSpec.describe "Sensors", :aggregate_failures do
       )
       expect(page).to have_content("Kampong Chhnang")
       expect(page).to have_content("កំពង់ឆ្នាំង")
+      expect(page).to have_content("Rules")
     end
   end
 
@@ -43,15 +44,17 @@ RSpec.describe "Sensors", :aggregate_failures do
 
     expect(page).to have_link_to_action(:cancel)
 
-    select_selectize("#province", "Battambang")
+    fill_in_sensor_info(province: "Battambang", level: 600)
     click_action_button(:create, key: :sensors)
 
     expect(page).to have_text("Sensor was successfully created.")
     expect(page).to have_content("Battambang")
+    expect(page).to have_content("600")
   end
 
   it "can show sensor details" do
     sensor = create(:sensor, account: admin.account)
+    sensor_rule = create(:sensor_rule, sensor: sensor, level: 1000)
 
     sign_in(admin)
     visit dashboard_sensor_path(sensor)
@@ -67,11 +70,12 @@ RSpec.describe "Sensors", :aggregate_failures do
       expect(page).to have_content(sensor.id)
       expect(page).to have_content("Province")
       expect(page).to have_content("Created at")
+      expect(page).to have_content("1000")
     end
   end
 
   it "can update sensor", :js do
-    sensor = create(:sensor, account: admin.account)
+    sensor = create(:sensor, :with_rules, account: admin.account)
 
     sign_in(admin)
     visit edit_dashboard_sensor_path(sensor)
@@ -85,11 +89,12 @@ RSpec.describe "Sensors", :aggregate_failures do
 
     expect(page).to have_link_to_action(:cancel)
 
-    select_selectize("#province", "Battambang")
+    fill_in_sensor_info(province: "Battambang", level: 1000)
     click_action_button(:update, key: :sensors)
 
     expect(page).to have_text("Sensor was successfully updated.")
     expect(page).to have_content("Battambang")
+    expect(page).to have_content("1000")
   end
 
   it "can delete sensor" do
@@ -102,5 +107,14 @@ RSpec.describe "Sensors", :aggregate_failures do
 
     expect(current_path).to eq(dashboard_sensors_path)
     expect(page).to have_text("Sensor was successfully destroyed.")
+  end
+
+  def fill_in_sensor_info(options = {})
+    click_on("Remove")
+    select_selectize("#province", options[:province])
+    click_on("Add")
+    fill_in("Level", with: options[:level])
+    file_path = Rails.root + file_fixture("test.mp3")
+    attach_file "Voice file", file_path
   end
 end

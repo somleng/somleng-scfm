@@ -9,6 +9,11 @@ en:
         voice: "Voice file"
       user:
         location_ids: "Provinces"
+      sensor:
+        sensor_rules: 'Rules'
+      sensor_rule:
+        voice: "Voice file"
+        level: "Level"
     models:
       batch_operation/callout_population: "Callout Population"
   activemodel:

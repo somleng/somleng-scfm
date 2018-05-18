@@ -91,6 +91,13 @@ main {
   }
 }
 
+.badge-danger {
+  a, a:hover {
+    color: white;
+    text-decoration: none;
+  }
+}
+
 @media (min-width: 768px) {
   #side_navigation.collapse {
     display: block;

@@ -12,7 +12,7 @@
               = translate(:"titles.admin_management")
         .card-body
           %ul.nav.flex-column
-            = nav_link(translate(:"titles.sensors.index"), dashboard_sensors_path, 'sensors', current_user.account.access_tokens.count)
+            = nav_link(translate(:"titles.sensors.index"), dashboard_sensors_path, 'sensors', current_user.account.sensors.count)
             = nav_link(translate(:"titles.access_tokens.index"), dashboard_access_tokens_path, 'access_tokens', current_user.account.access_tokens.count)
             = nav_link(translate(:"titles.contacts.index"), dashboard_contacts_path, 'contacts', current_user.account.contacts.count)
             = nav_link(translate(:"titles.users.index"), dashboard_users_path, 'users', current_user.account.users.count)

@@ -65,12 +65,7 @@ FactoryBot.define do
     end
 
     after(:build) do |callout, evaluator|
-      if evaluator.voice_file.present?
-        callout.voice.attach(
-          io: File.open(ActiveSupport::TestCase.fixture_path + "/files/#{evaluator.voice_file}"),
-          filename: evaluator.voice_file
-        )
-      end
+      callout.voice.attach(fixture_file(evaluator.voice_file)) if evaluator.voice_file.present?
     end
   end
 
@@ -187,5 +182,28 @@ FactoryBot.define do
   factory :sensor do
     account
     province_id "04"
+
+    trait :with_rules do
+      transient do
+        rules_count 1
+      end
+
+      after(:create) do |sensor, evaluator|
+        create_list(:sensor_rule, evaluator.rules_count, sensor: sensor)
+      end
+    end
+  end
+
+  factory :sensor_rule do
+    sensor
+    level 500
+
+    transient do
+      voice_file "test.mp3"
+    end
+
+    after(:build) do |sensor_rule, evaluator|
+      sensor_rule.voice.attach(fixture_file(evaluator.voice_file)) if evaluator.voice_file.present?
+    end
   end
 end

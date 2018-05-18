@@ -5,4 +5,7 @@
     %code
       = location_names(sensor.province_id, 'province')
   %td
+    %code
+      = sensor.sensor_rules.map(&:level).join(', ')
+  %td
     = sensor.created_at

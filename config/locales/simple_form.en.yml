@@ -10,6 +10,7 @@ en:
     labels:
       defaults:
         phone_number: 'Phone Number'
+        # voice: 'Voice File'
     prompts:
       defaults:
         province_id: 'Select a province'

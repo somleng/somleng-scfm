@@ -4,6 +4,6 @@
     = link_to(translate(:"titles.sensors.new"), new_dashboard_sensor_path, class: 'btn btn-outline-success')
 
 - content_for(:resources_table) do
-  = render("shared/resources_table", resource_class: Callout, columns: [:province, :created_at])
+  = render("shared/resources_table", resource_class: Sensor, columns: [:province, :sensor_rules, :created_at])
 
 = render("shared/index")

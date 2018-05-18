@@ -16,7 +16,7 @@
     .btn-group.mr-2{ role: 'group' }
       - url = resource.is_a?(BatchOperation::CalloutPopulation) && resource.callout ? dashboard_callout_batch_operation_path(resource.callout, resource) : dashboard_batch_operation_path(resource)
       = link_to(translate(:"titles.actions.delete"), url, class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
-.col-lg-8.col-sm-12
+.col-lg-10.col-xl-8
   #resource.card
     .card-body
       %dl.row

@@ -1,0 +1,9 @@
+= content_tag_for(:tr, sensor_rule) do
+  %td
+    %code
+      = sensor_rule.level
+  %td
+    %code
+      = link_to sensor_rule.voice.blob.filename, url_for(sensor_rule.voice)
+  %td
+    = sensor_rule.created_at

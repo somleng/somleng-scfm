@@ -6,6 +6,7 @@ default: &default
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("DB_POOL") { 5 } %>
   reaping_frequency: 10
+  url: <%= ENV['DATABASE_URL'] %>
 
 development:
   <<: *default
@@ -17,4 +18,3 @@ test:
 
 production:
   <<: *default
-  url: <%= ENV['DATABASE_URL'] %>

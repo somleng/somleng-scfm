@@ -1,0 +1,17 @@
+version: '3'
+services:
+  db:
+    image: postgres
+  somleng-scfm:
+    image: dwilkie/somleng-scfm
+    command: bundle exec rails s -p 3000 -b '0.0.0.0'
+    environment:
+      - RAILS_ENV=development
+      - DATABASE_URL=postgres://postgres:@db/somleng_scfm_development
+    ports:
+      - "3000:3000"
+    depends_on:
+      - db
+  curl:
+    image: endeveit/docker-jq
+    command: /bin/sh -c 'cat /dev/null'

@@ -1,0 +1,9 @@
+- content_for(:button_toolbar) do
+  = render("shared/disabled_button", url: url_for, button_text: translate(:"titles.callout_participations.index"), count: resources.count)
+  .btn-group.mr-2{ role: 'group' }
+    = link_to(translate(:"titles.actions.back"), parent_show_path, class: 'btn btn-outline-dark')
+
+- content_for(:resources_table) do
+  = render("shared/resources_table", resource_class: CalloutParticipation, columns: [:contact_id, :created_at])
+
+= render("shared/index")

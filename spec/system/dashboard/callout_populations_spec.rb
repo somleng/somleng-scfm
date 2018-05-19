@@ -130,6 +130,14 @@ RSpec.describe "Callout Populations" do
 
     within("#button_toolbar") do
       expect(page).to have_link_to_action(
+        :index,
+        key: :callout_participations,
+        href: dashboard_batch_operation_callout_participations_path(
+          callout_population
+        )
+      )
+
+      expect(page).to have_link_to_action(
         :edit,
         href: edit_dashboard_batch_operation_callout_population_path(
           callout_population

@@ -5,7 +5,7 @@ module SomlengScfm::SpecHelpers::FilterHelpers
 
   def filter_options
     @filter_options ||= {
-      :association_chain => association_chain
+      association_chain: association_chain
     }
   end
 
@@ -14,7 +14,6 @@ module SomlengScfm::SpecHelpers::FilterHelpers
   end
 
   def json_data
-    {"foo" => "bar", "bar" => "foo"}
+    { "foo" => "bar", "bar" => "foo" }
   end
 end
-

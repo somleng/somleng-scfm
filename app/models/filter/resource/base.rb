@@ -20,23 +20,23 @@ class Filter::Resource::Base < Filter::Base
 
   def metadata_attribute_filter
     @metadata_attribute_filter ||= Filter::Attribute::JSON.new(
-      {:json_attribute => :metadata}.merge(options), params
+      { json_attribute: :metadata }.merge(options), params
     )
   end
 
   def created_at_attribute_filter
     @created_at_attribute_filter ||= Filter::Attribute::Timestamp.new(
-      {:timestamp_attribute => :created_at}.merge(options), params
+      { timestamp_attribute: :created_at }.merge(options), params
     )
   end
 
   def updated_at_attribute_filter
     @updated_at_attribute_filter ||= Filter::Attribute::Timestamp.new(
-      {:timestamp_attribute => :updated_at}.merge(options), params
+      { timestamp_attribute: :updated_at }.merge(options), params
     )
   end
 
   def self.attribute_filters
-    [:metadata_attribute_filter, :created_at_attribute_filter, :updated_at_attribute_filter]
+    %i[metadata_attribute_filter created_at_attribute_filter updated_at_attribute_filter]
   end
 end

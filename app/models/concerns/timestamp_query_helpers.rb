@@ -3,12 +3,8 @@ module TimestampQueryHelpers
 
   class_methods do
     def timestamp_attribute_is(comparator, value, timestamp_attribute)
-      if value.is_a?(String)
-        query_value = DateTime.parse(value)
-        query_value = query_value.to_date if query_value == Date.parse(value)
-      else
-        query_value = compa
-      end
+      query_value = DateTime.parse(value)
+      query_value = query_value.to_date if query_value == Date.parse(value)
 
       arel_timestamp_attribute = if query_value.class == Date
                                    Arel::Nodes::NamedFunction.new(

@@ -67,7 +67,9 @@ class Dashboard::BaseController < ApplicationController
   end
 
   def respond_with_destroyed_resource
-    respond_with_resource(location: resources_path)
+    respond_with(*respond_with_resource_parts, location: resources_path) do |format|
+      format.html { redirect_to(show_location(resource)) } unless resource.destroy
+    end
   end
 
   def prepare_new_resource
@@ -127,7 +129,11 @@ class Dashboard::BaseController < ApplicationController
   end
 
   def respond_with_resource(location: nil)
-    respond_with resource, location: -> { location || show_location(resource) }
+    respond_with(*respond_with_resource_parts, location: -> { location || show_location(resource) })
+  end
+
+  def respond_with_resource_parts
+    [:dashboard, resource]
   end
 
   def show_location(resource)

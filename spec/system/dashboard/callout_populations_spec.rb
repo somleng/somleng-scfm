@@ -130,6 +130,14 @@ RSpec.describe "Callout Populations" do
 
     within("#button_toolbar") do
       expect(page).to have_link_to_action(
+        :index,
+        key: :callout_participations,
+        href: dashboard_batch_operation_callout_participations_path(
+          callout_population
+        )
+      )
+
+      expect(page).to have_link_to_action(
         :edit,
         href: edit_dashboard_batch_operation_callout_population_path(
           callout_population
@@ -193,6 +201,22 @@ RSpec.describe "Callout Populations" do
       dashboard_callout_batch_operations_path(callout_population.callout)
     )
     expect(page).to have_text("successfully destroyed.")
+  end
+
+  it "cannot delete a callout population with callout participations" do
+    user = create(:user)
+    callout_population = create(:callout_population, account: user.account)
+    create(:callout_participation, callout_population: callout_population)
+
+    sign_in(user)
+    visit dashboard_batch_operation_path(callout_population)
+
+    click_action_button(:delete, type: :link)
+
+    expect(current_path).to eq(
+      dashboard_batch_operation_path(callout_population)
+    )
+    expect(page).to have_text("could not be destroyed")
   end
 
   def create_callout_population(account, contact_filter_metadata)

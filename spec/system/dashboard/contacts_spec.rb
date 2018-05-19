@@ -114,6 +114,12 @@ RSpec.describe "Contacts", :aggregate_failures do
         :edit,
         href: edit_dashboard_contact_path(contact)
       )
+
+      expect(page).to have_link_to_action(
+        :index,
+        key: :callout_participations,
+        href: dashboard_contact_callout_participations_path(contact)
+      )
     end
 
     within("#contact") do

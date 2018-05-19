@@ -3,6 +3,8 @@
     = render("shared/disabled_button", url: dashboard_contact_path(resource), button_text: resource.model_name.human)
     - if current_user.is_admin?
       .btn-group.mr-2{ role: 'group' }
+        = render("shared/button_with_count", url: dashboard_contact_callout_participations_path(resource), button_text: translate(:"titles.callout_participations.index"), count: resource.callout_participations.count)
+      .btn-group.mr-2{ role: 'group' }
         = link_to(translate(:"titles.actions.edit"), edit_dashboard_contact_path(resource), class: 'btn btn-outline-primary')
       .btn-group.mr-2{ role: 'group' }
         = link_to(translate(:"titles.actions.delete"), dashboard_contact_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })

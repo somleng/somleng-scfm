@@ -16,15 +16,20 @@ Rails.application.routes.draw do
     root to: "callouts#index"
     resources :users, except: %i[new create]
     resources :access_tokens, only: %i[index create destroy]
-    resources :contacts
+    resources :contacts do
+      resources :callout_participations, only: :index
+    end
     resources :callouts do
       resources :callout_events, only: :create
       resources :batch_operations, only: %i[index destroy]
+      resources :callout_participations, only: :index
 
       namespace :batch_operation do
         resources :callout_populations, only: %i[new create]
       end
     end
+
+    resources :callout_participations, only: %i[show destroy]
 
     namespace :batch_operation do
       resources :callout_populations, only: %i[edit update]
@@ -35,6 +40,7 @@ Rails.application.routes.draw do
         resources :contacts, only: :index
       end
       resources :batch_operation_events, only: :create
+      resources :callout_participations, only: :index
     end
   end
 

@@ -109,6 +109,12 @@ RSpec.describe "Callouts", :aggregate_failures do
         :edit,
         href: edit_dashboard_callout_path(callout)
       )
+
+      expect(page).to have_link_to_action(
+        :index,
+        key: :callout_participations,
+        href: dashboard_callout_callout_participations_path(callout)
+      )
     end
 
     within("#callout") do

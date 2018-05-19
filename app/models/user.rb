@@ -10,7 +10,7 @@ class User < ApplicationRecord
 
   belongs_to :account
 
-  bitmask :roles, :as => [:member, :admin], null: false
+  bitmask :roles, as: %i[member admin], null: false
 
   before_validation :remove_empty_location_ids
 

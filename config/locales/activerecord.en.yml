@@ -9,8 +9,11 @@ en:
         voice: "Voice file"
       user:
         location_ids: "Provinces"
+      callout_participation:
+        callout_population_id: "Callout Population"
     models:
       batch_operation/callout_population: "Callout Population"
+      callout_participation: "Callout Participation"
   activemodel:
     attributes:
       key_value_field:

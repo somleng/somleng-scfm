@@ -11,18 +11,11 @@ module JsonQueryHelpers
 
       value_condition = value.nil? ? "IS NULL" : "= ?"
 
-      if database_adapter_helper.adapter_sqlite?
-        # From: https://sqlite.org/json1.html#the_json_extract_function
-        # json_extract('{"a":2,"c":[4,5,{"f":7}]}', '$.c[2].f') => 7
-        sql = "json_extract(\"#{table_name}\".\"#{json_column}\", ?) #{value_condition}"
-        key = "$.#{keys.join('.')}"
-      else
-        # From: https://www.postgresql.org/docs/current/static/functions-json.html
-        # '{"a":[1,2,3],"b":[4,5,6]}'::json#>>'{a,2}' => 3
-        # Note that the column is already jsonb so no need to cast
-        key = "{#{keys.join(",")}}"
-        sql = "\"#{table_name}\".\"#{json_column}\" #>> ? #{value_condition}"
-      end
+      # From: https://www.postgresql.org/docs/current/static/functions-json.html
+      # '{"a":[1,2,3],"b":[4,5,6]}'::json#>>'{a,2}' => 3
+      # Note that the column is already jsonb so no need to cast
+      key = "{#{keys.join(',')}}"
+      sql = "\"#{table_name}\".\"#{json_column}\" #>> ? #{value_condition}"
 
       where(sql, *[key, value].compact)
     end
@@ -40,9 +33,9 @@ module JsonQueryHelpers
 
     # Adapted from:
     # https://stackoverflow.com/a/9648410
-    def flatten_hash(hash, k = [])
-      return {k => hash} if !hash.is_a?(Hash)
-      hash.inject({}){ |h, v| h.merge! flatten_hash(v[-1], k + [v[0]]) }
+    def flatten_hash(hash, keys = [])
+      return { keys => hash } unless hash.is_a?(Hash)
+      hash.inject({}) { |h, v| h.merge! flatten_hash(v[-1], keys + [v[0]]) }
     end
   end
 end

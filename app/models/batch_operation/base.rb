@@ -34,8 +34,6 @@ class BatchOperation::Base < ApplicationRecord
 
   belongs_to :account
 
-  conditionally_serialize(:parameters, JSON)
-
   validates :type, presence: true
   validates :parameters, json: true
 

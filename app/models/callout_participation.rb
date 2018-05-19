@@ -5,31 +5,31 @@ class CalloutParticipation < ApplicationRecord
 
   DEFAULT_RETRY_STATUSES = [
     "failed"
-  ]
+  ].freeze
 
   belongs_to :callout
   belongs_to :contact
   belongs_to :callout_population,
-             :optional => true,
-             :class_name => "BatchOperation::CalloutPopulation"
+             optional: true,
+             class_name: "BatchOperation::CalloutPopulation"
 
   has_many :phone_calls,
-           :dependent => :restrict_with_error
+           dependent: :restrict_with_error
 
   has_many :remote_phone_call_events,
-           :through => :phone_calls
+           through: :phone_calls
 
   validates :contact_id,
-            :uniqueness => {:scope => :callout_id}
+            uniqueness: { scope: :callout_id }
 
   validates :msisdn,
-            :uniqueness => {:scope => :callout_id}
+            uniqueness: { scope: :callout_id }
 
-  delegate :call_flow_logic, :to => :callout, :prefix => true, :allow_nil => true
-  delegate :msisdn, :to => :contact, :prefix => true, :allow_nil => true
+  delegate :call_flow_logic, to: :callout, prefix: true, allow_nil: true
+  delegate :msisdn, to: :contact, prefix: true, allow_nil: true
 
   before_validation :set_msisdn_from_contact,
-                    :on => :create
+                    on: :create
 
   def call_flow_logic
     super || callout_call_flow_logic
@@ -37,16 +37,16 @@ class CalloutParticipation < ApplicationRecord
 
   def self.no_phone_calls_or_last_attempt(status)
     where(
-      :id => no_phone_calls
+      id: no_phone_calls
     ).or(
       where(
-        :id => last_phone_call_attempt(status)
+        id: last_phone_call_attempt(status)
       )
     )
   end
 
   def self.no_phone_calls
-    left_outer_joins(:phone_calls).where(:phone_calls => {:id => nil})
+    left_outer_joins(:phone_calls).where(phone_calls: { id: nil })
   end
 
   def self.has_phone_calls
@@ -66,10 +66,10 @@ class CalloutParticipation < ApplicationRecord
     joins(:phone_calls).joins(
       "LEFT OUTER JOIN \"phone_calls\" \"future_phone_calls\" ON (\"future_phone_calls\".\"callout_participation_id\" = \"callout_participations\".\"id\" AND \"phone_calls\".\"created_at\" < \"future_phone_calls\".\"created_at\")"
     ).where(
-      :future_phone_calls => {:id => nil}
+      future_phone_calls: { id: nil }
     ).where(
-      :phone_calls => {
-        :status => [status]
+      phone_calls: {
+        status: [status]
       }
     )
   end

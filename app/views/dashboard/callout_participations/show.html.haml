@@ -1,0 +1,35 @@
+.col-12
+  #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
+    = render("shared/disabled_button", url: dashboard_callout_participation_path(resource), button_text: resource.model_name.human)
+    .btn-group.mr-2{ role: 'group' }
+      = link_to(translate(:"titles.actions.delete"), dashboard_callout_participation_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+.col-12.col-md-9.col-lg-7
+  #resource.card
+    .card-body
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right #
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.id
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = CalloutParticipation.human_attribute_name(:callout_id)
+        %dd.col-sm-7.col-md-6
+          = link_to(resource.callout_id, dashboard_callout_path(resource.callout_id))
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = CalloutParticipation.human_attribute_name(:contact_id)
+        %dd.col-sm-7.col-md-6
+          = link_to(resource.contact_id, dashboard_contact_path(resource.contact_id))
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = CalloutParticipation.human_attribute_name(:callout_population_id)
+        - if resource.callout_population_id
+          %dd.col-sm-7.col-md-6
+            = link_to(resource.callout_population_id, dashboard_batch_operation_path(resource.callout_population_id))
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = CalloutParticipation.human_attribute_name(:created_at)
+        %dd.col-sm-7.col-md-6
+          = resource.created_at
+      = render("shared/key_value_attributes", attribute: :metadata)

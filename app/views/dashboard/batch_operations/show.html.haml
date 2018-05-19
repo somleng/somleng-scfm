@@ -4,6 +4,8 @@
     - if resource.is_a?(BatchOperation::CalloutPopulation)
       .btn-group.mr-2{ role: 'group' }
         = render("shared/button_with_count", button_text: translate(:"titles.actions.preview"), url: dashboard_batch_operation_preview_contacts_path(resource), count: resource.contacts_preview.count)
+      .btn-group.mr-2{ role: 'group' }
+        = render("shared/button_with_count", button_text: translate(:"titles.callout_participations.index"), url: dashboard_batch_operation_callout_participations_path(resource), count: resource.callout_participations.count)
     - if resource.may_queue?
       .btn-group.mr-2{ role: 'group' }
         = link_to(translate(:"titles.batch_operations.queue"), dashboard_batch_operation_batch_operation_events_path(resource, event: :queue), method: :post, class: 'btn btn-outline-success', data: { confirm: translate(:"titles.actions.data_confirm") })

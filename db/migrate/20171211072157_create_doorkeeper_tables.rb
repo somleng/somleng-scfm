@@ -1,19 +1,19 @@
-class CreateDoorkeeperTables < ApplicationMigration
+class CreateDoorkeeperTables < ActiveRecord::Migration[5.1]
   def change
     create_table :oauth_applications do |t|
       t.references(
         :owner,
-        :foreign_key => {
-          :to_table => :accounts
+        foreign_key: {
+          to_table: :accounts
         },
-        :null => false
+        null: false
       )
 
       t.string  :name,         null: false
       t.string  :uid,          null: false
       t.string  :secret,       null: false
       t.text    :redirect_uri, null: false
-      t.string  :scopes,       null: false, default: ''
+      t.string  :scopes,       null: false, default: ""
       t.timestamps             null: false
     end
 
@@ -22,10 +22,10 @@ class CreateDoorkeeperTables < ApplicationMigration
     create_table :oauth_access_grants do |t|
       t.references(
         :resource_owner,
-        :foreign_key => {
-          :to_table => :accounts
+        foreign_key: {
+          to_table: :accounts
         },
-        :null => false
+        null: false
       )
 
       t.references :application,     null: false
@@ -49,23 +49,23 @@ class CreateDoorkeeperTables < ApplicationMigration
 
       t.references(
         :resource_owner,
-        :index => false,
-        :foreign_key => {
-          :to_table => :accounts
+        index: false,
+        foreign_key: {
+          to_table: :accounts
         },
-        :null => false
+        null: false
       )
 
       t.references(
         :created_by,
-        :index => true,
-        :foreign_key => {
-          :to_table => :accounts
+        index: true,
+        foreign_key: {
+          to_table: :accounts
         },
-        :null => false
+        null: false
       )
 
-      t.public_send(json_column_type, :metadata, :null => false, :default => json_column_default)
+      t.jsonb(:metadata, null: false, default: {})
 
       t.references :application
 
@@ -75,12 +75,12 @@ class CreateDoorkeeperTables < ApplicationMigration
       # https://github.com/doorkeeper-gem/doorkeeper/tree/v3.0.0.rc1#custom-access-token-generator
       #
       # t.text     :token,             null: false
-      t.string   :token,                  :null => false
+      t.string   :token, null: false
 
       t.string   :refresh_token
       t.integer  :expires_in
       t.datetime :revoked_at
-      t.timestamps                       :null => false
+      t.timestamps null: false
       t.string   :scopes
 
       # If there is a previous_refresh_token column,

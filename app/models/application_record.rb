@@ -1,4 +1,4 @@
 class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
-  include DatabaseAdapterHelpers
+  include TimestampQueryHelpers
 end

@@ -1,20 +1,20 @@
 default: &default
-  adapter: <%= ENV.fetch("RAILS_DB_ADAPTER") { "postgresql" } %>
+  adapter: "postgresql"
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   encoding: unicode
-  timeout: 5000
-  <% default_db_adapter = "postgresql" %>
-  <% rails_db_adapter = ENV.fetch("RAILS_DB_ADAPTER") { default_db_adapter } %>
+  # For details on connection pooling, see rails configuration guide
+  # http://guides.rubyonrails.org/configuring.html#database-pooling
+  pool: <%= ENV.fetch("DB_POOL") { 5 } %>
+  reaping_frequency: 10
 
 development:
   <<: *default
-  database: <%= rails_db_adapter == "sqlite3" ? "db/development.sqlite3" : "somleng_scfm_development" %>
+  database: "somleng_scfm_development"
+
 test:
   <<: *default
-  database: <%= rails_db_adapter == "sqlite3" ? "db/test.sqlite3" : "somleng_scfm_test" %>
+  database: "somleng_scfm_test"
 
 production:
   <<: *default
-  <% database_name = ENV.fetch("DATABASE_NAME") { "somleng_scfm_production" } %>
-  <% database_path = ENV.fetch("DATABASE_PATH") { "db/#{database_name}.sqlite3" } %>
-  database: <%= rails_db_adapter == "sqlite3" ? database_path : database_name %>
+  url: <%= ENV['DATABASE_URL'] %>

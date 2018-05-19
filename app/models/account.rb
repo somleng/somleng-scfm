@@ -6,8 +6,6 @@ class Account < ApplicationRecord
 
   include MetadataHelpers
 
-  conditionally_serialize(:settings, JSON)
-
   store_accessor :settings,
                  :platform_provider_name
 

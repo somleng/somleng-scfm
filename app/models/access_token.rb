@@ -1,11 +1,11 @@
 class AccessToken < Doorkeeper::AccessToken
-  include DatabaseAdapterHelpers
+  include TimestampQueryHelpers
   include MetadataHelpers
 
-  belongs_to :resource_owner, :class_name => "Account"
-  belongs_to :created_by,     :class_name => "Account"
+  belongs_to :resource_owner, class_name: "Account"
+  belongs_to :created_by,     class_name: "Account"
 
-  before_destroy    :validate_destroy
+  before_destroy :validate_destroy
 
   attr_accessor :destroyer
 
@@ -19,8 +19,8 @@ class AccessToken < Doorkeeper::AccessToken
     options ||= {}
     super(
       {
-        :only    => json_attributes.keys,
-        :methods => json_methods.keys
+        only: json_attributes.keys,
+        methods: json_methods.keys
       }.merge(options)
     )
   end
@@ -31,11 +31,11 @@ class AccessToken < Doorkeeper::AccessToken
 
   def json_methods
     {
-      :id => nil,
-      :token => nil,
-      :created_at => nil,
-      :updated_at => nil,
-      :metadata => nil
+      id: nil,
+      token: nil,
+      created_at: nil,
+      updated_at: nil,
+      metadata: nil
     }
   end
 

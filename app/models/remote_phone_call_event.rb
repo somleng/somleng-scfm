@@ -3,23 +3,21 @@ class RemotePhoneCallEvent < ApplicationRecord
   include HasCallFlowLogic
   include Wisper::Publisher
 
-  conditionally_serialize(:details, JSON)
-
-  belongs_to :phone_call, :validate => true, :autosave => true
+  belongs_to :phone_call, validate: true, autosave: true
 
   validates :call_flow_logic,
-            :presence => true
+            presence: true
 
   validates :remote_call_id,
             :remote_direction,
-            :presence => true
+            presence: true
 
   delegate :contact,
-           :to => :phone_call
+           to: :phone_call
 
   delegate :complete!,
-           :to => :phone_call,
-           :prefix => true
+           to: :phone_call,
+           prefix: true
 
   def setup!
     broadcast(:remote_phone_call_event_initialized, self)

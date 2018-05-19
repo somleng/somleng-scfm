@@ -78,8 +78,4 @@ class Account < ApplicationRecord
   def platform_configuration(key)
     read_attribute("#{platform_provider_name}_#{key}")
   end
-
-  def set_default_permissions_bitmask
-    self.permissions_bitmask = DEFAULT_PERMISSIONS_BITMASK if permissions.empty?
-  end
 end

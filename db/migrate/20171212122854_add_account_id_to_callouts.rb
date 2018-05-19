@@ -1,7 +1,7 @@
-class AddAccountIdToCallouts < ApplicationMigration
+class AddAccountIdToCallouts < ActiveRecord::Migration[5.1]
   def up
     change_table(:callouts) do |t|
-      t.references(:account, :index => true, :foreign_key => true)
+      t.references(:account, index: true, foreign_key: true)
     end
 
     if Callout.any?
@@ -11,10 +11,10 @@ class AddAccountIdToCallouts < ApplicationMigration
         account = Account.first_or_create!
       end
 
-      Callout.update_all(:account_id => account.id)
+      Callout.update_all(account_id: account.id)
     end
 
-    change_column(:callouts, :account_id, :bigint, :null => false)
+    change_column(:callouts, :account_id, :bigint, null: false)
   end
 
   def down

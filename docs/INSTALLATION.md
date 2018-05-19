@@ -1,6 +1,6 @@
 # Setup
 
-Follow this guide to get Somleng SCFM setup on your local machine. This guide installs Somleng SCFM in SQLite mode with Docker. Note that this is not recommended for a production environment, but it's the easiest way to try things out.
+Follow this guide to get Somleng SCFM setup on your local machine using Docker.
 
 ## Prerequisites
 
@@ -8,107 +8,67 @@ Follow this guide to get Somleng SCFM setup on your local machine. This guide in
 
 If you haven't already done so, go ahead and [install Docker](https://docs.docker.com/engine/installation/).
 
-Then download the lastest image of Somleng SCFM.
+### Git
 
-```
-$ docker pull dwilkie/somleng-scfm
-```
+You'll also need Git installed. If you haven't already done so, go ahead and [install Git](https://git-scm.com/book/en/v1/Getting-Started-Installing-Git)
 
 ### Twilio Account
 
 For the tutorial we're going to connect Somleng SCFM to Twilio. If you haven't already done so, go ahead and [create a Twilio Account](https://www.twilio.com/).
 
-### Create a new SQLite Database
+### Clone the Repository
 
-The first thing to do is create the database with a super admin account. Go ahead and run the following command to get your database set up.
+    $ git clone https://github.com/somleng/somleng-scfm.git
+    $ cd somleng-scfm
 
-Note that this will create a new SQLite database located at `/tmp/somleng-scfm/db/somleng_scfm_production.sqlite3` on your host machine. It will also create a file located at `/tmp/somleng-scfm/super_admin_access_token.txt` which contains the Access Token of your Super Admin account.
+### Start the SCFM Server
 
-Run the following command:
+In _another_ from the SCFM directory terminal run:
 
-```
-$ docker run --rm -v /tmp/somleng-scfm:/tmp -e RAILS_ENV=production -e RAILS_DB_ADAPTER=sqlite3 -e SECRET_KEY_BASE=secret -e CREATE_SUPER_ADMIN_ACCOUNT=1 -e OUTPUT=super_admin -e FORMAT=http_basic dwilkie/somleng-scfm /bin/bash -c 'if [ -f /tmp/db/somleng_scfm_production.sqlite3 ]; then cp /tmp/db/somleng_scfm_production.sqlite3 ./db/; fi && bundle exec rake db:create && bundle exec rake db:migrate && SUPER_ADMIN_ACCESS_TOKEN=$(bundle exec rake db:seed) && mkdir -p /tmp/db/ && cp ./db/somleng_scfm_production.sqlite3 /tmp/db && echo $SUPER_ADMIN_ACCESS_TOKEN > /tmp/super_admin_access_token.txt' && SUPER_ADMIN_ACCESS_TOKEN=$(</tmp/somleng-scfm/super_admin_access_token.txt) && echo "Super Admin Account Access Token: $SUPER_ADMIN_ACCESS_TOKEN"
-```
+        $ docker-compose up
 
-You should see your Super Admin's access token in the `$SUPER_ADMIN_ACCESS_TOKEN` environment variable as shown below:
+Note that this command exposes port 3000 to your host. You should now see SCFM booted at <http://localhost:3000>
 
-```
-$ Super Admin Account Access Token: 49c6f7961eae951e1d8ecb28093c4d59fcf3fd5fb31f120fcdef45f18c930a06
-```
+### Setup the Database
 
-### Start the REST API Server
+The next need to do is create the database and setup a Super Admin account. Go ahead and run the following commands in the first terminal:
 
-Now that the database has been created we can start the REST API Server.
+    $ docker-compose run --rm somleng-scfm /bin/bash -c './bin/rails db:setup'
+    $ SUPER_ADMIN_ACCESS_TOKEN=$(docker-compose run --rm -e CREATE_SUPER_ADMIN_ACCOUNT=1 -e OUTPUT=super_admin -e FORMAT=http_basic somleng-scfm /bin/bash -c './bin/rails db:seed')
+    $ echo $SUPER_ADMIN_ACCESS_TOKEN
 
-In *another* terminal, run the following command:
-
-```
-$ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
-```
-
-Note that this command exposes port 3000 to your host. This will allow you to access the API at `http://localhost:3000/api`. Feel free to remove the `-p 3000:3000` option if you don't want to access the REST API from your host.
-
-### Testing the API
-
-To test things out run the following command from another terminal:
-
-```
-$ docker run -t --rm --link somleng-scfm endeveit/docker-jq /bin/sh -c 'curl -s -v  http://scfm:3000/api/contacts'
-```
-
-You should see something like:
-
-```
-< HTTP/1.1 401 Unauthorized
-< X-Frame-Options: SAMEORIGIN
-< X-XSS-Protection: 1; mode=block
-< X-Content-Type-Options: nosniff
-< Cache-Control: no-store
-< Pragma: no-cache
-< WWW-Authenticate: Bearer realm="Doorkeeper", error="invalid_token", error_description="The access token is invalid"
-< Content-Type: text/html
-< X-Request-Id: ba91231c-7d9e-447b-b247-b04a42db9588
-< X-Runtime: 0.002254
-< Transfer-Encoding: chunked
-<
-```
-
-Note we used the `curl` and `jq` commands to execute the request, which are available in the `endeveit/docker-jq` container. Inside the container the REST API is available at `http://scfm:3000/api`. If you have `curl` and `jq` installed locally you could also run the above command like so:
-
-```
-$ curl -s -v http://localhost:3000/api/contacts
-```
-
-The rest of the examples access the REST API from within a docker container. Feel free to access the API from your host if you like.
+You should see the output of your Super Admin access token.
 
 ### Create a user account
 
+Using our Super Admin account we will now use the API to create a normal user account.
+
 Run the following command:
 
-```
-$ ACCOUNT_ID=$(docker run -t --rm --link somleng-scfm -e SUPER_ADMIN_ACCESS_TOKEN=$SUPER_ADMIN_ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/accounts -u $SUPER_ADMIN_ACCESS_TOKEN: | jq -j ".id"') && echo "Account ID: $ACCOUNT_ID"
-```
+    $ ACCOUNT_ID=$(docker-compose run --rm -e SUPER_ADMIN_ACCESS_TOKEN=$SUPER_ADMIN_ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/accounts -u $SUPER_ADMIN_ACCESS_TOKEN: | jq -r -M ".id"')
+    $ echo $ACCOUNT_ID
 
-If all goes well should see something like:
+If all goes well should see your user account id. E.g. `2`
 
-```
-Account ID: 2
-```
-
-### Create a user access token
+### Create an access token for the acccount
 
 Now that we have our user account we need to create an access token in order to access the API.
 
 Run the following command:
 
-```
-$ ACCESS_TOKEN=$(docker run -t --rm --link somleng-scfm -e SUPER_ADMIN_ACCESS_TOKEN=$SUPER_ADMIN_ACCESS_TOKEN -e ACCOUNT_ID=$ACCOUNT_ID endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/access_tokens -d "account_id=2" -u $SUPER_ADMIN_ACCESS_TOKEN: | jq -j ".token"') && echo "Access Token: $ACCESS_TOKEN"
-```
+    $ ACCESS_TOKEN=$(docker-compose run --rm -e SUPER_ADMIN_ACCESS_TOKEN=$SUPER_ADMIN_ACCESS_TOKEN -e ACCOUNT_ID=$ACCOUNT_ID curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/access_tokens -d "account_id=$ACCOUNT_ID" -u $SUPER_ADMIN_ACCESS_TOKEN: | jq -r -M ".token"')
+    $ echo $ACCESS_TOKEN
 
-You should see something like:
-
-```
-Access Token: 4705e06c2977e12bed7ff8f24296aeb804fc7037213c4e09ed21d770608e6a40
-```
+You should see your access token. E.g. `4705e06c2977e12bed7ff8f24296aeb804fc7037213c4e09ed21d770608e6a40`
 
 We can now authenticate with the API by using `-u $ACCESS_TOKEN:` (note the trailing ':') in our requests.
+
+### Create a User
+
+Now that we our user account and access token, let's go ahead and create a user in order to sign in:
+
+Run the following command:
+
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/users -d "email=somleng@example.com" -d "password=secret1234" -u $ACCESS_TOKEN: | jq'
+
+You should be able to now sign in at <http://localhost:3000> with the email and password that you used in the request above.

@@ -16,9 +16,7 @@ Now that we're all set up, let's create some contacts in our database using the 
 
 The following command creates a new contact with the phone number (msisdn) `+252662345678`. Feel free to update the phone number to your number.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/contacts --data-urlencode "msisdn=+252662345678" -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/contacts --data-urlencode "msisdn=+252662345678" -u $ACCESS_TOKEN: | jq'
 
 You should see something like:
 
@@ -27,8 +25,9 @@ You should see something like:
   "id": 1,
   "msisdn": "+252662345678",
   "metadata": {},
-  "created_at": "2017-11-09T04:58:03.684Z",
-  "updated_at": "2017-11-09T04:58:03.684Z"
+  "created_at": "2018-05-19T06:49:24.294Z",
+  "updated_at": "2018-05-19T06:49:24.294Z",
+  "account_id": 2
 }
 ```
 
@@ -38,32 +37,28 @@ Note that the only required field for a contact is a msisdn (aka phone number) w
 
 Our contact is a bit hard to identify, so let's give her a name and a gender.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -XPATCH -v http://scfm:3000/api/contacts/1 -d "[metadata][name]=Alice" -d "[metadata][gender]=f" -u $ACCESS_TOKEN:'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -XPATCH -v http://somleng-scfm:3000/api/contacts/1 -d "[metadata][name]=Alice" -d "[metadata][gender]=f" -u $ACCESS_TOKEN:'
 
 You should see something like:
 
-```
-...
-> PATCH /api/contacts/1 HTTP/1.1
-> Host: scfm:3000
-> User-Agent: curl/7.51.0
-> Accept: */*
-> Content-Length: 22
-> Content-Type: application/x-www-form-urlencoded
->
-* upload completely sent off: 22 out of 22 bytes
-< HTTP/1.1 204 No Content
-< X-Frame-Options: SAMEORIGIN
-< X-XSS-Protection: 1; mode=block
-< X-Content-Type-Options: nosniff
-< Cache-Control: no-cache
-< X-Request-Id: d7a4ea73-9bc5-4b17-8d15-fefc6593f4ed
-< X-Runtime: 0.007223
-<
-...
-```
+    ...
+    > PATCH /api/contacts/1 HTTP/1.1
+    > Host: somleng-scfm:3000
+    > User-Agent: curl/7.51.0
+    > Accept: */*
+    > Content-Length: 22
+    > Content-Type: application/x-www-form-urlencoded
+    >
+    * upload completely sent off: 22 out of 22 bytes
+    < HTTP/1.1 204 No Content
+    < X-Frame-Options: SAMEORIGIN
+    < X-XSS-Protection: 1; mode=block
+    < X-Content-Type-Options: nosniff
+    < Cache-Control: no-cache
+    < X-Request-Id: d7a4ea73-9bc5-4b17-8d15-fefc6593f4ed
+    < X-Runtime: 0.007223
+    <
+    ...
 
 Notice that we ran this curl command with the `-v` flag. By default updating a resource successfully returns no content. The `-v` option on curl allows us to see the headers. In this case the response is `HTTP/1.1 204 No Content` which means that the contact was updated successfully.
 
@@ -71,9 +66,7 @@ Notice that we ran this curl command with the `-v` flag. By default updating a r
 
 If we want proof that our contact was really is the case we can fetch the contact:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/contacts/1 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/contacts/1 -u $ACCESS_TOKEN: | jq'
 
 You should see something like:
 
@@ -94,9 +87,7 @@ You should see something like:
 
 Now that we have Alice in our contacts, let's add another one for Bob:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/contacts --data-urlencode "msisdn=+252662345679" -d "[metadata][name]=Bob" -d "[metadata][gender]=m" -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/contacts --data-urlencode "msisdn=+252662345679" -d "[metadata][name]=Bob" -d "[metadata][gender]=m" -u $ACCESS_TOKEN: | jq'
 
 Now you should see Bob:
 
@@ -115,9 +106,7 @@ Now you should see Bob:
 
 Now just for fun, let's add a third contact for the Ghostbusters.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/contacts --data-urlencode "msisdn=+85510202103" -d "metadata[name]=Ghostbusters" -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/contacts --data-urlencode "msisdn=+85510202103" -d "metadata[name]=Ghostbusters" -u $ACCESS_TOKEN: | jq'
 
 Now you should see the Ghostbusters:
 
@@ -137,32 +126,28 @@ Now you should see the Ghostbusters:
 
 Let's see see who we have in our contacts table
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/contacts -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/contacts -u $ACCESS_TOKEN: | jq'
 
-```
-...
-> GET /api/contacts HTTP/1.1
-> Host: scfm:3000
-> User-Agent: curl/7.51.0
-> Accept: */*
->
-< HTTP/1.1 200 OK
-< X-Frame-Options: SAMEORIGIN
-< X-XSS-Protection: 1; mode=block
-< X-Content-Type-Options: nosniff
-< Per-Page: 25
-< Total: 3
-< Content-Type: application/json; charset=utf-8
-< ETag: W/"f46af555c8c8195492f4e4e2b2bc8d6f"
-< Cache-Control: max-age=0, private, must-revalidate
-< X-Request-Id: 82e09347-a79a-4e38-b1ad-ac56212a7b33
-< X-Runtime: 0.007498
-< Transfer-Encoding: chunked
-<
-...
-```
+    ...
+    > GET /api/contacts HTTP/1.1
+    > Host: somleng-scfm:3000
+    > User-Agent: curl/7.51.0
+    > Accept: */*
+    >
+    < HTTP/1.1 200 OK
+    < X-Frame-Options: SAMEORIGIN
+    < X-XSS-Protection: 1; mode=block
+    < X-Content-Type-Options: nosniff
+    < Per-Page: 25
+    < Total: 3
+    < Content-Type: application/json; charset=utf-8
+    < ETag: W/"f46af555c8c8195492f4e4e2b2bc8d6f"
+    < Cache-Control: max-age=0, private, must-revalidate
+    < X-Request-Id: 82e09347-a79a-4e38-b1ad-ac56212a7b33
+    < X-Runtime: 0.007498
+    < Transfer-Encoding: chunked
+    <
+    ...
 
 ```json
 [
@@ -204,14 +189,10 @@ Note that again we specified the `-v` flag to curl in order to get the headers. 
 
 What if we only wanted to only return the contacts who are female?
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/contacts?q[metadata][gender]=f" -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s -g "http://somleng-scfm:3000/api/contacts?q[metadata][gender]=f" -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 1
-```
+    < Per-Page: 25
+    < Total: 1
 
 ```json
 [
@@ -234,53 +215,45 @@ You can filter contacts by their metadata or by their msisdn (phone number).
 
 Looking at our contact index, adding the Ghostbusters was just a joke so let's delete them.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -XDELETE -v "http://scfm:3000/api/contacts/3" -u $ACCESS_TOKEN:'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -XDELETE -v "http://somleng-scfm:3000/api/contacts/3" -u $ACCESS_TOKEN:'
 
 You should see something like:
 
-```
-...
-> DELETE /api/contacts/3 HTTP/1.1
-> Host: scfm:3000
-> User-Agent: curl/7.51.0
-> Accept: */*
->
-< HTTP/1.1 204 No Content
-< X-Frame-Options: SAMEORIGIN
-< X-XSS-Protection: 1; mode=block
-< X-Content-Type-Options: nosniff
-< Cache-Control: no-cache
-< X-Request-Id: b0ebec64-5c78-4cfd-b3f7-563c8d85388c
-< X-Runtime: 0.022870
-<
-...
-```
+    ...
+    > DELETE /api/contacts/3 HTTP/1.1
+    > Host: somleng-scfm:3000
+    > User-Agent: curl/7.51.0
+    > Accept: */*
+    >
+    < HTTP/1.1 204 No Content
+    < X-Frame-Options: SAMEORIGIN
+    < X-XSS-Protection: 1; mode=block
+    < X-Content-Type-Options: nosniff
+    < Cache-Control: no-cache
+    < X-Request-Id: b0ebec64-5c78-4cfd-b3f7-563c8d85388c
+    < X-Runtime: 0.022870
+    <
+    ...
 
 Similar to when updating resources, a successful delete returns `No Content` which can be seen in the headers above.
 
 To double check that the Ghostbusters have been deleted you can try to fetch them:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/contacts/3 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/contacts/3 -u $ACCESS_TOKEN: | jq'
 
-```
-...
-> GET /api/contacts/3 HTTP/1.1
-> Host: scfm:3000
-> User-Agent: curl/7.51.0
-> Accept: */*
->
-< HTTP/1.1 404 Not Found
-< Content-Type: application/json; charset=UTF-8
-< X-Request-Id: 3842fd04-011d-4b5c-aed0-0d9d4df7f7c1
-< X-Runtime: 0.004426
-< Content-Length: 34
-<
-...
-```
+    ...
+    > GET /api/contacts/3 HTTP/1.1
+    > Host: somleng-scfm:3000
+    > User-Agent: curl/7.51.0
+    > Accept: */*
+    >
+    < HTTP/1.1 404 Not Found
+    < Content-Type: application/json; charset=UTF-8
+    < X-Request-Id: 3842fd04-011d-4b5c-aed0-0d9d4df7f7c1
+    < X-Runtime: 0.004426
+    < Content-Length: 34
+    <
+    ...
 
 ```json
 {
@@ -299,9 +272,7 @@ Now that we have some contacts in our database let's create a callout. A callout
 
 Let's go ahead and create a callout:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/callouts -u $ACCESS_TOKEN: | jq'
 
 Sample Response:
 
@@ -328,9 +299,7 @@ In order to populate a callout we create what's called callout population. This 
 
 Let's go ahead and create a batch operation for populating the callout. Take notice of the url in the command below `/api/callouts/1/batch_operations`. Here `1` is the id of the callout created in the previous step. We are creating a batch operation of type `BatchOperation::CalloutPopulation` on the the callout with the id `1`.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/1/batch_operations -d type=BatchOperation::CalloutPopulation -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/callouts/1/batch_operations -d type=BatchOperation::CalloutPopulation -u $ACCESS_TOKEN: | jq'
 
 You should see something like:
 
@@ -350,18 +319,14 @@ Now that we have our callout population we can preview which contacts will parti
 
 Again, take notice of the url in the command below `/api/batch_operations/1/preview/contacts`. Here `1` is the id of the callout population created in the previous step. We are previewing the contacts in the callout population.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/preview/contacts -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -v http://somleng-scfm:3000/api/batch_operations/1/preview/contacts -u $ACCESS_TOKEN: | jq'
 
 You should see something like:
 
-```
-...
-< Per-Page: 25
-< Total: 2
-...
-```
+    ...
+    < Per-Page: 25
+    < Total: 2
+    ...
 
 ```json
 [
@@ -396,23 +361,17 @@ Typically you don't want to call everyone in your contacts table. Let's say for 
 
 To do this let's update the callout population specifying the `contact_filter_params` which will limit our population of the callout. Note that the `contacts_filter_params` are nested under `parameters` attribute. A batch operation will have different configurable parameters depending on the type.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/1 -d parameters[contact_filter_params][metadata][gender]=f -u $ACCESS_TOKEN:'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -XPATCH http://somleng-scfm:3000/api/batch_operations/1 -d parameters[contact_filter_params][metadata][gender]=f -u $ACCESS_TOKEN:'
 
 Again since we're updating a record, a successful response will return `No Content`.
 
-```
-< HTTP/1.1 204 No Content
-```
+    < HTTP/1.1 204 No Content
 
 ### Inspecting a callout population
 
 Let's double check that our callout population was updated.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/1 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/batch_operations/1 -u $ACCESS_TOKEN: | jq'
 
 You should see something like;
 
@@ -438,14 +397,10 @@ We can see now that the `contact_filter_params` are populated with the parameter
 
 Let's try the preview again.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/preview/contacts -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -v http://somleng-scfm:3000/api/batch_operations/1/preview/contacts -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 1
-```
+    < Per-Page: 25
+    < Total: 1
 
 ```json
 [
@@ -468,9 +423,7 @@ Now we can see from the response that there's `Total` of `1` contacts in the pre
 
 Once we're happy with our batch operation for populating the callout we can queue it for processing. This will take some time depending on how many participations need to be created.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations/1/batch_operation_events -d "event=queue" -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/batch_operations/1/batch_operation_events -d "event=queue" -u $ACCESS_TOKEN: | jq'
 
 You should see something like:
 
@@ -494,9 +447,7 @@ You should see something like:
 
 Notice that the status is now `queued`. In the background, Somleng SCFM is now busy populating your callout with callout participations. You can check the status of the population by fetching it again.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/1 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/batch_operations/1 -u $ACCESS_TOKEN: | jq'
 
 You should see something like this:
 
@@ -522,14 +473,10 @@ Notice that the status is now `finished`. This means that the batch operation ha
 
 Let's check the contacts that the batch operation added to our callout.
 
-```
-< Per-Page: 25
-< Total: 1
-```
+    < Per-Page: 25
+    < Total: 1
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations/1/contacts -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/batch_operations/1/contacts -u $ACCESS_TOKEN: | jq'
 
 ```json
 [
@@ -552,18 +499,14 @@ Now that we have populated our callout we should have a bunch of callout partici
 
 Let's see what callout participations we have in our callout.
 
-Take notice of the url in the command below `/api/callouts/1/callout_participations`. Here `1` is the id of the callout, *not* the batch operation (although in this case the batch operation id may also have an id of `1`). Here we are fetching the participations in the callout.
+Take notice of the url in the command below `/api/callouts/1/callout_participations`. Here `1` is the id of the callout, _not_ the batch operation (although in this case the batch operation id may also have an id of `1`). Here we are fetching the participations in the callout.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/callout_participations -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/callouts/1/callout_participations -u $ACCESS_TOKEN: | jq'
 
 You should see something like:
 
-```
-< Per-Page: 25
-< Total: 1
-```
+    < Per-Page: 25
+    < Total: 1
 
 ```json
 [
@@ -587,14 +530,10 @@ As you can see we have just the one participation in the callout, which has the 
 
 If we want to see exactly who will be participating in our callout we can check that too:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/contacts -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/callouts/1/contacts -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 1
-```
+    < Per-Page: 25
+    < Total: 1
 
 ```json
 [
@@ -617,9 +556,7 @@ Let's say that we changed our mind from before and we now want to include Bob in
 
 In the command below we specify `contact_id=2` which is Bob's contact_id
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -XPOST -s http://scfm:3000/api/callouts/1/callout_participations -d contact_id=2 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -XPOST -s http://somleng-scfm:3000/api/callouts/1/callout_participations -d contact_id=2 -u $ACCESS_TOKEN: | jq'
 
 You should see something like:
 
@@ -639,9 +576,7 @@ You should see something like:
 
 Bob is now the second participant in the callout. Once again we can check all the participants with:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/contacts -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/callouts/1/contacts -u $ACCESS_TOKEN: | jq'
 
 ```json
 < Per-Page: 25
@@ -679,14 +614,10 @@ Let's say we no longer want to call Alice. We can remove Alice by deleting her p
 
 Notice in the command below we specify Alice's `contact_id` as a query parameter.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts/1/callout_participations?q[contact_id]=1" -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s -g "http://somleng-scfm:3000/api/callouts/1/callout_participations?q[contact_id]=1" -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 1
-```
+    < Per-Page: 25
+    < Total: 1
 
 ```json
 [
@@ -710,26 +641,18 @@ The `id` field in the response above is Alice's callout participation id
 
 Once we have Alice's callout participation id we can delete her from the callout. Note that this doesn't delete her from the contacts table. It simply removes her from the callout.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/callout_participations/1 -u $ACCESS_TOKEN:'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -XDELETE http://somleng-scfm:3000/api/callout_participations/1 -u $ACCESS_TOKEN:'
 
 As before, when deleting a resource successfully we should get a `No Content` reponse.
 
-```
-< HTTP/1.1 204 No Content
-```
+    < HTTP/1.1 204 No Content
 
 For our own piece of mind let's make sure she's actually been removed from the callout.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/contacts -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/callouts/1/contacts -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 1
-```
+    < Per-Page: 25
+    < Total: 1
 
 ```json
 [
@@ -752,9 +675,7 @@ Let's say that we really do want Alice in the callout after all. We could just r
 
 First let's check our batch operation again:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/1 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/batch_operations/1 -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -778,14 +699,10 @@ As you can see from the response above the status of the batch operation is alre
 
 First let's make sure that Alice will be added again if we repopulate by previewing the contacts.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/1/preview/contacts -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -v http://somleng-scfm:3000/api/batch_operations/1/preview/contacts -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 1
-```
+    < Per-Page: 25
+    < Total: 1
 
 ```json
 [
@@ -806,9 +723,7 @@ Ok so we can see from the preview that Alice will added as a participant to the 
 
 Finally let's go ahead and queue the batch operation. Notice that the `event` in the command below is `requeue`. We're requeuing the batch operation to populate the callout.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations/1/batch_operation_events -d "event=requeue" -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/batch_operations/1/batch_operation_events -d "event=requeue" -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -832,9 +747,7 @@ Now we see that the callout population has been queued again.
 
 Let's check again to see if it's done.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/1 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/batch_operations/1 -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -856,14 +769,10 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 Looks good. Now let's check to see if Alice is was populated in our callout.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations/1/contacts -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/batch_operations/1/contacts -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 1
-```
+    < Per-Page: 25
+    < Total: 1
 
 ```json
 [
@@ -884,14 +793,10 @@ Ok, we see that Alice is has been populated but what happened to Bob? If we take
 
 What we really want to see is who is now in our callout.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts/1/contacts -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/callouts/1/contacts -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 2
-```
+    < Per-Page: 25
+    < Total: 2
 
 ```json
 [
@@ -928,14 +833,10 @@ In order to make calls we can use the Phone Calls API. Let's start off by simply
 
 So in order to call Alice, we need her callout participation id. As shown above we can get this by filtering the callout participations by the contact id.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g "http://scfm:3000/api/callouts/1/callout_participations?q[contact_id]=1" -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s -g "http://somleng-scfm:3000/api/callouts/1/callout_participations?q[contact_id]=1" -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 1
-```
+    < Per-Page: 25
+    < Total: 1
 
 ```json
 [
@@ -957,9 +858,7 @@ Ok so we can see from the response above hat Alice's callout participation ID is
 
 Let's go ahead and create a phone call for her participation.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callout_participations/3/phone_calls -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/callout_participations/3/phone_calls -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -977,9 +876,7 @@ Let's modify our request to include some remote request parameters. Note that in
 
 Also note that we use the lowercase, underscored version of the parameters instead of the CamelCase version. Both versions are shown in the [Twilio Documentation](https://www.twilio.com/docs/api/voice/making-calls#post-parameters).
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callout_participations/3/phone_calls --data-urlencode "remote_request_params[from]=1234" --data-urlencode "remote_request_params[url]=https://demo.twilio.com/docs/voice.xml" -d "remote_request_params[method]=GET" -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/callout_participations/3/phone_calls --data-urlencode "remote_request_params[from]=1234" --data-urlencode "remote_request_params[url]=https://demo.twilio.com/docs/voice.xml" -d "remote_request_params[method]=GET" -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -1020,13 +917,9 @@ Let's suppose that we want to update the `remote_request_params` so that Alice s
 
 Note that we still need to specify the `url` parameter in the update request.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/phone_calls/1 --data-urlencode "remote_request_params[from]=345" --data-urlencode "remote_request_params[url]=https://demo.twilio.com/docs/voice.xml" -d "remote_request_params[method]=GET"'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -XPATCH http://somleng-scfm:3000/api/phone_calls/1 --data-urlencode "remote_request_params[from]=345" --data-urlencode "remote_request_params[url]=https://demo.twilio.com/docs/voice.xml" -d "remote_request_params[method]=GET"'
 
-```
-< HTTP/1.1 204 No Content
-```
+    < HTTP/1.1 204 No Content
 
 Again updating a resources successfully will return a `204`.
 
@@ -1034,9 +927,7 @@ Again updating a resources successfully will return a `204`.
 
 Let's check that our call was updated successfully.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/phone_calls/1 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/phone_calls/1 -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -1071,9 +962,7 @@ Now we can see that our `remote_request_params` have been updated.
 
 As mentioned before, it's possible to create multiple calls for a single callout participation. Let's say we want call Alice multiple times. To do this, let's create another call for Alice's callout participation.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callout_participations/3/phone_calls --data-urlencode "remote_request_params[from]=1234" --data-urlencode "remote_request_params[url]=https://demo.twilio.com/docs/voice.xml" -d "remote_request_params[method]=GET" -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/callout_participations/3/phone_calls --data-urlencode "remote_request_params[from]=1234" --data-urlencode "remote_request_params[url]=https://demo.twilio.com/docs/voice.xml" -d "remote_request_params[method]=GET" -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -1108,14 +997,10 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 Now that we have created a second phone call for Alice's callout participation, we can view all her phone calls by indexing under the callout participation.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callout_participations/3/phone_calls -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/callout_participations/3/phone_calls -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 2
-```
+    < Per-Page: 25
+    < Total: 2
 
 ```json
 [
@@ -1180,26 +1065,18 @@ Phone calls which have a `status` of `created` can also be deleted, since they h
 
 Let's go ahead and delete the most recent call that we just created for Alice's callout participation.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XDELETE http://scfm:3000/api/phone_calls/2 -u $ACCESS_TOKEN:'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -XDELETE http://somleng-scfm:3000/api/phone_calls/2 -u $ACCESS_TOKEN:'
 
-```
-< HTTP/1.1 204 No Content
-```
+    < HTTP/1.1 204 No Content
 
 Again for a successful `DELETE` request we should get a `204` response.
 
-Let's go and list the phone calls again to see if it has in fact been deleted. Note that in the request below we don't specify the callout participation ID. This request will list *all* of the phone calls in the database so it's normally not what you want. But for this example, after deleting Alice's most recent phone call we should only have one remaining.
+Let's go and list the phone calls again to see if it has in fact been deleted. Note that in the request below we don't specify the callout participation ID. This request will list _all_ of the phone calls in the database so it's normally not what you want. But for this example, after deleting Alice's most recent phone call we should only have one remaining.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/phone_calls -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/phone_calls -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 1
-```
+    < Per-Page: 25
+    < Total: 1
 
 ```json
 [
@@ -1236,9 +1113,7 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 Ok finally we're ready to go ahead and call Alice. In order to do this we create a phone call event for the phone call and set the event to `queue`.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/phone_calls/1/phone_call_events -d event=queue -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/phone_calls/1/phone_call_events -d event=queue -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -1271,9 +1146,7 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 We can see from the `status` attribute that the call has been `queued`. In the background the call should being queued on Twilio or Somleng. We can check the status of the call by fetching it again.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/phone_calls/1 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/phone_calls/1 -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -1314,53 +1187,41 @@ Oops, it looks like that we're missing our Account SID.
 
 Twilio and Somleng API keys are configured with environment variables. The following environment variables are available:
 
-```
-SOMLENG_ACCOUNT_SID=somleng-account-sid
-SOMLENG_AUTH_TOKEN=somleng-auth-token
-SOMLENG_CLIENT_REST_API_HOST=somleng-rest-api-host
-SOMLENG_CLIENT_REST_API_BASE_URL=somleng-rest-api-base-url
-TWILIO_ACCOUNT_SID=twilio-account-sid
-TWILIO_AUTH_TOKEN=twilio-auth-token
-PLATFORM_PROVIDER=twilio-or-somleng
-```
+    SOMLENG_ACCOUNT_SID=somleng-account-sid
+    SOMLENG_AUTH_TOKEN=somleng-auth-token
+    SOMLENG_CLIENT_REST_API_HOST=somleng-rest-api-host
+    SOMLENG_CLIENT_REST_API_BASE_URL=somleng-rest-api-base-url
+    TWILIO_ACCOUNT_SID=twilio-account-sid
+    TWILIO_AUTH_TOKEN=twilio-auth-token
+    PLATFORM_PROVIDER=twilio-or-somleng
 
 If we're using Twilio, we need to set the following environment variables:
 
-```
-PLATFORM_PROVIDER=twilio
-TWILIO_ACCOUNT_SID=twilio-account-sid
-TWILIO_AUTH_TOKEN=twilio-auth-token
-```
+    PLATFORM_PROVIDER=twilio
+    TWILIO_ACCOUNT_SID=twilio-account-sid
+    TWILIO_AUTH_TOKEN=twilio-auth-token
 
 If we're using Somleng, we would set the following environment variables:
 
-```
-PLATFORM_PROVIDER=somleng
-SOMLENG_ACCOUNT_SID=somleng-account-sid
-SOMLENG_AUTH_TOKEN=somleng-auth-token
-SOMLENG_CLIENT_REST_API_HOST=somleng-rest-api-host
-SOMLENG_CLIENT_REST_API_BASE_URL=somleng-rest-api-base-url
-```
+    PLATFORM_PROVIDER=somleng
+    SOMLENG_ACCOUNT_SID=somleng-account-sid
+    SOMLENG_AUTH_TOKEN=somleng-auth-token
+    SOMLENG_CLIENT_REST_API_HOST=somleng-rest-api-host
+    SOMLENG_CLIENT_REST_API_BASE_URL=somleng-rest-api-base-url
 
 When we boot the API server we can specify these environment variables. Let's go ahead and restart our API server with our Twilio or Somleng environment variables set. Don't forget to shutdown the running API server first (Ctrl-C from the terminal). Here's the command if you're using Twilio. Don't forget to replace the dummy values with your actual values.
 
-```
-$ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 -e PLATFORM_PROVIDER=twilio -e TWILIO_ACCOUNT_SID=twilio-account-sid -e TWILIO_AUTH_TOKEN=twilio-auth-token dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
-```
+    $ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 -e PLATFORM_PROVIDER=twilio -e TWILIO_ACCOUNT_SID=twilio-account-sid -e TWILIO_AUTH_TOKEN=twilio-auth-token dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
 
 Below is the command to use if you're using Somleng. Again don't forget to replace the dummy values with your actual values.
 
-```
-$ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 -e PLATFORM_PROVIDER=somleng -e SOMLENG_ACCOUNT_SID=somleng-account-sid -e SOMLENG_AUTH_TOKEN=somleng-auth-token -e SOMLENG_CLIENT_REST_API_HOST=somleng-rest-api-host -e SOMLENG_CLIENT_REST_API_BASE_URL=somleng-rest-api-base-url dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
-```
+    $ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 -e PLATFORM_PROVIDER=somleng -e SOMLENG_ACCOUNT_SID=somleng-account-sid -e SOMLENG_AUTH_TOKEN=somleng-auth-token -e SOMLENG_CLIENT_REST_API_HOST=somleng-rest-api-host -e SOMLENG_CLIENT_REST_API_BASE_URL=somleng-rest-api-base-url dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
 
 ### Calling again
 
 With the server rebooted and our environment variables set correctly let's try to call Alice again. First, it's important to note that once a phone call has been queued remotely, that particular phone call cannot be retried. Instead we just need to make another phone call for Alice and queue it again.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callout_participations/3/phone_calls --data-urlencode "remote_request_params[from]=345" --data-urlencode "remote_request_params[url]=https://demo.twilio.com/docs/voice.xml" -d "remote_request_params[method]=GET" -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/callout_participations/3/phone_calls --data-urlencode "remote_request_params[from]=345" --data-urlencode "remote_request_params[url]=https://demo.twilio.com/docs/voice.xml" -d "remote_request_params[method]=GET" -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -1393,9 +1254,7 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 And go ahead and queue it again.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/phone_calls/3/phone_call_events -d event=queue -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/phone_calls/3/phone_call_events -d event=queue -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -1428,9 +1287,7 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 Then fetch it to check it's status
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/phone_calls/3 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/phone_calls/3 -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -1482,9 +1339,7 @@ This looks better! We can see that the `status` is now `remotely_queued` and tha
 
 Now that our call was queued remotely, it would be nice to see what happened to it. Using the phone call events API we can queue a job for fetching the remote status of a call.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/phone_calls/3/phone_call_events -d event=queue_remote_fetch -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/phone_calls/3/phone_call_events -d event=queue_remote_fetch -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -1534,9 +1389,7 @@ Here we see the `status` is now `remote_fetch_queued` which means that a remote 
 
 Let's fetch the call again to see if it's been updated.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/phone_calls/3 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/phone_calls/3 -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -1607,9 +1460,7 @@ We could also use the API to specify our own custom call flow logic instead. The
 
 In order to use our own logic let's go ahead and create yet another phone call for Alice. Notice that this time we're specifying the `remote_request_params[url]` parameter AND the `remote_request_params[status_callback]` as `http://18a2c6b3.ngrok.io/api/remote_phone_call_events`. If you're using ngrok, you'll need to update this to url provided by ngrok. The path though is important `/api/remote_phone_call_events`. This is the endpoint within the API which is designed to return TwiML for our custom call flow logic. Also notice that we left out the `remote_request_params[method]` parameter. This is because, by default, Twilio and Somleng assume that it can reach your TwiML endpoint via HTTP POST. Since the somleng-scfm API endpoint at `/api/remote_phone_call_events` supports POST (and only POST) we can leave this blank.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callout_participations/3/phone_calls --data-urlencode "remote_request_params[from]=345" --data-urlencode "remote_request_params[url]=http://18a2c6b3.ngrok.io/api/remote_phone_call_events" --data-urlencode "remote_request_params[status_callback]=http://18a2c6b3.ngrok.io/api/remote_phone_call_events" -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/callout_participations/3/phone_calls --data-urlencode "remote_request_params[from]=345" --data-urlencode "remote_request_params[url]=http://18a2c6b3.ngrok.io/api/remote_phone_call_events" --data-urlencode "remote_request_params[status_callback]=http://18a2c6b3.ngrok.io/api/remote_phone_call_events" -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -1644,13 +1495,9 @@ We can see from the output that the phone call has been created successfully wit
 
 But what if we want to use our own call flow logic? In order to do this you can define a ruby class in your application inheriting `CallFlowLogic::Base`, then implement the `to_xml` method (for some more complex examples checkout the [call_flow_logic directory](https://github.com/somleng/somleng-scfm/tree/master/app/models/call_flow_logic)). Once you have defined your call flow logic you can set it on a callout, callout participation or phone call. For this example let's try to set the call flow logic to `CallFlowLogic::AvfCapom::CapomShort` which is already defined in the [call_flow_logic directory](https://github.com/somleng/somleng-scfm/tree/master/app/models/call_flow_logic).
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -XPATCH http://scfm:3000/api/phone_calls/5 -d call_flow_logic=CallFlowLogic::AvfCapom::CapomShort -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s -XPATCH http://somleng-scfm:3000/api/phone_calls/5 -d call_flow_logic=CallFlowLogic::AvfCapom::CapomShort -u $ACCESS_TOKEN: | jq'
 
-```
-< HTTP/1.1 422 Unprocessable Entity
-```
+    < HTTP/1.1 422 Unprocessable Entity
 
 ```json
 {
@@ -1668,32 +1515,22 @@ Oops. Doesn't seem to have worked. The error message suggests that our call flow
 
 In order to make our custom call flow logic available, we need to register it first. You can use the environment variable `REGISTERED_CALL_FLOW_LOGIC` to define a comma separated list of call flow logic that your application uses. You can also use the environment variable `DEFAULT_CALL_FLOW_LOGIC` to override the application's default call flow logic. This is useful for specifying call flow logic for incoming calls. For example, setting the following enironment variables will register the call flow logic called `CallFlowLogic::AvfCapom::CapomShort` and set it to the application default.
 
-```
-REGISTERED_CALL_FLOW_LOGIC=CallFlowLogic::AvfCapom::CapomShort
-DEFAULT_CALL_FLOW_LOGIC=CallFlowLogic::AvfCapom::CapomShort
-```
+    REGISTERED_CALL_FLOW_LOGIC=CallFlowLogic::AvfCapom::CapomShort
+    DEFAULT_CALL_FLOW_LOGIC=CallFlowLogic::AvfCapom::CapomShort
 
 Let's go ahead and restart our API server and specify these environment variables. Don't forget to shutdown the running API server first (Ctrl-C). Also note that for brevity we have left out the Twilio and Somleng configuration variables. Be sure to add them in as well.
 
-```
-$ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 -e REGISTERED_CALL_FLOW_LOGIC=CallFlowLogic::AvfCapom::CapomShort -e DEFAULT_CALL_FLOW_LOGIC=CallFlowLogic::AvfCapom::CapomShort dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
-```
+    $ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 -e REGISTERED_CALL_FLOW_LOGIC=CallFlowLogic::AvfCapom::CapomShort -e DEFAULT_CALL_FLOW_LOGIC=CallFlowLogic::AvfCapom::CapomShort dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
 
 Ok let's try to use our call flow logic again.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -XPATCH http://scfm:3000/api/phone_calls/4 -d call_flow_logic=CallFlowLogic::AvfCapom::CapomShort -u $ACCESS_TOKEN:'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s -XPATCH http://somleng-scfm:3000/api/phone_calls/4 -d call_flow_logic=CallFlowLogic::AvfCapom::CapomShort -u $ACCESS_TOKEN:'
 
-```
-< HTTP/1.1 204 No Content
-```
+    < HTTP/1.1 204 No Content
 
 Looks better. Let's fetch the phone call again to make sure it's been updated with our call flow logic.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/phone_calls/4 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/phone_calls/4 -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -1725,9 +1562,7 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 Now we can see that the `call_flow_logic` has been successfully updated. Finally let's go ahead and queue the call.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/phone_calls/4/phone_call_events -d event=queue -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/phone_calls/4/phone_call_events -d event=queue -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -1769,9 +1604,7 @@ Recall when we went through [populating callouts](#populating-a-callout) we used
 
 In order to demonstrate this let's go and [create a second callout](#managing-callouts) and populate it with participations.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/callouts -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -1788,9 +1621,7 @@ Now that we have our second callout, let's go and [populate it](#populating-a-ca
 
 First create a batch operation for populating our new callout:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/callouts/2/batch_operations -d type=BatchOperation::CalloutPopulation -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/callouts/2/batch_operations -d type=BatchOperation::CalloutPopulation -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -1806,14 +1637,10 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 Then preview the batch operation:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/2/preview/contacts -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -v http://somleng-scfm:3000/api/batch_operations/2/preview/contacts -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 2
-```
+    < Per-Page: 25
+    < Total: 2
 
 ```json
 [
@@ -1842,9 +1669,7 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 Queue it for population:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations/2/batch_operation_events -d "event=queue" -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/batch_operations/2/batch_operation_events -d "event=queue" -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -1860,14 +1685,10 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 And finally check the participants:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations/2/contacts -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/batch_operations/2/contacts -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 2
-```
+    < Per-Page: 25
+    < Total: 2
 
 ```json
 [
@@ -1896,14 +1717,10 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 Alice and Bob are now both participants in the first callout and the second callout. We can double check this by looking at all callout participations across all callouts.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callout_participations -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/callout_participations -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 4
-```
+    < Per-Page: 25
+    < Total: 4
 
 ```json
 [
@@ -1956,14 +1773,10 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 Now let's take a closer look at our actual callouts.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/callouts -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/callouts -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 2
-```
+    < Per-Page: 25
+    < Total: 2
 
 ```json
 [
@@ -1996,32 +1809,24 @@ For this example, let's assume that we want to use the `CallFlowLogic::AvfCapom:
 
 Firstly let's go ahead and update the `call_flow_logic` for the second callout. Note that you'll have to register this callout first as explained in the previous section.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/callouts/2 -d call_flow_logic="CallFlowLogic::AvfCapom::CapomShort" -u $ACCESS_TOKEN:'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -XPATCH http://somleng-scfm:3000/api/callouts/2 -d call_flow_logic="CallFlowLogic::AvfCapom::CapomShort" -u $ACCESS_TOKEN:'
 
-```
-< HTTP/1.1 204 No Content
-```
+    < HTTP/1.1 204 No Content
 
 #### Fetching
 
 Now let's fetch the callout to make sure that it was updated successfully:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/callouts/2 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/callouts/2 -u $ACCESS_TOKEN: | jq'
 
-```
-{
-  "id": 2,
-  "status": "initialized",
-  "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
-  "metadata": {},
-  "created_at": "2017-11-23T03:13:39.136Z",
-  "updated_at": "2017-11-23T03:35:50.274Z"
-}
-```
+    {
+      "id": 2,
+      "status": "initialized",
+      "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
+      "metadata": {},
+      "created_at": "2017-11-23T03:13:39.136Z",
+      "updated_at": "2017-11-23T03:35:50.274Z"
+    }
 
 #### Events
 
@@ -2029,33 +1834,25 @@ Now we can see that our `call_flow_logic` has been updated to `CallFlowLogic::Av
 
 Since, that for this example we only want to deal with the second callout, let's go ahead and set the status to `running` by `starting` the callout.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -XPOST -s http://scfm:3000/api/callouts/2/callout_events -d "event=start" -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -XPOST -s http://somleng-scfm:3000/api/callouts/2/callout_events -d "event=start" -u $ACCESS_TOKEN: | jq'
 
-```
-{
-  "id": 2,
-  "status": "running",
-  "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
-  "metadata": {},
-  "created_at": "2017-11-23T03:13:39.136Z",
-  "updated_at": "2017-11-23T03:52:51.145Z"
-}
-```
+    {
+      "id": 2,
+      "status": "running",
+      "call_flow_logic": "CallFlowLogic::AvfCapom::CapomShort",
+      "metadata": {},
+      "created_at": "2017-11-23T03:13:39.136Z",
+      "updated_at": "2017-11-23T03:52:51.145Z"
+    }
 
 #### Filtering
 
 Now that our second callout's `status` is `running` we can filter all callouts on the status. The following command lists all callouts with the `status` equal to `running`.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -g http://scfm:3000/api/callouts?q[status]="running" -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s -g http://somleng-scfm:3000/api/callouts?q[status]="running" -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 1
-```
+    < Per-Page: 25
+    < Total: 1
 
 ```json
 [
@@ -2072,22 +1869,18 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 To summarize this is what we just did:
 
-1. Created a second callout
-2. Populated it
-3. Set the call flow logic
-4. Started it
+1.  Created a second callout
+2.  Populated it
+3.  Set the call flow logic
+4.  Started it
 
 ### Create a Batch Operation for creating phone calls
 
 Let's see how we can use a batch operation for creating phone calls across callouts. First let's go ahead and create a batch operation for creating phone calls.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -XPOST http://scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallCreate -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s -XPOST http://somleng-scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallCreate -u $ACCESS_TOKEN: | jq'
 
-```
-< HTTP/1.1 422 Unprocessable Entity
-```
+    < HTTP/1.1 422 Unprocessable Entity
 
 ```json
 {
@@ -2105,13 +1898,9 @@ When using a batch operation for creating phone calls that batch operation must 
 
 Let's try again, this time specifying the `remote_request_params`. Note that for batch operations the `remote_request_params` are nested under `parameters`.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s -XPOST http://scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallCreate --data-urlencode "parameters[remote_request_params][from]=1234" --data-urlencode "parameters[remote_request_params][url]=https://demo.twilio.com/docs/voice.xml" -d "parameters[remote_request_params][method]=GET" -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s -XPOST http://somleng-scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallCreate --data-urlencode "parameters[remote_request_params][from]=1234" --data-urlencode "parameters[remote_request_params][url]=https://demo.twilio.com/docs/voice.xml" -d "parameters[remote_request_params][method]=GET" -u $ACCESS_TOKEN: | jq'
 
-```
-< HTTP/1.1 201 Created
-```
+    < HTTP/1.1 201 Created
 
 ```json
 {
@@ -2137,14 +1926,10 @@ Alright that seemed to have worked. Note from the response above that the `statu
 
 Now that we have our batch operation we can go ahead and preview it to see which [callout participations](#managing-callout-participations) will have phone calls created.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations/3/preview/callout_participations -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/batch_operations/3/preview/callout_participations -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 4
-```
+    < Per-Page: 25
+    < Total: 4
 
 ```json
 [
@@ -2203,21 +1988,15 @@ For this example we only wanted to create phone calls from the second callout, o
 
 Let's go ahead and specify some `callout_filter_params` so that our batch operation will only create phone calls for the callouts that are `running`. To do this let's go ahead and update the batch operation, this time specifying `callout_filter_params`. Note that we also need to specify the `remote_request_params` when updating the batch operation.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/3 --data-urlencode "parameters[remote_request_params][from]=1234" --data-urlencode "parameters[remote_request_params][url]=https://demo.twilio.com/docs/voice.xml" -d "parameters[remote_request_params][method]=GET" -d "parameters[callout_filter_params][status]=running"'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -XPATCH http://somleng-scfm:3000/api/batch_operations/3 --data-urlencode "parameters[remote_request_params][from]=1234" --data-urlencode "parameters[remote_request_params][url]=https://demo.twilio.com/docs/voice.xml" -d "parameters[remote_request_params][method]=GET" -d "parameters[callout_filter_params][status]=running"'
 
-```
-< HTTP/1.1 204 No Content
-```
+    < HTTP/1.1 204 No Content
 
 ### Fetching
 
 Let's fetch the batch operation to make sure that our filter parameters were specified correctly:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/3 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/batch_operations/3 -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -2244,14 +2023,10 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 Let's preview our batch operation again to see which callout participations will have phone calls created.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations/3/preview/callout_participations -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/batch_operations/3/preview/callout_participations -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 2
-```
+    < Per-Page: 25
+    < Total: 2
 
 ```json
 [
@@ -2286,9 +2061,7 @@ Now we can see that the preview only shows the two callout participations from t
 
 Now that we're happy with out batch operation let's go ahead and queue it.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/3/batch_operation_events -d event=queue -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/batch_operations/3/batch_operation_events -d event=queue -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -2313,9 +2086,7 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 We can see theat the `status` is `queued`. Let's fetch it again to see if it's finished.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/3 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/batch_operations/3 -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -2340,14 +2111,10 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 Now we can see that the `status` is `finished`, we can check to see the phone calls which have been created.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations/3/phone_calls -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/batch_operations/3/phone_calls -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 2
-```
+    < Per-Page: 25
+    < Total: 2
 
 ```json
 [
@@ -2412,9 +2179,7 @@ So we can see that two phone calls were created from this batch operation. One f
 
 In the previous section we explained how to use a batch operation to create phone calls. The next logical step would be to create a batch operation to queue the calls on Twilio or Somleng. Let's go ahead and do this now:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallQueue -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallQueue -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -2430,16 +2195,12 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 ### Previewing
 
-We can see the `status` is `preview` so let's go ahead and preview the *phone calls* which would be queued by this batch operation.
+We can see the `status` is `preview` so let's go ahead and preview the _phone calls_ which would be queued by this batch operation.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations/4/preview/phone_calls -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/batch_operations/4/preview/phone_calls -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 5
-```
+    < Per-Page: 25
+    < Total: 5
 
 ```json
 [
@@ -2641,21 +2402,15 @@ That's a lot of calls. In fact that's all the calls that we have created so far.
 
 When queuing phone calls, we can filter on any of the attributes in the phone calls tables, in the callout participations table and in the callouts table. Let's update our batch operation with some filter parameters.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/4 -d "parameters[callout_filter_params][status]=running" -d "parameters[phone_call_filter_params][status]=created" -u $ACCESS_TOKEN:'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -XPATCH http://somleng-scfm:3000/api/batch_operations/4 -d "parameters[callout_filter_params][status]=running" -d "parameters[phone_call_filter_params][status]=created" -u $ACCESS_TOKEN:'
 
-```
-< HTTP/1.1 204 No Content
-```
+    < HTTP/1.1 204 No Content
 
 ### Fetching
 
 To see the result let's fetch the batch operation:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/4 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/batch_operations/4 -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -2680,14 +2435,10 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 And preview it again:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations/4/preview/phone_calls -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/batch_operations/4/preview/phone_calls -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 2
-```
+    < Per-Page: 25
+    < Total: 2
 
 ```json
 [
@@ -2750,9 +2501,7 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 Now that we're happy with our batch operation let's go ahead and queue it.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/4/batch_operation_events -d event=queue -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/batch_operations/4/batch_operation_events -d event=queue -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -2775,9 +2524,7 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 We can see theat the status is queued. Let's fetch it again to see if it's finished.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/4 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/batch_operations/4 -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -2800,14 +2547,10 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 Now we can see that the `status` is `finished`, we can check to see the phone calls which have been queued.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations/4/phone_calls -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/batch_operations/4/phone_calls -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 2
-```
+    < Per-Page: 25
+    < Total: 2
 
 ```json
 [
@@ -2902,9 +2645,7 @@ Both of our phone calls now have the `status` `remotely_queued`.
 
 The last batch operation that we might want to do is to queue phone calls for a remote status fetch. To do this let's create a batch operation for fetching the remote status
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -XPOST http://scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallQueueRemoteFetch -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/batch_operations -d type=BatchOperation::PhoneCallQueueRemoteFetch -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -2920,14 +2661,10 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 Once again, let's preview the batch operation to see which phone calls would be updated.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s -v http://scfm:3000/api/batch_operations/5/preview/phone_calls -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -v http://somleng-scfm:3000/api/batch_operations/5/preview/phone_calls -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 5
-```
+    < Per-Page: 25
+    < Total: 5
 
 ```json
 [
@@ -3161,21 +2898,15 @@ When updating the remote status, we're only interested in the calls that have th
 
 Note that in the command below we specify the statuses as a comma separated list:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/5 -d "parameters[callout_filter_params][status]=running" -d "parameters[phone_call_filter_params][status]=remotely_queued,in_progress" -u $ACCESS_TOKEN:'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -XPATCH http://somleng-scfm:3000/api/batch_operations/5 -d "parameters[callout_filter_params][status]=running" -d "parameters[phone_call_filter_params][status]=remotely_queued,in_progress" -u $ACCESS_TOKEN:'
 
-```
-< HTTP/1.1 204 No Content
-```
+    < HTTP/1.1 204 No Content
 
 ### Fetching
 
 To see the result let's fetch the batch operation:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/5 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/batch_operations/5 -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -3200,14 +2931,10 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 And preview it again:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations/5/preview/phone_calls -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/batch_operations/5/preview/phone_calls -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 2
-```
+    < Per-Page: 25
+    < Total: 2
 
 ```json
 [
@@ -3302,19 +3029,13 @@ We can see that this filter now returns only our phone calls which have the `sta
 
 We can further limit the number of calls which will be updated by specifying a limit. Let's do this by updating our batch operation parameters again and setting the `limit` to `1`. Note that we also need to specify our filter parameters otherwise they'll be overridden.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -XPATCH http://scfm:3000/api/batch_operations/5 -d "parameters[callout_filter_params][status]=running" -d "parameters[phone_call_filter_params][status]=remotely_queued,in_progress" -d "parameters[limit]=1" -u $ACCESS_TOKEN:'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -XPATCH http://somleng-scfm:3000/api/batch_operations/5 -d "parameters[callout_filter_params][status]=running" -d "parameters[phone_call_filter_params][status]=remotely_queued,in_progress" -d "parameters[limit]=1" -u $ACCESS_TOKEN:'
 
-```
-< HTTP/1.1 204 No Content
-```
+    < HTTP/1.1 204 No Content
 
 Let's fetch it again to make sure it was updated
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/5 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/batch_operations/5 -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -3342,9 +3063,7 @@ We can see that the `limit` parameter has been set correctly.
 
 Let's go ahead and queue our batch operation.
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/5/batch_operation_events -d event=queue -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/batch_operations/5/batch_operation_events -d event=queue -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -3368,9 +3087,7 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 And fetch it to check if it's finished:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -s http://scfm:3000/api/batch_operations/5 -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s http://somleng-scfm:3000/api/batch_operations/5 -u $ACCESS_TOKEN: | jq'
 
 ```json
 {
@@ -3394,14 +3111,10 @@ $ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/
 
 Finally check the phone calls were updated:
 
-```
-$ docker run -t --rm --link somleng-scfm -e ACCESS_TOKEN=$ACCESS_TOKEN endeveit/docker-jq /bin/sh -c 'curl -v -s http://scfm:3000/api/batch_operations/5/phone_calls -u $ACCESS_TOKEN: | jq'
-```
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s http://somleng-scfm:3000/api/batch_operations/5/phone_calls -u $ACCESS_TOKEN: | jq'
 
-```
-< Per-Page: 25
-< Total: 1
-```
+    < Per-Page: 25
+    < Total: 1
 
 ```json
 [

@@ -1,7 +1,6 @@
 module MetadataHelpers
   extend ActiveSupport::Concern
 
-  include ConditionalSerialization
   include JsonQueryHelpers
   include KeyValueFieldsFor
 
@@ -18,8 +17,6 @@ module MetadataHelpers
 
   included do
     attr_accessor :metadata_merge_mode
-
-    conditionally_serialize(:metadata, JSON)
 
     validates :metadata,
               json: true
@@ -39,6 +36,10 @@ module MetadataHelpers
   private
 
   def metadata_merge_mode_or_default
-    metadata_merge_mode && METADATA_MERGE_MODES.include?(metadata_merge_mode.to_sym) ? metadata_merge_mode.to_sym : DEFAULT_METADATA_MERGE_MODE
+    if metadata_merge_mode && METADATA_MERGE_MODES.include?(metadata_merge_mode.to_sym)
+      metadata_merge_mode.to_sym
+    else
+      DEFAULT_METADATA_MERGE_MODE
+    end
   end
 end

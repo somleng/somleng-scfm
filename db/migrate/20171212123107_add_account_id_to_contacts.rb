@@ -1,7 +1,7 @@
-class AddAccountIdToContacts < ApplicationMigration
+class AddAccountIdToContacts < ActiveRecord::Migration[5.1]
   def up
     change_table(:contacts) do |t|
-      t.references(:account, :index => true, :foreign_key => true)
+      t.references(:account, index: true, foreign_key: true)
     end
 
     if Contact.any?
@@ -11,10 +11,10 @@ class AddAccountIdToContacts < ApplicationMigration
         account = Account.first_or_create!
       end
 
-      Contact.update_all(:account_id => account.id)
+      Contact.update_all(account_id: account.id)
     end
 
-    change_column(:contacts, :account_id, :bigint, :null => false)
+    change_column(:contacts, :account_id, :bigint, null: false)
   end
 
   def down

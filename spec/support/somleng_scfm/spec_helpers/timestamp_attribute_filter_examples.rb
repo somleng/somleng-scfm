@@ -26,7 +26,7 @@ RSpec.shared_examples_for "timestamp_attribute_filter" do |*timestamp_attributes
         expect(subject.resources).to match_array([])
       end
 
-      context "filter parameter is a time" do
+      context "filter parameter is a time string" do
         let(:timestamp_filter_value) { resource_timestamp + 1.second }
 
         context "#{timestamp_attribute}_before" do

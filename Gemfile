@@ -2,7 +2,6 @@ source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 gem "rails", "~> 5.2.0"
-# support both sqlite3 and pg
 gem "aasm", github: "aasm/aasm"
 gem "active_elastic_job", github: "samnang/active-elastic-job", branch: "upgrade_to_aws_sdk_3"
 gem "api-pagination"
@@ -34,7 +33,6 @@ gem "responders"
 gem "sass-rails", "~> 5.0"
 gem "selectize-rails"
 gem "simple_form"
-gem "sqlite3"
 gem "turbolinks", "~> 5"
 gem "twilio-ruby"
 gem "uglifier", ">= 1.3.0"

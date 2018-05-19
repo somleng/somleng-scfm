@@ -38,10 +38,6 @@ class PhoneCall < ApplicationRecord
   include MsisdnHelpers
   include HasCallFlowLogic
 
-  conditionally_serialize(:remote_response, JSON)
-  conditionally_serialize(:remote_request_params, JSON)
-  conditionally_serialize(:remote_queue_response, JSON)
-
   validates :remote_call_id, uniqueness: { case_sensitive: false, allow_nil: true }
   validates :status, presence: true
   validates :callout_participation, presence: true, unless: :inbound?

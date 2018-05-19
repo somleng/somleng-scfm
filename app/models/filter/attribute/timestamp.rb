@@ -47,7 +47,7 @@ class Filter::Attribute::Timestamp < Filter::Attribute::Base
   end
 
   def parse_filter_value(raw_value)
-    raw_value && DateTime.parse(raw_value)
+    DateTime.parse(raw_value) if raw_value.present?
   rescue StandardError
     nil
   end

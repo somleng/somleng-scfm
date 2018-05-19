@@ -16,6 +16,8 @@ class Dashboard::CalloutParticipationsController < Dashboard::BaseController
       callout
     elsif callout_population_id
       callout_population
+    elsif contact_id
+      contact
     end
   end
 
@@ -35,9 +37,17 @@ class Dashboard::CalloutParticipationsController < Dashboard::BaseController
     @callout_population ||= current_account.batch_operations.find(callout_population_id)
   end
 
+  def contact_id
+    params[:contact_id]
+  end
+
+  def contact
+    @contact ||= current_account.contacts.find(contact_id)
+  end
+
   def parent_show_path
-    if callout_id
-      dashboard_callout_path(callout)
+    if callout_id || contact_id
+      polymorphic_path([:dashboard, parent])
     elsif callout_population_id
       dashboard_batch_operation_path(callout_population)
     end

@@ -8,8 +8,23 @@ RSpec.describe "Dashboard" do
 
     within("#side_navigation") do
       expect(page).to have_link(
+        I18n.translate!(:"titles.access_tokens.index"),
+        href: dashboard_access_tokens_path
+      )
+
+      expect(page).to have_link(
+        I18n.translate!(:"titles.batch_operations.index"),
+        href: dashboard_batch_operations_path
+      )
+
+      expect(page).to have_link(
         I18n.translate!(:"titles.callouts.index"),
         href: dashboard_callouts_path
+      )
+
+      expect(page).to have_link(
+        I18n.translate!(:"titles.callout_participations.index"),
+        href: dashboard_callout_participations_path
       )
 
       expect(page).to have_link(
@@ -18,18 +33,8 @@ RSpec.describe "Dashboard" do
       )
 
       expect(page).to have_link(
-        I18n.translate!(:"titles.access_tokens.index"),
-        href: dashboard_access_tokens_path
-      )
-
-      expect(page).to have_link(
         I18n.translate!(:"titles.users.index"),
         href: dashboard_users_path
-      )
-
-      expect(page).to have_link(
-        I18n.translate!(:"titles.batch_operations.index"),
-        href: dashboard_batch_operations_path
       )
     end
   end

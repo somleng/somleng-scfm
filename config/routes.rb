@@ -27,7 +27,7 @@ Rails.application.routes.draw do
       end
     end
 
-    resources :callout_participations, only: %i[show destroy]
+    resources :callout_participations, only: %i[index show destroy]
 
     namespace :batch_operation do
       resources :callout_populations, only: %i[edit update]

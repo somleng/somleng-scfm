@@ -1,19 +1,17 @@
 require "rails_helper"
 
 RSpec.describe "Callout Participations" do
-  it "can list all callout participations for a callout" do
+  it "can list all callout participations for an account" do
     user = create(:user)
     callout_participation = create_callout_participation(user.account)
-    other_callout_participation = create_callout_participation(user.account)
+    other_callout_participation = create(:callout_participation)
 
     sign_in(user)
-    visit(dashboard_callout_callout_participations_path(callout_participation.callout))
+    visit(dashboard_callout_participations_path)
 
     within("#button_toolbar") do
       expect(page).to have_link_to_action(:index, key: :callout_participations)
-      expect(page).to have_link_to_action(
-        :back, href: dashboard_callout_path(callout_participation.callout)
-      )
+      expect(page).not_to have_link_to_action(:back)
     end
 
     within("#resources") do
@@ -24,6 +22,26 @@ RSpec.describe "Callout Participations" do
         callout_participation.id,
         href: dashboard_callout_participation_path(callout_participation)
       )
+    end
+  end
+
+  it "can list all callout participations for a callout" do
+    user = create(:user)
+    callout_participation = create_callout_participation(user.account)
+    other_callout_participation = create_callout_participation(user.account)
+
+    sign_in(user)
+    visit(dashboard_callout_callout_participations_path(callout_participation.callout))
+
+    within("#button_toolbar") do
+      expect(page).to have_link_to_action(
+        :back, href: dashboard_callout_path(callout_participation.callout)
+      )
+    end
+
+    within("#resources") do
+      expect(page).to have_content_tag_for(callout_participation)
+      expect(page).not_to have_content_tag_for(other_callout_participation)
     end
   end
 

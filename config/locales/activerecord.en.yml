@@ -15,10 +15,11 @@ en:
         remote_status: "Remote Status"
         remote_error_message: "Remote Error Message"
         remotely_queued_at: "Remotely Queued At"
-        created_at: "Created At"
         remote_request_params: "Remote Request Params"
         remote_response: "Remote Response"
         remote_queue_response: "Remote Queue Response"
+      remote_phone_call_event:
+        phone_call_id: "Phone Call"
     models:
       batch_operation/callout_population: "Callout Population"
       callout_participation: "Callout Participation"

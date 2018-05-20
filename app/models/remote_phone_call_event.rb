@@ -19,6 +19,8 @@ class RemotePhoneCallEvent < ApplicationRecord
            to: :phone_call,
            prefix: true
 
+  accepts_nested_key_value_fields_for :details
+
   def setup!
     broadcast(:remote_phone_call_event_initialized, self)
   end

@@ -60,10 +60,16 @@ class PhoneCall < ApplicationRecord
   delegate :platform_provider,
            to: :account
 
+  delegate :callout_id, to: :callout_participation, allow_nil: true
+
   before_validation :set_defaults, on: :create
   before_destroy    :validate_destroy
 
   attr_accessor :new_remote_status
+
+  accepts_nested_key_value_fields_for :remote_request_params
+  accepts_nested_key_value_fields_for :remote_response
+  accepts_nested_key_value_fields_for :remote_queue_response
 
   include AASM
 
@@ -149,6 +155,10 @@ class PhoneCall < ApplicationRecord
 
   def inbound?
     remote_direction == TWILIO_DIRECTIONS[:inbound]
+  end
+
+  def direction
+    inbound? ? :inbound : :outbound
   end
 
   private

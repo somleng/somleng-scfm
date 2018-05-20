@@ -124,6 +124,12 @@ RSpec.describe "Callouts", :aggregate_failures do
         key: :callout_participations,
         href: dashboard_callout_callout_participations_path(callout)
       )
+
+      expect(page).to have_link_to_action(
+        :index,
+        key: :phone_calls,
+        href: dashboard_callout_phone_calls_path(callout)
+      )
     end
 
     within("#callout") do

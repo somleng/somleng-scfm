@@ -1,0 +1,11 @@
+= content_tag_for(:tr, phone_call) do
+  %td
+    = link_to(phone_call.id, show_location(phone_call))
+  %td
+    = phone_call.msisdn
+  %td
+    = phone_call.direction.to_s.humanize
+  %td
+    = phone_call.status.humanize
+  %td
+    = phone_call.created_at

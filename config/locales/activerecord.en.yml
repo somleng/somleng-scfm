@@ -7,9 +7,22 @@ en:
         msisdn: "Phone Number"
       callout_participation:
         callout_population_id: "Callout Population"
+      phone_call:
+        msisdn: "Phone Number"
+        callout_participation_id: "Callout Participation"
+        call_flow_logic: "Call Flow Logic"
+        remote_call_id: "Remote Call ID"
+        remote_status: "Remote Status"
+        remote_error_message: "Remote Error Message"
+        remotely_queued_at: "Remotely Queued At"
+        created_at: "Created At"
+        remote_request_params: "Remote Request Params"
+        remote_response: "Remote Response"
+        remote_queue_response: "Remote Queue Response"
     models:
       batch_operation/callout_population: "Callout Population"
       callout_participation: "Callout Participation"
+      phone_call: "Phone Call"
   activemodel:
     attributes:
       key_value_field:

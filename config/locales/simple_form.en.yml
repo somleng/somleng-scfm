@@ -10,3 +10,8 @@ en:
     labels:
       defaults:
         phone_number: 'Phone Number'
+    options:
+      account:
+        platform_provider_name:
+          twilio: "Twilio"
+          somleng: "Somleng"

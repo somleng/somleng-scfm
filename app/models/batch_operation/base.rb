@@ -94,6 +94,10 @@ class BatchOperation::Base < ApplicationRecord
     end
   end
 
+  def applies_on_phone_calls?
+    APPLIES_ON_PHONE_CALLS_TYPES.include?(self.class.to_s)
+  end
+
   def serializable_hash(options = nil)
     options ||= {}
     super(

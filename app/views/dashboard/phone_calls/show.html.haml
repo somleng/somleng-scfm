@@ -1,0 +1,99 @@
+.col-12
+  #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
+    = render("shared/disabled_button", url: dashboard_phone_call_path(resource), button_text: resource.model_name.human)
+    .btn-group.mr-2{ role: 'group' }
+      = render("shared/button_with_count", url: dashboard_phone_call_remote_phone_call_events_path(resource), button_text: translate(:"titles.remote_phone_call_events.index"), count: resource.remote_phone_call_events.count)
+    .btn-group.mr-2{ role: 'group' }
+      = link_to(translate(:"titles.actions.delete"), dashboard_phone_call_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+.col-12.col-md-9.col-lg-7
+  #resource.card
+    .card-body
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right #
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.id
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = PhoneCall.human_attribute_name(:msisdn)
+        %dd.col-sm-7.col-md-6
+          = resource.msisdn
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = PhoneCall.human_attribute_name(:contact_id)
+        %dd.col-sm-7.col-md-6
+          = link_to(resource.contact_id, dashboard_contact_path(resource.contact_id))
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = PhoneCall.human_attribute_name(:direction)
+        %dd.col-sm-7.col-md-6
+          = resource.direction.to_s.humanize
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = PhoneCall.human_attribute_name(:status)
+        %dd.col-sm-7.col-md-6
+          = resource.status.humanize
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = PhoneCall.human_attribute_name(:callout_participation_id)
+        - if resource.callout_participation_id
+          %dd.col-sm-7.col-md-6
+            = link_to(resource.callout_participation_id, dashboard_callout_participation_path(resource.callout_participation_id))
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = PhoneCall.human_attribute_name(:callout_id)
+        - if resource.callout_id
+          %dd.col-sm-7.col-md-6
+            = link_to(resource.callout_id, dashboard_callout_path(resource.callout_id))
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = PhoneCall.human_attribute_name(:create_batch_operation)
+        - if resource.create_batch_operation_id
+          %dd.col-sm-7.col-md-6
+            = link_to(resource.create_batch_operation_id, dashboard_batch_operation_path(resource.create_batch_operation_id))
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = PhoneCall.human_attribute_name(:queue_batch_operation)
+        - if resource.queue_batch_operation_id
+          %dd.col-sm-7.col-md-6
+            = link_to(resource.queue_batch_operation_id, dashboard_batch_operation_path(resource.queue_batch_operation_id))
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = PhoneCall.human_attribute_name(:queue_remote_fetch_batch_operation)
+        - if resource.queue_remote_fetch_batch_operation
+          %dd.col-sm-7.col-md-6
+            = link_to(resource.queue_remote_fetch_batch_operation_id, dashboard_batch_operation_path(resource.queue_remote_fetch_batch_operation_id))
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = PhoneCall.human_attribute_name(:call_flow_logic)
+        %dd.col-sm-7.col-md-6
+          = resource.call_flow_logic
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = PhoneCall.human_attribute_name(:remote_call_id)
+        %dd.col-sm-7.col-md-6
+          = resource.remote_call_id
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = PhoneCall.human_attribute_name(:remote_status)
+        %dd.col-sm-7.col-md-6
+          = resource.remote_status
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = PhoneCall.human_attribute_name(:remote_error_message)
+        %dd.col-sm-7.col-md-6
+          = resource.remote_error_message
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = PhoneCall.human_attribute_name(:remotely_queued_at)
+        %dd.col-sm-7.col-md-6
+          = resource.remotely_queued_at
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = PhoneCall.human_attribute_name(:created_at)
+        %dd.col-sm-7.col-md-6
+          = resource.created_at
+      = render("shared/key_value_attributes", attribute: :remote_request_params)
+      = render("shared/key_value_attributes", attribute: :remote_response)
+      = render("shared/key_value_attributes", attribute: :remote_queue_response)
+      = render("shared/key_value_attributes", attribute: :metadata)

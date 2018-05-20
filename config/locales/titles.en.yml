@@ -11,6 +11,9 @@ en:
     access_tokens:
       index: "API Keys"
       create: "Create API Key"
+    accounts:
+      edit: "Account Settings"
+      update: "Save"
     batch_operations:
       index: "Batch Operations"
       show: "Batch Operation"
@@ -40,6 +43,10 @@ en:
       create: "Create Contact"
       edit: "Edit Contact"
       update: "Save"
+    phone_calls:
+      index: "Phone Calls"
+    remote_phone_call_events:
+      index: "Remote Phone Call Events"
     users:
       index: "Users"
       edit: "Edit User"

@@ -14,34 +14,48 @@ Rails.application.routes.draw do
 
   namespace "dashboard" do
     root to: "callouts#index"
-    resources :users, except: %i[new create]
     resources :access_tokens, only: %i[index create destroy]
-    resources :contacts do
-      resources :callout_participations, only: :index
-    end
-    resources :callouts do
-      resources :callout_events, only: :create
-      resources :batch_operations, only: %i[index destroy]
-      resources :callout_participations, only: :index
-
-      namespace :batch_operation do
-        resources :callout_populations, only: %i[new create]
-      end
-    end
-
-    resources :callout_participations, only: %i[show destroy]
+    resource :account, only: %i[edit update]
 
     namespace :batch_operation do
       resources :callout_populations, only: %i[edit update]
     end
 
     resources :batch_operations, only: %i[index show destroy] do
+      resources :batch_operation_events, only: :create
+      resources :callout_participations, only: :index
+      resources :phone_calls, only: :index
+
       namespace :preview, module: "batch_operation_preview" do
         resources :contacts, only: :index
       end
-      resources :batch_operation_events, only: :create
-      resources :callout_participations, only: :index
     end
+
+    resources :contacts do
+      resources :callout_participations, only: :index
+      resources :phone_calls, only: :index
+    end
+
+    resources :callouts do
+      namespace :batch_operation do
+        resources :callout_populations, only: %i[new create]
+      end
+      resources :batch_operations, only: %i[index destroy]
+      resources :callout_events, only: :create
+      resources :callout_participations, only: :index
+      resources :phone_calls, only: :index
+    end
+
+    resources :callout_participations, only: %i[index show destroy] do
+      resources :phone_calls, only: :index
+    end
+
+    resources :phone_calls, only: %i[index show destroy] do
+      resources :remote_phone_call_events, only: :index
+    end
+
+    resources :remote_phone_call_events, only: %i[index show]
+    resources :users, except: %i[new create]
   end
 
   namespace "api", defaults: { format: "json" } do

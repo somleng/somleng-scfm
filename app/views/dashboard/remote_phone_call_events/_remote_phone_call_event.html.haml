@@ -1,0 +1,5 @@
+= content_tag_for(:tr, remote_phone_call_event) do
+  %td
+    = link_to(remote_phone_call_event.id, show_location(remote_phone_call_event))
+  %td
+    = remote_phone_call_event.created_at

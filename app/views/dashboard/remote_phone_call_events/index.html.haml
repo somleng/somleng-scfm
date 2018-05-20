@@ -1,10 +1,10 @@
 - content_for(:button_toolbar) do
-  = render("shared/disabled_button", url: url_for, button_text: translate(:"titles.callout_participations.index"), count: resources.count)
+  = render("shared/disabled_button", url: url_for, button_text: translate(:"titles.remote_phone_call_events.index"), count: resources.count)
   - if parent_show_path
     .btn-group.mr-2{ role: 'group' }
       = link_to(translate(:"titles.actions.back"), parent_show_path, class: 'btn btn-outline-dark')
 
 - content_for(:resources_table) do
-  = render("shared/resources_table", resource_class: CalloutParticipation, columns: [:created_at])
+  = render("shared/resources_table", resource_class: RemotePhoneCallEvent, columns: [:created_at])
 
 = render("shared/index")

@@ -3,6 +3,12 @@ en:
     attributes:
       access_token:
         token: "API Key"
+      account:
+        twilio_account_sid: "Twilio Account Sid"
+        twilio_auth_token: "Twilio Auth Token"
+        somleng_account_sid: "Somleng Account Sid"
+        somleng_auth_token: "Somleng Auth Token"
+        platform_provider_name: "Platform Provider"
       contact:
         msisdn: "Phone Number"
       callout:
@@ -11,9 +17,23 @@ en:
         location_ids: "Provinces"
       callout_participation:
         callout_population_id: "Callout Population"
+      phone_call:
+        msisdn: "Phone Number"
+        callout_participation_id: "Callout Participation"
+        call_flow_logic: "Call Flow Logic"
+        remote_call_id: "Remote Call ID"
+        remote_status: "Remote Status"
+        remote_error_message: "Remote Error Message"
+        remotely_queued_at: "Remotely Queued At"
+        remote_request_params: "Remote Request Params"
+        remote_response: "Remote Response"
+        remote_queue_response: "Remote Queue Response"
+      remote_phone_call_event:
+        phone_call_id: "Phone Call"
     models:
       batch_operation/callout_population: "Callout Population"
       callout_participation: "Callout Participation"
+      phone_call: "Phone Call"
   activemodel:
     attributes:
       key_value_field:

@@ -15,3 +15,8 @@ en:
         province_id: 'Select a province'
         district_id: 'Select a district'
         commune_id: 'Select a commune'
+    options:
+      account:
+        platform_provider_name:
+          twilio: "Twilio"
+          somleng: "Somleng"

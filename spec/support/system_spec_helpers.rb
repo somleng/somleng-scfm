@@ -57,6 +57,19 @@ module SystemSpecHelpers
   def have_content_tag_for(model, model_name: nil)
     have_selector("##{model_name || model.class.to_s.underscore.tr('/', '_')}_#{model.id}")
   end
+
+  def create_callout_participation(account:, **options)
+    callout = options.delete(:callout) || create(:callout, account: account)
+    contact = options.delete(:contact) || create(:contact, account: account)
+    create(:callout_participation, { callout: callout, contact: contact }.merge(options))
+  end
+
+  def create_phone_call(account:, **options)
+    callout_participation = options.delete(:callout_participation) || create_callout_participation(
+      account: account
+    )
+    create(:phone_call, { callout_participation: callout_participation }.merge(options))
+  end
 end
 
 RSpec.configure do |config|

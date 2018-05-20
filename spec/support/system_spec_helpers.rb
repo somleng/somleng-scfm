@@ -41,6 +41,13 @@ module SystemSpecHelpers
     contact = options.delete(:contact) || create(:contact, account: account)
     create(:callout_participation, { callout: callout, contact: contact }.merge(options))
   end
+
+  def create_phone_call(account:, **options)
+    callout_participation = options.delete(:callout_participation) || create_callout_participation(
+      account: account
+    )
+    create(:phone_call, { callout_participation: callout_participation }.merge(options))
+  end
 end
 
 RSpec.configure do |config|

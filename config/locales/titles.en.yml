@@ -42,6 +42,8 @@ en:
       update: "Save"
     phone_calls:
       index: "Phone Calls"
+    remote_phone_call_events:
+      index: "Remote Phone Call Events"
     users:
       index: "Users"
       edit: "Edit User"

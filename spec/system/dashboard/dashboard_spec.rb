@@ -38,6 +38,11 @@ RSpec.describe "Dashboard" do
       )
 
       expect(page).to have_link(
+        I18n.translate!(:"titles.remote_phone_call_events.index"),
+        href: dashboard_remote_phone_call_events_path
+      )
+
+      expect(page).to have_link(
         I18n.translate!(:"titles.users.index"),
         href: dashboard_users_path
       )

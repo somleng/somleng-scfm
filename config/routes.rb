@@ -46,7 +46,12 @@ Rails.application.routes.draw do
     resources :callout_participations, only: %i[index show destroy] do
       resources :phone_calls, only: :index
     end
-    resources :phone_calls, only: %i[index show destroy]
+
+    resources :phone_calls, only: %i[index show destroy] do
+      resources :remote_phone_call_events, only: :index
+    end
+
+    resources :remote_phone_call_events, only: %i[index show]
     resources :users, except: %i[new create]
   end
 

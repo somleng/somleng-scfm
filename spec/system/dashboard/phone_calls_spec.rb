@@ -25,7 +25,7 @@ RSpec.describe "Phone Calls" do
       expect(page).to have_content("Phone Number")
       expect(page).to have_content("Direction")
       expect(page).to have_content("Status")
-      expect(page).to have_content("Created At")
+      expect(page).to have_content("Created at")
     end
   end
 
@@ -131,6 +131,14 @@ RSpec.describe "Phone Calls" do
     sign_in(user)
     visit(dashboard_phone_call_path(phone_call))
 
+    within("#button_toolbar") do
+      expect(page).to have_link_to_action(
+        :index,
+        key: :remote_phone_call_events,
+        href: dashboard_phone_call_remote_phone_call_events_path(phone_call)
+      )
+    end
+
     within("#resource") do
       expect(page).to have_content(phone_call.id)
 
@@ -176,7 +184,7 @@ RSpec.describe "Phone Calls" do
       expect(page).to have_content("Remote Status")
       expect(page).to have_content("Remote Error Message")
       expect(page).to have_content("Remotely Queued At")
-      expect(page).to have_content("Created At")
+      expect(page).to have_content("Created at")
       expect(page).to have_content("Remote Request Params")
       expect(page).to have_content("Remote Response")
       expect(page).to have_content("Remote Queue Response")
@@ -199,10 +207,19 @@ RSpec.describe "Phone Calls" do
     expect(page).to have_text("Phone Call was successfully destroyed.")
   end
 
-  def create_phone_call(account:, **options)
-    callout_participation = options.delete(:callout_participation) || create_callout_participation(
-      account: account
+  it "cannot delete a phone call with events" do
+    user = create(:user)
+    phone_call = create_phone_call(account: user.account)
+    create(:remote_phone_call_event, phone_call: phone_call)
+
+    sign_in(user)
+    visit dashboard_phone_call_path(phone_call)
+
+    click_action_button(:delete, type: :link)
+
+    expect(current_path).to eq(
+      dashboard_phone_call_path(phone_call)
     )
-    create(:phone_call, { callout_participation: callout_participation }.merge(options))
+    expect(page).to have_text("could not be destroyed")
   end
 end

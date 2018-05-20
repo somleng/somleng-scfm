@@ -3,7 +3,7 @@ require "rails_helper"
 RSpec.describe "Callout Participations" do
   it "can list all callout participations for an account" do
     user = create(:user)
-    callout_participation = create_callout_participation(user.account)
+    callout_participation = create_callout_participation(account: user.account)
     other_callout_participation = create(:callout_participation)
 
     sign_in(user)
@@ -22,13 +22,14 @@ RSpec.describe "Callout Participations" do
         callout_participation.id,
         href: dashboard_callout_participation_path(callout_participation)
       )
+      expect(page).to have_content("Created at")
     end
   end
 
   it "can list all callout participations for a callout" do
     user = create(:user)
-    callout_participation = create_callout_participation(user.account)
-    other_callout_participation = create_callout_participation(user.account)
+    callout_participation = create_callout_participation(account: user.account)
+    other_callout_participation = create_callout_participation(account: user.account)
 
     sign_in(user)
     visit(dashboard_callout_callout_participations_path(callout_participation.callout))
@@ -49,13 +50,13 @@ RSpec.describe "Callout Participations" do
     user = create(:user)
     callout_population = create(:callout_population, account: user.account)
     callout_participation = create_callout_participation(
-      user.account,
+      account: user.account,
       callout: callout_population.callout,
       callout_population: callout_population
     )
 
     other_callout_participation = create_callout_participation(
-      user.account,
+      account: user.account,
       callout: callout_population.callout
     )
 
@@ -76,8 +77,8 @@ RSpec.describe "Callout Participations" do
 
   it "can list all the callout participations for a contact" do
     user = create(:user)
-    callout_participation = create_callout_participation(user.account)
-    other_callout_participation = create_callout_participation(user.account)
+    callout_participation = create_callout_participation(account: user.account)
+    other_callout_participation = create_callout_participation(account: user.account)
 
     sign_in(user)
     visit(dashboard_contact_callout_participations_path(callout_participation.contact))
@@ -98,13 +99,21 @@ RSpec.describe "Callout Participations" do
     user = create(:user)
     callout_population = create(:callout_population, account: user.account)
     callout_participation = create_callout_participation(
-      user.account,
+      account: user.account,
       callout: callout_population.callout,
       callout_population: callout_population
     )
 
     sign_in(user)
     visit(dashboard_callout_participation_path(callout_participation))
+
+    within("#button_toolbar") do
+      expect(page).to have_link_to_action(
+        :index,
+        key: :phone_calls,
+        href: dashboard_callout_participation_phone_calls_path(callout_participation)
+      )
+    end
 
     within("#resource") do
       expect(page).to have_content(callout_participation.id)
@@ -133,21 +142,16 @@ RSpec.describe "Callout Participations" do
 
   it "can delete a callout participation" do
     user = create(:user)
-    callout_participation = create_callout_participation(user.account)
+    callout_participation = create_callout_participation(account: user.account)
 
     sign_in(user)
     visit dashboard_callout_participation_path(callout_participation)
 
     click_action_button(:delete, type: :link)
 
-    expect(current_path).to eq(dashboard_callout_callout_participations_path(callout_participation.callout))
+    expect(current_path).to eq(
+      dashboard_callout_callout_participations_path(callout_participation.callout)
+    )
     expect(page).to have_text("Callout Participation was successfully destroyed.")
-  end
-
-  def create_callout_participation(account, *args)
-    options = args.extract_options!
-    callout = options.delete(:callout) || create(:callout, account: account)
-    contact = options.delete(:contact) || create(:contact, account: account)
-    create(:callout_participation, *args, { callout: callout, contact: contact }.merge(options))
   end
 end

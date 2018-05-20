@@ -268,6 +268,22 @@ RSpec.describe PhoneCall do
     end
   end
 
+  describe "#direction" do
+    context "inbound" do
+      it "returns inbound" do
+        phone_call = build_stubbed(:phone_call, :inbound)
+        expect(phone_call.direction).to eq(:inbound)
+      end
+    end
+
+    context "outbound" do
+      it "returns inbound" do
+        phone_call = build_stubbed(:phone_call, :outbound)
+        expect(phone_call.direction).to eq(:outbound)
+      end
+    end
+  end
+
   describe "#remote_response" do
     it { expect(subject.remote_response).to eq({}) }
   end

@@ -8,4 +8,5 @@
           = nav_link(translate(:"titles.callouts.index"), dashboard_callouts_path, 'callouts', current_user.account.callouts.running.count)
           = nav_link(translate(:"titles.callout_participations.index"), dashboard_callout_participations_path, "callout_participations", current_user.account.callout_participations.count)
           = nav_link(translate(:"titles.contacts.index"), dashboard_contacts_path, 'contacts', current_user.account.contacts.count)
+          = nav_link(translate(:"titles.phone_calls.index"), dashboard_phone_calls_path, 'contacts', current_user.account.phone_calls.count)
           = nav_link(translate(:"titles.users.index"), dashboard_users_path, 'users', current_user.account.users.count)

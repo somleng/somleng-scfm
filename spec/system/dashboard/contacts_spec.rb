@@ -131,6 +131,12 @@ RSpec.describe "Contacts", :aggregate_failures do
         key: :callout_participations,
         href: dashboard_contact_callout_participations_path(contact)
       )
+
+      expect(page).to have_link_to_action(
+        :index,
+        key: :phone_calls,
+        href: dashboard_contact_phone_calls_path(contact)
+      )
     end
 
     within("#contact") do

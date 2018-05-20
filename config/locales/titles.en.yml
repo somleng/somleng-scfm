@@ -40,6 +40,8 @@ en:
       create: "Create Contact"
       edit: "Edit Contact"
       update: "Save"
+    phone_calls:
+      index: "Phone Calls"
     users:
       index: "Users"
       edit: "Edit User"

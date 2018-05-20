@@ -41,6 +41,11 @@ RSpec.describe "Batch Operations" do
     within("#button_toolbar") do
       expect(page).not_to have_link_to_action(:edit)
       expect(page).not_to have_link_to_action(:preview)
+      expect(page).to have_link_to_action(
+        :index,
+        key: :phone_calls,
+        href: dashboard_batch_operation_phone_calls_path(batch_operation)
+      )
     end
 
     within("#resource") do

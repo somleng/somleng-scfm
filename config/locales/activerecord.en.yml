@@ -3,6 +3,12 @@ en:
     attributes:
       access_token:
         token: "API Key"
+      account:
+        twilio_account_sid: "Twilio Account Sid"
+        twilio_auth_token: "Twilio Auth Token"
+        somleng_account_sid: "Somleng Account Sid"
+        somleng_auth_token: "Somleng Auth Token"
+        platform_provider_name: "Platform Provider"
       contact:
         msisdn: "Phone Number"
       callout_participation:

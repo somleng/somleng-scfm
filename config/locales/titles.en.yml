@@ -11,6 +11,9 @@ en:
     access_tokens:
       index: "API Keys"
       create: "Create API Key"
+    accounts:
+      edit: "Account Settings"
+      update: "Save"
     batch_operations:
       index: "Batch Operations"
       show: "Batch Operation"

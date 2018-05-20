@@ -1,0 +1,4 @@
+.col
+  #button_toolbar.btn-toolbar.mb-2{ role: 'toolbar' }
+    = render("shared/disabled_button", url: edit_dashboard_account_path, button_text: translate(:"titles.accounts.edit"), button_class: "btn-outline-primary", badge_class: "badge-primary")
+  = render "form"

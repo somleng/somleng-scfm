@@ -1,10 +1,17 @@
 require "rails_helper"
 
 RSpec.describe "Dashboard" do
-  it "has side navigation links" do
+  it "has navigation links" do
     user = create(:user)
     sign_in(user)
     visit(root_path)
+
+    within("#user_menu") do
+      expect(page).to have_link(
+        I18n.translate!(:"titles.accounts.edit"),
+        href: edit_dashboard_account_path
+      )
+    end
 
     within("#side_navigation") do
       expect(page).to have_link(

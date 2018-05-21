@@ -19,11 +19,11 @@ RSpec.describe "Account Settings" do
     somleng_account_sid = generate(:somleng_account_sid)
     somleng_auth_token = generate(:auth_token)
 
+    choose("Somleng")
     fill_in("Twilio Account Sid", with: twilio_account_sid)
     fill_in("Twilio Auth Token", with: twilio_auth_token)
     fill_in("Somleng Account Sid", with: somleng_account_sid)
     fill_in("Somleng Auth Token", with: somleng_auth_token)
-    select("Somleng", from: "Platform Provider")
     click_action_button(:update, key: :accounts)
 
     expect(current_path).to eq(edit_dashboard_account_path)

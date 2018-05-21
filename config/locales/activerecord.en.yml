@@ -27,6 +27,8 @@ en:
       remote_phone_call_event:
         phone_call_id: "Phone Call"
     models:
+      access_token: "API Key"
+      batch_operation/base: "Batch Operation"
       batch_operation/callout_population: "Callout Population"
       callout_participation: "Callout Participation"
       phone_call: "Phone Call"

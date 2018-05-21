@@ -1,6 +1,9 @@
 .col-12
   #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
     = yield(:button_toolbar)
+#page_entries_info.col-12
+  %h6
+    = page_entries_info(resources)
 .col-12
   = yield(:resources_table)
 .col-12

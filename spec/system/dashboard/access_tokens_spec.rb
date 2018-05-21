@@ -17,6 +17,10 @@ RSpec.describe "API Key Management" do
       )
     end
 
+    within("#page_entries_info") do
+      expect(page).to have_content("api key")
+    end
+
     within("#resources") do
       expect(page).to have_content_tag_for(access_token1)
       expect(page).to have_content_tag_for(access_token2)

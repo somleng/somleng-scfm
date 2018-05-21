@@ -62,7 +62,7 @@ RSpec.describe "Remote Phone Call Events" do
       )
 
       expect(page).to have_content("#")
-      expect(page).to have_content("Phone Call")
+      expect(page).to have_content("Phone call")
       expect(page).to have_content("Created at")
       expect(page).to have_content("Details")
     end

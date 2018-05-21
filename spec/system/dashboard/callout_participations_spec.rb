@@ -135,7 +135,7 @@ RSpec.describe "Callout Participations" do
 
       expect(page).to have_content("Callout")
       expect(page).to have_content("Contact")
-      expect(page).to have_content("Callout Population")
+      expect(page).to have_content("Callout population")
       expect(page).to have_content("Created at")
     end
   end
@@ -152,6 +152,6 @@ RSpec.describe "Callout Participations" do
     expect(current_path).to eq(
       dashboard_callout_callout_participations_path(callout_participation.callout)
     )
-    expect(page).to have_text("Callout Participation was successfully destroyed.")
+    expect(page).to have_text("was successfully destroyed")
   end
 end

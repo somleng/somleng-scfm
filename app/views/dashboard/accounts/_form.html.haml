@@ -1,7 +1,7 @@
 .card
   .card-body
     = simple_form_for(resource, url: dashboard_account_path) do |f|
-      = f.input :platform_provider_name, collection: Account::PLATFORM_PROVIDERS.map(&:to_sym), prompt: true
+      = f.input :platform_provider_name, collection: Account::PLATFORM_PROVIDERS.map(&:to_sym), as: :radio_buttons
       = f.input :twilio_account_sid
       = f.input :twilio_auth_token
       = f.input :somleng_account_sid

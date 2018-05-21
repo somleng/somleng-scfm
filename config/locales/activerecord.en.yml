@@ -2,40 +2,30 @@ en:
   activerecord:
     attributes:
       access_token:
-        token: "API Key"
+        token: "API key"
       account:
-        twilio_account_sid: "Twilio Account Sid"
-        twilio_auth_token: "Twilio Auth Token"
-        somleng_account_sid: "Somleng Account Sid"
-        somleng_auth_token: "Somleng Auth Token"
-        platform_provider_name: "Platform Provider"
+        platform_provider_name: "Platform provider"
       contact:
-        msisdn: "Phone Number"
-      callout_participation:
-        callout_population_id: "Callout Population"
+        msisdn: "Phone number"
       phone_call:
-        msisdn: "Phone Number"
-        callout_participation_id: "Callout Participation"
-        call_flow_logic: "Call Flow Logic"
-        remote_call_id: "Remote Call ID"
-        remote_status: "Remote Status"
-        remote_error_message: "Remote Error Message"
-        remotely_queued_at: "Remotely Queued At"
-        remote_request_params: "Remote Request Params"
-        remote_response: "Remote Response"
-        remote_queue_response: "Remote Queue Response"
-      remote_phone_call_event:
-        phone_call_id: "Phone Call"
+        msisdn: "Phone number"
+        remote_call_id: "Remote call sid"
     models:
-      access_token: "API Key"
-      batch_operation/base: "Batch Operation"
-      batch_operation/callout_population: "Callout Population"
-      callout_participation: "Callout Participation"
-      phone_call: "Phone Call"
+      access_token:
+        one: "API key"
+        other: "API keys"
+      batch_operation/base:
+        one: "Batch operation"
+        other: "Batch operations"
+      batch_operation/callout_population:
+        one: "Callout population"
+        other: "Callout populations"
   activemodel:
     attributes:
       key_value_field:
         key: "Key"
         value: "Value"
     models:
-      event/base: "Event"
+      event/base:
+        one: "Event"
+        other: "Events"

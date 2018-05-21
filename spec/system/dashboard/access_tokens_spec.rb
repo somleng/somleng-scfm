@@ -25,7 +25,7 @@ RSpec.describe "API Key Management" do
       expect(page).to have_content_tag_for(access_token1)
       expect(page).to have_content_tag_for(access_token2)
       expect(page).not_to have_content_tag_for(other_access_token)
-      expect(page).to have_text("API Key")
+      expect(page).to have_text("API key")
       expect(page).to have_text(access_token1.token)
       expect(page).to have_text(access_token2.token)
       expect(page).to have_link(

@@ -24,7 +24,7 @@ RSpec.describe "Contacts", :aggregate_failures do
         contact.id,
         href: dashboard_contact_path(contact)
       )
-      expect(page).to have_content("Phone Number")
+      expect(page).to have_content("Phone number")
     end
   end
 
@@ -46,9 +46,9 @@ RSpec.describe "Contacts", :aggregate_failures do
 
     click_action_button(:create, key: :contacts)
 
-    expect(page).to have_content("Phone Number can't be blank")
+    expect(page).to have_content("Phone number can't be blank")
 
-    fill_in("Phone Number", with: phone_number)
+    fill_in("Phone number", with: phone_number)
     fill_in_key_value_for(:metadata, with: { key: "name", value: "Bob Chann" })
     click_action_button(:create, key: :contacts)
 
@@ -81,7 +81,7 @@ RSpec.describe "Contacts", :aggregate_failures do
     expect(page).to have_link_to_action(:cancel)
 
     updated_phone_number = generate(:somali_msisdn)
-    fill_in("Phone Number", with: updated_phone_number)
+    fill_in("Phone number", with: updated_phone_number)
     remove_key_value_for(:metadata)
     remove_key_value_for(:metadata)
     add_key_value_for(:metadata)
@@ -142,7 +142,7 @@ RSpec.describe "Contacts", :aggregate_failures do
     within("#contact") do
       expect(page).to have_content(contact.id)
       expect(page).to have_content("#")
-      expect(page).to have_content("Phone Number")
+      expect(page).to have_content("Phone number")
       expect(page).to have_content(phone_number)
       expect(page).to have_content("Metadata")
       expect(page).to have_content("location:country")

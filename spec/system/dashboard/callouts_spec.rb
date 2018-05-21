@@ -94,7 +94,7 @@ RSpec.describe "Callouts", :aggregate_failures do
   end
 
   it "can show a callout" do
-    user = create(:user)
+    user = create(:admin)
     callout = create(
       :callout,
       :initialized,

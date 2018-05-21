@@ -24,7 +24,7 @@ RSpec.describe "Contacts", :aggregate_failures do
         contact.id,
         href: dashboard_contact_path(contact)
       )
-      expect(page).to have_content("Phone Number")
+      expect(page).to have_content("Phone number")
     end
   end
 
@@ -46,7 +46,7 @@ RSpec.describe "Contacts", :aggregate_failures do
 
     click_action_button(:create, key: :contacts)
 
-    expect(page).to have_content("Phone Number can't be blank")
+    expect(page).to have_content("Phone number can't be blank")
 
     fill_in_contact_information(phone_number)
     click_action_button(:create, key: :contacts)
@@ -131,13 +131,13 @@ RSpec.describe "Contacts", :aggregate_failures do
     within("#contact") do
       expect(page).to have_content(contact.id)
       expect(page).to have_content("#")
-      expect(page).to have_content("Phone Number")
+      expect(page).to have_content("Phone number")
       expect(page).to have_content(phone_number)
     end
   end
 
   def fill_in_contact_information(phone_number)
-    fill_in("Phone Number", with: phone_number)
+    fill_in("Phone number", with: phone_number)
     select_selectize("#province", "Battambang")
     select_selectize("#district", "Banan")
     select_selectize("#commune", "Kantueu Pir")

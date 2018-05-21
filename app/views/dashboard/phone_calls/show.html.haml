@@ -2,7 +2,7 @@
   #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
     = render("shared/disabled_button", url: dashboard_phone_call_path(resource), button_text: resource.model_name.human)
     .btn-group.mr-2{ role: 'group' }
-      = render("shared/button_with_count", url: dashboard_phone_call_remote_phone_call_events_path(resource), button_text: translate(:"titles.remote_phone_call_events.index"), count: resource.remote_phone_call_events.count)
+      = render("shared/button_link", url: dashboard_phone_call_remote_phone_call_events_path(resource), button_text: translate(:"titles.remote_phone_call_events.index"))
     .btn-group.mr-2{ role: 'group' }
       = link_to(translate(:"titles.actions.delete"), dashboard_phone_call_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
 .col-12.col-md-9.col-lg-7

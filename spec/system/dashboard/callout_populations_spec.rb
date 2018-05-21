@@ -72,7 +72,7 @@ RSpec.describe "Callout Populations" do
 
     new_callout_population = callout.reload.callout_populations.last!
     expect(current_path).to eq(dashboard_batch_operation_path(new_callout_population))
-    expect(page).to have_text("Callout Population was successfully created.")
+    expect(page).to have_text("Callout population was successfully created")
     asserted_contact_filter_metadata = { "gender" => "f", "location" => { "country" => "kh" } }
     expect(new_callout_population.contact_filter_metadata).to eq(asserted_contact_filter_metadata)
   end
@@ -112,7 +112,7 @@ RSpec.describe "Callout Populations" do
     click_action_button(:update, key: :callout_populations)
 
     expect(current_path).to eq(dashboard_batch_operation_path(callout_population))
-    expect(page).to have_text("Callout Population was successfully updated.")
+    expect(page).to have_text("Callout population was successfully updated.")
     expect(callout_population.reload.contact_filter_metadata).to eq("gender" => "m")
   end
 

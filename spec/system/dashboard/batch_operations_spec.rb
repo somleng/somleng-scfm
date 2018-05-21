@@ -18,6 +18,10 @@ RSpec.describe "Batch Operations" do
       expect(page).not_to have_link_to_action(:back)
     end
 
+    within("#page_entries_info") do
+      expect(page).to have_content("batch operation")
+    end
+
     within("#resources") do
       expect(page).to have_content_tag_for(batch_operation)
       expect(page).not_to have_content_tag_for(other_batch_operation)

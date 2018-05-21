@@ -22,7 +22,7 @@ RSpec.describe "Phone Calls" do
         phone_call.id,
         href: dashboard_phone_call_path(phone_call)
       )
-      expect(page).to have_content("Phone Number")
+      expect(page).to have_content("Phone number")
       expect(page).to have_content("Direction")
       expect(page).to have_content("Status")
       expect(page).to have_content("Created at")
@@ -173,21 +173,21 @@ RSpec.describe "Phone Calls" do
       )
 
       expect(page).to have_content("#")
-      expect(page).to have_content("Phone Number")
+      expect(page).to have_content("Phone number")
       expect(page).to have_content("Contact")
       expect(page).to have_content("Direction")
       expect(page).to have_content("Status")
-      expect(page).to have_content("Callout Participation")
+      expect(page).to have_content("Callout participation")
       expect(page).to have_content("Callout")
-      expect(page).to have_content("Call Flow Logic")
-      expect(page).to have_content("Remote Call ID")
-      expect(page).to have_content("Remote Status")
-      expect(page).to have_content("Remote Error Message")
-      expect(page).to have_content("Remotely Queued At")
+      expect(page).to have_content("Call flow logic")
+      expect(page).to have_content("Remote call sid")
+      expect(page).to have_content("Remote status")
+      expect(page).to have_content("Remote error message")
+      expect(page).to have_content("Remotely queued at")
       expect(page).to have_content("Created at")
-      expect(page).to have_content("Remote Request Params")
-      expect(page).to have_content("Remote Response")
-      expect(page).to have_content("Remote Queue Response")
+      expect(page).to have_content("Remote request params")
+      expect(page).to have_content("Remote response")
+      expect(page).to have_content("Remote queue response")
       expect(page).to have_content("Metadata")
     end
   end
@@ -204,7 +204,7 @@ RSpec.describe "Phone Calls" do
     expect(current_path).to eq(
       dashboard_phone_calls_path
     )
-    expect(page).to have_text("Phone Call was successfully destroyed.")
+    expect(page).to have_text("was successfully destroyed")
   end
 
   it "cannot delete a phone call with events" do

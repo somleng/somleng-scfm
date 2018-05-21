@@ -1,2 +1,2 @@
 .btn-group.mr-2{ role: 'group' }
-  = render("shared/button_with_count", url: url, button_text: button_text, count: local_assigns[:count], class: "disabled", html_options: {"aria-disabled": true}, button_class: local_assigns[:button_class], badge_class: local_assigns[:badge_class])
+  = render("shared/button_link", url: url, button_text: button_text, class: "disabled", html_options: {"aria-disabled": true}, button_class: local_assigns[:button_class])

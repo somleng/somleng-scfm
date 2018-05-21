@@ -3,11 +3,11 @@
     #main_nav.card
       .card-body
         %ul.nav.flex-column
-          = nav_link(translate(:"titles.access_tokens.index"), dashboard_access_tokens_path, 'access_tokens', current_user.account.access_tokens.count)
-          = nav_link(translate(:"titles.batch_operations.index"), dashboard_batch_operations_path, 'batch_operations', current_user.account.batch_operations.preview.count)
-          = nav_link(translate(:"titles.callouts.index"), dashboard_callouts_path, 'callouts', current_user.account.callouts.running.count)
-          = nav_link(translate(:"titles.callout_participations.index"), dashboard_callout_participations_path, "callout_participations", current_user.account.callout_participations.count)
-          = nav_link(translate(:"titles.contacts.index"), dashboard_contacts_path, 'contacts', current_user.account.contacts.count)
-          = nav_link(translate(:"titles.phone_calls.index"), dashboard_phone_calls_path, 'phone_calls', current_user.account.phone_calls.count)
-          = nav_link(translate(:"titles.remote_phone_call_events.index"), dashboard_remote_phone_call_events_path, 'remote_phone_call_events', current_user.account.remote_phone_call_events.count)
-          = nav_link(translate(:"titles.users.index"), dashboard_users_path, 'users', current_user.account.users.count)
+          = nav_link(translate(:"titles.access_tokens.index"), dashboard_access_tokens_path, 'access_tokens')
+          = nav_link(translate(:"titles.batch_operations.index"), dashboard_batch_operations_path, 'batch_operations')
+          = nav_link(translate(:"titles.callouts.index"), dashboard_callouts_path, 'callouts')
+          = nav_link(translate(:"titles.callout_participations.index"), dashboard_callout_participations_path, "callout_participations")
+          = nav_link(translate(:"titles.contacts.index"), dashboard_contacts_path, 'contacts')
+          = nav_link(translate(:"titles.phone_calls.index"), dashboard_phone_calls_path, 'phone_calls')
+          = nav_link(translate(:"titles.remote_phone_call_events.index"), dashboard_remote_phone_call_events_path, 'remote_phone_call_events')
+          = nav_link(translate(:"titles.users.index"), dashboard_users_path, 'users')

@@ -2,9 +2,9 @@
   #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
     = render("shared/disabled_button", url: dashboard_contact_path(resource), button_text: resource.model_name.human)
     .btn-group.mr-2{ role: 'group' }
-      = render("shared/button_with_count", url: dashboard_contact_callout_participations_path(resource), button_text: translate(:"titles.callout_participations.index"), count: resource.callout_participations.count)
+      = render("shared/button_link", url: dashboard_contact_callout_participations_path(resource), button_text: translate(:"titles.callout_participations.index"))
     .btn-group.mr-2{ role: 'group' }
-      = render("shared/button_with_count", url: dashboard_contact_phone_calls_path(resource), button_text: translate(:"titles.phone_calls.index"), count: resource.phone_calls.count)
+      = render("shared/button_link", url: dashboard_contact_phone_calls_path(resource), button_text: translate(:"titles.phone_calls.index"))
     .btn-group.mr-2{ role: 'group' }
       = link_to(translate(:"titles.actions.edit"), edit_dashboard_contact_path(resource), class: 'btn btn-outline-primary')
     .btn-group.mr-2{ role: 'group' }

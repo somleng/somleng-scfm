@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "POST '/api/phone_calls/:phone_call_id/phone_call_events'" do
   include SomlengScfm::SpecHelpers::RequestHelpers
@@ -9,19 +9,19 @@ RSpec.describe "POST '/api/phone_calls/:phone_call_id/phone_call_events'" do
   let(:account_traits) { {} }
   let(:account_attributes) { {} }
   let(:account) { create(:account, *account_traits.keys, account_attributes) }
-  let(:access_token_model) { create(:access_token, :resource_owner => account) }
+  let(:access_token_model) { create(:access_token, resource_owner: account) }
 
-  let(:callout_attributes) { { :account => account } }
+  let(:callout_attributes) { { account: account } }
   let(:callout) { create(:callout, callout_attributes) }
 
-  let(:callout_participation_attributes) { { :callout => callout } }
+  let(:callout_participation_attributes) { { callout: callout } }
   let(:callout_participation) { create(:callout_participation, callout_participation_attributes) }
 
-  let(:factory_attributes) { { :callout_participation => callout_participation } }
+  let(:factory_attributes) { { callout_participation: callout_participation } }
   let(:phone_call) { create(:phone_call, :with_default_provider, factory_attributes) }
   let(:url) { api_phone_call_phone_call_events_path(phone_call) }
   let(:event) { nil }
-  let(:body) { { :event => event } }
+  let(:body) { { event: event } }
 
   def somleng_account_sid
     phone_call.platform_provider.account_sid
@@ -33,7 +33,7 @@ RSpec.describe "POST '/api/phone_calls/:phone_call_id/phone_call_events'" do
 
   context "invalid request" do
     let(:event) { :queue_remote }
-    let(:factory_attributes) { super().merge(:status => PhoneCall::STATE_QUEUED) }
+    let(:factory_attributes) { super().merge(status: PhoneCall::STATE_QUEUED) }
 
     def setup_scenario
       super
@@ -49,7 +49,7 @@ RSpec.describe "POST '/api/phone_calls/:phone_call_id/phone_call_events'" do
 
   context "remote requests" do
     let(:asserted_remote_response_body) { remote_response_params.to_json }
-    let(:remote_call_id) {  SecureRandom.uuid }
+    let(:remote_call_id) { SecureRandom.uuid }
 
     def remote_response_params
       {
@@ -73,12 +73,12 @@ RSpec.describe "POST '/api/phone_calls/:phone_call_id/phone_call_events'" do
     context "event=queue_remote_fetch" do
       let(:event) { :queue_remote_fetch }
 
-      let(:factory_attributes) {
+      let(:factory_attributes) do
         super().merge(
-          :status => PhoneCall::STATE_REMOTELY_QUEUED,
-          :remote_call_id => remote_call_id
+          status: PhoneCall::STATE_REMOTELY_QUEUED,
+          remote_call_id: remote_call_id
         )
-      }
+      end
 
       let(:asserted_response_status) { PhoneCall::STATE_REMOTE_FETCH_QUEUED }
       let(:asserted_final_status)    { PhoneCall::STATE_COMPLETED }

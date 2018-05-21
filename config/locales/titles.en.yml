@@ -45,6 +45,8 @@ en:
       update: "Save"
     phone_calls:
       index: "Phone Calls"
+      queue: "Send"
+      queue_remote_fetch: "Fetch Remote Status"
     remote_phone_call_events:
       index: "Remote Phone Call Events"
     users:

@@ -214,12 +214,51 @@ RSpec.describe "Phone Calls" do
 
     sign_in(user)
     visit dashboard_phone_call_path(phone_call)
-
     click_action_button(:delete, type: :link)
 
     expect(current_path).to eq(
       dashboard_phone_call_path(phone_call)
     )
     expect(page).to have_text("could not be destroyed")
+  end
+
+  it "can queue a phone call" do
+    user = create(:user)
+    phone_call = create_phone_call(account: user.account)
+
+    sign_in(user)
+    visit dashboard_phone_call_path(phone_call)
+    clear_enqueued_jobs
+    within("#button_toolbar") do
+      expect {
+        click_action_button(:queue, key: :phone_calls, type: :link)
+      }.to enqueue_job(QueueRemoteCallJob).with(phone_call.id)
+    end
+
+    expect(phone_call.reload).to be_queued
+    expect(page).to have_text("Event was successfully created.")
+    expect(page).not_to have_link_to_action(:queue, key: :phone_calls)
+  end
+
+  it "can fetch the remote status of a phone call" do
+    user = create(:user)
+    phone_call = create_phone_call(
+      account: user.account,
+      status: PhoneCall::STATE_REMOTELY_QUEUED,
+      remote_call_id: SecureRandom.uuid
+    )
+
+    sign_in(user)
+    visit dashboard_phone_call_path(phone_call)
+    clear_enqueued_jobs
+    within("#button_toolbar") do
+      expect {
+        click_action_button(:queue_remote_fetch, key: :phone_calls, type: :link)
+      }.to enqueue_job(FetchRemoteCallJob).with(phone_call.id)
+    end
+
+    expect(phone_call.reload).to be_remote_fetch_queued
+    expect(page).to have_text("Event was successfully created.")
+    expect(page).not_to have_link_to_action(:queue_remote_fetch, key: :phone_calls)
   end
 end

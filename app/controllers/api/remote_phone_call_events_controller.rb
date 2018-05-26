@@ -51,10 +51,7 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
   end
 
   def call_flow_logic
-    @call_flow_logic ||= begin
-      resource_call_flow_logic = registered_call_flow_logic(resource.call_flow_logic)
-      (resource_call_flow_logic&.constantize) || default_call_flow_logic
-    end
+    @call_flow_logic ||= resource.call_flow_logic.constantize
   end
 
   def respond_with_create_resource
@@ -74,10 +71,6 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
     params.permit(:metadata_merge_mode, metadata: {})
   end
 
-  def api_authenticate?
-    super if params[:action] != "create"
-  end
-
   def phone_call
     @phone_call ||= current_account.phone_calls.find(params[:phone_call_id])
   end
@@ -92,15 +85,5 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
 
   def contact
     @contact ||= current_account.contacts.find(params[:contact_id])
-  end
-
-  def default_call_flow_logic
-    CallFlowLogic::HelloWorld
-  end
-
-  def registered_call_flow_logic(call_flow_logic)
-    if call_flow_logic
-      CallFlowLogic::Base.registered.map(&:to_s).detect { |r| r == call_flow_logic }
-    end
   end
 end

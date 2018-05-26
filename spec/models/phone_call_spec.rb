@@ -53,6 +53,11 @@ RSpec.describe PhoneCall do
     end
   end
 
+  describe "delegations" do
+    it { is_expected.to delegate_method(:callout).to(:callout_participation) }
+    it { is_expected.to delegate_method(:callout_id).to(:callout_participation) }
+  end
+
   describe "defaults" do
     let(:factory_attributes) { {} }
     subject { build(factory, *factory_traits, factory_attributes) }

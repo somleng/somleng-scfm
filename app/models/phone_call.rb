@@ -47,6 +47,7 @@ class PhoneCall < ApplicationRecord
             unless: :inbound?
 
   delegate :call_flow_logic, to: :callout_participation, prefix: true, allow_nil: true
+  delegate :call_flow_logic, to: :contact, prefix: true, allow_nil: true
 
   delegate :contact,
            :msisdn,
@@ -150,7 +151,7 @@ class PhoneCall < ApplicationRecord
   end
 
   def call_flow_logic
-    super || callout_participation_call_flow_logic
+    super || callout_participation_call_flow_logic || contact_call_flow_logic
   end
 
   def inbound?

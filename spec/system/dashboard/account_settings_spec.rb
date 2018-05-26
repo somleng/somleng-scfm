@@ -20,6 +20,7 @@ RSpec.describe "Account Settings" do
     somleng_auth_token = generate(:auth_token)
 
     choose("Somleng")
+    select("Hello World", from: "Default call flow logic")
     fill_in("Twilio account sid", with: twilio_account_sid)
     fill_in("Twilio auth token", with: twilio_auth_token)
     fill_in("Somleng account sid", with: somleng_account_sid)
@@ -30,6 +31,7 @@ RSpec.describe "Account Settings" do
     expect(page).to have_text("Account was successfully updated.")
     user.account.reload
     expect(user.account.platform_provider_name).to eq("somleng")
+    expect(user.account.call_flow_logic).to eq("CallFlowLogic::HelloWorld")
     expect(user.account.twilio_account_sid).to eq(twilio_account_sid)
     expect(user.account.twilio_auth_token).to eq(twilio_auth_token)
     expect(user.account.somleng_account_sid).to eq(somleng_account_sid)

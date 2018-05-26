@@ -1211,11 +1211,11 @@ If we're using Somleng, we would set the following environment variables:
 
 When we boot the API server we can specify these environment variables. Let's go ahead and restart our API server with our Twilio or Somleng environment variables set. Don't forget to shutdown the running API server first (Ctrl-C from the terminal). Here's the command if you're using Twilio. Don't forget to replace the dummy values with your actual values.
 
-    $ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 -e PLATFORM_PROVIDER=twilio -e TWILIO_ACCOUNT_SID=twilio-account-sid -e TWILIO_AUTH_TOKEN=twilio-auth-token dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
+    $ docker-compose run -it --rm -e PLATFORM_PROVIDER=twilio -e TWILIO_ACCOUNT_SID=twilio-account-sid -e TWILIO_AUTH_TOKEN=twilio-auth-token somleng-scfm /bin/bash -c 'bundle exec rails s'
 
 Below is the command to use if you're using Somleng. Again don't forget to replace the dummy values with your actual values.
 
-    $ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 -e PLATFORM_PROVIDER=somleng -e SOMLENG_ACCOUNT_SID=somleng-account-sid -e SOMLENG_AUTH_TOKEN=somleng-auth-token -e SOMLENG_CLIENT_REST_API_HOST=somleng-rest-api-host -e SOMLENG_CLIENT_REST_API_BASE_URL=somleng-rest-api-base-url dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
+    $ docker-compose run -it --rm -e PLATFORM_PROVIDER=somleng -e SOMLENG_ACCOUNT_SID=somleng-account-sid -e SOMLENG_AUTH_TOKEN=somleng-auth-token -e SOMLENG_CLIENT_REST_API_HOST=somleng-rest-api-host -e SOMLENG_CLIENT_REST_API_BASE_URL=somleng-rest-api-base-url somleng-scfm /bin/bash -c 'bundle exec rails s'
 
 ### Calling again
 
@@ -1513,14 +1513,13 @@ Oops. Doesn't seem to have worked. The error message suggests that our call flow
 
 ### Registering your call flow logic
 
-In order to make our custom call flow logic available, we need to register it first. You can use the environment variable `REGISTERED_CALL_FLOW_LOGIC` to define a comma separated list of call flow logic that your application uses. You can also use the environment variable `DEFAULT_CALL_FLOW_LOGIC` to override the application's default call flow logic. This is useful for specifying call flow logic for incoming calls. For example, setting the following enironment variables will register the call flow logic called `CallFlowLogic::AvfCapom::CapomShort` and set it to the application default.
+In order to make our custom call flow logic available, we need to register it first. You can use the environment variable `REGISTERED_CALL_FLOW_LOGIC` to define a comma separated list of call flow logic that your application uses. For example, setting the following environment variable will register the call flow logic called `CallFlowLogic::AvfCapom::CapomShort`.
 
     REGISTERED_CALL_FLOW_LOGIC=CallFlowLogic::AvfCapom::CapomShort
-    DEFAULT_CALL_FLOW_LOGIC=CallFlowLogic::AvfCapom::CapomShort
 
 Let's go ahead and restart our API server and specify these environment variables. Don't forget to shutdown the running API server first (Ctrl-C). Also note that for brevity we have left out the Twilio and Somleng configuration variables. Be sure to add them in as well.
 
-    $ docker run -it --rm -v /tmp/somleng-scfm/db:/usr/src/app/db -p 3000:3000 -h scfm --name somleng-scfm -e RAILS_ENV=production -e SECRET_KEY_BASE=secret -e RAILS_DB_ADAPTER=sqlite3 -e REGISTERED_CALL_FLOW_LOGIC=CallFlowLogic::AvfCapom::CapomShort -e DEFAULT_CALL_FLOW_LOGIC=CallFlowLogic::AvfCapom::CapomShort dwilkie/somleng-scfm /bin/bash -c 'bundle exec rails s'
+    $ docker-compose run -it --rm -e REGISTERED_CALL_FLOW_LOGIC=CallFlowLogic::AvfCapom::CapomShort somleng-scfm /bin/bash -c 'bundle exec rails s'
 
 Ok let's try to use our call flow logic again.
 

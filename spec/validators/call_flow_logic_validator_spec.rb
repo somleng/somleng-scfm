@@ -1,22 +1,22 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe CallFlowLogicValidator do
   class CallFlowLogicValidator::Validatable
     include ActiveModel::Validations
-    attr_accessor  :call_flow_logic
+    attr_accessor :call_flow_logic
 
-    validates :call_flow_logic, :call_flow_logic => true
+    validates :call_flow_logic, call_flow_logic: true
 
     def initialize(options = {})
       self.call_flow_logic = options[:call_flow_logic]
     end
   end
 
-  subject { CallFlowLogicValidator::Validatable.new(:call_flow_logic => call_flow_logic) }
+  subject { CallFlowLogicValidator::Validatable.new(call_flow_logic: call_flow_logic) }
 
   def setup_scenario
     super
-    CallFlowLogic::Application
+    CallFlowLogic::HelloWorld
   end
 
   context "blank" do
@@ -30,7 +30,7 @@ RSpec.describe CallFlowLogicValidator do
   end
 
   context "valid" do
-    let(:call_flow_logic) { CallFlowLogic::Application.to_s }
+    let(:call_flow_logic) { CallFlowLogic::HelloWorld.to_s }
     it { is_expected.to be_valid }
   end
 end

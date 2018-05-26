@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "Callout Participations" do
   include SomlengScfm::SpecHelpers::RequestHelpers
@@ -6,11 +6,11 @@ RSpec.describe "Callout Participations" do
   let(:account_traits) { {} }
   let(:account_attributes) { {} }
   let(:account) { create(:account, *account_traits.keys, account_attributes) }
-  let(:access_token_model) { create(:access_token, :resource_owner => account) }
+  let(:access_token_model) { create(:access_token, resource_owner: account) }
 
-  let(:callout) { create(:callout, :account => account) }
+  let(:callout) { create(:callout, account: account) }
   let(:body) { {} }
-  let(:factory_attributes) { { :callout => callout } }
+  let(:factory_attributes) { { callout: callout } }
   let(:callout_participation) { create(:callout_participation, factory_attributes) }
   let(:execute_request_before) { true }
 
@@ -59,38 +59,38 @@ RSpec.describe "Callout Participations" do
 
     describe "GET '/api/callout/:callout_id/callout_participations'" do
       let(:url) { api_callout_callout_participations_path(callout) }
-      let(:factory_attributes) { { :callout => callout } }
+      let(:factory_attributes) { { callout: callout } }
       it { assert_filtered! }
     end
 
     describe "GET '/api/contacts/:contact_id/callout_participations'" do
-      let(:contact) { create(:contact, :account => account) }
+      let(:contact) { create(:contact, account: account) }
       let(:url) { api_contact_callout_participations_path(contact) }
-      let(:factory_attributes) { { :contact => contact } }
+      let(:factory_attributes) { { contact: contact } }
       it { assert_filtered! }
     end
 
     describe "GET '/api/batch_operation/:batch_operation_id/callout_participations'" do
       let(:url) { api_batch_operation_callout_participations_path(batch_operation) }
-      let(:batch_operation_factory_attributes) { { :account => account } }
+      let(:batch_operation_factory_attributes) { { account: account } }
       let(:batch_operation) { create(batch_operation_factory, batch_operation_factory_attributes) }
 
       context "BatchOperation::CalloutPopulation" do
         let(:batch_operation_factory) { :callout_population }
-        let(:factory_attributes) { { :callout_population => batch_operation } }
+        let(:factory_attributes) { { callout_population: batch_operation } }
         it { assert_filtered! }
       end
 
       context "BatchOperation::PhoneCallCreate" do
         let(:batch_operation_factory) { :phone_call_create_batch_operation }
-        let(:phone_call) {
+        let(:phone_call) do
           build(
             :phone_call,
-            :create_batch_operation => batch_operation
+            create_batch_operation: batch_operation
           )
-        }
+        end
 
-        let(:factory_attributes) { { :phone_calls => [phone_call] } }
+        let(:factory_attributes) { { phone_calls: [phone_call] } }
 
         it { assert_filtered! }
       end
@@ -98,14 +98,14 @@ RSpec.describe "Callout Participations" do
 
     describe "GET '/api/batch_operations/:batch_operation_id/preview/callout_participations'" do
       let(:url) { api_batch_operation_preview_callout_participations_path(batch_operation) }
-      let(:factory_attributes) { super().merge(:metadata => {"foo" => "bar", "bar" => "foo"}) }
-      let(:batch_operation) {
+      let(:factory_attributes) { super().merge(metadata: { "foo" => "bar", "bar" => "foo" }) }
+      let(:batch_operation) do
         create(
           :phone_call_create_batch_operation,
-          :callout_participation_filter_params => factory_attributes.slice(:metadata),
-          :account => account
+          callout_participation_filter_params: factory_attributes.slice(:metadata),
+          account: account
         )
-      }
+      end
 
       context "successful request" do
         it { assert_filtered! }
@@ -113,7 +113,7 @@ RSpec.describe "Callout Participations" do
 
       context "invalid request" do
         let(:execute_request_before) { false }
-        let(:batch_operation) { create(:callout_population, :account => account) }
+        let(:batch_operation) { create(:callout_population, account: account) }
         it { expect { execute_request }.to raise_error(ActiveRecord::RecordNotFound) }
       end
     end
@@ -133,19 +133,19 @@ RSpec.describe "Callout Participations" do
 
     context "valid request" do
       let(:metadata) { { "foo" => "bar" } }
-      let(:call_flow_logic) { CallFlowLogic::Application.to_s }
+      let(:call_flow_logic) { CallFlowLogic::HelloWorld.to_s }
       let(:contact) { create(:contact) }
       let(:msisdn) { generate(:somali_msisdn) }
       let(:parsed_response) { JSON.parse(response.body) }
 
-      let(:body) {
+      let(:body) do
         {
-          :metadata => metadata,
-          :contact_id => contact.id,
-          :call_flow_logic => call_flow_logic,
-          :msisdn => msisdn
+          metadata: metadata,
+          contact_id: contact.id,
+          call_flow_logic: call_flow_logic,
+          msisdn: msisdn
         }
-      }
+      end
 
       let(:created_callout_participation) { callout.callout_participations.last }
 
@@ -183,21 +183,21 @@ RSpec.describe "Callout Participations" do
     end
 
     describe "PATCH" do
-      let(:factory_attributes) { super().merge("metadata" => {"bar" => "baz" }) }
+      let(:factory_attributes) { super().merge("metadata" => { "bar" => "baz" }) }
       let(:method) { :patch }
       let(:contact) { create(:contact) }
-      let(:call_flow_logic) { CallFlowLogic::Application.to_s }
-      let(:metadata) { {"foo" => "bar"} }
+      let(:call_flow_logic) { CallFlowLogic::HelloWorld.to_s }
+      let(:metadata) { { "foo" => "bar" } }
       let(:msisdn) { generate(:somali_msisdn) }
-      let(:body) {
+      let(:body) do
         {
-          :metadata_merge_mode => "replace",
-          :metadata => metadata,
-          :contact_id => contact.id,
-          :call_flow_logic => call_flow_logic,
-          :msisdn => msisdn
+          metadata_merge_mode: "replace",
+          metadata: metadata,
+          contact_id: contact.id,
+          call_flow_logic: call_flow_logic,
+          msisdn: msisdn
         }
-      }
+      end
 
       def assert_update!
         expect(response.code).to eq("204")
@@ -224,7 +224,7 @@ RSpec.describe "Callout Participations" do
 
       context "invalid request" do
         def setup_scenario
-          create(:phone_call, :callout_participation => callout_participation)
+          create(:phone_call, callout_participation: callout_participation)
           super
         end
 

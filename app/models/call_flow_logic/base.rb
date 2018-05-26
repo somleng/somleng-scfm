@@ -1,11 +1,11 @@
 class CallFlowLogic::Base
-  DEFAULT = "CallFlowLogic::Application"
+  DEFAULT = "CallFlowLogic::HelloWorld".freeze
 
   attr_accessor :options
   @registered = [DEFAULT]
 
-  def self.registered
-    @registered
+  class << self
+    attr_reader :registered
   end
 
   def self.register(*args)
@@ -32,7 +32,7 @@ class CallFlowLogic::Base
   end
 
   def run!
-    event.phone_call_complete! if event
+    event&.phone_call_complete!
   end
 
   def no_response

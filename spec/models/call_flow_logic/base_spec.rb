@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe CallFlowLogic::Base do
   describe ".permitted" do
-    let(:call_flow_logic) { CallFlowLogic::Application }
+    let(:call_flow_logic) { CallFlowLogic::HelloWorld }
     let(:asserted_call_flow_logic) { call_flow_logic }
 
     def assert_permitted!

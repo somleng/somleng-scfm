@@ -411,7 +411,7 @@ Sample Response:
 
 ### Update
 
-    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -XPATCH http://somleng-scfm:3000/api/callouts/1 -d call_flow_logic=CallFlowLogic::Application -d "metadata[name]=my+callout" -u $ACCESS_TOKEN:'
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -XPATCH http://somleng-scfm:3000/api/callouts/1 -d call_flow_logic=CallFlowLogic::HelloWorld -d "metadata[name]=my+callout" -u $ACCESS_TOKEN:'
 
 #### metadata_merge_mode=merge (default)
 
@@ -445,7 +445,7 @@ Sample Response:
 {
   "id": 1,
   "status": "initialized",
-  "call_flow_logic": "CallFlowLogic::Application",
+  "call_flow_logic": "CallFlowLogic::HelloWorld",
   "metadata": {
     "name": "my callout"
   },
@@ -470,7 +470,7 @@ Sample Response:
 
 #### Filter by call flow logic
 
-    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s -g http://somleng-scfm:3000/api/callouts?q[call_flow_logic]=CallFlowLogic::Application -u $ACCESS_TOKEN: | jq'
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s -g http://somleng-scfm:3000/api/callouts?q[call_flow_logic]=CallFlowLogic::HelloWorld -u $ACCESS_TOKEN: | jq'
 
 #### Filter by created_at
 
@@ -519,7 +519,7 @@ Sample Response:
   {
     "id": 1,
     "status": "initialized",
-    "call_flow_logic": "CallFlowLogic::Application",
+    "call_flow_logic": "CallFlowLogic::HelloWorld",
     "metadata": {
       "name": "my callout"
     },
@@ -553,7 +553,7 @@ Sample Response:
 {
   "id": 1,
   "status": "running",
-  "call_flow_logic": "CallFlowLogic::Application",
+  "call_flow_logic": "CallFlowLogic::HelloWorld",
   "metadata": {
     "name": "my callout"
   },
@@ -594,7 +594,7 @@ Sample Response:
 
 ### Update
 
-    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -XPATCH http://somleng-scfm:3000/api/callout_participations/1 -d call_flow_logic=CallFlowLogic::Application -d "metadata[name]=my+callout+participation" -d "msisdn=252662345701" -u $ACCESS_TOKEN:'
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -XPATCH http://somleng-scfm:3000/api/callout_participations/1 -d call_flow_logic=CallFlowLogic::HelloWorld -d "metadata[name]=my+callout+participation" -d "msisdn=252662345701" -u $ACCESS_TOKEN:'
 
 #### metadata_merge_mode=merge (default)
 
@@ -630,7 +630,7 @@ Sample Response:
       "contact_id": 1,
       "callout_population_id": null,
       "msisdn": "+252662345701",
-      "call_flow_logic": "CallFlowLogic::Application",
+      "call_flow_logic": "CallFlowLogic::HelloWorld",
       "metadata": {
         "name": "my callout participation"
       },
@@ -662,7 +662,7 @@ Sample Response:
 
 #### Filter by call flow logic
 
-    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -g -s http://somleng-scfm:3000/api/callout_participations?q[call_flow_logic]=CallFlowLogic::Application -u $ACCESS_TOKEN: | jq'
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -g -s http://somleng-scfm:3000/api/callout_participations?q[call_flow_logic]=CallFlowLogic::HelloWorld -u $ACCESS_TOKEN: | jq'
 
 #### Filter by callout participations which have phone calls
 
@@ -728,7 +728,7 @@ Sample Response:
         "contact_id": 1,
         "callout_population_id": null,
         "msisdn": "+252662345701",
-        "call_flow_logic": "CallFlowLogic::Application",
+        "call_flow_logic": "CallFlowLogic::HelloWorld",
         "metadata": {
           "name": "my callout participation"
         },
@@ -873,7 +873,7 @@ Sample Response:
 
 #### Filter by call flow logic
 
-    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s -g http://somleng-scfm:3000/api/phone_calls?q[call_flow_logic]=CallFlowLogic::Application -u $ACCESS_TOKEN: | jq'
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -v -s -g http://somleng-scfm:3000/api/phone_calls?q[call_flow_logic]=CallFlowLogic::HelloWorld -u $ACCESS_TOKEN: | jq'
 
 #### Filter by remote_call_id
 

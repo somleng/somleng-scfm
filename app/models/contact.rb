@@ -18,4 +18,7 @@ class Contact < ApplicationRecord
 
   validates :msisdn,
             uniqueness: { scope: :account_id }
+
+  delegate :call_flow_logic,
+           to: :account
 end

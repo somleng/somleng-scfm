@@ -12,6 +12,8 @@ en:
     error_notification:
       default_message: 'Please review the problems below:'
     labels:
+      account:
+        call_flow_logic: Default call flow logic
       defaults:
         phone_number: Phone Number
     'no': 'No'
@@ -20,6 +22,9 @@ en:
         platform_provider_name:
           somleng: Somleng
           twilio: Twilio
+      defaults:
+        call_flow_logic:
+          CallFlowLogic::HelloWorld: Hello World
     required:
       mark: "*"
       text: required

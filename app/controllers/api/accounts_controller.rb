@@ -8,7 +8,7 @@ class Api::AccountsController < Api::FilteredController
   end
 
   def authorize_super_admin!
-    super if ["show", "update"].exclude?(action_name) || !singleton?
+    super if %w[show update].exclude?(action_name) || !singleton?
   end
 
   def find_resource
@@ -34,7 +34,8 @@ class Api::AccountsController < Api::FilteredController
       :somleng_account_sid,
       :somleng_auth_token,
       :metadata_merge_mode,
-      :metadata => {}
+      settings: %i[platform_provider_name call_flow_logic],
+      metadata: {}
     )
   end
 

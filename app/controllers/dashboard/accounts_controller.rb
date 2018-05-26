@@ -8,6 +8,7 @@ class Dashboard::AccountsController < Dashboard::BaseController
   def permitted_params
     params.require(:account).permit(
       :platform_provider_name,
+      :call_flow_logic,
       :twilio_account_sid,
       :twilio_auth_token,
       :somleng_account_sid,

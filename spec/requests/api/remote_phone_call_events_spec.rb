@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "Remote Phone Call Events" do
   include SomlengScfm::SpecHelpers::RequestHelpers
@@ -6,21 +6,21 @@ RSpec.describe "Remote Phone Call Events" do
   let(:account_traits) { {} }
   let(:account_attributes) { {} }
   let(:account) { create(:account, *account_traits.keys, account_attributes) }
-  let(:access_token_model) { create(:access_token, :resource_owner => account) }
+  let(:access_token_model) { create(:access_token, resource_owner: account) }
 
-  let(:callout_attributes) { { :account => account } }
+  let(:callout_attributes) { { account: account } }
   let(:callout) { create(:callout, callout_attributes) }
 
-  let(:contact_attributes) { { :account => account } }
+  let(:contact_attributes) { { account: account } }
   let(:contact) { create(:contact, contact_attributes) }
 
-  let(:callout_participation_attributes) { { :callout => callout, :contact => contact } }
+  let(:callout_participation_attributes) { { callout: callout, contact: contact } }
   let(:callout_participation) { create(:callout_participation, callout_participation_attributes) }
 
-  let(:phone_call_attributes) { { :callout_participation => callout_participation } }
+  let(:phone_call_attributes) { { callout_participation: callout_participation } }
   let(:phone_call) { create(:phone_call, phone_call_attributes) }
 
-  let(:factory_attributes) { { :phone_call => phone_call } }
+  let(:factory_attributes) { { phone_call: phone_call } }
   let(:remote_phone_call_event) { create(:remote_phone_call_event, factory_attributes) }
 
   let(:execute_request) { true }
@@ -52,14 +52,14 @@ RSpec.describe "Remote Phone Call Events" do
 
     describe "PATCH" do
       let(:method) { :patch }
-      let(:factory_attributes) { super().merge("metadata" => {"bar" => "baz" }) }
+      let(:factory_attributes) { super().merge("metadata" => { "bar" => "baz" }) }
       let(:metadata) { { "foo" => "bar" } }
-      let(:body) {
+      let(:body) do
         {
-          :metadata => metadata,
-          :metadata_merge_mode => "replace"
+          metadata: metadata,
+          metadata_merge_mode: "replace"
         }
-      }
+      end
 
       def assert_update!
         expect(response.code).to eq("204")
@@ -101,25 +101,25 @@ RSpec.describe "Remote Phone Call Events" do
       let(:request_account_sid) { twilio_account_sid }
       let(:request_auth_token) { twilio_auth_token }
 
-      let(:twilio_request_validator) {
+      let(:twilio_request_validator) do
         Twilio::Security::RequestValidator.new(request_auth_token)
-      }
+      end
 
-      let(:twilio_request_signature) {
+      let(:twilio_request_signature) do
         twilio_request_validator.build_signature_for(url, body)
-      }
+      end
 
       let(:authorization_user) { nil }
       let(:authorization_password) { nil }
 
-      let(:account_attributes) {
+      let(:account_attributes) do
         super().merge(
-          :twilio_account_sid => twilio_account_sid,
-          :twilio_auth_token => twilio_auth_token,
-          :somleng_account_sid => somleng_account_sid,
-          :somleng_auth_token => somleng_auth_token
+          twilio_account_sid: twilio_account_sid,
+          twilio_auth_token: twilio_auth_token,
+          somleng_account_sid: somleng_account_sid,
+          somleng_auth_token: somleng_auth_token
         )
-      }
+      end
 
       def body
         {
@@ -139,7 +139,7 @@ RSpec.describe "Remote Phone Call Events" do
       end
 
       context "requesting json" do
-        let(:url_params) { {:format => :json} }
+        let(:url_params) { { format: :json } }
         let(:execute_request) { false }
         let(:asserted_response_body) { asserted_remote_phone_call_event.to_json }
         it { expect { execute_request! }.to raise_error(ActionController::UnknownFormat) }
@@ -187,12 +187,12 @@ RSpec.describe "Remote Phone Call Events" do
 
         context "with registered call flow logic" do
           let(:call_flow_logic) { nil }
-          let(:my_callflow_logic_twiml) {
+          let(:my_callflow_logic_twiml) do
             MyCallFlowLogic.new(asserted_remote_phone_call_event).to_xml
-          }
+          end
 
           class MyCallFlowLogic < CallFlowLogic::Base
-            def to_xml(options = {})
+            def to_xml(_options = {})
               Twilio::TwiML::VoiceResponse.new do |response|
                 response.say("Thanks for trying my custom call flow logic. Enjoy")
               end.to_s
@@ -222,11 +222,12 @@ RSpec.describe "Remote Phone Call Events" do
             context "setting the default call flow logic" do
               let(:call_flow_logic) { MyCallFlowLogic }
               let(:asserted_twiml) { my_callflow_logic_twiml }
+              let(:execute_request) { false }
 
-              def env
-                super.merge(
-                  "DEFAULT_CALL_FLOW_LOGIC" => call_flow_logic.to_s
-                )
+              def setup_scenario
+                super
+                account.update_attributes!(call_flow_logic: MyCallFlowLogic.to_s)
+                execute_request!
               end
 
               it { assert_created! }
@@ -240,19 +241,19 @@ RSpec.describe "Remote Phone Call Events" do
             let(:call_status) { "ringing" }
 
             let(:contact) { create(:contact) }
-            let(:callout) { create(:callout, :call_flow_logic => call_flow_logic) }
-            let(:callout_participation) { create(:callout_participation, :callout => callout) }
+            let(:callout) { create(:callout, call_flow_logic: call_flow_logic) }
+            let(:callout_participation) { create(:callout_participation, callout: callout) }
             let(:asserted_phone_call_status) { PhoneCall::STATE_IN_PROGRESS }
 
-            let(:phone_call) {
+            let(:phone_call) do
               create(
                 :phone_call,
-                :remote_call_id => call_sid,
-                :remote_direction => direction,
-                :contact => contact,
-                :callout_participation => callout_participation
+                remote_call_id: call_sid,
+                remote_direction: direction,
+                contact: contact,
+                callout_participation: callout_participation
               )
-            }
+            end
 
             let(:asserted_phone_call) { phone_call }
             let(:asserted_contact) { contact }
@@ -286,13 +287,13 @@ RSpec.describe "Remote Phone Call Events" do
     def setup_scenario
       create(
         :remote_phone_call_event,
-        :phone_call => create(
+        phone_call: create(
           :phone_call,
-          :callout_participation => create(
+          callout_participation: create(
             :callout_participation,
-            :callout => create(
+            callout: create(
               :callout,
-              :account => account
+              account: account
             )
           )
         )
@@ -305,7 +306,7 @@ RSpec.describe "Remote Phone Call Events" do
       expect(JSON.parse(response.body)).to eq(JSON.parse([remote_phone_call_event].to_json))
     end
 
-    describe "GET '/api/phone_calls/:phone_call_id/remote_phone_call_events'"do
+    describe "GET '/api/phone_calls/:phone_call_id/remote_phone_call_events'" do
       let(:url) { api_phone_call_remote_phone_call_events_path(phone_call) }
       it { assert_filtered! }
     end

@@ -1,5 +1,5 @@
 class RemotePhoneCallEventObserver < ApplicationObserver
-  DEFAULT_CALL_FLOW_LOGIC = CallFlowLogic::HelloWorld
+  DEFAULT_CALL_FLOW_LOGIC = "CallFlowLogic::HelloWorld".freeze
 
   attr_accessor :remote_phone_call_event
 
@@ -17,7 +17,7 @@ class RemotePhoneCallEventObserver < ApplicationObserver
     phone_call.msisdn ||= details["From"]
     phone_call.contact ||= find_or_initialize_contact(phone_call.msisdn)
     phone_call.remote_status ||= details["CallStatus"]
-    remote_phone_call_event.call_flow_logic ||= registered_call_flow_logic(phone_call.call_flow_logic) || default_call_flow_logic
+    remote_phone_call_event.call_flow_logic ||= registered_call_flow_logic(phone_call.call_flow_logic) || DEFAULT_CALL_FLOW_LOGIC
     remote_phone_call_event.phone_call.call_flow_logic = remote_phone_call_event.call_flow_logic
   end
 
@@ -49,9 +49,5 @@ class RemotePhoneCallEventObserver < ApplicationObserver
     if call_flow_logic
       CallFlowLogic::Base.registered.map(&:to_s).detect { |r| r == call_flow_logic }
     end
-  end
-
-  def default_call_flow_logic
-    registered_call_flow_logic(ENV["DEFAULT_CALL_FLOW_LOGIC"]) || DEFAULT_CALL_FLOW_LOGIC
   end
 end

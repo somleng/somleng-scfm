@@ -1,11 +1,11 @@
 class Api::RemotePhoneCallEventsController < Api::FilteredController
-  respond_to :xml,  :only => :create
-  respond_to :json, :except => :create
+  respond_to :xml,  only: :create
+  respond_to :json, except: :create
 
   private
 
   def build_resource
-    @resource = RemotePhoneCallEvent.new(:details => permitted_build_params)
+    @resource = RemotePhoneCallEvent.new(details: permitted_build_params)
   end
 
   def setup_resource
@@ -45,21 +45,21 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
 
   def call_flow_logic_instance
     @call_flow_logic_instance ||= call_flow_logic.new(
-      :event => resource,
-      :current_url => request.original_url
+      event: resource,
+      current_url: request.original_url
     )
   end
 
   def call_flow_logic
     @call_flow_logic ||= begin
       resource_call_flow_logic = registered_call_flow_logic(resource.call_flow_logic)
-      (resource_call_flow_logic && resource_call_flow_logic.constantize) || default_call_flow_logic
+      (resource_call_flow_logic&.constantize) || default_call_flow_logic
     end
   end
 
   def respond_with_create_resource
     if resource.persisted?
-      respond_with(call_flow_logic_instance, :location => nil)
+      respond_with(call_flow_logic_instance, location: nil)
     else
       respond_with(resource)
     end
@@ -71,7 +71,7 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
   end
 
   def permitted_update_params
-    params.permit(:metadata_merge_mode, :metadata => {})
+    params.permit(:metadata_merge_mode, metadata: {})
   end
 
   def api_authenticate?

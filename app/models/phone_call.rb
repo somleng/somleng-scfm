@@ -60,7 +60,7 @@ class PhoneCall < ApplicationRecord
   delegate :platform_provider,
            to: :account
 
-  delegate :callout_id, to: :callout_participation, allow_nil: true
+  delegate :callout, :callout_id, to: :callout_participation, allow_nil: true
 
   before_validation :set_defaults, on: :create
   before_destroy    :validate_destroy

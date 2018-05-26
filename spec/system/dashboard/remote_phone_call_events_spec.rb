@@ -67,9 +67,4 @@ RSpec.describe "Remote Phone Call Events" do
       expect(page).to have_content("Details")
     end
   end
-
-  def create_remote_phone_call_event(account:, **options)
-    phone_call = options.delete(:phone_call) || create_phone_call(account: account)
-    create(:remote_phone_call_event, phone_call: phone_call, **options)
-  end
 end

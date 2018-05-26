@@ -6,11 +6,11 @@ RSpec.describe RemotePhoneCallEvent do
   include_examples("has_call_flow_logic")
 
   describe "associations" do
-    def assert_associations!
-      is_expected.to belong_to(:phone_call).validate(true).autosave(true)
-    end
+    it { is_expected.to belong_to(:phone_call).validate(true).autosave(true) }
+  end
 
-    it { assert_associations! }
+  describe "delegations" do
+    it { is_expected.to delegate_method(:callout).to(:phone_call) }
   end
 
   describe "validations" do
@@ -22,13 +22,9 @@ RSpec.describe RemotePhoneCallEvent do
     context "persisted" do
       subject { create(factory) }
 
-      def assert_validations!
-        is_expected.to validate_presence_of(:call_flow_logic)
-        is_expected.to validate_presence_of(:remote_call_id)
-        is_expected.to validate_presence_of(:remote_direction)
-      end
-
-      it { assert_validations! }
+      it { is_expected.to validate_presence_of(:call_flow_logic) }
+      it { is_expected.to validate_presence_of(:remote_call_id) }
+      it { is_expected.to validate_presence_of(:remote_direction) }
     end
   end
 

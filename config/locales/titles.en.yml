@@ -13,6 +13,7 @@ en:
       delete: Delete
       edit: Edit
       preview: Preview
+    admin_management: Admin
     batch_operations:
       index: Batch Operations
       queue: Start

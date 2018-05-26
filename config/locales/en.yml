@@ -10,4 +10,7 @@ en:
         phone_call:
           attributes:
             base:
-              restrict_destroy_status: Cannot delete record because status is %{status}
+              restrict_destroy_status: "Cannot delete record because the destroyer is not the creator"
+      messages:
+        audio_type: "can only be audio file"
+        audio_size: "maximum size is 10 Megabytes"

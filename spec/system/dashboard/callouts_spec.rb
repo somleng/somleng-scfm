@@ -26,10 +26,12 @@ RSpec.describe "Callouts", :aggregate_failures do
       )
       expect(page).to have_content("Status")
       expect(page).to have_content("Initialized")
+      expect(page).to have_content(callout.province_name_en)
+      expect(page).to have_content(callout.province_name_km)
     end
   end
 
-  it "can create a callout" do
+  it "can create a callout", :js do
     user = create(:user)
 
     sign_in(user)
@@ -44,22 +46,18 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     expect(page).to have_link_to_action(:cancel)
 
-    fill_in_key_value_for(:metadata, with: { key: "location:country", value: "kh" })
+    fill_in_callout_information
     click_action_button(:create, key: :submit, namespace: :helpers, model: "Callout")
 
-    new_callout = Callout.last!
-    expect(current_path).to eq(dashboard_callout_path(new_callout))
     expect(page).to have_text("Callout was successfully created.")
-    expect(new_callout.metadata).to eq("location" => { "country" => "kh" })
+
+    callout = Callout.first
+    expect(callout.voice.attached?).to eq true
   end
 
   it "can update a callout", :js do
     user = create(:user)
-    callout = create(
-      :callout,
-      account: user.account,
-      metadata: { "location" => { "country" => "kh", "city" => "Phnom Penh" } }
-    )
+    callout = create(:callout, account: user.account)
 
     sign_in(user)
     visit edit_dashboard_callout_path(callout)
@@ -73,13 +71,13 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     expect(page).to have_link_to_action(:cancel)
 
-    remove_key_value_for(:metadata)
-    remove_key_value_for(:metadata)
+    # wait for selectize default selected
+    sleep 1
+    fill_in_callout_information
     click_action_button(:update, key: :submit, namespace: :helpers)
 
-    expect(current_path).to eq(dashboard_callout_path(callout))
     expect(page).to have_text("Callout was successfully updated.")
-    expect(callout.reload.metadata).to eq({})
+    expect(callout.voice.attached?).to eq true
   end
 
   it "can delete a callout" do
@@ -96,12 +94,11 @@ RSpec.describe "Callouts", :aggregate_failures do
   end
 
   it "can show a callout" do
-    user = create(:user)
+    user = create(:admin)
     callout = create(
       :callout,
       :initialized,
-      account: user.account,
-      metadata: { "location" => { "country" => "Cambodia" } }
+      account: user.account
     )
 
     sign_in(user)
@@ -111,12 +108,6 @@ RSpec.describe "Callouts", :aggregate_failures do
       expect(page).to have_link_to_action(
         :edit,
         href: edit_dashboard_callout_path(callout)
-      )
-
-      expect(page).to have_link_to_action(
-        :index,
-        key: :batch_operations,
-        href: dashboard_callout_batch_operations_path(callout)
       )
 
       expect(page).to have_link_to_action(
@@ -137,9 +128,6 @@ RSpec.describe "Callouts", :aggregate_failures do
       expect(page).to have_content("Status")
       expect(page).to have_content("Initialized")
       expect(page).to have_content("Created at")
-      expect(page).to have_content("Metadata")
-      expect(page).to have_content("location:country")
-      expect(page).to have_content("Cambodia")
     end
   end
 
@@ -170,5 +158,16 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(callout.reload).to be_running
     expect(page).not_to have_link_to_action(:resume_callout, key: :callouts)
     expect(page).to have_link_to_action(:stop_callout, key: :callouts)
+  end
+
+  def have_callout(callout)
+    have_selector("#callout_#{callout.id}")
+  end
+
+  def fill_in_callout_information
+    file_path = Rails.root + file_fixture("test.mp3")
+    attach_file "Voice file", file_path
+    select_selectize("#province", "Battambang")
+    select_selectize("#communes", "Kantueu Pir")
   end
 end

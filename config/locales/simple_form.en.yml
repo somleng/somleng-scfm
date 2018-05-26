@@ -14,12 +14,16 @@ en:
     labels:
       defaults:
         phone_number: Phone Number
-    'no': 'No'
     options:
       account:
         platform_provider_name:
           somleng: Somleng
           twilio: Twilio
+    prompts:
+      defaults:
+        commune_id: Select a commune
+        district_id: Select a district
+        province_id: Select a province
     required:
       mark: "*"
       text: required

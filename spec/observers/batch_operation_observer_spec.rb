@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe BatchOperationObserver do
   describe "#batch_operation_queued(callout_population)" do
     let(:batch_operation) { create(:batch_operation, :status => BatchOperation::Base::STATE_QUEUED) }
-    let(:enqueued_job) { enqueued_jobs.first }
+    let(:enqueued_job) { enqueued_jobs.last }
 
     def setup_scenario
       subject.batch_operation_queued(batch_operation)
@@ -15,4 +15,3 @@ RSpec.describe BatchOperationObserver do
     }
   end
 end
-

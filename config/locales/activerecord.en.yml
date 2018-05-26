@@ -15,11 +15,15 @@ en:
         token: API key
       account:
         platform_provider_name: Platform provider
+      callout:
+        voice: Voice file
       contact:
         msisdn: Phone number
       phone_call:
         msisdn: Phone number
         remote_call_id: Remote call sid
+      user:
+        location_ids: Provinces
     models:
       access_token:
         one: API key

@@ -6,3 +6,4 @@ class ApplicationResponder < ActionController::Responder
   # of the resource path (show action) for POST/PUT/DELETE requests.
   # include Responders::CollectionResponder
 end
+# 

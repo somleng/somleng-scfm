@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Account Settings" do
   it "can update the account settings" do
-    user = create(:user)
+    user = create(:admin)
     sign_in(user)
 
     visit(edit_dashboard_account_path)

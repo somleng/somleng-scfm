@@ -1,12 +1,13 @@
+---
 en:
   activerecord:
     errors:
       models:
-        phone_call:
-          attributes:
-            base:
-              restrict_destroy_status: "Cannot delete record because status is %{status}"
         access_token:
           attributes:
             base:
-              restrict_destroy_status: "Cannot delete record because the destroyer is not the creator"
+              restrict_destroy_status: Cannot delete record because the destroyer is not the creator
+        phone_call:
+          attributes:
+            base:
+              restrict_destroy_status: Cannot delete record because status is %{status}

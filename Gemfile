@@ -1,7 +1,6 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gem "rails", "~> 5.2.0"
 gem "aasm", github: "aasm/aasm"
 gem "active_elastic_job", github: "tawan/active-elastic-job"
 gem "api-pagination"
@@ -25,6 +24,7 @@ gem "pg"
 gem "phony"
 gem "phony_rails"
 gem "puma", "~> 3.7"
+gem "rails", "~> 5.2.0"
 gem "record_tag_helper", "~> 1.0"
 gem "responders"
 gem "sass-rails", "~> 5.0"
@@ -35,6 +35,7 @@ gem "uglifier", ">= 1.3.0"
 gem "wisper", github: "krisleech/wisper"
 
 group :development, :test do
+  gem "i18n-tasks"
   gem "pry"
   gem "rspec-rails"
 end

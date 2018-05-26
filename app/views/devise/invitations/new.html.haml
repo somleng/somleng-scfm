@@ -8,5 +8,5 @@
         - resource.class.invite_key_fields.each do |field|
           = f.input field
         .form-group.actions
-          = f.submit translate(:"titles.user_invitations.create"), class: 'btn btn-primary'
+          = f.button :submit, class: 'btn btn-primary'
           = link_to(translate(:"titles.actions.cancel"), :back, class: 'btn btn-outline-dark')

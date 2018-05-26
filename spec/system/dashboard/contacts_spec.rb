@@ -44,13 +44,13 @@ RSpec.describe "Contacts", :aggregate_failures do
 
     expect(page).to have_link_to_action(:cancel)
 
-    click_action_button(:create, key: :contacts)
+    click_action_button(:create, key: :submit, namespace: :helpers, model: "Contact")
 
     expect(page).to have_content("Phone number can't be blank")
 
     fill_in("Phone number", with: phone_number)
     fill_in_key_value_for(:metadata, with: { key: "name", value: "Bob Chann" })
-    click_action_button(:create, key: :contacts)
+    click_action_button(:create, key: :submit, namespace: :helpers, model: "Contact")
 
     expect(page).to have_text("Contact was successfully created.")
     new_contact = user.reload.account.contacts.last!
@@ -86,7 +86,7 @@ RSpec.describe "Contacts", :aggregate_failures do
     remove_key_value_for(:metadata)
     add_key_value_for(:metadata)
     fill_in_key_value_for(:metadata, with: { key: "gender", value: "f" })
-    click_action_button(:update, key: :contacts)
+    click_action_button(:update, key: :submit, namespace: :helpers)
 
     expect(current_path).to eq(dashboard_contact_path(contact))
     expect(page).to have_text("Contact was successfully updated.")

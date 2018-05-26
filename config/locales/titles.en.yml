@@ -1,72 +1,59 @@
+---
 en:
   titles:
-    actions:
-      edit: "Edit"
-      delete: "Delete"
-      data_confirm: "Are you sure?"
-      cancel: "Cancel"
-      preview: "Preview"
-      back: "Back"
-    admin_management: "Admin"
     access_tokens:
-      index: "API Keys"
-      create: "Create API Key"
+      create: Create API Key
+      index: API Keys
     accounts:
-      edit: "Account Settings"
-      update: "Save"
+      edit: Account Settings
+    actions:
+      back: Back
+      cancel: Cancel
+      data_confirm: Are you sure?
+      delete: Delete
+      edit: Edit
+      preview: Preview
     batch_operations:
-      index: "Batch Operations"
-      show: "Batch Operation"
-      queue: "Start"
-      requeue: "Restart"
-    callouts:
-      index: "Callouts"
-      new: "New Callout"
-      create: "Create Callout"
-      edit: "Edit Callout"
-      update: "Update Callout"
-      show: "Callout"
-      start_callout: "Start Callout"
-      stop_callout: "Stop Callout"
-      resume_callout: "Resume Callout"
+      index: Batch Operations
+      queue: Start
+      requeue: Restart
     callout_participations:
-      index: "Callout Participations"
+      index: Callout Participations
     callout_populations:
-      new: "New Callout Population"
-      create: "Create Callout Population"
-      edit: "Edit Callout Population"
-      update: "Update Callout Population"
-      show: "Callout Population"
+      edit: Edit Callout Population
+      new: New Callout Population
+    callouts:
+      edit: Edit Callout
+      index: Callouts
+      new: New Callout
+      resume_callout: Resume Callout
+      start_callout: Start Callout
+      stop_callout: Stop Callout
     contacts:
-      index: "Contacts"
-      new: "New Contact"
-      create: "Create Contact"
-      edit: "Edit Contact"
-      update: "Save"
+      edit: Edit Contact
+      index: Contacts
+      new: New Contact
     phone_calls:
-      index: "Phone Calls"
-      queue: "Send"
-      queue_remote_fetch: "Fetch Remote Status"
+      index: Phone Calls
+      queue: Send
+      queue_remote_fetch: Fetch Remote Status
     remote_phone_call_events:
-      index: "Remote Phone Call Events"
-    users:
-      index: "Users"
-      edit: "Edit User"
-      update: "Save"
+      index: Remote Phone Call Events
     user_invitations:
-      new: "Invite User"
-      create: "Send Invitation"
-      edit: "Set your password"
-      update: "Save"
+      edit: Set your password
+      new: Invite User
     user_passwords:
-      new: "Forgot your password?"
-      create: "Send Reset Instructions"
-      edit: "Change Password"
-      update: "Save"
+      create: Send Reset Instructions
+      edit: Change Password
+      new: Forgot your password?
+      update: Save
     user_registrations:
-      edit: "Change Password"
-      update: "Save"
+      edit: Change Password
+      update: Save
     user_sessions:
-      new: "Sign In"
-      create: "Sign In"
-      destroy: "Sign Out"
+      create: Sign In
+      destroy: Sign Out
+      new: Sign In
+    users:
+      edit: Edit User
+      index: Users

@@ -4,5 +4,5 @@
       = f.input :msisdn, input_html: { autofocus: true }
       = render("shared/key_value_fields", attribute: :metadata, f: f)
       .form-group.actions
-        = f.submit translate(:"titles.contacts.#{action}"), class: 'btn btn-primary'
+        = f.button :submit, class: 'btn btn-primary'
         = link_to(translate(:"titles.actions.cancel"), :back, class: 'btn btn-outline-dark')

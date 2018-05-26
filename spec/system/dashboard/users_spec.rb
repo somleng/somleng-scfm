@@ -77,7 +77,7 @@ RSpec.describe "Users" do
     expect(page).to have_link_to_action(:cancel)
 
     fill_in_key_value_for(:metadata, with: { key: "name", value: "Bob Chann" })
-    click_action_button(:update, key: :users)
+    click_action_button(:update, key: :submit, namespace: :helpers)
 
     expect(current_path).to eq(dashboard_user_path(other_user))
     expect(page).to have_text("User was successfully updated.")

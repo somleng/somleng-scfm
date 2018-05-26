@@ -1,22 +1,30 @@
+---
 en:
+  helpers:
+    submit:
+      batch_operation_callout_population:
+        create: Create Callout Population
+      create: Create %{model}
+      update: Save
+      user:
+        create: Send Invitation
   simple_form:
-    "yes": 'Yes'
-    "no": 'No'
-    required:
-      text: 'required'
-      mark: '*'
     error_notification:
-      default_message: "Please review the problems below:"
+      default_message: 'Please review the problems below:'
     labels:
       defaults:
-        phone_number: 'Phone Number'
-    prompts:
-      defaults:
-        province_id: 'Select a province'
-        district_id: 'Select a district'
-        commune_id: 'Select a commune'
+        phone_number: Phone Number
     options:
       account:
         platform_provider_name:
-          twilio: "Twilio"
-          somleng: "Somleng"
+          somleng: Somleng
+          twilio: Twilio
+    prompts:
+      defaults:
+        commune_id: Select a commune
+        district_id: Select a district
+        province_id: Select a province
+    required:
+      mark: "*"
+      text: required
+    'yes': 'Yes'

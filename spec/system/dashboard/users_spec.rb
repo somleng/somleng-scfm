@@ -88,7 +88,7 @@ RSpec.describe "Users" do
 
     choose "Admin"
     select_selectize("#locations", "Banteay Meanchey")
-    click_action_button(:update, key: :users)
+    click_action_button(:update, key: :submit, namespace: :helpers)
 
     other_user.reload
     expect(current_path).to eq(dashboard_user_path(other_user))

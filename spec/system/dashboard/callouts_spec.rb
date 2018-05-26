@@ -47,7 +47,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(page).to have_link_to_action(:cancel)
 
     fill_in_callout_information
-    click_action_button(:create, key: :callouts)
+    click_action_button(:create, key: :submit, namespace: :helpers, model: "Callout")
 
     expect(page).to have_text("Callout was successfully created.")
 
@@ -74,7 +74,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     # wait for selectize default selected
     sleep 1
     fill_in_callout_information
-    click_action_button(:update, key: :callouts)
+    click_action_button(:update, key: :submit, namespace: :helpers)
 
     expect(page).to have_text("Callout was successfully updated.")
     expect(callout.voice.attached?).to eq true

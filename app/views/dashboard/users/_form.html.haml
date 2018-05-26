@@ -5,5 +5,5 @@
       = f.input :roles, as: :radio_buttons, collection: User.values_for_roles, label_method: ->(r) { r.to_s.capitalize }, checked: f.object.roles
       = f.input :location_ids, collection: [], wrapper_html: { id: 'locations' }, input_html: { multiple: 'multiple', class: 'js-pumi-selectize', data: { default_value: f.object.location_ids, pumi_url: pumi.provinces_url } }
       .form-group.actions
-        = f.submit translate(:"titles.users.update"), class: 'btn btn-primary'
+        = f.button :submit, class: 'btn btn-primary'
         = link_to(translate(:"titles.actions.cancel"), :back, class: 'btn btn-outline-dark')

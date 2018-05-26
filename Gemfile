@@ -1,7 +1,6 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gem "rails", "~> 5.2.0"
 gem "aasm", github: "aasm/aasm"
 gem "active_elastic_job", github: "samnang/active-elastic-job", branch: "upgrade_to_aws_sdk_3"
 gem "api-pagination"
@@ -39,6 +38,7 @@ gem "uglifier", ">= 1.3.0"
 gem "wisper", github: "krisleech/wisper"
 
 group :development, :test do
+  gem "i18n-tasks"
   gem "pry"
   gem "rspec-rails"
 end

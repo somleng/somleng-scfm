@@ -19,7 +19,7 @@ RSpec.describe "User Invitations" do
     clear_enqueued_jobs
 
     perform_enqueued_jobs do
-      click_action_button(:create, key: :user_invitations)
+      click_action_button(:create, key: :"submit.user", namespace: :helpers)
     end
 
     expect(page).to have_text("An invitation email has been sent to bopha@somleng.com.")
@@ -42,7 +42,7 @@ RSpec.describe "User Invitations" do
 
     fill_in "Password", with: "myscret"
     fill_in "Password confirmation", with: "myscret"
-    click_action_button(:update, key: :user_invitations)
+    click_action_button(:update, key: :submit, namespace: :helpers)
 
     expect(page).to have_text("Your password was set successfully. You are now signed in.")
   end

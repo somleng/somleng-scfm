@@ -4,16 +4,16 @@ RSpec.describe CallFlowLogic::PeopleInNeed::EWS::EmergencyMessage do
   it_behaves_like("call_flow_logic")
 
   describe "#to_xml" do
-    fit "plays the emergency message" do
+    it "plays the emergency message" do
       account = create(:account)
-      phone_call = create_phone_call(account: account)
+      event = create_remote_phone_call_event(account: account)
       call_flow_logic = described_class.new(event: event)
-      response = Hash.from_xml(xml)["Response"]
-    end
-  end
 
-  def create_remote_phone_call_event(account:, **options)
-    phone_call = options.delete(:phone_call) || create_phone_call(account: account)
-    create(:remote_phone_call_event, phone_call: phone_call, **options)
+      xml = call_flow_logic.to_xml
+
+      response = Hash.from_xml(xml)["Response"]
+      expect(response.keys.size).to eq(1)
+      expect(response.fetch("Play")).to include(event.callout.voice_blob.filename.to_s)
+    end
   end
 end

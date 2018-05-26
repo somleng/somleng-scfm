@@ -1,8 +1,9 @@
 class CallFlowLogic::PeopleInNeed::EWS::EmergencyMessage < CallFlowLogic::Base
-  def to_xml(options = {})
+  def to_xml(_options = {})
     Twilio::TwiML::VoiceResponse.new do |response|
-      response.say("Thanks for trying our documentation. Enjoy!")
-      response.play(:url => "http://demo.twilio.com/docs/classic.mp3")
+      response.play(
+        url: Rails.application.routes.url_helpers.rails_blob_url(event.callout.voice)
+      )
     end.to_s
   end
 end

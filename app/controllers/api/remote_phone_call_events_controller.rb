@@ -95,7 +95,7 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
   end
 
   def default_call_flow_logic
-    CallFlowLogic::Application
+    CallFlowLogic::HelloWorld
   end
 
   def registered_call_flow_logic(call_flow_logic)

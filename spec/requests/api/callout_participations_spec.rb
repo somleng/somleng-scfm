@@ -133,7 +133,7 @@ RSpec.describe "Callout Participations" do
 
     context "valid request" do
       let(:metadata) { { "foo" => "bar" } }
-      let(:call_flow_logic) { CallFlowLogic::Application.to_s }
+      let(:call_flow_logic) { CallFlowLogic::HelloWorld.to_s }
       let(:contact) { create(:contact) }
       let(:msisdn) { generate(:somali_msisdn) }
       let(:parsed_response) { JSON.parse(response.body) }
@@ -186,7 +186,7 @@ RSpec.describe "Callout Participations" do
       let(:factory_attributes) { super().merge("metadata" => {"bar" => "baz" }) }
       let(:method) { :patch }
       let(:contact) { create(:contact) }
-      let(:call_flow_logic) { CallFlowLogic::Application.to_s }
+      let(:call_flow_logic) { CallFlowLogic::HelloWorld.to_s }
       let(:metadata) { {"foo" => "bar"} }
       let(:msisdn) { generate(:somali_msisdn) }
       let(:body) {

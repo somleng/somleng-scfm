@@ -166,7 +166,7 @@ RSpec.describe "Remote Phone Call Events" do
       end
 
       context "valid request" do
-        let(:application_twiml) { CallFlowLogic::Application.new(asserted_remote_phone_call_event).to_xml }
+        let(:application_twiml) { CallFlowLogic::HelloWorld.new(asserted_remote_phone_call_event).to_xml }
         let(:asserted_twiml) { application_twiml }
         let(:asserted_response_body) { asserted_twiml }
         let(:asserted_remote_phone_call_event) { RemotePhoneCallEvent.last }

@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "Phone Calls" do
   include SomlengScfm::SpecHelpers::RequestHelpers
@@ -6,19 +6,19 @@ RSpec.describe "Phone Calls" do
   let(:account_traits) { {} }
   let(:account_attributes) { {} }
   let(:account) { create(:account, *account_traits.keys, account_attributes) }
-  let(:access_token_model) { create(:access_token, :resource_owner => account) }
+  let(:access_token_model) { create(:access_token, resource_owner: account) }
 
-  let(:callout_attributes) { { :account => account } }
+  let(:callout_attributes) { { account: account } }
   let(:callout) { create(:callout, callout_attributes) }
 
-  let(:contact_attributes) { { :account => account } }
+  let(:contact_attributes) { { account: account } }
   let(:contact) { create(:contact, contact_attributes) }
 
-  let(:callout_participation_attributes) { { :callout => callout, :contact => contact } }
+  let(:callout_participation_attributes) { { callout: callout, contact: contact } }
   let(:callout_participation) { create(:callout_participation, callout_participation_attributes) }
 
   let(:body) { {} }
-  let(:factory_attributes) { { :callout_participation => callout_participation } }
+  let(:factory_attributes) { { callout_participation: callout_participation } }
   let(:phone_call) { create(:phone_call, factory_attributes) }
   let(:execute_request_before) { true }
 
@@ -51,20 +51,20 @@ RSpec.describe "Phone Calls" do
     let(:msisdn) { nil }
     let(:remote_request_params) { nil }
     let(:call_flow_logic) { nil }
-    let(:body) {
+    let(:body) do
       {
-        :metadata => metadata,
-        :remote_request_params => remote_request_params,
-        :call_flow_logic => call_flow_logic,
-        :msisdn => msisdn
+        metadata: metadata,
+        remote_request_params: remote_request_params,
+        call_flow_logic: call_flow_logic,
+        msisdn: msisdn
       }
-    }
+    end
 
     context "valid request" do
       let(:msisdn) { generate(:somali_msisdn) }
-      let(:metadata) { { "foo" => "bar"} }
+      let(:metadata) { { "foo" => "bar" } }
       let(:remote_request_params) { generate(:twilio_request_params) }
-      let(:call_flow_logic) { CallFlowLogic::Application.to_s }
+      let(:call_flow_logic) { CallFlowLogic::HelloWorld.to_s }
 
       let(:created_phone_call) { callout_participation.phone_calls.last }
       let(:parsed_response_body) { JSON.parse(response.body) }
@@ -109,16 +109,16 @@ RSpec.describe "Phone Calls" do
 
     describe "PATCH" do
       let(:method) { :patch }
-      let(:factory_attributes) { super().merge("metadata" => {"bar" => "baz" }) }
+      let(:factory_attributes) { super().merge("metadata" => { "bar" => "baz" }) }
       let(:metadata) { { "foo" => "bar" } }
       let(:msisdn) { generate(:somali_msisdn) }
-      let(:body) {
+      let(:body) do
         {
-          :metadata => metadata,
-          :metadata_merge_mode => "replace",
-          :msisdn => msisdn
+          metadata: metadata,
+          metadata_merge_mode: "replace",
+          msisdn: msisdn
         }
-      }
+      end
 
       def assert_update!
         expect(response.code).to eq("204")
@@ -142,7 +142,7 @@ RSpec.describe "Phone Calls" do
       end
 
       context "invalid request" do
-        let(:factory_attributes) { super().merge(:status => PhoneCall::STATE_QUEUED) }
+        let(:factory_attributes) { super().merge(status: PhoneCall::STATE_QUEUED) }
 
         def assert_invalid!
           expect(response.code).to eq("422")
@@ -156,16 +156,16 @@ RSpec.describe "Phone Calls" do
   describe "nested indexes" do
     let(:method) { :get }
 
-    let(:batch_operation_attributes) { { :account => account } }
+    let(:batch_operation_attributes) { { account: account } }
     let(:batch_operation) { create(batch_operation_factory, batch_operation_attributes) }
 
     def setup_scenario
       create(
         :phone_call,
-        :callout_participation => create(
+        callout_participation: create(
           :callout_participation,
-          :callout => create(
-            :callout, :account => account
+          callout: create(
+            :callout, account: account
           )
         )
       )
@@ -196,13 +196,13 @@ RSpec.describe "Phone Calls" do
       let(:url) { api_batch_operation_preview_phone_calls_path(batch_operation) }
 
       context "valid requests" do
-        let(:factory_attributes) { super().merge(:metadata => { "foo" => "bar", "bar" => "foo" }) }
+        let(:factory_attributes) { super().merge(metadata: { "foo" => "bar", "bar" => "foo" }) }
 
-        let(:batch_operation_attributes) {
+        let(:batch_operation_attributes) do
           super().merge(
-            :phone_call_filter_params => factory_attributes.slice(:metadata)
+            phone_call_filter_params: factory_attributes.slice(:metadata)
           )
-        }
+        end
 
         context "BatchOperation::PhoneCallQueue" do
           let(:batch_operation_factory) { :phone_call_queue_batch_operation }
@@ -218,7 +218,7 @@ RSpec.describe "Phone Calls" do
       context "invalid request" do
         let(:execute_request_before) { false }
         let(:batch_operation_factory) { :phone_call_create_batch_operation }
-        it {expect { execute_request }.to raise_error(ActiveRecord::RecordNotFound) }
+        it { expect { execute_request }.to raise_error(ActiveRecord::RecordNotFound) }
       end
     end
 
@@ -228,19 +228,19 @@ RSpec.describe "Phone Calls" do
       context "valid requests" do
         context "BatchOperation::PhoneCallCreate" do
           let(:batch_operation_factory) { :phone_call_create_batch_operation }
-          let(:factory_attributes) { { :create_batch_operation => batch_operation } }
+          let(:factory_attributes) { { create_batch_operation: batch_operation } }
           it { assert_filtered! }
         end
 
         context "BatchOperation::PhoneCallQueue" do
           let(:batch_operation_factory) { :phone_call_queue_batch_operation }
-          let(:factory_attributes) { { :queue_batch_operation => batch_operation } }
+          let(:factory_attributes) { { queue_batch_operation: batch_operation } }
           it { assert_filtered! }
         end
 
         context "BatchOperation::PhoneCallQueueRemoteFetch" do
           let(:batch_operation_factory) { :phone_call_queue_remote_fetch_batch_operation }
-          let(:factory_attributes) { { :queue_remote_fetch_batch_operation => batch_operation } }
+          let(:factory_attributes) { { queue_remote_fetch_batch_operation: batch_operation } }
           it { assert_filtered! }
         end
       end

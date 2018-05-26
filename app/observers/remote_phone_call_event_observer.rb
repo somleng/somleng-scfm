@@ -1,5 +1,5 @@
 class RemotePhoneCallEventObserver < ApplicationObserver
-  DEFAULT_CALL_FLOW_LOGIC = CallFlowLogic::Application
+  DEFAULT_CALL_FLOW_LOGIC = CallFlowLogic::HelloWorld
 
   attr_accessor :remote_phone_call_event
 
@@ -31,9 +31,9 @@ class RemotePhoneCallEventObserver < ApplicationObserver
 
   def find_or_initialize_phone_call
     PhoneCall.where(
-      :remote_call_id => remote_phone_call_event.remote_call_id
+      remote_call_id: remote_phone_call_event.remote_call_id
     ).first_or_initialize(
-      :remote_direction => remote_phone_call_event.remote_direction
+      remote_direction: remote_phone_call_event.remote_direction
     )
   end
 

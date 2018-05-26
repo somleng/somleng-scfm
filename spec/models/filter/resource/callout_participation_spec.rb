@@ -12,7 +12,7 @@ RSpec.describe Filter::Resource::CalloutParticipation do
     include_examples "timestamp_attribute_filter"
     include_examples(
       "string_attribute_filter",
-      :call_flow_logic => CallFlowLogic::Application.to_s
+      :call_flow_logic => CallFlowLogic::HelloWorld.to_s
     )
 
     context "filtering" do

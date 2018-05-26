@@ -9,7 +9,11 @@ module JsonQueryHelpers
 
       keys = [keys].flatten
 
-      value_condition = value.nil? ? "IS NULL" : "= ?"
+      value_condition = case value
+                        when Array then "IN (?)"
+                        when nil then "IS NULL"
+                        else "= ?"
+                        end
 
       # From: https://www.postgresql.org/docs/current/static/functions-json.html
       # '{"a":[1,2,3],"b":[4,5,6]}'::json#>>'{a,2}' => 3

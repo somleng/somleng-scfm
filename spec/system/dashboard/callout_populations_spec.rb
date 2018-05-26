@@ -68,7 +68,11 @@ RSpec.describe "Callout Populations" do
       with: { key: "location:country", value: "kh" },
       index: 1
     )
-    click_action_button(:create, key: :callout_populations)
+    click_action_button(
+      :create,
+      key: :"submit.batch_operation_callout_population",
+      namespace: :helpers
+    )
 
     new_callout_population = callout.reload.callout_populations.last!
     expect(current_path).to eq(dashboard_batch_operation_path(new_callout_population))
@@ -109,7 +113,7 @@ RSpec.describe "Callout Populations" do
     remove_key_value_for(:contact_filter_metadata)
     add_key_value_for(:contact_filter_metadata)
     fill_in_key_value_for(:contact_filter_metadata, with: { key: "gender", value: "m" })
-    click_action_button(:update, key: :callout_populations)
+    click_action_button(:update, key: :submit, namespace: :helpers)
 
     expect(current_path).to eq(dashboard_batch_operation_path(callout_population))
     expect(page).to have_text("Callout population was successfully updated.")

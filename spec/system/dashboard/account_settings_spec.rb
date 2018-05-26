@@ -24,7 +24,7 @@ RSpec.describe "Account Settings" do
     fill_in("Twilio auth token", with: twilio_auth_token)
     fill_in("Somleng account sid", with: somleng_account_sid)
     fill_in("Somleng auth token", with: somleng_auth_token)
-    click_action_button(:update, key: :accounts)
+    click_action_button(:update, key: :submit, namespace: :helpers)
 
     expect(current_path).to eq(edit_dashboard_account_path)
     expect(page).to have_text("Account was successfully updated.")

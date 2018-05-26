@@ -81,6 +81,7 @@ GEM
       public_suffix (>= 2.0.2, < 4.0)
     api-pagination (4.6.3)
     arel (9.0.0)
+    ast (2.4.0)
     autoprefixer-rails (8.0.0)
       execjs
     aws-sdk (2.10.81)
@@ -144,6 +145,9 @@ GEM
     docile (1.1.1)
     doorkeeper (4.2.6)
       railties (>= 4.2)
+    easy_translate (0.5.1)
+      thread
+      thread_safe
     email_spec (2.2.0)
       htmlentities (~> 4.3.3)
       launchy (~> 2.1)
@@ -165,11 +169,22 @@ GEM
       temple (>= 0.8.0)
       tilt
     hashdiff (0.3.6)
+    highline (1.7.10)
     htmlentities (4.3.4)
     httparty (0.15.6)
       multi_xml (>= 0.5.2)
     i18n (1.0.1)
       concurrent-ruby (~> 1.0)
+    i18n-tasks (0.9.21)
+      activesupport (>= 4.0.2)
+      ast (>= 2.1.0)
+      easy_translate (>= 0.5.1)
+      erubi
+      highline (>= 1.7.3)
+      i18n
+      parser (>= 2.2.3.0)
+      rainbow (>= 2.2.2, < 4.0)
+      terminal-table (>= 1.5.1)
     jbuilder (2.7.0)
       activesupport (>= 4.2.0)
       multi_json (>= 1.2)
@@ -225,6 +240,8 @@ GEM
       rails
     okcomputer (1.17.2)
     orm_adapter (0.5.0)
+    parser (2.5.1.0)
+      ast (~> 2.4.0)
     pg (0.21.0)
     phony (2.15.48)
     phony_rails (0.14.6)
@@ -267,6 +284,7 @@ GEM
       method_source
       rake (>= 0.8.7)
       thor (>= 0.18.1, < 2.0)
+    rainbow (3.0.0)
     rake (12.3.1)
     rb-fsevent (0.10.2)
     rb-inotify (0.9.10)
@@ -333,7 +351,10 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     temple (0.8.0)
+    terminal-table (1.8.0)
+      unicode-display_width (~> 1.1, >= 1.1.1)
     thor (0.20.0)
+    thread (0.2.2)
     thread_safe (0.3.6)
     tilt (2.0.8)
     turbolinks (5.1.1)
@@ -347,6 +368,7 @@ GEM
       thread_safe (~> 0.1)
     uglifier (3.2.0)
       execjs (>= 0.3.0, < 3)
+    unicode-display_width (1.3.2)
     url (0.3.2)
     warden (1.2.7)
       rack (>= 1.0)
@@ -390,6 +412,7 @@ DEPENDENCIES
   fakefs
   haml
   httparty
+  i18n-tasks
   jbuilder (~> 2.5)
   jquery-rails
   kaminari

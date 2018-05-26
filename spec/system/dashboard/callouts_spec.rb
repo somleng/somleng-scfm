@@ -45,7 +45,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(page).to have_link_to_action(:cancel)
 
     fill_in_key_value_for(:metadata, with: { key: "location:country", value: "kh" })
-    click_action_button(:create, key: :callouts)
+    click_action_button(:create, key: :submit, namespace: :helpers, model: "Callout")
 
     new_callout = Callout.last!
     expect(current_path).to eq(dashboard_callout_path(new_callout))
@@ -75,7 +75,7 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     remove_key_value_for(:metadata)
     remove_key_value_for(:metadata)
-    click_action_button(:update, key: :callouts)
+    click_action_button(:update, key: :submit, namespace: :helpers)
 
     expect(current_path).to eq(dashboard_callout_path(callout))
     expect(page).to have_text("Callout was successfully updated.")

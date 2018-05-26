@@ -1,8 +1,9 @@
 module SystemSpecHelpers
-  def click_action_button(action, key: nil, type: nil)
+  def click_action_button(action, key: nil, type: nil, namespace: nil, **interpolations)
     type ||= :button
     key ||= :actions
-    public_send("click_#{type}", I18n.translate!(:"titles.#{key}.#{action}"))
+    namespace ||= :titles
+    public_send("click_#{type}", I18n.translate!(:"#{namespace}.#{key}.#{action}", interpolations))
   end
 
   def fill_in_key_value_for(attribute, with:, index: 0)

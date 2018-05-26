@@ -6,19 +6,6 @@ RSpec.describe Filter::Resource::RemotePhoneCallEvent do
   let(:filterable_factory) { :remote_phone_call_event }
   let(:association_chain) { RemotePhoneCallEvent }
 
-#  create_table "remote_phone_call_events", force: :cascade do |t|
-#    t.integer "phone_call_id", null: false
-#    t.text "details", default: "{}", null: false
-#    t.text "metadata", default: "{}", null: false
-#    t.string "remote_call_id", null: false
-#    t.string "remote_direction", null: false
-#    t.string "call_flow_logic", null: false
-#    t.datetime "created_at", null: false
-#    t.datetime "updated_at", null: false
-#    t.index ["phone_call_id"], name: "index_remote_phone_call_events_on_phone_call_id"
-#  end
-
-
   describe "#resources" do
     include_examples("metadata_attribute_filter")
     include_examples("timestamp_attribute_filter")

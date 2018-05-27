@@ -1,0 +1,8 @@
+= content_tag_for(:tr, sensor_rule) do
+  %td
+    = link_to(sensor_rule.id, show_location(sensor_rule))
+  %td
+    %code
+      = sensor_rule.level
+  %td
+    = sensor_rule.created_at

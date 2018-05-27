@@ -57,7 +57,9 @@ RSpec.describe "Callouts", :aggregate_failures do
 
   it "can update a callout", :js do
     user = create(:user)
-    callout = create(:callout, account: user.account)
+    callout = create(
+      :callout, account: user.account, commune_ids: ["010201"]
+    )
 
     sign_in(user)
     visit edit_dashboard_callout_path(callout)
@@ -69,10 +71,9 @@ RSpec.describe "Callouts", :aggregate_failures do
       )
     end
 
+    expect(page).to have_content("Banteay Neang")
     expect(page).to have_link_to_action(:cancel)
 
-    # wait for selectize default selected
-    sleep 1
     fill_in_callout_information
     click_action_button(:update, key: :submit, namespace: :helpers)
 

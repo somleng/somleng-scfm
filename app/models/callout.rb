@@ -1,6 +1,7 @@
 class Callout < ApplicationRecord
   include MetadataHelpers
   include HasCallFlowLogic
+  include PumiHelpers
 
   AUDIO_CONTENT_TYPES = %w[audio/mpeg audio/mp3 audio/wav].freeze
 
@@ -24,21 +25,16 @@ class Callout < ApplicationRecord
   has_many :contacts,
            through: :callout_participations
 
-  store_accessor :metadata, :commune_ids
-  attr_accessor :province_id
-
   has_one_attached :voice
 
   alias_attribute :calls, :phone_calls
 
-  before_validation :remove_empty_commune_ids
-
   validates :status, presence: true
-  validates :commune_ids, presence: true
 
-  validate  :validate_voice
-
-  delegate :id, :name_en, :name_km, to: :province, prefix: true, allow_nil: true
+  validates :voice, file: {
+    presence: true, type: AUDIO_CONTENT_TYPES,
+    size: 10.megabytes
+  }
 
   include AASM
 
@@ -75,34 +71,5 @@ class Callout < ApplicationRecord
         to: :stopped
       )
     end
-  end
-
-  def province
-    return if commune_ids.blank?
-    Pumi::Province.find_by_id(commune_ids.first[0..1])
-  end
-
-  private
-
-  def remove_empty_commune_ids
-    self.commune_ids = Array(commune_ids).reject(&:blank?)
-  end
-
-  # https://github.com/rails/rails/issues/31656
-  def validate_voice
-    if voice.attached?
-      errors.add(:voice, :audio_type) unless audio_file?
-      errors.add(:voice, :audio_size) if file_too_big?
-    else
-      errors.add(:voice, :blank)
-    end
-  end
-
-  def audio_file?
-    voice.blob.content_type.in?(AUDIO_CONTENT_TYPES)
-  end
-
-  def file_too_big?
-    voice.blob.byte_size.bytes > 10.megabytes
   end
 end

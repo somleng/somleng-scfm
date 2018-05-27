@@ -12,6 +12,7 @@
               = translate(:"titles.admin_management")
         .card-body
           %ul.nav.flex-column
+            = nav_link(translate(:"titles.sensors.index"), dashboard_sensors_path, ['sensors', 'sensor_rules'])
             = nav_link(translate(:"titles.access_tokens.index"), dashboard_access_tokens_path, 'access_tokens')
             = nav_link(translate(:"titles.batch_operations.index"), dashboard_batch_operations_path, 'batch_operations')
             = nav_link(translate(:"titles.callout_participations.index"), dashboard_callout_participations_path, "callout_participations")

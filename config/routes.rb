@@ -57,6 +57,9 @@ Rails.application.routes.draw do
 
     resources :remote_phone_call_events, only: %i[index show]
     resources :users, except: %i[new create]
+    resources :sensors do
+      resources :sensor_rules, shallow: true
+    end
   end
 
   namespace "api", defaults: { format: "json" } do

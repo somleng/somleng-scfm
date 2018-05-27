@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "Batch Operation Integration Specs" do
   include SomlengScfm::SpecHelpers::RequestHelpers
@@ -13,18 +13,18 @@ RSpec.describe "Batch Operation Integration Specs" do
     include SomlengScfm::SpecHelpers::SomlengClientHelpers
 
     let(:method) { :post }
-    let(:account_traits) { {} }
+    let(:account_traits) { {with_default_provider: nil} }
     let(:account_attributes) { {} }
     let(:account) { create(:account, *account_traits.keys, account_attributes) }
-    let(:access_token_model) { create(:access_token, :resource_owner => account) }
+    let(:access_token_model) { create(:access_token, resource_owner: account) }
 
-    let(:batch_operation_factory_attributes) { { :account => account } }
+    let(:batch_operation_factory_attributes) { { account: account } }
     let(:batch_operation) { create(batch_operation_factory, batch_operation_factory_attributes) }
 
     let(:url) { api_batch_operation_batch_operation_events_path(batch_operation) }
-    let(:body) { { :event => :queue } }
+    let(:body) { { event: :queue } }
     let(:phone_call_factory_attributes) { {} }
-    let(:phone_call) { create(:phone_call, :with_default_provider, phone_call_factory_attributes) }
+    let(:phone_call) { create_phone_call(account: account, **phone_call_factory_attributes) }
     let(:asserted_remote_response_body) { remote_response_params.to_json }
     let(:remote_call_id) { SecureRandom.uuid }
 
@@ -75,13 +75,13 @@ RSpec.describe "Batch Operation Integration Specs" do
     context "BatchOperation::PhoneCallQueueRemoteFetch" do
       let(:batch_operation_factory) { :phone_call_queue_remote_fetch_batch_operation }
 
-      let(:phone_call_factory_attributes) {
+      let(:phone_call_factory_attributes) do
         {
-          :status => PhoneCall::STATE_REMOTELY_QUEUED,
-          :remotely_queued_at => Time.now,
-          :remote_call_id => remote_call_id
+          status: PhoneCall::STATE_REMOTELY_QUEUED,
+          remotely_queued_at: Time.now,
+          remote_call_id: remote_call_id
         }
-      }
+      end
 
       let(:asserted_final_status) { PhoneCall::STATE_IN_PROGRESS }
 

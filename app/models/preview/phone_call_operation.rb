@@ -1,7 +1,7 @@
 class Preview::PhoneCallOperation < Preview::Base
   private
 
-  def filter_resources(scope)
+  def filter_resources(scope:)
     scope.merge(callout_filter.resources).merge(callout_participation_filter.resources)
   end
 

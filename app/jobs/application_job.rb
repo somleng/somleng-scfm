@@ -1,5 +1,5 @@
 class ApplicationJob < ActiveJob::Base
-  DEFAULT_QUEUE_NAME = "default"
+  DEFAULT_QUEUE_NAME = "default".freeze
 
   def self.aws_sqs_queue_name(job_name = nil)
     eb_tier = Rails.application.secrets.fetch(:eb_tier)

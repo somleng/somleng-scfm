@@ -23,18 +23,18 @@ RSpec.shared_examples_for("resource_filtering") do |options = {}|
 
     if options[:filter_by_account] != false
       context "by account" do
-        let(:filtered_resource) {
+        let(:filtered_resource) do
           defined?(super()) ? super() : create(
             filter_on_factory,
             filter_factory_attributes
           )
-        }
+        end
 
-        let(:resource_from_different_account) {
+        let(:resource_from_different_account) do
           create(
             filter_on_factory
           )
-        }
+        end
 
         let(:asserted_resources) { [filtered_resource] }
 
@@ -49,28 +49,28 @@ RSpec.shared_examples_for("resource_filtering") do |options = {}|
     end
 
     context "by metadata" do
-      let(:metadata) {
+      let(:metadata) do
         {
           "foo" => "bar",
           "bar" => {
             "baz" => "foo"
           }
         }
-      }
+      end
 
-      let(:resource_with_matching_metadata) {
+      let(:resource_with_matching_metadata) do
         create(
           filter_on_factory,
-          filter_factory_attributes.merge(:metadata => metadata)
+          filter_factory_attributes.merge(metadata: metadata)
         )
-      }
+      end
 
-      let(:resource_without_matching_metadata) {
+      let(:resource_without_matching_metadata) do
         create(filter_on_factory, filter_factory_attributes)
-      }
+      end
 
       let(:query_params) { { "metadata" => metadata } }
-      let(:url_params) { { :q => query_params } }
+      let(:url_params) { { q: query_params } }
 
       let(:asserted_resources) { [resource_with_matching_metadata] }
 

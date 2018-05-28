@@ -187,7 +187,7 @@ ActiveRecord::Schema.define(version: 2018_05_18_072400) do
   end
 
   create_table "sensor_rules", force: :cascade do |t|
-    t.bigint "sensor_id"
+    t.bigint "sensor_id", null: false
     t.jsonb "metadata", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -196,7 +196,7 @@ ActiveRecord::Schema.define(version: 2018_05_18_072400) do
 
   create_table "sensors", force: :cascade do |t|
     t.jsonb "metadata", default: {}, null: false
-    t.bigint "account_id"
+    t.bigint "account_id", null: false
     t.string "external_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

@@ -44,3 +44,11 @@ deploy:
     on:
       repo: PIN-Cambodia/somleng-scfm
       branch: master
+  - provider: elasticbeanstalk
+    region: ap-southeast-1
+    app: scfm
+    env: scfm-batch-operation-worker
+    bucket_name: deploy.ews1294.info
+    on:
+      repo: PIN-Cambodia/somleng-scfm
+      branch: master

@@ -30,13 +30,9 @@ RSpec.describe CallFlowLogic::Base do
       let(:call_flow_logic) { CallFlowLogic::AvfCapom::CapomShort }
       let(:asserted_call_flow_logic) { call_flow_logic }
 
-      def env
-        super.merge("REGISTERED_CALL_FLOW_LOGIC" => call_flow_logic.to_s)
-      end
-
       def setup_scenario
-        super
-        require Rails.root.join("config", "initializers", "call_flow_logic")
+        stub_secrets(registered_call_flow_logic: call_flow_logic.to_s)
+        described_class.init
       end
 
       it { assert_registered! }

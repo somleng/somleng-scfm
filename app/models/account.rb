@@ -8,8 +8,7 @@ class Account < ApplicationRecord
   include HasCallFlowLogic
 
   store_accessor :settings,
-                 :platform_provider_name,
-                 :call_flow_logic
+                 :platform_provider_name
 
   bitmask :permissions,
           as: [

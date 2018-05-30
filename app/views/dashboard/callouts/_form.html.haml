@@ -15,6 +15,7 @@
                 input_html: { class: 'js-select-communes',
                   style: "width: 100%", multiple: 'multiple',
                   data: { default_value: f.object.commune_ids }}
+      = f.input :call_flow_logic, collection: CallFlowLogic::Base.registered.map(&:to_sym), as: :radio_buttons
       .form-group.actions
         = f.button :submit, class: 'btn btn-primary'
         = link_to(translate(:"titles.actions.cancel"), :back, class: 'btn btn-outline-dark')

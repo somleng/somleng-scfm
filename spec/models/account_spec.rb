@@ -1,32 +1,25 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Account do
   let(:factory) { :account }
   include_examples "has_metadata"
+  include_examples "has_call_flow_logic"
 
   describe "associations" do
-    def assert_associations!
-      is_expected.to have_many(:users).dependent(:restrict_with_error)
-      is_expected.to have_many(:contacts).dependent(:restrict_with_error)
-      is_expected.to have_many(:callouts).dependent(:restrict_with_error)
-      is_expected.to have_many(:batch_operations).dependent(:restrict_with_error)
-      is_expected.to have_many(:callout_participations)
-      is_expected.to have_many(:phone_calls)
-      is_expected.to have_many(:remote_phone_call_events)
-      is_expected.to have_many(:access_tokens).dependent(:restrict_with_error)
-      is_expected.to have_many(:sensors)
-      is_expected.to have_many(:sensor_rules).through(:sensors)
-    end
-
-    it { assert_associations! }
+    it { is_expected.to have_many(:users).dependent(:restrict_with_error) }
+    it { is_expected.to have_many(:contacts).dependent(:restrict_with_error) }
+    it { is_expected.to have_many(:callouts).dependent(:restrict_with_error) }
+    it { is_expected.to have_many(:batch_operations).dependent(:restrict_with_error) }
+    it { is_expected.to have_many(:callout_participations) }
+    it { is_expected.to have_many(:phone_calls) }
+    it { is_expected.to have_many(:remote_phone_call_events) }
+    it { is_expected.to have_many(:access_tokens).dependent(:restrict_with_error) }
+    it { is_expected.to have_many(:sensors) }
+    it { is_expected.to have_many(:sensor_rules).through(:sensors) }
   end
 
   describe "validations" do
-    def assert_associations!
-      is_expected.to validate_inclusion_of(:platform_provider_name).in_array(["twilio", "somleng"]).allow_nil
-    end
-
-    it { assert_associations! }
+    it { is_expected.to validate_inclusion_of(:platform_provider_name).in_array(%w[twilio somleng]).allow_nil }
   end
 
   describe "defaults" do
@@ -46,13 +39,13 @@ RSpec.describe Account do
     let(:twilio_account_sid) { generate(:twilio_account_sid) }
     let(:somleng_account_sid) { SecureRandom.hex }
 
-    let(:account) {
+    let(:account) do
       create(
         :account,
-        :twilio_account_sid => twilio_account_sid,
-        :somleng_account_sid => somleng_account_sid
+        twilio_account_sid: twilio_account_sid,
+        somleng_account_sid: somleng_account_sid
       )
-    }
+    end
 
     let(:asserted_results) { [account] }
 

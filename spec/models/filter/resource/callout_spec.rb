@@ -12,7 +12,7 @@ RSpec.describe Filter::Resource::Callout do
     include_examples(
       "string_attribute_filter",
       :status => Callout::STATE_RUNNING.to_s,
-      :call_flow_logic => CallFlowLogic::Application.to_s
+      :call_flow_logic => CallFlowLogic::HelloWorld.to_s
     )
   end
 end

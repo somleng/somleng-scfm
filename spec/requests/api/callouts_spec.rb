@@ -35,7 +35,7 @@ RSpec.describe "Callouts" do
 
     describe "POST" do
       let(:method) { :post }
-      let(:call_flow_logic) { CallFlowLogic::Application.to_s }
+      let(:call_flow_logic) { CallFlowLogic::HelloWorld.to_s }
       let(:body) { { voice: fixture_file_upload("files/test.mp3", 'audio/mp3'), :metadata => metadata, :call_flow_logic => call_flow_logic } }
       let(:asserted_created_callout) { Callout.last }
       let(:parsed_response) { JSON.parse(response.body) }

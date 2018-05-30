@@ -25,11 +25,11 @@ class BatchOperation::PhoneCallCreate < BatchOperation::PhoneCallOperation
   end
 
   def callout_participations_preview
-    preview.callout_participations.limit(applied_limit)
+    preview.callout_participations(scope: account.callout_participations).limit(applied_limit)
   end
 
   def contacts_preview
-    preview.contacts.limit(applied_limit)
+    preview.contacts(scope: account.contacts).limit(applied_limit)
   end
 
   private

@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "Account" do
   include SomlengScfm::SpecHelpers::RequestHelpers
@@ -7,7 +7,7 @@ RSpec.describe "Account" do
   let(:factory_attributes) { {} }
   let(:factory_traits) { {} }
   let(:account) { create(:account, *factory_traits.keys, factory_attributes) }
-  let(:access_token_model) { create(:access_token, :resource_owner => account) }
+  let(:access_token_model) { create(:access_token, resource_owner: account) }
 
   def setup_scenario
     super
@@ -31,7 +31,7 @@ RSpec.describe "Account" do
     describe "PATCH" do
       let(:method) { :patch }
       let(:metadata) { { "foo" => "bar" } }
-      let(:factory_attributes) { super().merge("metadata" => {"bar" => "baz" }) }
+      let(:factory_attributes) { super().merge("metadata" => { "bar" => "baz" }) }
 
       def assert_update!
         expect(response.code).to eq("204")
@@ -41,4 +41,3 @@ RSpec.describe "Account" do
     end
   end
 end
-

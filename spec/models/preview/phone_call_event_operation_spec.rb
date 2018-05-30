@@ -1,77 +1,73 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Preview::PhoneCallEventOperation do
-  let(:callout_participation_filter_params) { {} }
-  let(:callout_filter_params) { {} }
+  describe "#phone_calls" do
+    it "can preview phone calls for BatchOperation::PhoneCallQueue" do
+      account = create(:account)
+      phone_call_status = PhoneCall::STATE_CREATED
 
-  let(:batch_operation) {
-    create(
-      batch_operation_factory,
-      :callout_participation_filter_params => callout_participation_filter_params,
-      :callout_filter_params => callout_filter_params
-    )
-  }
-
-  subject { described_class.new(:previewable => batch_operation) }
-
-  describe "filtering" do
-    let(:callout_factory_params) { { :status => Callout::STATE_RUNNING } }
-    let(:callout) { create(:callout, callout_factory_params) }
-
-    let(:callout_participation_factory_params) {
-      {
-        :metadata => {"foo" => "bar", "bar" => "foo"}
-      }
-    }
-
-    let(:callout_participation) {
-      create(
-        :callout_participation,
-        {:callout => callout}.merge(callout_participation_factory_params)
+      phone_call, other_phone_call = create_phone_calls(
+        account: account,
+        status: phone_call_status
       )
-    }
 
-    let(:phone_call_factory_params) { { :status => PhoneCall::STATE_CREATED } }
-
-    let(:phone_call) {
-      create(
-        :phone_call,
-        {:callout_participation => callout_participation}.merge(phone_call_factory_params)
+      batch_operation = create_batch_operation(
+        factory: :phone_call_queue_batch_operation,
+        account: account,
+        phone_call_filter_status: phone_call_status
       )
-    }
 
-    let(:phone_call_filter_params) {
-      phone_call_factory_params.slice(:status)
-    }
+      preview = described_class.new(previewable: batch_operation)
 
-    let(:callout_filter_params) {
-      callout_factory_params.slice(:status)
-    }
-
-    let(:callout_participation_filter_params) {
-      callout_participation_factory_params.slice(:metadata)
-    }
-
-    def setup_scenario
-      super
-      phone_call
-      create(:phone_call, phone_call_filter_params)
+      expect(preview.phone_calls(scope: PhoneCall)).to match_array([phone_call, other_phone_call])
+      expect(preview.phone_calls(scope: account.phone_calls)).to match_array([phone_call])
     end
 
-    describe "#phone_calls" do
-      def assert_phone_calls!
-        expect(subject.phone_calls).to match_array([phone_call])
-      end
+    it "can preview phone calls for BatchOperation::PhoneCallQueueRemoteFetch" do
+      account = create(:account)
+      phone_call_status = PhoneCall::STATE_CREATED
 
-      context "previewable type is BatchOperation::PhoneCallQueue" do
-        let(:batch_operation_factory) { :phone_call_queue_batch_operation }
-        it { assert_phone_calls! }
-      end
+      phone_call, other_phone_call = create_phone_calls(
+        account: account,
+        status: phone_call_status
+      )
 
-      context "previewable type is BatchOperation::PhoneCallQueueRemoteFetch" do
-        let(:batch_operation_factory) { :phone_call_queue_remote_fetch_batch_operation }
-        it { assert_phone_calls! }
-      end
+      batch_operation = create_batch_operation(
+        factory: :phone_call_queue_remote_fetch_batch_operation,
+        account: account,
+        phone_call_filter_status: phone_call_status
+      )
+
+      preview = described_class.new(previewable: batch_operation)
+
+      expect(preview.phone_calls(scope: PhoneCall)).to match_array([phone_call, other_phone_call])
+      expect(preview.phone_calls(scope: account.phone_calls)).to match_array([phone_call])
+    end
+
+    def create_batch_operation(factory:, account:, phone_call_filter_status:)
+      create(
+        factory,
+        account: account,
+        phone_call_filter_params: {
+          status: phone_call_filter_status
+        }
+      )
+    end
+
+    def create_phone_calls(account:, status:)
+      phone_call = create_phone_call(
+        account: account,
+        status: status
+      )
+
+      other_phone_call = create(:phone_call, status: status)
+
+      _non_matching_phone_call = create_phone_call(
+        account: account,
+        status: PhoneCall::STATE_QUEUED
+      )
+
+      [phone_call, other_phone_call]
     end
   end
 end

@@ -6,10 +6,10 @@ class Dashboard::CalloutsController < Dashboard::BaseController
   end
 
   def permitted_params
-    params.require(:callout).permit(:voice, commune_ids: [])
+    params.require(:callout).permit(:voice, :call_flow_logic, commune_ids: [])
   end
 
-  def prepare_resource_for_update
+  def before_update_attributes
     clear_metadata
   end
 

@@ -47,12 +47,14 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(page).to have_link_to_action(:cancel)
 
     fill_in_callout_information
+    choose("Hello World")
     click_action_button(:create, key: :submit, namespace: :helpers, model: "Callout")
 
     expect(page).to have_text("Callout was successfully created.")
 
     callout = Callout.first
     expect(callout.voice.attached?).to eq true
+    expect(callout.call_flow_logic).to eq(CallFlowLogic::HelloWorld.to_s)
   end
 
   it "can update a callout", :js do
@@ -74,11 +76,14 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(page).to have_content("Banteay Neang")
     expect(page).to have_link_to_action(:cancel)
 
+    choose("Hello World")
     fill_in_callout_information
     click_action_button(:update, key: :submit, namespace: :helpers)
 
     expect(page).to have_text("Callout was successfully updated.")
+    callout.reload
     expect(callout.voice.attached?).to eq true
+    expect(callout.call_flow_logic).to eq(CallFlowLogic::HelloWorld.to_s)
   end
 
   it "can delete a callout" do
@@ -99,7 +104,8 @@ RSpec.describe "Callouts", :aggregate_failures do
     callout = create(
       :callout,
       :initialized,
-      account: user.account
+      account: user.account,
+      call_flow_logic: "CallFlowLogic::HelloWorld"
     )
 
     sign_in(user)
@@ -129,6 +135,8 @@ RSpec.describe "Callouts", :aggregate_failures do
       expect(page).to have_content("Status")
       expect(page).to have_content("Initialized")
       expect(page).to have_content("Created at")
+      expect(page).to have_content("Call flow logic")
+      expect(page).to have_content("CallFlowLogic::HelloWorld")
     end
   end
 

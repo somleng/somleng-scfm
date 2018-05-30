@@ -1,22 +1,22 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe JsonValidator do
   class JsonValidator::Validatable
     include ActiveModel::Validations
-    attr_accessor  :json_attribute
+    attr_accessor :json_attribute
 
-    validates :json_attribute, :json => true
+    validates :json_attribute, json: true
 
     def initialize(options = {})
       self.json_attribute = options[:json_attribute]
     end
   end
 
-  subject { JsonValidator::Validatable.new(:json_attribute => json_value) }
+  subject { JsonValidator::Validatable.new(json_attribute: json_value) }
 
   def setup_scenario
     super
-    CallFlowLogic::Application
+    CallFlowLogic::HelloWorld
   end
 
   context "nil" do

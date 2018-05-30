@@ -5,9 +5,10 @@ class Account < ApplicationRecord
   PLATFORM_PROVIDERS = [DEFAULT_PLATFORM_PROVIDER, "somleng"].freeze
 
   include MetadataHelpers
+  include HasCallFlowLogic
 
-  store_accessor :settings,
-                 :platform_provider_name
+  store_accessor :settings
+  accepts_nested_key_value_fields_for :settings
 
   bitmask :permissions,
           as: [
@@ -58,7 +59,9 @@ class Account < ApplicationRecord
   end
 
   def self.by_platform_account_sid(account_sid)
-    where(twilio_account_sid?(account_sid) ? :twilio_account_sid : :somleng_account_sid => account_sid)
+    where(
+      twilio_account_sid?(account_sid) ? :twilio_account_sid : :somleng_account_sid => account_sid
+    )
   end
 
   def platform_auth_token(account_sid)

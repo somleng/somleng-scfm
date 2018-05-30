@@ -21,4 +21,5 @@ end
 RSpec.configure do |config|
   config.include(FactoryHelpers, type: :system)
   config.include(FactoryHelpers, type: :model)
+  config.include(FactoryHelpers, type: :request)
 end

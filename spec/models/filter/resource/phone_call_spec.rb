@@ -18,7 +18,7 @@ RSpec.describe Filter::Resource::PhoneCall do
     include_examples(
       "string_attribute_filter",
       "status" => PhoneCall::STATE_COMPLETED,
-      :call_flow_logic => CallFlowLogic::Application.to_s,
+      :call_flow_logic => CallFlowLogic::HelloWorld.to_s,
       :remote_call_id => SecureRandom.uuid,
       :remote_status => PhoneCall::TWILIO_CALL_STATUSES[:not_answered],
       :remote_direction => PhoneCall::TWILIO_DIRECTIONS[:inbound],

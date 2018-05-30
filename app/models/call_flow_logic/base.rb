@@ -1,18 +1,31 @@
 class CallFlowLogic::Base
-  DEFAULT = "CallFlowLogic::Application"
+  DEFAULT = "CallFlowLogic::HelloWorld".freeze
 
   attr_accessor :options
-  @registered = [DEFAULT]
+
+  def self.init
+    names = Rails.application.secrets[:registered_call_flow_logic]
+    return if names.blank?
+
+    class_names = names.to_s.split(",").each_with_object([]) do |name, result|
+      name.constantize
+      result << name.to_s
+    rescue StandardError
+      nil
+    end
+
+    register(*class_names)
+  end
 
   def self.registered
-    @registered
+    @registered ||= [DEFAULT]
   end
 
   def self.register(*args)
     args.each do |arg|
-      @registered << arg if arg && permitted.include?(arg)
+      registered << arg if arg && permitted.include?(arg)
     end
-    @registered
+    registered
   end
 
   def self.permitted
@@ -32,7 +45,7 @@ class CallFlowLogic::Base
   end
 
   def run!
-    event.phone_call_complete! if event
+    event&.phone_call_complete!
   end
 
   def no_response
@@ -41,3 +54,5 @@ class CallFlowLogic::Base
     end.to_s
   end
 end
+
+CallFlowLogic::Base.init

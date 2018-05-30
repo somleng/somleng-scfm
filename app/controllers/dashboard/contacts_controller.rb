@@ -13,6 +13,10 @@ class Dashboard::ContactsController < Dashboard::BaseController
     params.require(:contact).permit(:msisdn, :commune_id)
   end
 
+  def before_update_attributes
+    clear_metadata
+  end
+
   def resources_path
     dashboard_contacts_path
   end

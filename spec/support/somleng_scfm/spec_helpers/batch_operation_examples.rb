@@ -2,11 +2,8 @@ RSpec.shared_examples_for "batch_operation" do
   include_examples "has_metadata"
 
   describe "associations" do
-    def assert_associations!
-      is_expected.to belong_to(:account)
-    end
-
-    it { assert_associations! }
+    subject { build_stubbed(factory) }
+    it { is_expected.to belong_to(:account) }
   end
 
   describe "validations" do

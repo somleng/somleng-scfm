@@ -5,30 +5,23 @@ RSpec.describe BatchOperation::CalloutPopulation do
   include_examples("batch_operation")
 
   describe "associations" do
-    def assert_associations!
-      is_expected.to belong_to(:callout)
-      is_expected.to have_many(:callout_participations).dependent(:restrict_with_error)
-      is_expected.to have_many(:contacts)
-    end
-
-    it { assert_associations! }
+    it { is_expected.to belong_to(:callout) }
+    it { is_expected.to have_many(:callout_participations).dependent(:restrict_with_error) }
+    it { is_expected.to have_many(:contacts) }
   end
 
   include_examples("hash_store_accessor", :contact_filter_params)
 
   describe "#run!" do
-    let(:contact) { create(:contact) }
-    subject { create(factory) }
+    it "populates the callout" do
+      callout_population = create(:callout_population)
+      contact = create(:contact, account: callout_population.account)
+      _other_contact = create(:contact)
 
-    def setup_scenario
-      super
-      contact
-      subject.run!
+      callout_population.run!
+
+      expect(callout_population.reload.contacts).to match_array([contact])
     end
-
-    it {
-      expect(subject.reload.contacts).to eq([contact])
-    }
   end
 
   describe "#contact_filter_metadata" do

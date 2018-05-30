@@ -1,28 +1,32 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Preview::CalloutPopulation do
-  let(:contact_filter_params) { {} }
-
-  let(:callout_population) {
-    create(
-      :callout_population,
-      :contact_filter_params => contact_filter_params
-    )
-  }
-
-  subject { described_class.new(:previewable => callout_population) }
-
   describe "#contacts" do
-    let(:contact_factory_params) { { :metadata => { "foo" => "bar", "bar" => "baz" } } }
-    let(:contact) { create(:contact, contact_factory_params) }
-    let(:contact_filter_params) { contact_factory_params.slice(:metadata) }
+    it "can filter the the contacts on the metadata" do
+      account = create(:account)
 
-    def setup_scenario
-      super
-      contact
-      create(:contact)
+      contact_metadata = {
+        "foo" => "bar",
+        "bar" => "baz"
+      }
+
+      contact = create(:contact, account: account, metadata: contact_metadata)
+      _non_matching_contact = create(:contact, account: account)
+      other_contact = create(:contact, metadata: contact_metadata)
+
+      callout_population = create(
+        :callout_population,
+        contact_filter_params: {
+          metadata: contact_metadata
+        }
+      )
+
+      preview = described_class.new(
+        previewable: callout_population
+      )
+
+      expect(preview.contacts(scope: Contact)).to match_array([contact, other_contact])
+      expect(preview.contacts(scope: account.contacts)).to match_array([contact])
     end
-
-    it { expect(subject.contacts).to match_array([contact]) }
   end
 end

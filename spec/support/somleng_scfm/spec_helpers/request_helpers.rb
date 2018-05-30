@@ -2,7 +2,7 @@ require_relative "../spec_helpers"
 
 module SomlengScfm::SpecHelpers::RequestHelpers
   def do_request(method, path, body = {}, headers = {}, options = {})
-    public_send(method, path, {:params => body, :headers => authorization_headers.merge(headers)}.merge(options))
+    public_send(method, path, { params: body, headers: authorization_headers.merge(headers) }.merge(options))
   end
 
   def assert_index!

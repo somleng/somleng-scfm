@@ -21,7 +21,7 @@ class BatchOperation::CalloutPopulation < BatchOperation::Base
   end
 
   def contacts_preview
-    preview.contacts
+    preview.contacts(scope: account.contacts)
   end
 
   def contact_filter_metadata

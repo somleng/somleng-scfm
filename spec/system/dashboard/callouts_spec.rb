@@ -106,6 +106,7 @@ RSpec.describe "Callouts", :aggregate_failures do
       :callout,
       :initialized,
       account: user.account,
+      call_flow_logic: "CallFlowLogic::HelloWorld",
       metadata: { "location" => { "country" => "Cambodia" } }
     )
 
@@ -142,6 +143,8 @@ RSpec.describe "Callouts", :aggregate_failures do
       expect(page).to have_content("Status")
       expect(page).to have_content("Initialized")
       expect(page).to have_content("Created at")
+      expect(page).to have_content("Call flow logic")
+      expect(page).to have_content("CallFlowLogic::HelloWorld")
       expect(page).to have_content("Metadata")
       expect(page).to have_content("location:country")
       expect(page).to have_content("Cambodia")

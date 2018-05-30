@@ -63,7 +63,7 @@ RSpec.describe "Accounts" do
       let(:twilio_auth_token) { generate(:auth_token) }
       let(:somleng_account_sid) { generate(:somleng_account_sid) }
       let(:somleng_auth_token) { generate(:auth_token) }
-      let(:settings) { { platform_provider_name: "somleng", call_flow_logic: CallFlowLogic::HelloWorld.to_s } }
+      let(:settings) { { platform_provider_name: "somleng" } }
 
       let(:body) do
         {
@@ -73,6 +73,7 @@ RSpec.describe "Accounts" do
           somleng_account_sid: somleng_account_sid,
           twilio_auth_token: twilio_auth_token,
           somleng_auth_token: somleng_auth_token,
+          call_flow_logic: CallFlowLogic::HelloWorld.to_s,
           settings: settings
         }
       end

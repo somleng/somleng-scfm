@@ -1,8 +1,8 @@
 class CallFlowLogicValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
-    if value && !registered_call_flow_logic.include?(value)
-      record.errors.add(attribute, :inclusion)
-    end
+    return if value.blank?
+    return if registered_call_flow_logic.include?(value)
+    record.errors.add(attribute, :inclusion)
   end
 
   private

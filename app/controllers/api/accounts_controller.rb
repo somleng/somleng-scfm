@@ -34,7 +34,8 @@ class Api::AccountsController < Api::FilteredController
       :somleng_account_sid,
       :somleng_auth_token,
       :metadata_merge_mode,
-      settings: %i[platform_provider_name call_flow_logic],
+      :call_flow_logic,
+      settings: %i[platform_provider_name],
       metadata: {}
     )
   end

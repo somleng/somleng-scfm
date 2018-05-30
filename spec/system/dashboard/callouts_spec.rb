@@ -44,12 +44,15 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     expect(page).to have_link_to_action(:cancel)
 
+    choose("Hello World")
     fill_in_key_value_for(:metadata, with: { key: "location:country", value: "kh" })
     click_action_button(:create, key: :submit, namespace: :helpers, model: "Callout")
 
     new_callout = Callout.last!
     expect(current_path).to eq(dashboard_callout_path(new_callout))
     expect(page).to have_text("Callout was successfully created.")
+    expect(new_callout.account).to eq(user.account)
+    expect(new_callout.call_flow_logic).to eq(CallFlowLogic::HelloWorld.to_s)
     expect(new_callout.metadata).to eq("location" => { "country" => "kh" })
   end
 
@@ -73,6 +76,7 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     expect(page).to have_link_to_action(:cancel)
 
+    choose("Hello World")
     remove_key_value_for(:metadata)
     remove_key_value_for(:metadata)
     click_action_button(:update, key: :submit, namespace: :helpers)
@@ -80,6 +84,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(current_path).to eq(dashboard_callout_path(callout))
     expect(page).to have_text("Callout was successfully updated.")
     expect(callout.reload.metadata).to eq({})
+    expect(callout.call_flow_logic).to eq(CallFlowLogic::HelloWorld.to_s)
   end
 
   it "can delete a callout" do

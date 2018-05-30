@@ -6,7 +6,10 @@ class Dashboard::CalloutsController < Dashboard::BaseController
   end
 
   def permitted_params
-    params.fetch(:callout, {}).permit(METADATA_FIELDS_ATTRIBUTES)
+    params.fetch(:callout, {}).permit(
+      :call_flow_logic,
+      **METADATA_FIELDS_ATTRIBUTES
+    )
   end
 
   def prepare_resource_for_update

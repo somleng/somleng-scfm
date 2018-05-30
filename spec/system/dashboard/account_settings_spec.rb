@@ -20,7 +20,7 @@ RSpec.describe "Account Settings" do
     somleng_auth_token = generate(:auth_token)
 
     choose("Somleng")
-    select("Hello World", from: "Default call flow logic")
+    choose("Hello World")
     fill_in("Twilio account sid", with: twilio_account_sid)
     fill_in("Twilio auth token", with: twilio_auth_token)
     fill_in("Somleng account sid", with: somleng_account_sid)

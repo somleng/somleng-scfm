@@ -3,6 +3,6 @@
   = link_to(translate(:"titles.access_tokens.create"), dashboard_access_tokens_path, class: 'btn btn-outline-success', method: "post")
 
 - content_for(:resources_table) do
-  = render("shared/resources_table", resource_class: AccessToken, columns: [:token, :created_at, :actions])
+  = render("shared/resources_table", resource_class: AccessToken, columns: [:token, :created_at, :actions], unsortable_columns: [:actions])
 
 = render("shared/index")

@@ -163,6 +163,8 @@ GEM
     faraday (0.13.1)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.23)
+    font-awesome-rails (4.7.0.4)
+      railties (>= 3.2, < 6.0)
     globalid (0.4.1)
       activesupport (>= 4.2.0)
     haml (5.0.4)
@@ -410,6 +412,7 @@ DEPENDENCIES
   email_spec
   factory_bot_rails
   fakefs
+  font-awesome-rails
   haml
   httparty
   i18n-tasks

@@ -2,8 +2,8 @@ require "rails_helper"
 
 RSpec.describe "Callouts", :aggregate_failures do
   it "can list callouts" do
-    user = create(:user)
-    callout = create(:callout, :initialized, account: user.account)
+    user          = create(:user)
+    callout       = create(:callout, :initialized, account: user.account)
     other_callout = create(:callout)
 
     sign_in(user)
@@ -24,7 +24,8 @@ RSpec.describe "Callouts", :aggregate_failures do
         callout.id,
         href: dashboard_callout_path(callout)
       )
-      expect(page).to have_content("Status")
+      expect(page).to have_sortable_column("status")
+      expect(page).to have_sortable_column("created_at")
       expect(page).to have_content("Initialized")
     end
   end

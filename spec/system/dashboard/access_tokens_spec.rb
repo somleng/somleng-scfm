@@ -32,6 +32,8 @@ RSpec.describe "API Key Management" do
         I18n.translate!(:"titles.actions.delete"),
         href: dashboard_access_token_path(access_token1)
       )
+
+      expect(page).to have_sortable_column("created_at")
     end
   end
 

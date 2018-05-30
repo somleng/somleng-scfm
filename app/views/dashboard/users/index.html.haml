@@ -3,6 +3,6 @@
   = link_to(translate(:"titles.user_invitations.new"), new_user_invitation_path, class: 'btn btn-outline-success')
 
 - content_for(:resources_table) do
-  = render("shared/resources_table", resource_class: User, columns: [:email, :invitation_accepted_at, :last_sign_in_at])
+  = render("shared/resources_table", resource_class: User, columns: [:email, :invitation_accepted_at, :last_sign_in_at, :created_at])
 
 = render("shared/index")

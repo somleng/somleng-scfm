@@ -22,10 +22,10 @@ RSpec.describe "Phone Calls" do
         phone_call.id,
         href: dashboard_phone_call_path(phone_call)
       )
-      expect(page).to have_content("Phone number")
-      expect(page).to have_content("Direction")
-      expect(page).to have_content("Status")
-      expect(page).to have_content("Created at")
+
+      expect(page).to have_sortable_column("msisdn")
+      expect(page).to have_sortable_column("status")
+      expect(page).to have_sortable_column("created_at")
     end
   end
 

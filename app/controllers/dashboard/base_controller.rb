@@ -14,7 +14,8 @@ class Dashboard::BaseController < ApplicationController
   before_action :set_locale
   before_action :find_resource, only: %i[show edit update destroy]
 
-  helper_method :resource, :resources, :show_location, :current_account
+  helper_method :resource, :resources, :show_location, :current_account,
+                :sort_column, :sort_direction
 
   def index
     find_resources
@@ -109,7 +110,7 @@ class Dashboard::BaseController < ApplicationController
   end
 
   def find_resources
-    @resources = association_chain.page(params[:page])
+    @resources = association_chain.page(params[:page]).order(sort_column => sort_direction)
   end
 
   def update_resource_attributes
@@ -150,5 +151,13 @@ class Dashboard::BaseController < ApplicationController
 
   def set_locale
     I18n.locale = current_user.locale
+  end
+
+  def sort_column
+    params[:sort] || "created_at"
+  end
+
+  def sort_direction
+    %w[asc desc].include?(params[:direction]) ? params[:direction] : "desc"
   end
 end

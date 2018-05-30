@@ -7,8 +7,8 @@ class Account < ApplicationRecord
   include MetadataHelpers
   include HasCallFlowLogic
 
-  store_accessor :settings,
-                 :platform_provider_name
+  store_accessor :settings
+  accepts_nested_key_value_fields_for :settings
 
   bitmask :permissions,
           as: [

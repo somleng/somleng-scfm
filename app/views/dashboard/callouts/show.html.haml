@@ -34,6 +34,12 @@
             = resource.status.humanize
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
+          = Callout.human_attribute_name(:call_flow_logic)
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.call_flow_logic
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
           = Callout.human_attribute_name(:created_at)
         %dd.col-sm-7.col-md-6
           %code

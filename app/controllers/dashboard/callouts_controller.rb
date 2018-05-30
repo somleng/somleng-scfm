@@ -12,7 +12,7 @@ class Dashboard::CalloutsController < Dashboard::BaseController
     )
   end
 
-  def prepare_resource_for_update
+  def before_update_attributes
     clear_metadata
   end
 

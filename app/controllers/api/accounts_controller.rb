@@ -29,13 +29,14 @@ class Api::AccountsController < Api::FilteredController
 
   def permitted_params
     params.permit(
+      :platform_provider_name,
       :twilio_account_sid,
       :twilio_auth_token,
       :somleng_account_sid,
       :somleng_auth_token,
       :metadata_merge_mode,
       :call_flow_logic,
-      settings: %i[platform_provider_name],
+      settings: {},
       metadata: {}
     )
   end

@@ -190,14 +190,6 @@ RSpec.describe "Batch Operations" do
     expect(response.code).to eq("422")
   end
 
-  def build_authorization_headers(access_token:)
-    {
-      "HTTP_AUTHORIZATION" => ActionController::HttpAuthentication::Basic.encode_credentials(
-        access_token.token, nil
-      )
-    }
-  end
-
   def assert_created!(account:, request_body:, response:)
     expect(response.code).to eq("201")
     parsed_response = JSON.parse(response.body)

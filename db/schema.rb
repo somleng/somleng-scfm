@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 2018_05_30_200530) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "call_flow_logic"
+    t.string "platform_provider_name"
     t.index ["somleng_account_sid"], name: "index_accounts_on_somleng_account_sid", unique: true
     t.index ["twilio_account_sid"], name: "index_accounts_on_twilio_account_sid", unique: true
   end

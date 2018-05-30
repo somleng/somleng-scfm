@@ -6,6 +6,17 @@ module SystemSpecHelpers
     public_send("click_#{type}", I18n.translate!(:"#{namespace}.#{key}.#{action}", interpolations))
   end
 
+  def fill_in_key_values_for(attribute, with:)
+    with.each_with_index do |(key, value), index|
+      fill_in_key_value_for(
+        attribute,
+        with: { key: key, value: value },
+        index: index
+      )
+      add_key_value_for(attribute)
+    end
+  end
+
   def fill_in_key_value_for(attribute, with:, index: 0)
     within("##{attribute}_fields") do
       page.all("input[placeholder='Key']")[index].set(with[:key]) if with.key?(:key)

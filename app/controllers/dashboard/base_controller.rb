@@ -37,8 +37,9 @@ class Dashboard::BaseController < ApplicationController
   end
 
   def update
-    prepare_resource_for_update
+    before_update_attributes
     update_resource_attributes
+    prepare_resource_for_update
     save_resource
     prepare_for_render_on_update
     respond_with_updated_resource
@@ -87,6 +88,8 @@ class Dashboard::BaseController < ApplicationController
   def prepare_resource_for_create; end
 
   def prepare_resource_for_update; end
+
+  def before_update_attributes; end
 
   def prepare_resource_for_destroy; end
 

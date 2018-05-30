@@ -31,7 +31,7 @@ Sample Response:
 
 ### Update
 
-    $ docker-compose run --rm -e SUPER_ADMIN_ACCESS_TOKEN=$SUPER_ADMIN_ACCESS_TOKEN curl /bin/sh -c 'curl -v -XPATCH http://somleng-scfm:3000/api/accounts/2 -d "somleng_account_sid=abcdefg" -d "metadata[name]=Basic+Account" -u $SUPER_ADMIN_ACCESS_TOKEN:'
+    $ docker-compose run --rm -e SUPER_ADMIN_ACCESS_TOKEN=$SUPER_ADMIN_ACCESS_TOKEN curl /bin/sh -c 'curl -v -XPATCH http://somleng-scfm:3000/api/accounts/2 -d "somleng_account_sid=abcdefg" -d "call_flow_logic=CallFlowLogic%3A%3AHelloWorld" -d "settings[platform_provider_name]=somleng" -d "settings[batch_operation_phone_call_create_parameters][callout_filter_params][status]=running" -d "metadata[name]=Basic+Account" -u $SUPER_ADMIN_ACCESS_TOKEN:'
 
 Sample Response:
 

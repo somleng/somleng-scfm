@@ -9,7 +9,7 @@ class Dashboard::ContactsController < Dashboard::BaseController
     params.require(:contact).permit(:msisdn, METADATA_FIELDS_ATTRIBUTES)
   end
 
-  def prepare_resource_for_update
+  def before_update_attributes
     clear_metadata
   end
 

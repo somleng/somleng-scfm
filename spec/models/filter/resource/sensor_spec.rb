@@ -1,10 +1,10 @@
 require "rails_helper"
 
-RSpec.describe Filter::Resource::User do
+RSpec.describe Filter::Resource::Sensor do
   include SomlengScfm::SpecHelpers::FilterHelpers
 
-  let(:filterable_factory) { :user }
-  let(:association_chain) { User }
+  let(:filterable_factory) { :sensor }
+  let(:association_chain) { Sensor }
 
   describe "#resources" do
     include_examples "metadata_attribute_filter"

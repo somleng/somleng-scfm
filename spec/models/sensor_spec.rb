@@ -1,8 +1,9 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Sensor do
   describe "associations" do
     it { is_expected.to belong_to(:account) }
+    it { is_expected.to have_many(:sensor_rules).dependent(:restrict_with_error) }
   end
 
   describe "validations" do

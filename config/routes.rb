@@ -120,5 +120,7 @@ Rails.application.routes.draw do
       resources :phone_call_events, only: :create
       resources :remote_phone_call_events, only: :index
     end
+
+    resources :sensors, except: %i[new edit]
   end
 end

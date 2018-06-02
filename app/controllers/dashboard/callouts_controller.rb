@@ -3,6 +3,11 @@ class Dashboard::CalloutsController < Dashboard::BaseController
 
   private
 
+  def build_new_resource
+    super
+    resource.call_flow_logic = CALL_FLOW_LOGIC.freeze
+  end
+
   def prepare_resource_for_create
     build_callout_population
   end

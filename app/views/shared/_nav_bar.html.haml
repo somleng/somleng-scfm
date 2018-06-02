@@ -2,7 +2,7 @@
   .navbar-brand
     %button.btn.btn-dark.d-md-none{"aria-controls" => "side_navigation", "aria-expanded" => "false", "aria-label" => "Toggle navigation", "data-target" => "#side_navigation", "data-toggle" => "collapse", :type => "button"}
       %span.navbar-toggler-icon
-    Somleng SCFM
+    EWS Dashboard
 
   %ul#user_menu.navbar-nav.px-3
     %li
@@ -11,9 +11,10 @@
         %button.btn.btn-secondary.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}
           = octicon "person"
         .dropdown-menu.dropdown-menu-right
-          = link_to edit_dashboard_account_path do
-            %button.dropdown-item{:type => "button"}
-              = translate(:"titles.accounts.edit")
+          - if current_user.is_admin?
+            = link_to edit_dashboard_account_path do
+              %button.dropdown-item{:type => "button"}
+                = translate(:"titles.accounts.edit")
           = link_to edit_user_registration_path do
             %button.dropdown-item{:type => "button"}
               = translate(:"titles.user_registrations.edit")

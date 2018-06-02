@@ -15,11 +15,22 @@ en:
         token: API key
       account:
         platform_provider_name: Platform provider
+      callout:
+        voice: Voice file
       contact:
         msisdn: Phone number
       phone_call:
         msisdn: Phone number
         remote_call_id: Remote call sid
+      sensor:
+        commune_ids: Communes
+        external_id: External id
+        sensor_rules: Rules
+      sensor_rule:
+        level: Level
+        voice: Voice file
+      user:
+        location_ids: Provinces
     models:
       access_token:
         one: API key

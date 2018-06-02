@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Dashboard" do
   it "has navigation links" do
-    user = create(:user)
+    user = create(:admin)
     sign_in(user)
     visit(root_path)
 

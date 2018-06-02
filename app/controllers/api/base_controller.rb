@@ -42,6 +42,10 @@ class Api::BaseController < ApplicationController
     resource.persisted? ? { location: resource_location } : {}
   end
 
+  def resource_location
+    polymorphic_path([:api, resource])
+  end
+
   def find_resource
     @resource = find_resource_association_chain.find(params[:id])
   end

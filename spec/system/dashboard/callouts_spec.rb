@@ -47,21 +47,21 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(page).to have_link_to_action(:cancel)
 
     fill_in_callout_information
-    choose("Hello World")
     click_action_button(:create, key: :submit, namespace: :helpers, model: "Callout")
 
     expect(page).to have_text("Callout was successfully created.")
 
     callout = Callout.first
-    expect(callout.voice.attached?).to eq true
-    expect(callout.call_flow_logic).to eq(CallFlowLogic::HelloWorld.to_s)
+    expect(callout.voice.attached?).to eq(true)
+    expect(callout.callout_population).to be_present
+    expect(callout.callout_population.contact_filter_metadata[:commune_id]).to eq(callout.commune_ids)
+    expect(callout.call_flow_logic).to eq(CallFlowLogic::PeopleInNeed::EWS::EmergencyMessage.name)
   end
 
-  it "can update a callout", :js do
+  it "can update a callout with an existing callout population", :js do
     user = create(:user)
-    callout = create(
-      :callout, account: user.account, commune_ids: ["010201"]
-    )
+    callout = create(:callout, account: user.account, commune_ids: ["010201"])
+    callout_population = create(:callout_population, callout: callout, account: callout.account)
 
     sign_in(user)
     visit edit_dashboard_callout_path(callout)
@@ -76,37 +76,38 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(page).to have_content("Banteay Neang")
     expect(page).to have_link_to_action(:cancel)
 
-    choose("Hello World")
     fill_in_callout_information
     click_action_button(:update, key: :submit, namespace: :helpers)
 
     expect(page).to have_text("Callout was successfully updated.")
+
     callout.reload
-    expect(callout.voice.attached?).to eq true
-    expect(callout.call_flow_logic).to eq(CallFlowLogic::HelloWorld.to_s)
+    expect(callout.reload.voice.attached?).to eq true
+    expect(callout.callout_population.contact_filter_metadata[:commune_id]).to eq(callout.commune_ids)
   end
 
-  it "can delete a callout" do
+  it "can update a callout wihtout an existing callout population", :js do
     user = create(:user)
-    callout = create(:callout, account: user.account)
+    callout = create(:callout, account: user.account, commune_ids: ["010201"])
 
     sign_in(user)
-    visit dashboard_callout_path(callout)
+    visit edit_dashboard_callout_path(callout)
 
-    click_action_button(:delete, type: :link)
+    expect(page).to have_content("Banteay Neang")
 
-    expect(current_path).to eq(dashboard_callouts_path)
-    expect(page).to have_text("Callout was successfully destroyed.")
+    fill_in_callout_information
+    click_action_button(:update, key: :submit, namespace: :helpers)
+
+    expect(page).to have_text("Callout was successfully updated.")
+
+    callout.reload
+    expect(callout.callout_population.contact_filter_metadata[:commune_id]).to eq(callout.commune_ids)
   end
 
   it "can show a callout" do
     user = create(:admin)
-    callout = create(
-      :callout,
-      :initialized,
-      account: user.account,
-      call_flow_logic: "CallFlowLogic::HelloWorld"
-    )
+    callout = create(:callout, :initialized, account: user.account)
+    callout_population = create(:callout_population, callout: callout, account: callout.account)
 
     sign_in(user)
     visit dashboard_callout_path(callout)
@@ -128,6 +129,11 @@ RSpec.describe "Callouts", :aggregate_failures do
         key: :phone_calls,
         href: dashboard_callout_phone_calls_path(callout)
       )
+
+      expect(page).to have_link_to_action(
+        :preview,
+        href: dashboard_batch_operation_preview_contacts_path(callout_population)
+      )
     end
 
     within("#callout") do
@@ -135,8 +141,6 @@ RSpec.describe "Callouts", :aggregate_failures do
       expect(page).to have_content("Status")
       expect(page).to have_content("Initialized")
       expect(page).to have_content("Created at")
-      expect(page).to have_content("Call flow logic")
-      expect(page).to have_content("CallFlowLogic::HelloWorld")
     end
   end
 

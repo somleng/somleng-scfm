@@ -2,7 +2,7 @@
   .navbar-brand
     %button.btn.btn-dark.d-md-none{"aria-controls" => "side_navigation", "aria-expanded" => "false", "aria-label" => "Toggle navigation", "data-target" => "#side_navigation", "data-toggle" => "collapse", :type => "button"}
       %span.navbar-toggler-icon
-    Somleng SCFM
+    = link_to t(:"titles.app_name"), dashboard_root_path
 
   %ul#user_menu.navbar-nav.px-3
     %li

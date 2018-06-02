@@ -10,6 +10,8 @@ RSpec.describe "API Key Management" do
 
     visit(dashboard_access_tokens_path)
 
+    expect(page).to have_title("API Keys")
+
     within("#button_toolbar") do
       expect(page).to have_link(
         I18n.translate!(:"titles.access_tokens.index"),

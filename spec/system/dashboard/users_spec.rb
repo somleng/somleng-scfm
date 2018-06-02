@@ -10,6 +10,8 @@ RSpec.describe "Users" do
     sign_in(user)
     visit dashboard_users_path
 
+    expect(page).to have_title("Users")
+
     within("#button_toolbar") do
       expect(page).to have_link_to_action(
         :new, key: :user_invitations, href: new_user_invitation_path
@@ -45,6 +47,8 @@ RSpec.describe "Users" do
     sign_in(user)
     visit dashboard_user_path(user)
 
+    expect(page).to have_title("User #{user.id}")
+
     within("#button_toolbar") do
       expect(page).to have_link_to_action(
         :edit,
@@ -69,6 +73,8 @@ RSpec.describe "Users" do
 
     sign_in(user)
     visit edit_dashboard_user_path(other_user)
+
+    expect(page).to have_title("Edit User")
 
     within("#button_toolbar") do
       expect(page).to have_link_to_action(

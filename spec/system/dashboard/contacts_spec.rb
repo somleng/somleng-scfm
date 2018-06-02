@@ -9,6 +9,8 @@ RSpec.describe "Contacts", :aggregate_failures do
     sign_in(user)
     visit dashboard_contacts_path
 
+    expect(page).to have_title("Contacts")
+
     within("#button_toolbar") do
       expect(page).to have_link_to_action(
         :new, key: :contacts, href: new_dashboard_contact_path
@@ -36,6 +38,8 @@ RSpec.describe "Contacts", :aggregate_failures do
 
     sign_in(user)
     visit new_dashboard_contact_path
+
+    expect(page).to have_title("New Contact")
 
     within("#button_toolbar") do
       expect(page).to have_link(
@@ -72,6 +76,8 @@ RSpec.describe "Contacts", :aggregate_failures do
 
     sign_in(user)
     visit edit_dashboard_contact_path(contact)
+
+    expect(page).to have_title("Edit Contact")
 
     within("#button_toolbar") do
       expect(page).to have_link(
@@ -121,6 +127,8 @@ RSpec.describe "Contacts", :aggregate_failures do
 
     sign_in(user)
     visit dashboard_contact_path(contact)
+
+    expect(page).to have_title("Contact #{contact.id}")
 
     within("#button_toolbar") do
       expect(page).to have_link_to_action(

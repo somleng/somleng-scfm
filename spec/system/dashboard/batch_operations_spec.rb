@@ -9,6 +9,8 @@ RSpec.describe "Batch Operations" do
     sign_in(user)
     visit(dashboard_batch_operations_path)
 
+    expect(page).to have_title("Batch Operations")
+
     within("#button_toolbar") do
       expect(page).to have_link_to_action(:index, key: :batch_operations)
       expect(page).not_to have_link_to_action(
@@ -43,6 +45,8 @@ RSpec.describe "Batch Operations" do
 
     sign_in(user)
     visit(dashboard_batch_operation_path(batch_operation))
+
+    expect(page).to have_title("Batch Operation #{batch_operation.id}")
 
     within("#button_toolbar") do
       expect(page).not_to have_link_to_action(:edit)

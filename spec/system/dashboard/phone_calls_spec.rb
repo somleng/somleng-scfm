@@ -9,6 +9,8 @@ RSpec.describe "Phone Calls" do
     sign_in(user)
     visit(dashboard_phone_calls_path)
 
+    expect(page).to have_title("Phone Calls")
+
     within("#button_toolbar") do
       expect(page).to have_link_to_action(:index, key: :phone_calls)
       expect(page).not_to have_link_to_action(:back)

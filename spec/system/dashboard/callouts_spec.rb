@@ -9,6 +9,8 @@ RSpec.describe "Callouts", :aggregate_failures do
     sign_in(user)
     visit dashboard_callouts_path
 
+    expect(page).to have_title("Callouts")
+
     within("#button_toolbar") do
       expect(page).to have_link_to_action(
         :new, key: :callouts, href: new_dashboard_callout_path
@@ -35,6 +37,8 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     sign_in(user)
     visit new_dashboard_callout_path
+
+    expect(page).to have_title("New Callout")
 
     within("#button_toolbar") do
       expect(page).to have_link(
@@ -67,6 +71,8 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     sign_in(user)
     visit edit_dashboard_callout_path(callout)
+
+    expect(page).to have_title("Edit Callout")
 
     within("#button_toolbar") do
       expect(page).to have_link(
@@ -113,6 +119,8 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     sign_in(user)
     visit dashboard_callout_path(callout)
+
+    expect(page).to have_title("Callout #{callout.id}")
 
     within("#button_toolbar") do
       expect(page).to have_link_to_action(

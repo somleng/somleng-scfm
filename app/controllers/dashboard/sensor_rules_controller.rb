@@ -1,18 +1,26 @@
 class Dashboard::SensorRulesController < Dashboard::AdminController
-  helper_method :sensor
+  helper_method :parent_show_path, :sensor
 
   private
 
   def association_chain
-    if sensor
-      sensor.sensor_rules
+    if parent
+      parent.sensor_rules
     else
       current_account.sensor_rules
     end
   end
 
+  def parent
+    sensor if sensor_id
+  end
+
+  def sensor_id
+    params[:sensor_id]
+  end
+
   def sensor
-    @sensor ||= current_account.sensors.find_by(id: params[:sensor_id])
+    @sensor ||= current_account.sensors.find(sensor_id)
   end
 
   def permitted_params
@@ -21,5 +29,9 @@ class Dashboard::SensorRulesController < Dashboard::AdminController
 
   def resources_path
     dashboard_sensor_sensor_rules_path(resource.sensor)
+  end
+
+  def parent_show_path
+    polymorphic_path([:dashboard, parent]) if parent
   end
 end

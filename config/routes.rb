@@ -63,7 +63,7 @@ Rails.application.routes.draw do
       resources :sensor_events, only: :index
     end
 
-    resources :sensor_rules, only: [] do
+    resources :sensor_rules, only: :index do
       resources :sensor_events, only: :index
     end
 

@@ -5,31 +5,54 @@ RSpec.describe "Sensors", :aggregate_failures do
   let(:sensor) { create(:sensor, account: admin.account) }
 
   it "can list sensors rules" do
-    rule = create(:sensor_rule, level: 1000, sensor: sensor)
-    other_rule = create(:sensor)
+    sensor_rule = create_sensor_rule(account: admin.account, level: 1000)
+    other_sensor_rule = create(:sensor_rule)
 
     sign_in(admin)
-    visit dashboard_sensor_sensor_rules_path(sensor)
+    visit dashboard_sensor_rules_path
 
     within("#button_toolbar") do
       expect(page).to have_link_to_action(:index, key: :sensor_rules)
-      expect(page).to have_link_to_action(:back)
-      expect(page).to have_link_to_action(
-        :new, key: :sensor_rules, href: new_dashboard_sensor_sensor_rule_path(sensor)
-      )
+      expect(page).not_to have_link_to_action(:back)
     end
 
     within("#resources") do
-      expect(page).to have_content_tag_for(rule)
-      expect(page).not_to have_content_tag_for(other_rule)
+      expect(page).to have_content_tag_for(sensor_rule)
+      expect(page).not_to have_content_tag_for(other_sensor_rule)
       expect(page).to have_content("#")
       expect(page).to have_content("Level")
       expect(page).to have_content("Created at")
       expect(page).to have_link(
-        rule.id,
-        href: dashboard_sensor_rule_path(rule)
+        sensor_rule.id,
+        href: dashboard_sensor_rule_path(sensor_rule)
       )
       expect(page).to have_content("1000")
+    end
+  end
+
+  it "can list sensors rules for a sensor" do
+    sensor_rule = create_sensor_rule(account: admin.account, level: 1000)
+    other_sensor_rule = create_sensor_rule(account: admin.account)
+
+    sign_in(admin)
+    visit dashboard_sensor_sensor_rules_path(sensor_rule.sensor)
+
+    within("#button_toolbar") do
+      expect(page).to have_link_to_action(
+        :back,
+        href: dashboard_sensor_path(sensor_rule.sensor)
+      )
+
+      expect(page).to have_link_to_action(
+        :new,
+        key: :sensor_rules,
+        href: new_dashboard_sensor_sensor_rule_path(sensor_rule.sensor)
+      )
+    end
+
+    within("#resources") do
+      expect(page).to have_content_tag_for(sensor_rule)
+      expect(page).not_to have_content_tag_for(other_sensor_rule)
     end
   end
 

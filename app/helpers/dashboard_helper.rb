@@ -8,12 +8,10 @@ module DashboardHelper
     end
   end
 
-  def location_names(ids, type)
-    locations = "pumi/#{type}".camelize.constantize.all.map do |location|
-      next if Array(ids).exclude? location.id
+  def location_names(location_ids, type)
+    Array(location_ids).map do |location_id|
+      location = type.find_by_id(location_id)
       "#{location.name_en} (#{location.name_km})"
-    end
-
-    Array(locations).reject(&:blank?).join(", ")
+    end.join(", ")
   end
 end

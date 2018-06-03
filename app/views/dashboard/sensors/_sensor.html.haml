@@ -6,6 +6,9 @@
       = sensor.external_id
   %td
     %code
-      = location_names(sensor.province_id, 'province')
+      = location_names(sensor.province_id, Pumi::Province)
+  %td
+    - if sensor.map_link
+      = link_to(sensor.map_link, sensor.map_link)
   %td
     = sensor.created_at

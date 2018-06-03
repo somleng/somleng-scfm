@@ -43,10 +43,16 @@
             = link_to(resource.map_link, resource.map_link, target: "_blank")
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
+          = Sensor.human_attribute_name(:province)
+        %dd.col-sm-7.col-md-6
+          %code
+            = location_names(resource.province_id, Pumi::Province)
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
           = Sensor.human_attribute_name(:commune_ids)
         %dd.col-sm-7.col-md-6
           %code
-            = location_names(resource.commune_ids, 'commune')
+            = location_names(resource.commune_ids, Pumi::Commune)
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Sensor.human_attribute_name(:created_at)

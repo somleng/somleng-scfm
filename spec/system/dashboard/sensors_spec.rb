@@ -4,7 +4,14 @@ RSpec.describe "Sensors", :aggregate_failures do
   let(:admin) { create(:admin) }
 
   it "can list sensors" do
-    sensor = create(:sensor, account: admin.account)
+    sensor = create(
+      :sensor,
+      account: admin.account,
+      commune_ids: ["040101"],
+      latitude: "11.5627465",
+      longitude: "104.9104493"
+    )
+
     other_sensor = create(:sensor)
 
     sign_in(admin)
@@ -24,6 +31,10 @@ RSpec.describe "Sensors", :aggregate_failures do
       expect(page).to have_link(
         sensor.id,
         href: dashboard_sensor_path(sensor)
+      )
+      expect(page).to have_link(
+        sensor.map_link,
+        href: sensor.map_link
       )
       expect(page).to have_content("Kampong Chhnang")
       expect(page).to have_content("កំពង់ឆ្នាំង")
@@ -91,15 +102,14 @@ RSpec.describe "Sensors", :aggregate_failures do
 
     within("#sensor") do
       expect(page).to have_content(sensor.id)
+      expect(page).to have_content("Province")
       expect(page).to have_content("Alert communes")
       expect(page).to have_content("Latitude")
       expect(page).to have_content("Longitude")
       expect(page).to have_content("Map")
       expect(page).to have_content("Created at")
-      expect(page).to have_link(
-        "https://maps.google.com/?q=11.5633885,104.915919",
-        href: "https://maps.google.com/?q=11.5633885,104.915919"
-      )
+      expect(page).to have_content("Map")
+      expect(page).to have_link(sensor.map_link, href: sensor.map_link)
     end
   end
 

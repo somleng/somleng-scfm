@@ -5,6 +5,6 @@
     = callout.status.humanize
   %td
     %code
-      = location_names(callout.province_id, 'province')
+      = location_names(callout.province_id, Pumi::Province)
   %td
     = callout.created_at

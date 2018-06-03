@@ -16,15 +16,10 @@ class Dashboard::SensorRulesController < Dashboard::AdminController
   end
 
   def permitted_params
-    params.require(:sensor_rule).permit(:level, :voice)
+    params.require(:sensor_rule).permit(:level, :alert_file)
   end
 
   def resources_path
     dashboard_sensor_sensor_rules_path(resource.sensor)
-  end
-
-  def respond_with_created_resource
-    location = polymorphic_path([:dashboard, resource.sensor, :sensor_rules])
-    respond_with_resource(location: location)
   end
 end

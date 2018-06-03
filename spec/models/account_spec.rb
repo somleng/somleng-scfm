@@ -16,6 +16,7 @@ RSpec.describe Account do
     it { is_expected.to have_many(:access_tokens).dependent(:restrict_with_error) }
     it { is_expected.to have_many(:sensors) }
     it { is_expected.to have_many(:sensor_rules).through(:sensors) }
+    it { is_expected.to have_many(:sensor_events).through(:sensors) }
   end
 
   describe "validations" do

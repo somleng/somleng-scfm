@@ -1,0 +1,29 @@
+.col-12
+  #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
+    = render("shared/disabled_button", url: dashboard_sensor_event_path(resource), button_text: resource.model_name.human)
+.col-12.col-md-9.col-lg-7
+  #resource.card
+    .card-body
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right #
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.id
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = SensorEvent.human_attribute_name(:sensor_id)
+        %dd.col-sm-7.col-md-6
+          = link_to(resource.sensor_id, dashboard_sensor_path(resource.sensor_id))
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = SensorEvent.human_attribute_name(:sensor_rule_id)
+        %dd.col-sm-7.col-md-6
+          - if resource.sensor_rule_id?
+            = link_to(resource.sensor_rule_id, dashboard_sensor_rule_path(resource.sensor_rule_id))
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = SensorEvent.human_attribute_name(:created_at)
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.created_at
+      = render("shared/key_value_attributes", attribute: :payload)

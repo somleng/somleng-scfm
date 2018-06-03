@@ -64,6 +64,18 @@ RSpec.describe "Sensors", :aggregate_failures do
         :edit,
         href: edit_dashboard_sensor_path(sensor)
       )
+
+      expect(page).to have_link_to_action(
+        :index,
+        key: :sensor_rules,
+        href: dashboard_sensor_sensor_rules_path(sensor)
+      )
+
+      expect(page).to have_link_to_action(
+        :index,
+        key: :sensor_events,
+        href: dashboard_sensor_sensor_events_path(sensor)
+      )
     end
 
     within("#sensor") do

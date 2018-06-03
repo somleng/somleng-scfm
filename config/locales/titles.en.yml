@@ -40,6 +40,8 @@ en:
       queue_remote_fetch: Fetch Remote Status
     remote_phone_call_events:
       index: Remote Phone Call Events
+    sensor_events:
+      index: Sensor Events
     sensor_rules:
       edit: Edit Sensor Rule
       index: Sensor Rules

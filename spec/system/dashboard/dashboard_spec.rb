@@ -50,6 +50,16 @@ RSpec.describe "Dashboard" do
       )
 
       expect(page).to have_link(
+        I18n.translate!(:"titles.sensors.index"),
+        href: dashboard_sensors_path
+      )
+
+      expect(page).to have_link(
+        I18n.translate!(:"titles.sensor_events.index"),
+        href: dashboard_sensor_events_path
+      )
+
+      expect(page).to have_link(
         I18n.translate!(:"titles.users.index"),
         href: dashboard_users_path
       )

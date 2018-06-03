@@ -209,16 +209,22 @@ FactoryBot.define do
     level 500
 
     transient do
-      voice_file "test.mp3"
+      alert_filename "test.mp3"
     end
 
     after(:build) do |sensor_rule, evaluator|
-      if evaluator.voice_file.present?
-        sensor_rule.voice.attach(
-          io: File.open(ActiveSupport::TestCase.fixture_path + "/files/#{evaluator.voice_file}"),
-          filename: evaluator.voice_file
+      if evaluator.alert_filename.present?
+        sensor_rule.alert_file.attach(
+          io: File.open(
+            ActiveSupport::TestCase.fixture_path + "/files/#{evaluator.alert_filename}"
+          ),
+          filename: evaluator.alert_filename
         )
       end
     end
+  end
+
+  factory :sensor_event do
+    sensor
   end
 end

@@ -1,6 +1,6 @@
 RSpec.shared_examples_for "msisdn_attribute_filter" do
   let(:somali_msisdn) { generate(:somali_msisdn) }
-  let(:filterable) { create(filterable_factory, :msisdn => somali_msisdn) }
+  let(:filterable) { create(filterable_factory, msisdn: somali_msisdn) }
 
   def setup_scenario
     super
@@ -9,7 +9,7 @@ RSpec.shared_examples_for "msisdn_attribute_filter" do
 
   context "filtering by msisdn" do
     def filter_params
-      super.merge(:msisdn => msisdn)
+      super.merge(msisdn: msisdn)
     end
 
     def assert_filter!

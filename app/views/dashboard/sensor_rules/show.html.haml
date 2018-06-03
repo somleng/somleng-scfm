@@ -4,6 +4,8 @@
     .btn-group.mr-2{ role: 'group' }
       = link_to(translate(:"titles.actions.back"), dashboard_sensor_path(resource.sensor), class: 'btn btn-outline-dark')
     .btn-group.mr-2{ role: 'group' }
+      = render("shared/button_link", url: dashboard_sensor_rule_sensor_events_path(resource), button_text: translate(:"titles.sensor_events.index"))
+    .btn-group.mr-2{ role: 'group' }
       = link_to(translate(:"titles.actions.edit"), edit_dashboard_sensor_rule_path(resource), class: 'btn btn-outline-primary')
     .btn-group.mr-2{ role: 'group' }
       = link_to(translate(:"titles.actions.delete"), dashboard_sensor_rule_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
@@ -28,9 +30,9 @@
             = resource.level
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
-          = resource.class.human_attribute_name(:voice)
+          = resource.class.human_attribute_name(:alert_file)
         %dd.col-sm-7.col-md-6
-          = link_to resource.voice.blob.filename, url_for(resource.voice)
+          = link_to(resource.alert_file.blob.filename, url_for(resource.alert_file))
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = resource.class.human_attribute_name(:created_at)

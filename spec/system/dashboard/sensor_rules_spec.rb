@@ -47,12 +47,13 @@ RSpec.describe "Sensors", :aggregate_failures do
     fill_in_sensor_rule_info(level: 1000)
     click_action_button(:create, key: :submit, namespace: :helpers, model: "Sensor rule")
 
-    expect(current_path).to eq(dashboard_sensor_sensor_rules_path(sensor))
     expect(page).to have_text("Sensor rule was successfully created.")
+    sensor_rule = admin.account.sensor_rules.last!
+    expect(current_path).to eq(dashboard_sensor_rule_path(sensor_rule))
     expect(page).to have_content("1000")
   end
 
-  it "can show sensor rule details" do
+  it "can show a sensor rule" do
     rule = create(:sensor_rule, sensor: sensor, level: 1000)
 
     sign_in(admin)
@@ -63,13 +64,19 @@ RSpec.describe "Sensors", :aggregate_failures do
         :edit,
         href: edit_dashboard_sensor_rule_path(rule)
       )
+
+      expect(page).to have_link_to_action(
+        :index,
+        key: :sensor_events,
+        href: dashboard_sensor_rule_sensor_events_path(rule)
+      )
     end
 
     within("#sensor") do
       expect(page).to have_content(sensor.id)
       expect(page).to have_content("Level")
       expect(page).to have_content("1000")
-      expect(page).to have_content("Voice file")
+      expect(page).to have_content("Alert file")
       expect(page).to have_content("Created at")
     end
   end
@@ -92,8 +99,8 @@ RSpec.describe "Sensors", :aggregate_failures do
     fill_in_sensor_rule_info(level: 1500)
     click_action_button(:update, key: :submit, namespace: :helpers, model: "Sensor rule")
 
-    expect(current_path).to eq(edit_dashboard_sensor_rule_path(rule))
-    expect(page).to have_text("Sensor rule was successfully updated.")
+    expect(page).to have_content("Sensor rule was successfully updated.")
+    expect(current_path).to eq(dashboard_sensor_rule_path(rule))
     expect(page).to have_content("1500")
   end
 
@@ -105,13 +112,13 @@ RSpec.describe "Sensors", :aggregate_failures do
 
     click_action_button(:delete, type: :link)
 
+    expect(page).to have_content("Sensor rule was successfully destroyed.")
     expect(current_path).to eq(dashboard_sensor_sensor_rules_path(sensor))
-    expect(page).to have_text("Sensor rule was successfully destroyed.")
   end
 
   def fill_in_sensor_rule_info(option = {})
     fill_in("Level", with: option[:level])
     file_path = Rails.root + file_fixture("test.mp3")
-    attach_file "Voice file", file_path
+    attach_file "Alert file", file_path
   end
 end

@@ -23,12 +23,12 @@ en:
         msisdn: Phone number
         remote_call_id: Remote call sid
       sensor:
-        commune_ids: Communes
+        commune_ids: Alert communes
         external_id: External id
-        sensor_rules: Rules
       sensor_rule:
+        alert_file: Alert file
         level: Level
-        voice: Voice file
+        map_link: Map
       user:
         location_ids: Provinces
     models:

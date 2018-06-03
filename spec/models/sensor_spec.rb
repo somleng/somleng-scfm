@@ -18,4 +18,21 @@ RSpec.describe Sensor do
       it { is_expected.to validate_uniqueness_of(:external_id).scoped_to(:account_id) }
     end
   end
+
+  describe "#map_link" do
+    it "returns a link to google maps" do
+      sensor = build_stubbed(
+        :sensor,
+        latitude: "11.5627465",
+        longitude: "104.9104493"
+      )
+
+      expect(sensor.map_link).to eq("https://maps.google.com/?q=11.5627465,104.9104493")
+    end
+
+    it "returns nil if missing latitude or longitude" do
+      sensor = build_stubbed(:sensor)
+      expect(sensor.map_link).to eq(nil)
+    end
+  end
 end

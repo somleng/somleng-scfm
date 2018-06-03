@@ -6,7 +6,12 @@ class Dashboard::SensorsController < Dashboard::AdminController
   end
 
   def permitted_params
-    params.require(:sensor).permit(:external_id, commune_ids: [])
+    params.require(:sensor).permit(
+      :external_id,
+      :latitude,
+      :longitude,
+      commune_ids: []
+    )
   end
 
   def resources_path

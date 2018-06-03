@@ -12,4 +12,12 @@ class Sensor < ApplicationRecord
 
   validates :account, presence: true
   validates :external_id, presence: true, uniqueness: { scope: :account_id }
+
+  store_accessor :metadata,
+                 :latitude, :longitude
+
+  def map_link
+    return unless latitude.present? && longitude.present?
+    "https://maps.google.com/?q=#{latitude},#{longitude}"
+  end
 end

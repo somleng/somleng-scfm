@@ -1,7 +1,9 @@
 .card
   .card-body
     = simple_form_for([:dashboard, resource]) do |f|
-      = f.input :external_id
+      = f.input(:external_id)
+      = f.input(:latitude)
+      = f.input(:longitude)
       = f.input :province_id, collection: [], prompt: true, required: true,
                 wrapper_html: { id: 'province' },
                 input_html: { class: 'js-select-province',

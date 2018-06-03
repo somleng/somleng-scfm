@@ -25,10 +25,22 @@
             = resource.external_id
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
-          = Sensor.human_attribute_name(:province_id)
+          = Sensor.human_attribute_name(:latitude)
         %dd.col-sm-7.col-md-6
           %code
-            = location_names(resource.province_id, 'province')
+            = resource.latitude
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Sensor.human_attribute_name(:longitude)
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.longitude
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Sensor.human_attribute_name(:map_link)
+        %dd.col-sm-7.col-md-6
+          - if resource.map_link.present?
+            = link_to(resource.map_link, resource.map_link, target: "_blank")
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Sensor.human_attribute_name(:commune_ids)

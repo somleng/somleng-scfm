@@ -44,17 +44,28 @@ RSpec.describe "Sensors", :aggregate_failures do
     expect(page).to have_link_to_action(:cancel)
 
     fill_in("External id", with: "sensor005")
+    fill_in("Latitude", with: "11.5627465")
+    fill_in("Longitude", with: "104.9104493")
     select_selectize("#province", "Battambang")
     select_selectize("#communes", "Kantueu Pir")
     click_action_button(:create, key: :submit, namespace: :helpers, model: "Sensor")
 
     expect(page).to have_text("Sensor was successfully created.")
-    expect(page).to have_content("sensor005")
-    expect(page).to have_content("Battambang")
+    sensor = admin.account.reload.sensors.last!
+    expect(sensor).to be_persisted
+    expect(sensor.external_id).to eq("sensor005")
+    expect(sensor.latitude).to eq("11.5627465")
+    expect(sensor.longitude).to eq("104.9104493")
+    expect(sensor.commune_ids).to match_array(["020102"])
   end
 
-  it "can show sensor details" do
-    sensor = create(:sensor, :with_rules, account: admin.account)
+  it "can show a sensor" do
+    sensor = create(
+      :sensor,
+      account: admin.account,
+      latitude: "11.5633885",
+      longitude: "104.915919"
+    )
 
     sign_in(admin)
     visit dashboard_sensor_path(sensor)
@@ -80,14 +91,23 @@ RSpec.describe "Sensors", :aggregate_failures do
 
     within("#sensor") do
       expect(page).to have_content(sensor.id)
-      expect(page).to have_content("Province")
+      expect(page).to have_content("Alert communes")
+      expect(page).to have_content("Latitude")
+      expect(page).to have_content("Longitude")
+      expect(page).to have_content("Map")
       expect(page).to have_content("Created at")
+      expect(page).to have_link(
+        "https://maps.google.com/?q=11.5633885,104.915919",
+        href: "https://maps.google.com/?q=11.5633885,104.915919"
+      )
     end
   end
 
   it "can update sensor", :js do
     sensor = create(
-      :sensor, :with_rules, account: admin.account, commune_ids: ["010201"]
+      :sensor,
+      account: admin.account,
+      commune_ids: ["010201"]
     )
 
     sign_in(admin)
@@ -109,8 +129,9 @@ RSpec.describe "Sensors", :aggregate_failures do
     click_action_button(:update, key: :submit, namespace: :helpers, model: "Sensor")
 
     expect(page).to have_text("Sensor was successfully updated.")
-    expect(page).to have_content("sensor005")
-    expect(page).to have_content("Battambang")
+    sensor.reload
+    expect(sensor.external_id).to eq("sensor005")
+    expect(sensor.commune_ids).to match_array(["020102"])
   end
 
   it "can delete sensor" do

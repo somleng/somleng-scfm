@@ -4,7 +4,7 @@ RSpec.describe "Sensors", :aggregate_failures do
   let(:admin)  { create(:admin) }
   let(:sensor) { create(:sensor, account: admin.account) }
 
-  it "can list sensors" do
+  it "can list sensors rules" do
     rule = create(:sensor_rule, level: 1000, sensor: sensor)
     other_rule = create(:sensor)
 
@@ -23,6 +23,8 @@ RSpec.describe "Sensors", :aggregate_failures do
       expect(page).to have_content_tag_for(rule)
       expect(page).not_to have_content_tag_for(other_rule)
       expect(page).to have_content("#")
+      expect(page).to have_content("Level")
+      expect(page).to have_content("Created at")
       expect(page).to have_link(
         rule.id,
         href: dashboard_sensor_rule_path(rule)

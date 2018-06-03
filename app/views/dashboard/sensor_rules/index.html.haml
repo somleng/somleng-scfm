@@ -6,6 +6,6 @@
     = link_to(translate(:"titles.sensor_rules.new"), new_dashboard_sensor_sensor_rule_path(sensor), class: 'btn btn-outline-success')
 
 - content_for(:resources_table) do
-  = render("shared/resources_table", resource_class: SensorRule, columns: [:level, :province, :created_at])
+  = render("shared/resources_table", resource_class: SensorRule, columns: [:level, :created_at])
 
 = render("shared/index")

@@ -28,13 +28,10 @@ RSpec.describe "Sensors", :aggregate_failures do
       expect(page).to have_content_tag_for(sensor)
       expect(page).not_to have_content_tag_for(other_sensor)
       expect(page).to have_content("#")
+      expect(page).to have_content("Province")
       expect(page).to have_link(
         sensor.id,
         href: dashboard_sensor_path(sensor)
-      )
-      expect(page).to have_link(
-        sensor.map_link,
-        href: sensor.map_link
       )
       expect(page).to have_content("Kampong Chhnang")
       expect(page).to have_content("កំពង់ឆ្នាំង")

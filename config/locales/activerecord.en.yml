@@ -25,10 +25,10 @@ en:
       sensor:
         commune_ids: Alert communes
         external_id: External id
+        map_link: Map
       sensor_rule:
         alert_file: Alert file
         level: Level
-        map_link: Map
       user:
         location_ids: Provinces
     models:

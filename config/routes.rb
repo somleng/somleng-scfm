@@ -12,7 +12,7 @@ Rails.application.routes.draw do
 
   namespace "dashboard" do
     root to: "callouts#index"
-    resources :access_tokens, only: %i[index create destroy]
+    resources :access_tokens
     resource :account, only: %i[edit update]
 
     namespace :batch_operation do

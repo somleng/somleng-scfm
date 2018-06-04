@@ -1,0 +1,33 @@
+.col
+  #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
+    = render("shared/disabled_button", url: dashboard_access_token_path(resource), button_text: resource.model_name.human)
+    .btn-group.mr-2{ role: 'group' }
+      = link_to(translate(:"titles.actions.edit"), edit_dashboard_access_token_path(resource), class: 'btn btn-outline-primary')
+    .btn-group.mr-2{ role: 'group' }
+      = link_to(translate(:"titles.actions.delete"), dashboard_access_token_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+.col-lg-8.col-sm-12
+  #access_token.card
+    .card-body
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right #
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.id
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = AccessToken.human_attribute_name(:token)
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.token
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = AccessToken.human_attribute_name(:permissions)
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.permissions_text
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = AccessToken.human_attribute_name(:created_at)
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.created_at

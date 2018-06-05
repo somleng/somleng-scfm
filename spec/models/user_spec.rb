@@ -13,6 +13,7 @@ RSpec.describe User do
       is_expected.to validate_presence_of(:email)
       is_expected.to validate_presence_of(:password)
       is_expected.to validate_confirmation_of(:password)
+      is_expected.to validate_inclusion_of(:locale).in_array(["en", "km"])
     end
 
     context "persisted" do
@@ -27,5 +28,17 @@ RSpec.describe User do
     end
 
     it { assert_validations! }
+  end
+
+  describe "#locale_en?" do
+    it "return true when locale is en" do
+      user = build(:user, locale: "en")
+      expect(user.locale_en?).to eq true
+    end
+
+    it "return false when locale is en" do
+      user = build(:user, locale: "kh")
+      expect(user.locale_en?).to eq false
+    end
   end
 end

@@ -182,9 +182,7 @@ RSpec.describe "Callout Populations" do
       expect(page).to have_link_to_action(:preview)
       expect(page).to have_link_to_action(
         :back,
-        href: dashboard_batch_operation_path(
-          callout_population
-        )
+        href: dashboard_callout_path(callout_population.callout_id)
       )
     end
 

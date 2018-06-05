@@ -31,6 +31,7 @@ en:
       defaults:
         call_flow_logic:
           CallFlowLogic::HelloWorld: Hello World
+          CallFlowLogic::PeopleInNeed::EWS::EmergencyMessage: Emergency Message
     prompts:
       defaults:
         commune_id: Select a commune

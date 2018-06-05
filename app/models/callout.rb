@@ -15,6 +15,7 @@ class Callout < ApplicationRecord
 
   has_many :callout_populations,
            class_name: "BatchOperation::CalloutPopulation"
+  has_one :callout_population, class_name: "BatchOperation::CalloutPopulation", autosave: true
 
   has_many :phone_calls,
            through: :callout_participations

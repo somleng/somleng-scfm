@@ -1,26 +1,19 @@
 .col-12
-  #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
+  #button_toolbar
     = render("shared/disabled_button", url: dashboard_batch_operation_path(resource), button_text: resource.model_name.human)
     - if resource.is_a?(BatchOperation::CalloutPopulation)
-      .btn-group.mr-2{ role: 'group' }
-        = render("shared/button_link", button_text: translate(:"titles.actions.preview"), url: dashboard_batch_operation_preview_contacts_path(resource))
-      .btn-group.mr-2{ role: 'group' }
-        = render("shared/button_link", button_text: translate(:"titles.callout_participations.index"), url: dashboard_batch_operation_callout_participations_path(resource))
+      = render("shared/button_link", button_text: translate(:"titles.actions.preview"), url: dashboard_batch_operation_preview_contacts_path(resource))
+      = render("shared/button_link", button_text: translate(:"titles.callout_participations.index"), url: dashboard_batch_operation_callout_participations_path(resource))
     - if resource.applies_on_phone_calls?
-      .btn-group.mr-2{ role: 'group' }
-        = render("shared/button_link", button_text: translate(:"titles.phone_calls.index"), url: dashboard_batch_operation_phone_calls_path(resource))
+      = render("shared/button_link", button_text: translate(:"titles.phone_calls.index"), url: dashboard_batch_operation_phone_calls_path(resource))
     - if resource.may_queue?
-      .btn-group.mr-2{ role: 'group' }
-        = link_to(translate(:"titles.batch_operations.queue"), dashboard_batch_operation_batch_operation_events_path(resource, event: :queue), method: :post, class: 'btn btn-outline-success', data: { confirm: translate(:"titles.actions.data_confirm") })
+      = link_to(translate(:"titles.batch_operations.queue"), dashboard_batch_operation_batch_operation_events_path(resource, event: :queue), method: :post, class: 'btn btn-outline-success', data: { confirm: translate(:"titles.actions.data_confirm") })
     - if resource.may_requeue?
-      .btn-group.mr-2{ role: 'group' }
-        = link_to(translate(:"titles.batch_operations.requeue"), dashboard_batch_operation_batch_operation_events_path(resource, event: :requeue), method: :post, class: 'btn btn-outline-warning', data: { confirm: translate(:"titles.actions.data_confirm") })
+      = link_to(translate(:"titles.batch_operations.requeue"), dashboard_batch_operation_batch_operation_events_path(resource, event: :requeue), method: :post, class: 'btn btn-outline-warning', data: { confirm: translate(:"titles.actions.data_confirm") })
     - if resource.is_a?(BatchOperation::CalloutPopulation)
-      .btn-group.mr-2{ role: 'group' }
-        = link_to(translate(:"titles.actions.edit"), edit_dashboard_batch_operation_callout_population_path(resource), class: 'btn btn-outline-primary')
-    .btn-group.mr-2{ role: 'group' }
-      - url = resource.is_a?(BatchOperation::CalloutPopulation) && resource.callout ? dashboard_callout_batch_operation_path(resource.callout, resource) : dashboard_batch_operation_path(resource)
-      = link_to(translate(:"titles.actions.delete"), url, class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+      = link_to(translate(:"titles.actions.edit"), edit_dashboard_batch_operation_callout_population_path(resource), class: 'btn btn-outline-primary')
+    - url = resource.is_a?(BatchOperation::CalloutPopulation) && resource.callout ? dashboard_callout_batch_operation_path(resource.callout, resource) : dashboard_batch_operation_path(resource)
+    = link_to(translate(:"titles.actions.delete"), url, class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
 .col-lg-8.col-sm-12
   #resource.card
     .card-body

@@ -1,5 +1,5 @@
 .col-12
-  #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
+  #button_toolbar
     = render("shared/disabled_button", url: dashboard_remote_phone_call_event_path(resource), button_text: resource.model_name.human)
 .col-12.col-md-9.col-lg-7
   #resource.card

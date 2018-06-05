@@ -82,6 +82,12 @@ ul.ul-infinit {
   padding: 0 12px;
 }
 
+#button_toolbar {
+  .btn {
+    margin-bottom: 4px;
+  }
+}
+
 @media (min-width: 768px) {
   #side_navigation.collapse {
     display: block;

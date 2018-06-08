@@ -9,14 +9,10 @@ module ApplicationHelper
   end
 
   def title
-    if content_for?(:title)
-      content_for :title
-    else
-      translate(
-        :"titles.#{controller_name}.#{action_name}",
-        id: resource && resource.id,
-        default: :"titles.app_name"
-      )
-    end
+    translate(
+      :"titles.#{controller_name}.#{action_name}",
+      id: resource && resource.id,
+      default: :"titles.app_name"
+    )
   end
 end

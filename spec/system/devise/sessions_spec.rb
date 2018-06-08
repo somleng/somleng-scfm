@@ -23,7 +23,7 @@ RSpec.describe "User sign in" do
     sign_in(user)
     visit dashboard_root_path
 
-    within("#user_menu") do
+    within("#top_nav") do
       click_action_button(:destroy, key: :user_sessions, type: :link)
     end
 

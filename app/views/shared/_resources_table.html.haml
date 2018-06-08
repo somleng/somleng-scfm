@@ -12,7 +12,7 @@
             - is_current_asc = (sort_direction == "asc")
             - new_direction = (is_current_column && is_current_asc) ? "desc" : "asc"
 
-            = link_to url_for(action: "index", sort: column, direction: new_direction), class: "sortable", id: column do
+            = link_to url_for(action: "index", sort_column: column, sort_direction: new_direction), class: "sortable", id: column do
               = resource_class.human_attribute_name(column.to_sym)
             - if is_current_column
               %span.sortable-icons

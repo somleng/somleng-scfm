@@ -6,7 +6,7 @@ RSpec.describe "Dashboard" do
     sign_in(user)
     visit(root_path)
 
-    within("#user_menu") do
+    within("#top_nav") do
       expect(page).to have_link(
         I18n.translate!(:"titles.accounts.edit"),
         href: edit_dashboard_account_path

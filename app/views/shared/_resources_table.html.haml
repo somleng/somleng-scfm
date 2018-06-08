@@ -4,7 +4,7 @@
       %th #
       - columns.each do |column|
         %th.th-sortable
-          - if (defined? unsortable_columns) && (column.in? unsortable_columns)
+          - if column.in?(Array(local_assigns[:unsortable_columns]))
             .text
               = resource_class.human_attribute_name(column.to_sym)
           - else

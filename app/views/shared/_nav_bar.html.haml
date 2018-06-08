@@ -2,29 +2,19 @@
   .navbar-brand
     %button.btn.btn-dark.d-md-none{"aria-controls" => "side_navigation", "aria-expanded" => "false", "aria-label" => "Toggle navigation", "data-target" => "#side_navigation", "data-toggle" => "collapse", :type => "button"}
       %span.navbar-toggler-icon
-    Somleng SCFM
+    = link_to t(:"titles.app_name"), dashboard_root_path
 
-  %ul#user_menu.navbar-nav.px-3
-    %li
-      .btn-group
-        %button.btn.btn-secondary.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}
-          = t(:"titles.language")
-        .dropdown-menu.dropdown-menu-right
-          = link_to dashboard_locale_path(current_user, user: { locale: "en" }), method: :patch do
-            .dropdown-item English
-          = link_to dashboard_locale_path(current_user, user: { locale: "km" }) , method: :patch do
-            .dropdown-item ខែ្មរ
-    %li
-      .btn-group
-        %button.btn.btn-secondary.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}
-          = octicon "person"
-        .dropdown-menu.dropdown-menu-right
-          = link_to edit_dashboard_account_path do
-            %button.dropdown-item{:type => "button"}
-              = translate(:"titles.accounts.edit")
-          = link_to edit_user_registration_path do
-            %button.dropdown-item{:type => "button"}
-              = translate(:"titles.user_registrations.edit")
-          = link_to destroy_user_session_path, method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") } do
-            %button.dropdown-item{:type => "button"}
-              = translate(:"titles.user_sessions.destroy")
+  %ul#top_nav.navbar-nav.px-3
+    %li#language_menu.nav-item.dropdown
+      %a#language_dropdown.nav-link.dropdown-toggle{href: "#", role: "button", data: {toggle: "dropdown"}, "aria-haspopup" => true, "aria-expanded" => false}
+        = fa_icon("language")
+      .dropdown-menu.dropdown-menu-right{"aria-labelledby" => "language_dropdown"}
+        = link_to("English", dashboard_locale_path(current_user, user: { locale: "en" }), method: :patch, class: "dropdown-item")
+        = link_to("ខែ្មរ", dashboard_locale_path(current_user, user: { locale: "km" }) , method: :patch, class: "dropdown-item")
+    %li#user_menu.nav-item.dropdown
+      %a#user_dropdown.nav-link.dropdown-toggle{href: "#", role: "button", data: {toggle: "dropdown"}, "aria-haspopup" => true, "aria-expanded" => false}
+        = fa_icon("user")
+      .dropdown-menu.dropdown-menu-right{"aria-labelledby" => "user_dropdown"}
+        = link_to(translate(:"titles.accounts.edit"), edit_dashboard_account_path, class: "dropdown-item")
+        = link_to(translate(:"titles.user_registrations.edit"), edit_user_registration_path, class: "dropdown-item")
+        = link_to(translate(:"titles.user_sessions.destroy"), destroy_user_session_path, method: :delete, class: "dropdown-item")

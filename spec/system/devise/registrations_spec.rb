@@ -11,7 +11,7 @@ RSpec.describe "Registrations" do
       expect(page).to have_content(I18n.translate!(:"titles.user_registrations.edit"))
     end
 
-    within("#user_menu") do
+    within("#top_nav") do
       expect(page).to have_link_to_action(
         :edit,
         key: :user_registrations,

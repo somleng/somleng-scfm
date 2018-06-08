@@ -1,0 +1,31 @@
+---
+km:
+  helpers:
+    submit:
+      batch_operation_callout_population:
+        create: Create Callout Population
+      create: Create %{model}
+      update: Save
+      user:
+        create: Send Invitation
+  simple_form:
+    error_notification:
+      default_message: 'Please review the problems below:'
+    labels:
+      account:
+        call_flow_logic: Default call flow logic
+      defaults:
+        phone_number: Phone Number
+    'no': 'No'
+    options:
+      account:
+        platform_provider_name:
+          somleng: Somleng
+          twilio: Twilio
+      defaults:
+        call_flow_logic:
+          CallFlowLogic::HelloWorld: Hello World
+    required:
+      mark: "*"
+      text: required
+    'yes': 'Yes'

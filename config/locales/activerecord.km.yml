@@ -1,0 +1,32 @@
+---
+km:
+  activemodel:
+    attributes:
+      key_value_field:
+        key: Key
+        value: Value
+    models:
+      event/base:
+        one: Event
+        other: Events
+  activerecord:
+    attributes:
+      access_token:
+        token: API key
+      account:
+        platform_provider_name: Platform provider
+      contact:
+        msisdn: Phone number
+      phone_call:
+        msisdn: Phone number
+        remote_call_id: Remote call sid
+    models:
+      access_token:
+        one: API key
+        other: API keys
+      batch_operation/base:
+        one: Batch operation
+        other: Batch operations
+      batch_operation/callout_population:
+        one: Callout population
+        other: Callout populations

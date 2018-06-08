@@ -29,16 +29,4 @@ RSpec.describe User do
 
     it { assert_validations! }
   end
-
-  describe "#locale_en?" do
-    it "return true when locale is en" do
-      user = build(:user, locale: "en")
-      expect(user.locale_en?).to eq true
-    end
-
-    it "return false when locale is en" do
-      user = build(:user, locale: "kh")
-      expect(user.locale_en?).to eq false
-    end
-  end
 end

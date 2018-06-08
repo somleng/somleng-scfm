@@ -1,10 +1,8 @@
 class Dashboard::LocalesController < Dashboard::BaseController
-  before_action :authorize_owner!
-
   private
 
-  def association_chain
-    current_account.users
+  def find_resource
+    @resource = current_user
   end
 
   def permitted_params
@@ -13,9 +11,5 @@ class Dashboard::LocalesController < Dashboard::BaseController
 
   def respond_with_updated_resource
     redirect_back(fallback_location: root_path)
-  end
-
-  def authorize_owner!
-    (resource == current_user)
   end
 end

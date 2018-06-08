@@ -10,15 +10,10 @@
         %button.btn.btn-secondary.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}
           = t(:"titles.language")
         .dropdown-menu.dropdown-menu-right
-          %a
-            - if current_user.locale_en?
-              = button_to dashboard_locale_path(current_user), method: :patch, params: { user: { locale: "km" }}, class: "dropdown-item text-center" do
-                ខែ្មរ
-                = image_tag "km-flag.png"
-            - else
-              = button_to dashboard_locale_path(current_user), method: :patch, params: { user: { locale: "en" }}, class: "dropdown-item text-center" do
-                Eng
-                = image_tag "en-flag.png"
+          = link_to dashboard_locale_path(current_user, user: { locale: "en" }), method: :patch do
+            .dropdown-item English
+          = link_to dashboard_locale_path(current_user, user: { locale: "km" }) , method: :patch do
+            .dropdown-item ខែ្មរ
     %li
       .btn-group
         %button.btn.btn-secondary.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}

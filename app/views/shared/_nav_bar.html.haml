@@ -6,7 +6,15 @@
 
   %ul#user_menu.navbar-nav.px-3
     %li
-      %span.oi.oi-person{"aria-hidden" => "true", :title => "person"}
+      .btn-group
+        %button.btn.btn-secondary.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}
+          = t(:"titles.language")
+        .dropdown-menu.dropdown-menu-right
+          = link_to dashboard_locale_path(current_user, user: { locale: "en" }), method: :patch do
+            .dropdown-item English
+          = link_to dashboard_locale_path(current_user, user: { locale: "km" }) , method: :patch do
+            .dropdown-item ខែ្មរ
+    %li
       .btn-group
         %button.btn.btn-secondary.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}
           = octicon "person"

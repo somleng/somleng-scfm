@@ -11,6 +11,7 @@ class Dashboard::BaseController < ApplicationController
   respond_to :html
 
   before_action :authenticate_user!
+  before_action :set_locale
   before_action :find_resource, only: %i[show edit update destroy]
 
   helper_method :resource, :resources, :show_location, :current_account
@@ -145,5 +146,9 @@ class Dashboard::BaseController < ApplicationController
 
   def current_account
     current_user.account
+  end
+
+  def set_locale
+    I18n.locale = current_user.locale
   end
 end

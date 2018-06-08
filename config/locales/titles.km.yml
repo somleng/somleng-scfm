@@ -1,6 +1,7 @@
 ---
-en:
+km:
   titles:
+    language: "Language"
     access_tokens:
       create: Create API Key
       index: API Keys
@@ -24,7 +25,7 @@ en:
       new: New Callout Population
     callouts:
       edit: Edit Callout
-      index: Callouts
+      index: តេចេញ
       new: New Callout
       resume_callout: Resume Callout
       start_callout: Start Callout
@@ -33,7 +34,6 @@ en:
       edit: Edit Contact
       index: Contacts
       new: New Contact
-    language: Language
     phone_calls:
       index: Phone Calls
       queue: Send

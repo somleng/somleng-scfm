@@ -22,7 +22,7 @@ RSpec.describe "Callout Participations" do
         callout_participation.id,
         href: dashboard_callout_participation_path(callout_participation)
       )
-      expect(page).to have_content("Created at")
+      expect(page).to have_sortable_column("created_at")
     end
   end
 

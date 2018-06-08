@@ -30,7 +30,9 @@ RSpec.describe "Batch Operations" do
         batch_operation.id,
         href: dashboard_batch_operation_path(batch_operation)
       )
-      expect(page).to have_content("Status")
+      have_sortable_column("type")
+      have_sortable_column("status")
+      have_sortable_column("created_at")
       expect(page).to have_content("Preview")
     end
   end

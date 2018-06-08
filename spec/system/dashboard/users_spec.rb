@@ -6,7 +6,6 @@ RSpec.describe "Users" do
   it "can list all users" do
     user = create(:user)
     other_user = create(:user, account: user.account)
-    different_user = create(:user)
 
     sign_in(user)
     visit dashboard_users_path
@@ -26,12 +25,17 @@ RSpec.describe "Users" do
         href: dashboard_user_path(other_user)
       )
 
-      expect(page).to have_content("Email")
-      expect(page).to have_content(user.email)
-      expect(page).to have_content(other_user.email)
-      expect(page).to have_no_content(different_user.email)
-      expect(page).to have_content("Last sign in at")
-      expect(page).to have_content("Invitation accepted at")
+      expect(page).to have_sortable_column("email")
+      expect(page).to have_sortable_column("invitation_accepted_at")
+      expect(page).to have_sortable_column("last_sign_in_at")
+      expect(page).to have_sortable_column("created_at")
+      expect(other_user.email).to appear_before(user.email)
+    end
+
+    click_link("Created at")
+
+    within("#resources") do
+      expect(user.email).to appear_before(other_user.email)
     end
   end
 

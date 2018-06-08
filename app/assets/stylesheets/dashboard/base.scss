@@ -1,5 +1,6 @@
 body {
   font-size: .875rem;
+  color: #333;
 }
 
 main {
@@ -87,8 +88,13 @@ dl.row {
   margin-bottom: 0;
 }
 
-ul.ul-infinit {
-  padding: 0 12px;
+.th-sortable {
+  a, a:hover {
+    text-decoration: none;
+  }
+  .sortable-icons {
+    margin-left: 8px;
+  }
 }
 
 #button_toolbar {

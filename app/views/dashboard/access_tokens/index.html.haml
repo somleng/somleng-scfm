@@ -1,9 +1,8 @@
 - content_for(:button_toolbar) do
   = render("shared/disabled_button", url: dashboard_access_tokens_path, button_text: translate(:"titles.access_tokens.index"))
-  .btn-group.mr-2{ role: 'group' }
-    = link_to(translate(:"titles.access_tokens.new"), new_dashboard_access_token_path, class: 'btn btn-outline-success')
+  = link_to(translate(:"titles.access_tokens.new"), new_dashboard_access_token_path, class: 'btn btn-outline-success')
 
 - content_for(:resources_table) do
-  = render("shared/resources_table", resource_class: AccessToken, columns: [:token, :permissions, :created_at], unsortable_columns: :actions)
+  = render("shared/resources_table", resource_class: AccessToken, columns: [:token, :permissions, :created_at], unsortable_columns: :permissions)
 
 = render("shared/index")

@@ -2,8 +2,9 @@
 km:
   titles:
     access_tokens:
-      create: Create API Key
+      edit: Edit API Key
       index: API Keys
+      new: New API Key
     accounts:
       edit: Account Settings
       update: Account Settings

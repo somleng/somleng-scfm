@@ -50,7 +50,10 @@ RSpec.describe "Access Tokens" do
     request_body = {
       metadata: {
         "foo" => "bar"
-      }
+      },
+      permissions: [
+        :contacts_write
+      ]
     }
 
     post(
@@ -65,6 +68,7 @@ RSpec.describe "Access Tokens" do
     created_access_token = AccessToken.find(parsed_response.fetch("id"))
     expect(created_access_token.resource_owner).to eq(account)
     expect(created_access_token.created_by).to eq(account)
+    expect(created_access_token.permissions).to match_array(request_body.fetch(:permissions))
   end
 
   it "can create an access token as a super admin" do

@@ -14,7 +14,7 @@ class Api::AccessTokensController < Api::FilteredController
   end
 
   def permitted_params
-    params.permit(:metadata_merge_mode, :metadata => {})
+    params.permit(:metadata_merge_mode, permissions: [], metadata: {})
   end
 
   def setup_resource

@@ -6,7 +6,7 @@ RSpec.describe "Phone Calls" do
   let(:account_traits) { {} }
   let(:account_attributes) { {} }
   let(:account) { create(:account, *account_traits.keys, account_attributes) }
-  let(:access_token_model) { create(:access_token, resource_owner: account) }
+  let(:access_token_model) { create_access_token(resource_owner: account) }
 
   let(:callout_attributes) { { account: account } }
   let(:callout) { create(:callout, callout_attributes) }
@@ -251,5 +251,13 @@ RSpec.describe "Phone Calls" do
         it { expect { execute_request }.to raise_error(ActiveRecord::RecordNotFound) }
       end
     end
+  end
+
+  def create_access_token(**options)
+    create(
+      :access_token,
+      permissions: %i[phone_calls_read phone_calls_write],
+      **options
+    )
   end
 end

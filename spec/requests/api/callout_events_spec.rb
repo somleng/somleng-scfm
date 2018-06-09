@@ -1,21 +1,60 @@
-require 'rails_helper'
+require "rails_helper"
 
-RSpec.describe "POST '/callouts/:callout_id/callout_events'" do
-  include SomlengScfm::SpecHelpers::RequestHelpers
+RSpec.describe "Callout Events" do
+  let(:account) { create(:account) }
+  let(:access_token) { create_access_token(resource_owner: account) }
 
-  let(:account_traits) { {} }
-  let(:account_attributes) { {} }
-  let(:account) { create(:account, *account_traits.keys, account_attributes) }
-  let(:eventable_attributes) { { :account => account } }
-  let(:access_token_model) { create(:access_token, :resource_owner => account) }
+  it "can start a callout" do
+    callout = create_callout(
+      account: account,
+      status: Callout::STATE_INITIALIZED
+    )
 
-  let(:eventable) { create(:callout, eventable_attributes) }
-  let(:url) { api_callout_callout_events_path(eventable) }
+    request_body = {
+      event: "start"
+    }
 
-  it_behaves_like "api_resource_event" do
-    let(:eventable_path) { api_callout_path(eventable) }
-    let(:asserted_new_status) { "running" }
-    let(:event) { "start" }
+    post(
+      api_callout_callout_events_path(callout),
+      params: request_body,
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("201")
+    expect(response.headers["Location"]).to eq(api_callout_path(callout))
+    parsed_body = JSON.parse(response.body)
+    expect(parsed_body.fetch("status")).to eq("running")
+    expect(callout.reload).to be_running
+  end
+
+  it "cannot start a running callout" do
+    callout = create_callout(
+      account: account,
+      status: Callout::STATE_RUNNING
+    )
+
+    request_body = {
+      event: "start"
+    }
+
+    post(
+      api_callout_callout_events_path(callout),
+      params: request_body,
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("422")
+  end
+
+  def create_callout(account:, **options)
+    create(:callout, account: account, **options)
+  end
+
+  def create_access_token(**options)
+    create(
+      :access_token,
+      permissions: %i[callouts_write],
+      **options
+    )
   end
 end
-

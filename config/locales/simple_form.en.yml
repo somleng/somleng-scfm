@@ -18,6 +18,26 @@ en:
         phone_number: Phone Number
     'no': 'No'
     options:
+      access_token:
+        permissions:
+          access_tokens_read: Read access tokens
+          access_tokens_write: Write access tokens
+          accounts_read: Read accounts
+          accounts_write: Write accounts
+          batch_operations_read: Read batch operations
+          batch_operations_write: Write batch operations
+          callout_participations_read: Read callout participations
+          callout_participations_write: Write callout participations
+          callouts_read: Read callouts
+          callouts_write: Write callouts
+          contacts_read: Read contacts
+          contacts_write: Write contacts
+          phone_calls_read: Read phone calls
+          phone_calls_write: Write phone calls
+          remote_phone_call_events_read: Read remote phone call events
+          remote_phone_call_events_write: Write remote phone call events
+          users_read: Read users
+          users_write: Write users
       account:
         platform_provider_name:
           somleng: Somleng

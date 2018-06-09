@@ -107,6 +107,7 @@ ActiveRecord::Schema.define(version: 2018_06_05_145657) do
     t.datetime "updated_at", null: false
     t.string "scopes"
     t.string "previous_refresh_token", default: "", null: false
+    t.bigint "permissions", default: 0, null: false
     t.index ["application_id"], name: "index_oauth_access_tokens_on_application_id"
     t.index ["created_by_id"], name: "index_oauth_access_tokens_on_created_by_id"
     t.index ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true

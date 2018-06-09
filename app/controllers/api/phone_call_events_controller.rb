@@ -24,4 +24,8 @@ class Api::PhoneCallEventsController < Api::ResourceEventsController
   def event_class
     Event::PhoneCall
   end
+
+  def access_token_write_permissions
+    [:phone_calls_write]
+  end
 end

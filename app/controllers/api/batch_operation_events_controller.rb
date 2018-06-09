@@ -24,4 +24,8 @@ class Api::BatchOperationEventsController < Api::ResourceEventsController
   def event_class
     Event::BatchOperation
   end
+
+  def access_token_write_permissions
+    [:batch_operations_write]
+  end
 end

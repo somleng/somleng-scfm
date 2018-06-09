@@ -1,12 +1,12 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "Contacts" do
   include SomlengScfm::SpecHelpers::RequestHelpers
   let(:account_traits) { {} }
   let(:account_attributes) { {} }
   let(:account) { create(:account, *account_traits.keys, account_attributes) }
-  let(:access_token_model) { create(:access_token, :resource_owner => account) }
-  let(:factory_attributes) { { :account => account } }
+  let(:access_token_model) { create_access_token(resource_owner: account) }
+  let(:factory_attributes) { { account: account } }
   let(:contact) { create(:contact, factory_attributes) }
 
   let(:body) { {} }
@@ -36,12 +36,12 @@ RSpec.describe "Contacts" do
       let(:method) { :post }
       let(:msisdn) { generate(:somali_msisdn) }
 
-      let(:body) {
+      let(:body) do
         {
-          :metadata => metadata,
-          :msisdn => msisdn
+          metadata: metadata,
+          msisdn: msisdn
         }
-      }
+      end
 
       context "valid request" do
         let(:asserted_created_contact) { Contact.last }
@@ -83,10 +83,10 @@ RSpec.describe "Contacts" do
     end
 
     describe "PATCH" do
-      let(:existing_metadata) { {"bar" => "foo"} }
-      let(:factory_attributes) { super().merge(:metadata => existing_metadata) }
+      let(:existing_metadata) { { "bar" => "foo" } }
+      let(:factory_attributes) { super().merge(metadata: existing_metadata) }
       let(:method) { :patch }
-      let(:body) { { :metadata => metadata, :metadata_merge_mode => "replace" } }
+      let(:body) { { metadata: metadata, metadata_merge_mode: "replace" } }
 
       def assert_update!
         expect(response.code).to eq("204")
@@ -109,7 +109,7 @@ RSpec.describe "Contacts" do
       end
 
       context "invalid request" do
-        let(:phone_call) { create(:phone_call, :contact => contact) }
+        let(:phone_call) { create(:phone_call, contact: contact) }
 
         def setup_scenario
           phone_call
@@ -128,15 +128,15 @@ RSpec.describe "Contacts" do
   describe "nested indexes" do
     let(:method) { :get }
 
-    let(:callout_participation_factory_attributes) { {:contact => contact} }
+    let(:callout_participation_factory_attributes) { { contact: contact } }
 
-    let(:callout_participation) {
+    let(:callout_participation) do
       create(:callout_participation, callout_participation_factory_attributes)
-    }
+    end
 
     def setup_scenario
       contact
-      create(:contact, :account => account)
+      create(:contact, account: account)
       super
     end
 
@@ -146,12 +146,12 @@ RSpec.describe "Contacts" do
     end
 
     describe "GET '/api/callouts/:callout_id/contacts'" do
-      let(:callout) { create(:callout, :account => account) }
+      let(:callout) { create(:callout, account: account) }
       let(:url) { api_callout_contacts_path(callout) }
 
-      let(:callout_participation_factory_attributes) {
-        super().merge(:callout => callout)
-      }
+      let(:callout_participation_factory_attributes) do
+        super().merge(callout: callout)
+      end
 
       def setup_scenario
         callout_participation
@@ -162,10 +162,10 @@ RSpec.describe "Contacts" do
     end
 
     describe "'/api/batch_operations/:batch_operation_id'" do
-      let(:batch_operation_factory_attributes) { { :account => account } }
-      let(:batch_operation) {
+      let(:batch_operation_factory_attributes) { { account: account } }
+      let(:batch_operation) do
         create(batch_operation_factory, batch_operation_factory_attributes)
-      }
+      end
 
       describe "GET '/contacts'" do
         let(:url) { api_batch_operation_contacts_path(batch_operation) }
@@ -173,9 +173,9 @@ RSpec.describe "Contacts" do
         context "BatchOperation::CalloutPopulation" do
           let(:batch_operation_factory) { :callout_population }
 
-          let(:callout_participation_factory_attributes) {
-            super().merge(:callout_population => batch_operation)
-          }
+          let(:callout_participation_factory_attributes) do
+            super().merge(callout_population: batch_operation)
+          end
 
           def setup_scenario
             callout_participation
@@ -191,8 +191,8 @@ RSpec.describe "Contacts" do
           def setup_scenario
             create(
               :phone_call,
-              :callout_participation => callout_participation,
-              :create_batch_operation => batch_operation
+              callout_participation: callout_participation,
+              create_batch_operation: batch_operation
             )
             super
           end
@@ -201,19 +201,19 @@ RSpec.describe "Contacts" do
         end
       end
 
-      describe  "GET '/preview/contacts'" do
+      describe "GET '/preview/contacts'" do
         let(:url) { api_batch_operation_preview_contacts_path(batch_operation) }
 
         context "BatchOperation::CalloutPopulation" do
           let(:batch_operation_factory) { :callout_population }
-          let(:factory_attributes) {
-            super().merge(:metadata => {"foo" => "bar", "bar" => "foo"})
-          }
+          let(:factory_attributes) do
+            super().merge(metadata: { "foo" => "bar", "bar" => "foo" })
+          end
 
           let(:contact_filter_params) { factory_attributes.slice(:metadata) }
-          let(:batch_operation_factory_attributes) {
-            super().merge(:contact_filter_params => contact_filter_params)
-          }
+          let(:batch_operation_factory_attributes) do
+            super().merge(contact_filter_params: contact_filter_params)
+          end
 
           it { assert_filtered! }
         end
@@ -230,5 +230,13 @@ RSpec.describe "Contacts" do
         end
       end
     end
+  end
+
+  def create_access_token(**options)
+    create(
+      :access_token,
+      permissions: %i[contacts_read contacts_write],
+      **options
+    )
   end
 end

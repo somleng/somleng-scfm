@@ -6,7 +6,7 @@ RSpec.describe "Remote Phone Call Events" do
   let(:account_traits) { {} }
   let(:account_attributes) { {} }
   let(:account) { create(:account, *account_traits.keys, account_attributes) }
-  let(:access_token_model) { create(:access_token, resource_owner: account) }
+  let(:access_token_model) { create_access_token(resource_owner: account) }
 
   let(:callout_attributes) { { account: account } }
   let(:callout) { create(:callout, callout_attributes) }
@@ -325,5 +325,13 @@ RSpec.describe "Remote Phone Call Events" do
       let(:url) { api_contact_remote_phone_call_events_path(contact) }
       it { assert_filtered! }
     end
+  end
+
+  def create_access_token(**options)
+    create(
+      :access_token,
+      permissions: %i[remote_phone_call_events_read remote_phone_call_events_write],
+      **options
+    )
   end
 end

@@ -98,7 +98,7 @@ class PhoneCall < ApplicationRecord
       transitions(
         from: :queued,
         to: :remotely_queued,
-        if: :has_remote_call_id?
+        if: :remote_call_id?
       )
 
       transitions(
@@ -111,7 +111,7 @@ class PhoneCall < ApplicationRecord
       transitions(
         from: :remotely_queued,
         to: :remote_fetch_queued,
-        if: :has_remote_call_id?
+        if: :remote_call_id?
       )
     end
 
@@ -179,10 +179,6 @@ class PhoneCall < ApplicationRecord
     define_method("remote_status_#{status}?") do
       remote_status == TWILIO_CALL_STATUSES.fetch(status)
     end
-  end
-
-  def has_remote_call_id?
-    remote_call_id?
   end
 
   def set_defaults

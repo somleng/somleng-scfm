@@ -4,6 +4,10 @@ class AccessToken < Doorkeeper::AccessToken
   # add new permissions to the end of the array
 
   PERMISSIONS = %i[
+    access_tokens_read
+    access_tokens_write
+    accounts_read
+    accounts_write
     batch_operations_read
     batch_operations_write
     callout_participations_read
@@ -15,6 +19,7 @@ class AccessToken < Doorkeeper::AccessToken
     phone_calls_read
     phone_calls_write
     remote_phone_call_events_read
+    remote_phone_call_events_write
     users_read
     users_write
   ].freeze

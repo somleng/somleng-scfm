@@ -6,7 +6,7 @@ RSpec.describe "Callout Participations" do
   let(:account_traits) { {} }
   let(:account_attributes) { {} }
   let(:account) { create(:account, *account_traits.keys, account_attributes) }
-  let(:access_token_model) { create(:access_token, resource_owner: account) }
+  let(:access_token_model) { create_access_token(resource_owner: account) }
 
   let(:callout) { create(:callout, account: account) }
   let(:body) { {} }
@@ -235,5 +235,13 @@ RSpec.describe "Callout Participations" do
         it { assert_invalid! }
       end
     end
+  end
+
+  def create_access_token(**options)
+    create(
+      :access_token,
+      permissions: %i[callout_participations_read callout_participations_write],
+      **options
+    )
   end
 end

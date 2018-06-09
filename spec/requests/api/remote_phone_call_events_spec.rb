@@ -128,7 +128,7 @@ RSpec.describe "Remote Phone Call Events" do
           "To" => to,
           "Direction" => direction,
           "CallStatus" => call_status,
-          "AccountSid" => request_account_sid
+          "AccountSid" => account.twilio_account_sid
         }
       end
 
@@ -136,6 +136,10 @@ RSpec.describe "Remote Phone Call Events" do
         {
           "X-Twilio-Signature" => twilio_request_signature
         }
+      end
+
+      def authorization_headers
+        {}
       end
 
       context "requesting json" do

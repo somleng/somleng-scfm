@@ -186,11 +186,20 @@ RSpec.describe PhoneCall do
       context "remote_call_id is present" do
         let(:remote_call_id) { "1234" }
 
-        it { assert_transitions! }
+        [
+          described_class::STATE_REMOTELY_QUEUED,
+          described_class::STATE_IN_PROGRESS
+        ].each do |current_status|
+          context "status: #{current_status}" do
+            let(:current_status) { current_status }
 
-        it("should broadcast") {
-          assert_broadcasted!(:phone_call_remote_fetch_queued) { subject.queue_remote_fetch! }
-        }
+            it { assert_transitions! }
+
+            it("should broadcast") {
+              assert_broadcasted!(:phone_call_remote_fetch_queued) { subject.queue_remote_fetch! }
+            }
+          end
+        end
       end
 
       context "remote_call_id is not present" do

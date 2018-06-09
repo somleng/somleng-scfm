@@ -261,6 +261,5 @@ RSpec.describe "Phone Calls" do
 
     expect(phone_call.reload).to be_remote_fetch_queued
     expect(page).to have_text("Event was successfully created.")
-    expect(page).not_to have_link_to_action(:queue_remote_fetch, key: :phone_calls)
   end
 end

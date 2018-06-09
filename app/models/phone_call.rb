@@ -109,7 +109,6 @@ class PhoneCall < ApplicationRecord
 
     event :queue_remote_fetch, after_commit: :publish_remote_fetch_queued do
       transitions(
-        from: :remotely_queued,
         to: :remote_fetch_queued,
         if: :remote_call_id?
       )

@@ -34,6 +34,8 @@ class Api::AccountsController < Api::FilteredController
       :twilio_auth_token,
       :somleng_account_sid,
       :somleng_auth_token,
+      :somleng_api_host,
+      :somleng_api_base_url,
       :metadata_merge_mode,
       :call_flow_logic,
       settings: {},

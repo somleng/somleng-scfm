@@ -96,7 +96,7 @@ search:
 
 ## Consider these keys used:
 ignore_unused:
-- "{activerecord,activemodel}.*"
+- "{activerecord,activemodel,attributes}.*"
 - "{devise,kaminari,doorkeeper,cocoon,flash,simple_form,errors,time,views,helpers}.*"
 # - 'simple_form.{yes,no}'
 # - 'simple_form.{placeholders,hints,labels}.*'

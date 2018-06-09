@@ -12,13 +12,11 @@ km:
   activerecord:
     attributes:
       access_token:
+        permissions: សិទិ្ធ
         token: API key
       account:
         platform_provider_name: Platform provider
-      contact:
-        msisdn: Phone number
       phone_call:
-        msisdn: Phone number
         remote_call_id: Remote call sid
     models:
       access_token:
@@ -30,3 +28,27 @@ km:
       batch_operation/callout_population:
         one: Callout population
         other: Callout populations
+      callout:
+        one: សេចក្ដីប្រកាស
+        other: សេចក្ដីប្រកាស
+      callout_participation:
+        one: សមាជិកចូលរួមក្នុងសេចក្ដីប្រកាស
+        other: សមាជិកចូលរួមក្នុងសេចក្ដីប្រកាស
+      contact:
+        one: សមាជិកទំនាក់ទំនង
+        other: សមាជិកទំនាក់ទំនង
+      phone_call:
+        one: កំណត់ត្រាការហៅចេញ
+        other: កំណត់ត្រាការហៅចេញ
+      remote_phone_call_event:
+        one: ព្រឹត្តិការណ៍ការហៅចេញ
+        other: ព្រឹត្តិការណ៍ការហៅចេញ
+      user:
+        one: អ្នកប្រីប្រាស់
+        other: អ្នកប្រីប្រាស់
+  attributes:
+    call_flow_logic: វិធីសាស្រ្តការហៅចេញ
+    created_at: បង្កើតនៅពេល
+    metadata: ទិន្នន័យបន្ថែម
+    msisdn: លេខទូរស័ព​្ទ
+    status: ស្ថានភាព

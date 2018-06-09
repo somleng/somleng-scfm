@@ -181,7 +181,7 @@ RSpec.describe "Phone Calls" do
       expect(page).to have_content("Status")
       expect(page).to have_content("Callout participation")
       expect(page).to have_content("Callout")
-      expect(page).to have_content("Call flow logic")
+      expect(page).to have_content("Call flow")
       expect(page).to have_content("Remote call sid")
       expect(page).to have_content("Remote status")
       expect(page).to have_content("Remote error message")

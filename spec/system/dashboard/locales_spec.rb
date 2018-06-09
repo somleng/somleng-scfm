@@ -13,7 +13,7 @@ RSpec.describe "Locales" do
       click_link("ខែ្មរ")
     end
 
-    expect(page).to have_content("តេចេញ")
+    expect(page).to have_content("សមាជិកទំនាក់ទំនង")
     user.reload
     expect(user.locale).to eq "km"
   end

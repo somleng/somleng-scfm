@@ -54,8 +54,8 @@ en:
       queue_remote_fetch: Fetch Remote Status
       show: Phone Call %{id}
     remote_phone_call_events:
-      index: Remote Phone Call Events
-      show: Remote Phone Call Event %{id}
+      index: Phone Call Events
+      show: Phone Call Event %{id}
     user_invitations:
       create: Invite User
       edit: Set your password

@@ -12,13 +12,11 @@ en:
   activerecord:
     attributes:
       access_token:
+        permissions: Permissions
         token: API key
       account:
         platform_provider_name: Platform provider
-      contact:
-        msisdn: Phone number
       phone_call:
-        msisdn: Phone number
         remote_call_id: Remote call sid
     models:
       access_token:
@@ -30,3 +28,27 @@ en:
       batch_operation/callout_population:
         one: Callout population
         other: Callout populations
+      callout:
+        one: Callout
+        other: Callouts
+      callout_participation:
+        one: Callout participation
+        other: Callout participations
+      contact:
+        one: Contact
+        other: Contacts
+      phone_call:
+        one: Phone call
+        other: Phone calls
+      remote_phone_call_event:
+        one: Phone call event
+        other: Phone call events
+      user:
+        one: User
+        other: Users
+  attributes:
+    call_flow_logic: Call flow
+    created_at: Created at
+    metadata: Metadata
+    msisdn: Phone number
+    status: Status

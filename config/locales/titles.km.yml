@@ -2,64 +2,64 @@
 km:
   titles:
     access_tokens:
-      edit: Edit API Key
+      edit: កែប្រែ API Key
       index: API Keys
       new: New API Key
     accounts:
       edit: Account Settings
       update: Account Settings
     actions:
-      back: Back
-      cancel: Cancel
+      back: ត្រលប់ក្រោយ
+      cancel: បោះបង់ចោល
       data_confirm: Are you sure?
-      delete: Delete
-      edit: Edit
-      preview: Preview
-      update: Edit
-    app_name: Somleng SCFM
+      delete: លុបចោល
+      edit: កែប្រែ
+      preview: ការឃើញជាមុន
+      update: កែប្រែ
+    app_name: សំឡេង SCFM
     batch_operations:
       index: Batch Operations
-      queue: Start
-      requeue: Restart
+      queue: ចាប់ផ្ដើម
+      requeue: ចាប់ផ្ដើមឡើងវិញ
       show: Batch Operation %{id}
     callout_participations:
-      index: Callout Participations
-      show: Callout Participation %{id}
+      index: សមាជិកចូលរួមក្នុងសេចក្ដីប្រកាស
+      show: សមាជិកចូលរួមក្នុងសេចក្ដីប្រកាស %{id}
     callout_populations:
       create: New Callout Population
-      edit: Edit Callout Population
+      edit: កែប្រែ Callout Population
       new: New Callout Population
       show: Callout Population %{id}
-      update: Edit Callout Population
+      update: កែប្រែ Callout Population
     callouts:
-      create: New Callout
-      edit: Edit Callout
-      index: តេចេញ
-      new: New Callout
-      resume_callout: Resume Callout
-      show: Callout %{id}
-      start_callout: Start Callout
-      stop_callout: Stop Callout
-      update: Edit Callout
+      create: បង្កើត សេចក្ដីប្រកាស
+      edit: កែប្រែ សេចក្ដីប្រកាស
+      index: សេចក្ដីប្រកាស
+      new: បង្កើត សេចក្ដីប្រកាស
+      resume_callout: បន្តរដំណើរការ
+      show: សេចក្ដីប្រកាស %{id}
+      start_callout: ចាប់ផ្ដើម
+      stop_callout: បញ្ឈប់
+      update: កែប្រែ សេចក្ដីប្រកាស
     contacts:
-      create: New Contact
-      edit: Edit Contact
-      index: ទំនាក់ទំនង
-      new: New Contact
-      show: Contact %{id}
-      update: Edit Contact
+      create: បង្កើត សមាជិកទំនាក់ទំនង
+      edit: កែប្រែ សមាជិកទំនាក់ទំនង
+      index: សមាជិកទំនាក់ទំនង
+      new: បង្កើត សមាជិកទំនាក់ទំនង
+      show: សមាជិកទំនាក់ទំនង %{id}
+      update: កែប្រែ សមាជិកទំនាក់ទំនង
     phone_calls:
-      index: Phone Calls
+      index: កំណត់ត្រាការហៅចេញ
       queue: Send
       queue_remote_fetch: Fetch Remote Status
-      show: Phone Call %{id}
+      show: កំណត់ត្រាការហៅចេញ %{id}
     remote_phone_call_events:
-      index: Remote Phone Call Events
-      show: Remote Phone Call Event %{id}
+      index: ព្រឹត្តិការណ៍ការហៅចេញ
+      show: ព្រឹត្តិការណ៍ការហៅចេញ %{id}
     user_invitations:
-      create: Invite User
+      create: អញ្ជើញ អ្នកប្រីប្រាស
       edit: Set your password
-      new: Invite User
+      new: អញ្ជើញ អ្នកប្រីប្រាស
       update: Set your password
     user_passwords:
       create: Forgot your password?
@@ -74,7 +74,7 @@ km:
       destroy: Sign Out
       new: Sign In
     users:
-      edit: Edit User
-      index: Users
-      show: User %{id}
-      update: Edit User
+      edit: កែប្រែ អ្នកប្រីប្រាស់
+      index: អ្នកប្រីប្រាស់
+      show: អ្នកប្រីប្រាស់ %{id}
+      update: កែប្រែ អ្នកប្រីប្រាស់

@@ -4,8 +4,8 @@ km:
     submit:
       batch_operation_callout_population:
         create: Create Callout Population
-      create: Create %{model}
-      update: Save
+      create: បង្កើត %{model}
+      update: រក្សាទុក
       user:
         create: Send Invitation
   simple_form:

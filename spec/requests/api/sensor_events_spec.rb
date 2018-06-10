@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Sensor Events" do
-  let(:access_token) { create(:access_token) }
+  let(:access_token) { create_access_token }
   let(:account) { access_token.resource_owner }
 
   it "can list all sensor events" do
@@ -98,5 +98,13 @@ RSpec.describe "Sensor Events" do
     sensor_event = sensor.sensor_events.find(parsed_body.fetch("id"))
     expect(sensor_event.payload).to eq(request_body.fetch(:payload))
     expect(sensor_event.sensor).to eq(sensor)
+  end
+
+  def create_access_token(**options)
+    create(
+      :access_token,
+      permissions: %i[sensor_events_read sensor_events_write],
+      **options
+    )
   end
 end

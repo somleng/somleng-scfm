@@ -69,6 +69,10 @@ module SystemSpecHelpers
   def have_content_tag_for(model, model_name: nil)
     have_selector("##{model_name || model.class.to_s.underscore.tr('/', '_')}_#{model.id}")
   end
+
+  def have_sortable_column(column)
+    have_css("a.sortable##{column}")
+  end
 end
 
 RSpec.configure do |config|

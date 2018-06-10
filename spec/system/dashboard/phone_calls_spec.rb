@@ -9,6 +9,8 @@ RSpec.describe "Phone Calls" do
     sign_in(user)
     visit(dashboard_phone_calls_path)
 
+    expect(page).to have_title("Phone Calls")
+
     within("#button_toolbar") do
       expect(page).to have_link_to_action(:index, key: :phone_calls)
       expect(page).not_to have_link_to_action(:back)
@@ -22,10 +24,10 @@ RSpec.describe "Phone Calls" do
         phone_call.id,
         href: dashboard_phone_call_path(phone_call)
       )
-      expect(page).to have_content("Phone number")
-      expect(page).to have_content("Direction")
-      expect(page).to have_content("Status")
-      expect(page).to have_content("Created at")
+
+      expect(page).to have_sortable_column("msisdn")
+      expect(page).to have_sortable_column("status")
+      expect(page).to have_sortable_column("created_at")
     end
   end
 
@@ -179,7 +181,7 @@ RSpec.describe "Phone Calls" do
       expect(page).to have_content("Status")
       expect(page).to have_content("Callout participation")
       expect(page).to have_content("Callout")
-      expect(page).to have_content("Call flow logic")
+      expect(page).to have_content("Call flow")
       expect(page).to have_content("Remote call sid")
       expect(page).to have_content("Remote status")
       expect(page).to have_content("Remote error message")
@@ -259,6 +261,5 @@ RSpec.describe "Phone Calls" do
 
     expect(phone_call.reload).to be_remote_fetch_queued
     expect(page).to have_text("Event was successfully created.")
-    expect(page).not_to have_link_to_action(:queue_remote_fetch, key: :phone_calls)
   end
 end

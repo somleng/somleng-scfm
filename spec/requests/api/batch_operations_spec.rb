@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Batch Operations" do
-  let(:access_token) { create(:access_token) }
+  let(:access_token) { create_access_token }
   let(:account) { access_token.resource_owner }
 
   it "can list all batch operations" do
@@ -209,5 +209,12 @@ RSpec.describe "Batch Operations" do
         "skip_validate_preview_presence" => "1"
       }.merge(parameters)
     }.merge(options)
+  end
+
+  def create_access_token(**options)
+    create(
+      :access_token,
+      permissions: %i[batch_operations_read batch_operations_write], **options
+    )
   end
 end

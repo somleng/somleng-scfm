@@ -13,6 +13,8 @@ class Dashboard::AccountsController < Dashboard::AdminController
       :twilio_auth_token,
       :somleng_account_sid,
       :somleng_auth_token,
+      :somleng_api_host,
+      :somleng_api_base_url,
       settings_fields_attributes: KEY_VALUE_FIELD_ATTRIBUTES
     )
   end

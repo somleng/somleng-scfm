@@ -1,23 +1,28 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "User Events" do
-  include SomlengScfm::SpecHelpers::RequestHelpers
+  it "can invite a user" do
+    account = create(:account)
+    access_token = create_access_token(resource_owner: account)
+    user = create(:user, account: account)
 
-  describe "POST '/user/:user_id/user_events'" do
-    let(:eventable) { create(:user) }
+    post(
+      api_user_user_events_path(user),
+      params: { event: "invite" },
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-    let(:account_traits) { {} }
-    let(:account_attributes) { {} }
-    let(:account) { create(:account, *account_traits.keys, account_attributes) }
-    let(:access_token_model) { create(:access_token, :resource_owner => account) }
-    let(:eventable_attributes) { { :account => account } }
+    expect(response.code).to eq("201")
+    expect(response.headers["Location"]).to eq(api_user_path(user))
+    user.reload
+    expect(user.invitation_sent_at).to be_present
+  end
 
-    let(:eventable) { create(:user, eventable_attributes) }
-    let(:url) { api_user_user_events_path(eventable) }
-
-    it_behaves_like "api_resource_event", :assert_status => false do
-      let(:eventable_path) { api_user_path(eventable) }
-      let(:event) { "invite" }
-    end
+  def create_access_token(**options)
+    create(
+      :access_token,
+      permissions: %i[users_write],
+      **options
+    )
   end
 end

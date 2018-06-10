@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Sensor Rules" do
-  let(:access_token) { create(:access_token) }
+  let(:access_token) { create_access_token }
   let(:account) { access_token.resource_owner }
 
   it "can list sensor rules" do
@@ -139,5 +139,13 @@ RSpec.describe "Sensor Rules" do
     )
 
     expect(response.code).to eq("422")
+  end
+
+  def create_access_token(**options)
+    create(
+      :access_token,
+      permissions: %i[sensor_rules_read sensor_rules_write],
+      **options
+    )
   end
 end

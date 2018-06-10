@@ -8,6 +8,7 @@ class Account < ApplicationRecord
   include HasCallFlowLogic
 
   store_accessor :settings
+
   accepts_nested_key_value_fields_for :settings
 
   bitmask :permissions,
@@ -82,6 +83,10 @@ class Account < ApplicationRecord
       api_host: platform_configuration(:api_host),
       api_base_url: platform_configuration(:api_base_url)
     )
+  end
+
+  def write_batch_operation_access_token
+    access_tokens.with_permissions(:batch_operations_write).last
   end
 
   private

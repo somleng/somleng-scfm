@@ -9,6 +9,8 @@ RSpec.describe "Batch Operations" do
     sign_in(user)
     visit(dashboard_batch_operations_path)
 
+    expect(page).to have_title("Batch Operations")
+
     within("#button_toolbar") do
       expect(page).to have_link_to_action(:index, key: :batch_operations)
       expect(page).not_to have_link_to_action(
@@ -30,7 +32,9 @@ RSpec.describe "Batch Operations" do
         batch_operation.id,
         href: dashboard_batch_operation_path(batch_operation)
       )
-      expect(page).to have_content("Status")
+      have_sortable_column("type")
+      have_sortable_column("status")
+      have_sortable_column("created_at")
       expect(page).to have_content("Preview")
     end
   end
@@ -41,6 +45,8 @@ RSpec.describe "Batch Operations" do
 
     sign_in(user)
     visit(dashboard_batch_operation_path(batch_operation))
+
+    expect(page).to have_title("Batch Operation #{batch_operation.id}")
 
     within("#button_toolbar") do
       expect(page).not_to have_link_to_action(:edit)

@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe AccessToken do
   let(:factory) { :access_token }
@@ -17,7 +17,7 @@ RSpec.describe AccessToken do
     let(:creator) { create(:account) }
     let(:destroyer_traits) { {} }
     let(:destroyer) { create(:account, *destroyer_traits.keys) }
-    let(:factory_attributes) { {:destroyer => destroyer, :created_by => creator} }
+    let(:factory_attributes) { { destroyer: destroyer, created_by: creator } }
     subject { create(factory, factory_attributes) }
 
     def setup_scenario
@@ -40,7 +40,7 @@ RSpec.describe AccessToken do
     end
 
     context "destroyer is super admin" do
-      let(:destroyer_traits) { super().merge(:super_admin => nil) }
+      let(:destroyer_traits) { super().merge(super_admin: nil) }
       it { assert_destroy! }
     end
 
@@ -61,10 +61,21 @@ RSpec.describe AccessToken do
 
   describe "#to_json" do
     let(:parsed_json) { JSON.parse(subject.to_json) }
-    let(:asserted_keys) { ["id", "token", "created_at", "updated_at", "metadata"] }
+    let(:asserted_keys) { %w[id token created_at updated_at metadata] }
 
     it {
       expect(parsed_json.keys).to match_array(asserted_keys)
     }
+  end
+
+  describe "#permissions_text" do
+    it "displays all the permissions as a comma separated string" do
+      access_token = build_stubbed(
+        :access_token,
+        permissions: %i[users_read users_write]
+      )
+
+      expect(access_token.permissions_text).to eq("Read users, Write users")
+    end
   end
 end

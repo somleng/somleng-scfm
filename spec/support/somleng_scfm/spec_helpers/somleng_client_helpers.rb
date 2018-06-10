@@ -37,8 +37,8 @@ module SomlengScfm::SpecHelpers::SomlengClientHelpers
 
   def asserted_remote_response
     @asserted_remote_response ||= {
-      :status => asserted_remote_response_status,
-      :body => asserted_remote_response_body
+      status: asserted_remote_response_status,
+      body: asserted_remote_response_body
     }
   end
 

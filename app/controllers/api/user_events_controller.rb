@@ -16,4 +16,8 @@ class Api::UserEventsController < Api::ResourceEventsController
   def event_class
     Event::User
   end
+
+  def access_token_write_permissions
+    [:users_write]
+  end
 end

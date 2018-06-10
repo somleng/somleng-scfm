@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  AVAILABLE_LOCALES = %w[en km].freeze
+
   include MetadataHelpers
 
   store_accessor :metadata, :location_ids
@@ -9,6 +11,7 @@ class User < ApplicationRecord
          :recoverable, :rememberable, :trackable, :validatable, :async
 
   belongs_to :account
+  validates_inclusion_of :locale, in: AVAILABLE_LOCALES
 
   bitmask :roles, as: %i[member admin], null: false
 

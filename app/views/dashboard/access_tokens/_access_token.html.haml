@@ -1,10 +1,12 @@
 = content_tag_for(:tr, access_token) do
   %td
-    = access_token_counter + 1
+    = link_to(access_token.id, dashboard_access_token_path(access_token))
   %td
     %code
       = access_token.token
   %td
-    = access_token.created_at
+    %code
+      = access_token.permissions_text
   %td
-    = link_to(translate(:"titles.actions.delete"), dashboard_access_token_path(access_token), class: "btn btn-outline-danger", method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+    %code
+      = access_token.created_at

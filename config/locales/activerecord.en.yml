@@ -12,15 +12,13 @@ en:
   activerecord:
     attributes:
       access_token:
+        permissions: Permissions
         token: API key
       account:
         platform_provider_name: Platform provider
       callout:
         voice: Voice file
-      contact:
-        msisdn: Phone number
       phone_call:
-        msisdn: Phone number
         remote_call_id: Remote call sid
       sensor:
         commune_ids: Alert communes
@@ -41,3 +39,36 @@ en:
       batch_operation/callout_population:
         one: Callout population
         other: Callout populations
+      batch_operation/phone_call_create:
+        one: Create phone calls
+        other: Create phone calls
+      batch_operation/phone_call_queue:
+        one: Queue phone calls
+        other: Queue phone calls
+      batch_operation/phone_call_queue_remote_fetch:
+        one: Fetch phone call status
+        other: Fetch phone call status
+      callout:
+        one: Callout
+        other: Callouts
+      callout_participation:
+        one: Callout participation
+        other: Callout participations
+      contact:
+        one: Contact
+        other: Contacts
+      phone_call:
+        one: Phone call
+        other: Phone calls
+      remote_phone_call_event:
+        one: Phone call event
+        other: Phone call events
+      user:
+        one: User
+        other: Users
+  attributes:
+    call_flow_logic: Call flow
+    created_at: Created at
+    metadata: Metadata
+    msisdn: Phone number
+    status: Status

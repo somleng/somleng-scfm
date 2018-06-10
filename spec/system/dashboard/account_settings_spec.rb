@@ -7,6 +7,8 @@ RSpec.describe "Account Settings" do
 
     visit(edit_dashboard_account_path)
 
+    expect(page).to have_title("Account Settings")
+
     within("#button_toolbar") do
       expect(page).to have_link(
         I18n.translate!(:"titles.accounts.edit"),

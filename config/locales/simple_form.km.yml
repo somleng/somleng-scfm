@@ -1,0 +1,55 @@
+---
+km:
+  helpers:
+    submit:
+      batch_operation_callout_population:
+        create: Create Callout Population
+      create: បង្កើត %{model}
+      update: រក្សាទុក
+      user:
+        create: Send Invitation
+  simple_form:
+    error_notification:
+      default_message: 'Please review the problems below:'
+    labels:
+      account:
+        call_flow_logic: Default call flow logic
+      sensor:
+        external_id: External id
+    options:
+      access_token:
+        permissions:
+          access_tokens_read: Read access tokens
+          access_tokens_write: Write access tokens
+          accounts_read: Read accounts
+          accounts_write: Write accounts
+          batch_operations_read: Read batch operations
+          batch_operations_write: Write batch operations
+          callout_participations_read: Read callout participations
+          callout_participations_write: Write callout participations
+          callouts_read: Read callouts
+          callouts_write: Write callouts
+          contacts_read: Read contacts
+          contacts_write: Write contacts
+          phone_calls_read: Read phone calls
+          phone_calls_write: Write phone calls
+          remote_phone_call_events_read: Read remote phone call events
+          remote_phone_call_events_write: Write remote phone call events
+          users_read: Read users
+          users_write: Write users
+      account:
+        platform_provider_name:
+          somleng: Somleng
+          twilio: Twilio
+      defaults:
+        call_flow_logic:
+          CallFlowLogic::HelloWorld: Hello World
+    prompts:
+      defaults:
+        commune_id: Select a commune
+        district_id: Select a district
+        province_id: Select a province
+    required:
+      mark: "*"
+      text: required
+    'yes': 'Yes'

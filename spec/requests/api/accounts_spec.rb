@@ -2,7 +2,7 @@ require "rails_helper"
 
 RSpec.describe "Accounts" do
   let(:account) { create(:account, :super_admin) }
-  let(:access_token) { create(:access_token, resource_owner: account) }
+  let(:access_token) { create_access_token(resource_owner: account) }
 
   it "can list all accounts" do
     filtered_account = create(
@@ -146,5 +146,9 @@ RSpec.describe "Accounts" do
     )
 
     expect(response.code).to eq("422")
+  end
+
+  def create_access_token(**options)
+    create(:access_token, permissions: %i[accounts_read accounts_write], **options)
   end
 end

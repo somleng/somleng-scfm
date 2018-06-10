@@ -1,43 +1,49 @@
 require "rails_helper"
 
 RSpec.describe "Account" do
-  include SomlengScfm::SpecHelpers::RequestHelpers
+  it "can fetch the account" do
+    account = create(:account)
+    access_token = create_access_token(resource_owner: account)
 
-  let(:body) { {} }
-  let(:factory_attributes) { {} }
-  let(:factory_traits) { {} }
-  let(:account) { create(:account, *factory_traits.keys, factory_attributes) }
-  let(:access_token_model) { create(:access_token, resource_owner: account) }
+    get(
+      api_current_account_path,
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-  def setup_scenario
-    super
-    do_request(method, url, body)
+    expect(response.code).to eq("200")
   end
 
-  describe "'/api/account'" do
-    let(:url) { api_current_account_path }
+  it "can update the account" do
+    account = create(
+      :account,
+      metadata: {
+        "bar" => "baz"
+      }
+    )
 
-    describe "GET" do
-      let(:method) { :get }
-      it_behaves_like("authorization")
+    request_body = {
+      metadata: {
+        "foo" => "bar"
+      },
+      metadata_merge_mode: "replace"
+    }
 
-      def assert_show!
-        expect(response.code).to eq("200")
-      end
+    access_token = create_access_token(resource_owner: account)
 
-      it { assert_show! }
-    end
+    patch(
+      api_current_account_path,
+      params: request_body,
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-    describe "PATCH" do
-      let(:method) { :patch }
-      let(:metadata) { { "foo" => "bar" } }
-      let(:factory_attributes) { super().merge("metadata" => { "bar" => "baz" }) }
+    expect(response.code).to eq("204")
+    expect(account.reload.metadata).to eq(request_body.fetch(:metadata))
+  end
 
-      def assert_update!
-        expect(response.code).to eq("204")
-      end
-
-      it { assert_update! }
-    end
+  def create_access_token(**options)
+    create(
+      :access_token,
+      permissions: %i[accounts_read accounts_write], **options
+    )
   end
 end

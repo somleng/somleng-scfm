@@ -3,8 +3,23 @@
     %tr
       %th #
       - columns.each do |column|
-        %th
-          = resource_class.human_attribute_name(column.to_sym)
+        %th.th-sortable
+          - if column.in?(Array(local_assigns[:unsortable_columns]))
+            .text
+              = resource_class.human_attribute_name(column.to_sym)
+          - else
+            - is_current_column = (column.to_s == sort_column)
+            - is_current_asc = (sort_direction == "asc")
+            - new_direction = (is_current_column && is_current_asc) ? "desc" : "asc"
+
+            = link_to url_for(action: "index", sort_column: column, sort_direction: new_direction), class: "sortable", id: column do
+              = resource_class.human_attribute_name(column.to_sym)
+            - if is_current_column
+              %span.sortable-icons
+                - if is_current_asc
+                  = fa_icon "sort-up"
+                - else
+                  = fa_icon "sort-down"
   %tbody
     - if local_assigns[:partial]
       = render(partial: partial, collection: resources)

@@ -2,12 +2,14 @@ require "rails_helper"
 
 RSpec.describe "Callouts", :aggregate_failures do
   it "can list callouts" do
-    user = create(:user)
-    callout = create(:callout, :initialized, account: user.account)
+    user          = create(:user)
+    callout       = create(:callout, :initialized, account: user.account)
     other_callout = create(:callout)
 
     sign_in(user)
     visit dashboard_callouts_path
+
+    expect(page).to have_title("Callouts")
 
     within("#button_toolbar") do
       expect(page).to have_link_to_action(
@@ -24,7 +26,8 @@ RSpec.describe "Callouts", :aggregate_failures do
         callout.id,
         href: dashboard_callout_path(callout)
       )
-      expect(page).to have_content("Status")
+      expect(page).to have_sortable_column("status")
+      expect(page).to have_sortable_column("created_at")
       expect(page).to have_content("Initialized")
       expect(page).to have_content(callout.province_name_en)
       expect(page).to have_content(callout.province_name_km)
@@ -36,6 +39,8 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     sign_in(user)
     visit new_dashboard_callout_path
+
+    expect(page).to have_title("New Callout")
 
     within("#button_toolbar") do
       expect(page).to have_link(
@@ -65,6 +70,8 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     sign_in(user)
     visit edit_dashboard_callout_path(callout)
+
+    expect(page).to have_title("Edit Callout")
 
     within("#button_toolbar") do
       expect(page).to have_link(
@@ -111,6 +118,8 @@ RSpec.describe "Callouts", :aggregate_failures do
     sign_in(user)
     visit dashboard_callout_path(callout)
 
+    expect(page).to have_title("Callout #{callout.id}")
+
     within("#button_toolbar") do
       expect(page).to have_link_to_action(
         :edit,
@@ -135,7 +144,7 @@ RSpec.describe "Callouts", :aggregate_failures do
       expect(page).to have_content("Status")
       expect(page).to have_content("Initialized")
       expect(page).to have_content("Created at")
-      expect(page).to have_content("Call flow logic")
+      expect(page).to have_content("Call flow")
       expect(page).to have_content("CallFlowLogic::HelloWorld")
     end
   end

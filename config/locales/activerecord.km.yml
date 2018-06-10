@@ -1,0 +1,74 @@
+---
+km:
+  activemodel:
+    attributes:
+      key_value_field:
+        key: Key
+        value: Value
+    models:
+      event/base:
+        one: Event
+        other: Events
+  activerecord:
+    attributes:
+      access_token:
+        permissions: សិទិ្ធ
+        token: API key
+      account:
+        platform_provider_name: Platform provider
+      callout:
+        voice: Voice file
+      phone_call:
+        remote_call_id: Remote call sid
+      sensor:
+        commune_ids: Alert communes
+        external_id: External id
+        map_link: Map
+      sensor_rule:
+        alert_file: Alert file
+        level: Level
+      user:
+        location_ids: Provinces
+    models:
+      access_token:
+        one: API key
+        other: API keys
+      batch_operation/base:
+        one: Batch operation
+        other: Batch operations
+      batch_operation/callout_population:
+        one: Callout population
+        other: Callout populations
+      batch_operation/phone_call_create:
+        one: Create phone calls
+        other: Create phone calls
+      batch_operation/phone_call_queue:
+        one: Queue phone calls
+        other: Queue phone calls
+      batch_operation/phone_call_queue_remote_fetch:
+        one: Fetch phone call status
+        other: Fetch phone call status
+      callout:
+        one: សេចក្ដីប្រកាស
+        other: សេចក្ដីប្រកាស
+      callout_participation:
+        one: សមាជិកចូលរួមក្នុងសេចក្ដីប្រកាស
+        other: សមាជិកចូលរួមក្នុងសេចក្ដីប្រកាស
+      contact:
+        one: សមាជិកទំនាក់ទំនង
+        other: សមាជិកទំនាក់ទំនង
+      phone_call:
+        one: កំណត់ត្រាការហៅចេញ
+        other: កំណត់ត្រាការហៅចេញ
+      remote_phone_call_event:
+        one: ព្រឹត្តិការណ៍ការហៅចេញ
+        other: ព្រឹត្តិការណ៍ការហៅចេញ
+      user:
+        one: អ្នកប្រីប្រាស់
+        other: អ្នកប្រីប្រាស់
+  attributes:
+    call_flow_logic: វិធីសាស្រ្តការហៅចេញ
+    created_at: បង្កើតនៅពេល
+    metadata: ទិន្នន័យបន្ថែម
+    msisdn: លេខទូរស័ព​្ទ
+    status: ស្ថានភាព

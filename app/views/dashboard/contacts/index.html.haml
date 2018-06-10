@@ -1,7 +1,6 @@
 - content_for(:button_toolbar) do
   = render("shared/disabled_button", url: dashboard_contacts_path, button_text: translate(:"titles.contacts.index"), count: resources.count)
-  .btn-group.mr-2{ role: 'group' }
-    = link_to(translate(:"titles.contacts.new"), new_dashboard_contact_path, class: 'btn btn-outline-success')
+  = link_to(translate(:"titles.contacts.new"), new_dashboard_contact_path, class: 'btn btn-outline-success')
 
 - content_for(:resources_table) do
   = render("shared/resources_table", resource_class: Contact, columns: [:msisdn, :created_at])

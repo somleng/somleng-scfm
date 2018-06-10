@@ -1,0 +1,18 @@
+---
+km:
+  helpers:
+    page_entries_info:
+      more_pages:
+        display_entries: កំពុងបង្ហាញ %{entry_name} <b>%{first}&nbsp;-&nbsp;%{last}</b> ក្នុងចំនួនសរុប <b>%{total}</b>
+      one_page:
+        display_entries:
+          one: កំពុងបង្ហាញ %{entry_name} មានចំនួន <b>1</b>
+          other: កំពុងបង្ហាញ %{entry_name} <b>ចំនួនសរុបមាន %{count}</b>
+          zero: គ្មាន %{entry_name}
+  views:
+    pagination:
+      first: "&laquo;"
+      last: "&raquo;"
+      next: "&rsaquo;"
+      previous: "&lsaquo;"
+      truncate: "&hellip;"

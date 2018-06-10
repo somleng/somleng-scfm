@@ -35,6 +35,19 @@ RSpec.describe Account do
     it { expect(subject.settings).to eq({}) }
   end
 
+  describe "#write_batch_operation_access_token" do
+    it "returns an access token which can write batch operations" do
+      account = create(:account)
+      access_token = create(
+        :access_token,
+        resource_owner: account,
+        permissions: %i[batch_operations_write]
+      )
+
+      expect(account.write_batch_operation_access_token).to eq(access_token)
+    end
+  end
+
   describe ".by_platform_account_sid(account_sid)" do
     let(:results) { described_class.by_platform_account_sid(account_sid) }
     let(:twilio_account_sid) { generate(:twilio_account_sid) }

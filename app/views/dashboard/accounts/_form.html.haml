@@ -4,6 +4,8 @@
       = f.input :platform_provider_name, collection: Account::PLATFORM_PROVIDERS.map(&:to_sym), as: :radio_buttons
       = f.input :somleng_account_sid
       = f.input :somleng_auth_token
+      = f.input :somleng_api_host
+      = f.input :somleng_api_base_url
       = f.input :twilio_account_sid
       = f.input :twilio_auth_token
       = f.input :call_flow_logic, collection: CallFlowLogic::Base.registered.map(&:to_sym), as: :radio_buttons

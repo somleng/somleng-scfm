@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_03_015036) do
+ActiveRecord::Schema.define(version: 2018_06_09_093900) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,6 +27,8 @@ ActiveRecord::Schema.define(version: 2018_06_03_015036) do
     t.datetime "updated_at", null: false
     t.string "call_flow_logic"
     t.string "platform_provider_name"
+    t.string "somleng_api_host"
+    t.string "somleng_api_base_url"
     t.index ["somleng_account_sid"], name: "index_accounts_on_somleng_account_sid", unique: true
     t.index ["twilio_account_sid"], name: "index_accounts_on_twilio_account_sid", unique: true
   end
@@ -128,6 +130,7 @@ ActiveRecord::Schema.define(version: 2018_06_03_015036) do
     t.datetime "updated_at", null: false
     t.string "scopes"
     t.string "previous_refresh_token", default: "", null: false
+    t.bigint "permissions", default: 0, null: false
     t.index ["application_id"], name: "index_oauth_access_tokens_on_application_id"
     t.index ["created_by_id"], name: "index_oauth_access_tokens_on_created_by_id"
     t.index ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true
@@ -245,6 +248,7 @@ ActiveRecord::Schema.define(version: 2018_06_03_015036) do
     t.integer "invitation_limit"
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
+    t.string "locale", default: "en", null: false
     t.integer "roles", default: 1, null: false
     t.index ["account_id"], name: "index_users_on_account_id"
     t.index ["email"], name: "index_users_on_email", unique: true

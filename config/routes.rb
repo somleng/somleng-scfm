@@ -14,7 +14,7 @@ Rails.application.routes.draw do
 
   namespace "dashboard" do
     root to: "callouts#index"
-    resources :access_tokens, only: %i[index create destroy]
+    resources :access_tokens
     resource :account, only: %i[edit update]
 
     namespace :batch_operation do
@@ -49,6 +49,8 @@ Rails.application.routes.draw do
     resources :callout_participations, only: %i[index show destroy] do
       resources :phone_calls, only: :index
     end
+
+    resources :locales, only: :update
 
     resources :phone_calls, only: %i[index show destroy] do
       resources :phone_call_events, only: :create

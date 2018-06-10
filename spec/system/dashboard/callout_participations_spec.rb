@@ -9,6 +9,8 @@ RSpec.describe "Callout Participations" do
     sign_in(user)
     visit(dashboard_callout_participations_path)
 
+    expect(page).to have_title("Callout Participations")
+
     within("#button_toolbar") do
       expect(page).to have_link_to_action(:index, key: :callout_participations)
       expect(page).not_to have_link_to_action(:back)
@@ -22,7 +24,7 @@ RSpec.describe "Callout Participations" do
         callout_participation.id,
         href: dashboard_callout_participation_path(callout_participation)
       )
-      expect(page).to have_content("Created at")
+      expect(page).to have_sortable_column("created_at")
     end
   end
 
@@ -33,6 +35,8 @@ RSpec.describe "Callout Participations" do
 
     sign_in(user)
     visit(dashboard_callout_callout_participations_path(callout_participation.callout))
+
+    expect(page).to have_title("Callout Participations")
 
     within("#button_toolbar") do
       expect(page).to have_link_to_action(
@@ -63,6 +67,8 @@ RSpec.describe "Callout Participations" do
     sign_in(user)
     visit(dashboard_batch_operation_callout_participations_path(callout_population))
 
+    expect(page).to have_title("Callout Participations")
+
     within("#button_toolbar") do
       expect(page).to have_link_to_action(
         :back, href: dashboard_batch_operation_path(callout_population)
@@ -82,6 +88,8 @@ RSpec.describe "Callout Participations" do
 
     sign_in(user)
     visit(dashboard_contact_callout_participations_path(callout_participation.contact))
+
+    expect(page).to have_title("Callout Participations")
 
     within("#button_toolbar") do
       expect(page).to have_link_to_action(
@@ -106,6 +114,8 @@ RSpec.describe "Callout Participations" do
 
     sign_in(user)
     visit(dashboard_callout_participation_path(callout_participation))
+
+    expect(page).to have_title("Callout Participation #{callout_participation.id}")
 
     within("#button_toolbar") do
       expect(page).to have_link_to_action(

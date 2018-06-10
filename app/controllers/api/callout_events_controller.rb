@@ -16,4 +16,8 @@ class Api::CalloutEventsController < Api::ResourceEventsController
   def event_class
     Event::Callout
   end
+
+  def access_token_write_permissions
+    [:callouts_write]
+  end
 end

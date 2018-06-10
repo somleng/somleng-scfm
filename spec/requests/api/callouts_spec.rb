@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe "Callouts" do
   include SomlengScfm::SpecHelpers::RequestHelpers
@@ -6,8 +6,8 @@ RSpec.describe "Callouts" do
   let(:account_traits) { {} }
   let(:account_attributes) { {} }
   let(:account) { create(:account, *account_traits.keys, account_attributes) }
-  let(:access_token_model) { create(:access_token, :resource_owner => account) }
-  let(:factory_attributes) { { :account => account } }
+  let(:access_token_model) { create_access_token(resource_owner: account) }
+  let(:factory_attributes) { { account: account } }
 
   let(:body) { {} }
   let(:metadata) { { "foo" => "bar", "commune_ids" => ["040202"] } }
@@ -36,7 +36,7 @@ RSpec.describe "Callouts" do
     describe "POST" do
       let(:method) { :post }
       let(:call_flow_logic) { CallFlowLogic::HelloWorld.to_s }
-      let(:body) { { voice: fixture_file_upload("files/test.mp3", 'audio/mp3'), :metadata => metadata, :call_flow_logic => call_flow_logic } }
+      let(:body) { { voice: fixture_file_upload("files/test.mp3", "audio/mp3"), metadata: metadata, call_flow_logic: call_flow_logic } }
       let(:asserted_created_callout) { Callout.last }
       let(:parsed_response) { JSON.parse(response.body) }
 
@@ -67,13 +67,13 @@ RSpec.describe "Callouts" do
 
     describe "PATCH" do
       let(:method) { :patch }
-      let(:factory_attributes) { super().merge("metadata" => {"bar" => "baz" }) }
-      let(:body) {
+      let(:factory_attributes) { super().merge("metadata" => { "bar" => "baz" }) }
+      let(:body) do
         {
-          :metadata => metadata,
-          :metadata_merge_mode => "replace"
+          metadata: metadata,
+          metadata_merge_mode: "replace"
         }
-      }
+      end
 
       def assert_update!
         expect(response.code).to eq("204")
@@ -96,7 +96,7 @@ RSpec.describe "Callouts" do
       end
 
       context "invalid request" do
-        let(:callout_participation) { create(:callout_participation, :callout => callout) }
+        let(:callout_participation) { create(:callout_participation, callout: callout) }
 
         def setup_scenario
           callout_participation
@@ -116,7 +116,7 @@ RSpec.describe "Callouts" do
     let(:method) { :get }
 
     def setup_scenario
-      create(:callout, :account => account)
+      create(:callout, account: account)
       callout
       super
     end
@@ -126,15 +126,23 @@ RSpec.describe "Callouts" do
     end
 
     describe "GET '/api/contacts/:contact_id/callouts'" do
-      let(:contact) { create(:contact, :account => account) }
+      let(:contact) { create(:contact, account: account) }
 
       def setup_scenario
-        create(:callout_participation, :contact => contact, :callout => callout)
+        create(:callout_participation, contact: contact, callout: callout)
         super
       end
 
       let(:url) { api_contact_callouts_path(contact) }
       it { assert_filtered! }
     end
+  end
+
+  def create_access_token(**options)
+    create(
+      :access_token,
+      permissions: %i[callouts_read callouts_write],
+      **options
+    )
   end
 end

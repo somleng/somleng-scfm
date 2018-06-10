@@ -1,0 +1,91 @@
+---
+km:
+  titles:
+    access_tokens:
+      edit: កែប្រែ API Key
+      index: API Keys
+      new: New API Key
+    accounts:
+      edit: Account Settings
+      update: Account Settings
+    actions:
+      back: ត្រលប់ក្រោយ
+      cancel: បោះបង់ចោល
+      data_confirm: Are you sure?
+      delete: លុបចោល
+      edit: កែប្រែ
+      preview: ការឃើញជាមុន
+      update: កែប្រែ
+    admin_management: Admin
+    app_name: EWS 1294
+    batch_operations:
+      index: Batch Operations
+      queue: ចាប់ផ្ដើម
+      requeue: ចាប់ផ្ដើមឡើងវិញ
+      show: Batch Operation %{id}
+    callout_participations:
+      index: សមាជិកចូលរួមក្នុងសេចក្ដីប្រកាស
+      show: សមាជិកចូលរួមក្នុងសេចក្ដីប្រកាស %{id}
+    callout_populations:
+      create: New Callout Population
+      edit: កែប្រែ Callout Population
+      new: New Callout Population
+      show: Callout Population %{id}
+      update: កែប្រែ Callout Population
+    callouts:
+      create: បង្កើត សេចក្ដីប្រកាស
+      edit: កែប្រែ សេចក្ដីប្រកាស
+      index: សេចក្ដីប្រកាស
+      new: បង្កើត សេចក្ដីប្រកាស
+      resume_callout: បន្តរដំណើរការ
+      show: សេចក្ដីប្រកាស %{id}
+      start_callout: ចាប់ផ្ដើម
+      stop_callout: បញ្ឈប់
+      update: កែប្រែ សេចក្ដីប្រកាស
+    contacts:
+      create: បង្កើត សមាជិកទំនាក់ទំនង
+      edit: កែប្រែ សមាជិកទំនាក់ទំនង
+      index: សមាជិកទំនាក់ទំនង
+      new: បង្កើត សមាជិកទំនាក់ទំនង
+      show: សមាជិកទំនាក់ទំនង %{id}
+      update: កែប្រែ សមាជិកទំនាក់ទំនង
+    phone_calls:
+      index: កំណត់ត្រាការហៅចេញ
+      queue: Send
+      queue_remote_fetch: Fetch Remote Status
+      show: កំណត់ត្រាការហៅចេញ %{id}
+    remote_phone_call_events:
+      index: ព្រឹត្តិការណ៍ការហៅចេញ
+      show: ព្រឹត្តិការណ៍ការហៅចេញ %{id}
+    sensor_events:
+      index: Sensor Events
+    sensor_rules:
+      edit: Edit Sensor Rule
+      index: Sensor Rules
+      new: New Sensor Rule
+    sensors:
+      edit: Edit Sensor
+      index: Sensors
+      new: New Sensor
+    user_invitations:
+      create: អញ្ជើញ អ្នកប្រីប្រាស
+      edit: Set your password
+      new: អញ្ជើញ អ្នកប្រីប្រាស
+      update: Set your password
+    user_passwords:
+      create: Forgot your password?
+      edit: Change Password
+      new: Forgot your password?
+      update: Save
+    user_registrations:
+      edit: Change Password
+      update: Save
+    user_sessions:
+      create: Sign In
+      destroy: Sign Out
+      new: Sign In
+    users:
+      edit: កែប្រែ អ្នកប្រីប្រាស់
+      index: អ្នកប្រីប្រាស់
+      show: អ្នកប្រីប្រាស់ %{id}
+      update: កែប្រែ អ្នកប្រីប្រាស់

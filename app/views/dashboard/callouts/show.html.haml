@@ -1,25 +1,19 @@
 .col-12
-  #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
+  #button_toolbar
     = render("shared/disabled_button", url: dashboard_callout_path(resource), button_text: resource.model_name.human)
     - if current_user.is_admin?
-      .btn-group.mr-2{ role: 'group' }
-        = render("shared/button_link", url: dashboard_callout_batch_operations_path(resource), button_text: translate(:"titles.batch_operations.index"))
-      .btn-group.mr-2{ role: 'group' }
-        = render("shared/button_link", url: dashboard_callout_callout_participations_path(resource), button_text: translate(:"titles.callout_participations.index"))
-      .btn-group.mr-2{ role: 'group' }
-        = render("shared/button_link", url: dashboard_callout_phone_calls_path(resource), button_text: translate(:"titles.phone_calls.index"))
-    .btn-group.mr-2{ role: 'group' }
-      - if resource.may_start?
-        = link_to(translate(:"titles.callouts.start_callout"), dashboard_callout_callout_events_path(resource, event: :start),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
-      - if resource.may_stop?
-        = link_to(translate(:"titles.callouts.stop_callout"), dashboard_callout_callout_events_path(resource, event: :stop),  class: 'btn btn-outline-danger', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
-      - if resource.may_resume?
-        = link_to(translate(:"titles.callouts.resume_callout"), dashboard_callout_callout_events_path(resource, event: :resume),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
-    .btn-group.mr-2{ role: 'group' }
-      = link_to(translate(:"titles.actions.edit"), edit_dashboard_callout_path(resource), class: 'btn btn-outline-primary')
-    .btn-group.mr-2{ role: 'group' }
-      = link_to(translate(:"titles.actions.delete"), dashboard_callout_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
-.col-lg-10.col-xl-8
+      = render("shared/button_link", url: dashboard_callout_batch_operations_path(resource), button_text: translate(:"titles.batch_operations.index"))
+      = render("shared/button_link", url: dashboard_callout_callout_participations_path(resource), button_text: translate(:"titles.callout_participations.index"))
+      = render("shared/button_link", url: dashboard_callout_phone_calls_path(resource), button_text: translate(:"titles.phone_calls.index"))
+    - if resource.may_start?
+      = link_to(translate(:"titles.callouts.start_callout"), dashboard_callout_callout_events_path(resource, event: :start),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
+    - if resource.may_stop?
+      = link_to(translate(:"titles.callouts.stop_callout"), dashboard_callout_callout_events_path(resource, event: :stop),  class: 'btn btn-outline-danger', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
+    - if resource.may_resume?
+      = link_to(translate(:"titles.callouts.resume_callout"), dashboard_callout_callout_events_path(resource, event: :resume),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
+    = link_to(translate(:"titles.actions.edit"), edit_dashboard_callout_path(resource), class: 'btn btn-outline-primary')
+    = link_to(translate(:"titles.actions.delete"), dashboard_callout_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+.col-12.col-md-9.col-lg-7
   #callout.card
     .card-body
       %dl.row

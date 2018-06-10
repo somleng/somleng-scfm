@@ -17,4 +17,8 @@ class BatchOperation::PhoneCallQueue < BatchOperation::PhoneCallEventOperation
   def fire_event!(phone_call)
     phone_call.queue!
   end
+
+  def batch_operation_account_settings_param
+    "batch_operation_phone_call_queue_parameters"
+  end
 end

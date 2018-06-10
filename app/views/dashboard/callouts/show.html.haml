@@ -3,8 +3,10 @@
     = render("shared/disabled_button", url: dashboard_callout_path(resource), button_text: resource.model_name.human)
     - if resource.callout_population
       = render("shared/button_link", button_text: translate(:"titles.actions.preview"), url: dashboard_batch_operation_preview_contacts_path(resource.callout_population))
-    = render("shared/button_link", url: dashboard_callout_callout_participations_path(resource), button_text: translate(:"titles.callout_participations.index"))
-    = render("shared/button_link", url: dashboard_callout_phone_calls_path(resource), button_text: translate(:"titles.phone_calls.index"))
+    - if current_user.is_admin?
+      = render("shared/button_link", button_text: translate(:"titles.batch_operations.index"), url: dashboard_callout_batch_operations_path(resource))
+      = render("shared/button_link", url: dashboard_callout_callout_participations_path(resource), button_text: translate(:"titles.callout_participations.index"))
+      = render("shared/button_link", url: dashboard_callout_phone_calls_path(resource), button_text: translate(:"titles.phone_calls.index"))
     - if resource.may_start?
       = link_to(translate(:"titles.callouts.start_callout"), dashboard_callout_callout_events_path(resource, event: :start),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
     - if resource.may_stop?

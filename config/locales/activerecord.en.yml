@@ -68,7 +68,9 @@ en:
         other: Users
   attributes:
     call_flow_logic: Call flow
+    commune_ids: Communes
     created_at: Created at
     metadata: Metadata
     msisdn: Phone number
+    province_id: Provice
     status: Status

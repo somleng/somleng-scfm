@@ -25,6 +25,11 @@ RSpec.describe "Dashboard" do
       )
 
       expect(page).to have_link(
+        I18n.translate!(:"titles.callouts.new"),
+        href: new_dashboard_callout_path
+      )
+
+      expect(page).to have_link(
         I18n.translate!(:"titles.callouts.index"),
         href: dashboard_callouts_path
       )

@@ -40,7 +40,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     sign_in(user)
     visit new_dashboard_callout_path
 
-    expect(page).to have_title("New Callout")
+    expect(page).to have_title("Make Emergency Call")
 
     within("#button_toolbar") do
       expect(page).to have_link(

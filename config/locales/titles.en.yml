@@ -36,7 +36,7 @@ en:
       create: New Callout
       edit: Edit Callout
       index: Callouts
-      new: New Callout
+      new: Make Emergency Call
       resume_callout: Resume Callout
       show: Callout %{id}
       start_callout: Start Callout

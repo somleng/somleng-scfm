@@ -3,6 +3,7 @@
     #main_nav.card
       .card-body
         %ul.nav.flex-column
+          = nav_link(translate(:"titles.callouts.new"), new_dashboard_callout_path, [])
           = nav_link(translate(:"titles.callouts.index"), dashboard_callouts_path, 'callouts')
     - if current_user.is_admin?
       #admin_nav.card

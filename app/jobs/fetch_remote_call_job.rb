@@ -25,6 +25,6 @@ class FetchRemoteCallJob < ApplicationJob
   end
 
   def somleng_client
-    @somleng_client ||= Somleng::Client.new(:provider => phone_call.platform_provider)
+    @somleng_client ||= Somleng::Client.new(provider: phone_call.platform_provider)
   end
 end

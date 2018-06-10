@@ -17,4 +17,8 @@ class BatchOperation::PhoneCallQueueRemoteFetch < BatchOperation::PhoneCallEvent
   def applied_limit
     limit
   end
+
+  def batch_operation_account_settings_param
+    "batch_operation_phone_call_queue_remote_fetch_parameters"
+  end
 end

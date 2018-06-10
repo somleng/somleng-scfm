@@ -28,6 +28,15 @@ en:
       batch_operation/callout_population:
         one: Callout population
         other: Callout populations
+      batch_operation/phone_call_create:
+        one: Create phone calls
+        other: Create phone calls
+      batch_operation/phone_call_queue:
+        one: Queue phone calls
+        other: Queue phone calls
+      batch_operation/phone_call_queue_remote_fetch:
+        one: Fetch phone call status
+        other: Fetch phone call status
       callout:
         one: Callout
         other: Callouts

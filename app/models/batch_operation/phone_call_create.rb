@@ -50,4 +50,8 @@ class BatchOperation::PhoneCallCreate < BatchOperation::PhoneCallOperation
       remote_request_params: remote_request_params
     )
   end
+
+  def batch_operation_account_settings_param
+    "batch_operation_phone_call_create_parameters"
+  end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_05_145657) do
+ActiveRecord::Schema.define(version: 2018_06_09_093900) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,6 +27,8 @@ ActiveRecord::Schema.define(version: 2018_06_05_145657) do
     t.datetime "updated_at", null: false
     t.string "call_flow_logic"
     t.string "platform_provider_name"
+    t.string "somleng_api_host"
+    t.string "somleng_api_base_url"
     t.index ["somleng_account_sid"], name: "index_accounts_on_somleng_account_sid", unique: true
     t.index ["twilio_account_sid"], name: "index_accounts_on_twilio_account_sid", unique: true
   end

@@ -2,6 +2,10 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
   respond_to :xml,  only: :create
   respond_to :json, except: :create
 
+  skip_before_action :doorkeeper_authorize!,
+                     :authorize_access_token_for_write!,
+                     only: :create
+
   private
 
   def build_resource

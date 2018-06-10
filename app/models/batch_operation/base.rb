@@ -37,6 +37,8 @@ class BatchOperation::Base < ApplicationRecord
   validates :type, presence: true
   validates :parameters, json: true
 
+  before_validation :set_default_parameters
+
   include AASM
 
   def self.from_type_param(type)
@@ -112,4 +114,15 @@ class BatchOperation::Base < ApplicationRecord
   def publish_queued
     broadcast(:batch_operation_queued, self)
   end
+
+  def set_default_parameters
+    return if parameters.present?
+    return if batch_operation_account_settings_param.blank?
+
+    self.parameters = account.settings.fetch(
+      batch_operation_account_settings_param
+    ) { {} }
+  end
+
+  def batch_operation_account_settings_param; end
 end

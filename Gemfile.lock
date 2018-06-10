@@ -159,8 +159,7 @@ GEM
     factory_bot_rails (4.8.2)
       factory_bot (~> 4.8.2)
       railties (>= 3.0.0)
-    fakefs (0.11.2)
-    faraday (0.13.1)
+    faraday (0.15.2)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.23)
     font-awesome-rails (4.7.0.4)
@@ -173,8 +172,6 @@ GEM
     hashdiff (0.3.6)
     highline (1.7.10)
     htmlentities (4.3.4)
-    httparty (0.15.6)
-      multi_xml (>= 0.5.2)
     i18n (1.0.1)
       concurrent-ruby (~> 1.0)
     i18n-tasks (0.9.21)
@@ -230,7 +227,6 @@ GEM
     minitest (5.11.3)
     msgpack (1.2.4)
     multi_json (1.12.2)
-    multi_xml (0.6.0)
     multipart-post (2.0.0)
     nio4r (2.3.1)
     nokogiri (1.8.2)
@@ -411,10 +407,8 @@ DEPENDENCIES
   doorkeeper
   email_spec
   factory_bot_rails
-  fakefs
   font-awesome-rails
   haml
-  httparty
   i18n-tasks
   jbuilder (~> 2.5)
   jquery-rails

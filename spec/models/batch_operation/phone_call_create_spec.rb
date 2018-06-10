@@ -3,11 +3,6 @@ require "rails_helper"
 RSpec.describe BatchOperation::PhoneCallCreate do
   let(:factory) { :phone_call_create_batch_operation }
 
-  describe "associations" do
-    it { is_expected.to have_many(:callout_participations) }
-    it { is_expected.to have_many(:contacts) }
-  end
-
   describe "validations" do
     context "remote_request_params" do
       subject { build(factory, remote_request_params: {}) }
@@ -30,6 +25,28 @@ RSpec.describe BatchOperation::PhoneCallCreate do
       create_callout_participation(account: batch_operation.account)
 
       expect(batch_operation).to be_valid
+    end
+  end
+
+  describe "#parameters" do
+    it "can set the parameters from the account settings" do
+      account = build_stubbed(
+        :account,
+        settings: {
+          "batch_operation_phone_call_create_parameters" => {
+            "callout_filter_params" => {
+              "status" => "running"
+            }
+          }
+        }
+      )
+      batch_operation = described_class.new(account: account)
+
+      batch_operation.valid?
+
+      expect(batch_operation.parameters).to eq(
+        account.settings.fetch("batch_operation_phone_call_create_parameters")
+      )
     end
   end
 

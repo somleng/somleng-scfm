@@ -54,7 +54,6 @@ group :test do
   gem "codecov", require: false
   gem "email_spec"
   gem "factory_bot_rails"
-  gem "fakefs", require: "fakefs/safe"
   gem "rails-controller-testing"
   gem "selenium-webdriver"
   gem "shoulda-matchers", github: "thoughtbot/shoulda-matchers"

@@ -78,7 +78,7 @@ class Account < ApplicationRecord
   end
 
   def write_batch_operation_access_token
-    access_tokens.with_permissions(:batch_operations_write).last.token
+    access_tokens.with_permissions(:batch_operations_write).last
   end
 
   private

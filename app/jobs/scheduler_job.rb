@@ -32,8 +32,7 @@ class SchedulerJob < ApplicationJob
   def client_for(account)
     Faraday.new(url: url_helpers.root_url) do |conn|
       conn.request :url_encoded
-      #conn.basic_auth(account.write_batch_operation_access_token, nil)
-      conn.basic_auth("fcd51e5f176c76717b9fc1495dd8653f9e6f6af4be6ea6aeede137c715bdeab8", nil)
+      conn.basic_auth(account.write_batch_operation_access_token.token, nil)
       conn.adapter Faraday.default_adapter
     end
   end

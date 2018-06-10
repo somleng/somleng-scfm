@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe BatchOperation::PhoneCallQueue do
   let(:factory) { :phone_call_queue_batch_operation }
@@ -9,7 +9,7 @@ RSpec.describe BatchOperation::PhoneCallQueue do
   include_examples("phone_call_event_operation_batch_operation") do
     let(:asserted_status_after_run) { PhoneCall::STATE_QUEUED }
     let(:invalid_transition_status) { PhoneCall::STATE_QUEUED }
-    let(:phone_call_factory_attributes) { {:status => PhoneCall::STATE_CREATED} }
+    let(:phone_call_factory_attributes) { { status: PhoneCall::STATE_CREATED } }
   end
 
   describe "#parameters" do
@@ -19,6 +19,26 @@ RSpec.describe BatchOperation::PhoneCallQueue do
       batch_operation = build(factory, account: account, parameters: {})
 
       expect(batch_operation).to be_valid
+    end
+
+    it "can set the parameters from the account settings" do
+      account = build_stubbed(
+        :account,
+        settings: {
+          "batch_operation_phone_call_queue_parameters" => {
+            "phone_call_filter_params" => {
+              "status" => "created"
+            }
+          }
+        }
+      )
+      batch_operation = described_class.new(account: account)
+
+      batch_operation.valid?
+
+      expect(batch_operation.parameters).to eq(
+        account.settings.fetch("batch_operation_phone_call_queue_parameters")
+      )
     end
   end
 end

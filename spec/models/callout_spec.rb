@@ -19,12 +19,9 @@ RSpec.describe Callout do
   end
 
   describe "validations" do
-    def assert_validations!
-      is_expected.to validate_presence_of(:status)
-      is_expected.to validate_presence_of(:commune_ids)
-    end
-
-    it { assert_validations! }
+    it { is_expected.to validate_presence_of(:status) }
+    it { is_expected.to validate_presence_of(:commune_ids) }
+    it { is_expected.to validate_presence_of(:call_flow_logic) }
 
     context "voice" do
       it "must be present" do

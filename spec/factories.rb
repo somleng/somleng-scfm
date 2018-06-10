@@ -41,6 +41,7 @@ FactoryBot.define do
   factory :callout do
     account
     commune_ids ["040202"]
+    call_flow_logic "CallFlowLogic::HelloWorld"
 
     transient do
       voice_file "test.mp3"

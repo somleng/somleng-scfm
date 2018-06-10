@@ -76,7 +76,7 @@ class Dashboard::BaseController < ApplicationController
   end
 
   def prepare_new_resource
-    build_key_value_fields
+    prepare_for_render
   end
 
   def build_resource_from_params
@@ -96,10 +96,14 @@ class Dashboard::BaseController < ApplicationController
   def prepare_resource_for_destroy; end
 
   def prepare_for_render_on_create
-    build_key_value_fields
+    prepare_for_render
   end
 
   def prepare_for_render_on_update
+    prepare_for_render
+  end
+
+  def prepare_for_render
     build_key_value_fields
   end
 

@@ -1,6 +1,10 @@
 - content_for(:button_toolbar) do
-  = render("shared/disabled_button", url: dashboard_batch_operation_preview_contacts_path(batch_operation), button_text: translate(:"titles.actions.preview"), count: resources.count)
-  = link_to(translate(:"titles.actions.back"), dashboard_batch_operation_path(batch_operation), class: 'btn btn-outline-dark')
+  = render("shared/disabled_button", url: dashboard_batch_operation_preview_contacts_path(batch_operation), button_text: translate(:"titles.actions.preview"))
+  = link_to(translate(:"titles.actions.back"), dashboard_callout_path(batch_operation.callout_id), class: 'btn btn-outline-dark')
+  - if batch_operation.may_queue?
+    = link_to(translate(:"titles.batch_operations.queue"), dashboard_batch_operation_batch_operation_events_path(batch_operation, event: :queue), method: :post, class: 'btn btn-outline-success', data: { confirm: translate(:"titles.actions.data_confirm") })
+  - if batch_operation.may_requeue?
+    = link_to(translate(:"titles.batch_operations.requeue"), dashboard_batch_operation_batch_operation_events_path(batch_operation, event: :requeue), method: :post, class: 'btn btn-outline-warning', data: { confirm: translate(:"titles.actions.data_confirm") })
 
 - content_for(:resources_table) do
   = render("shared/resources_table", resource_class: Contact, columns: [:msisdn, :created_at], partial: "dashboard/contacts/contact")

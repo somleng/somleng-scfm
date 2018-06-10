@@ -15,6 +15,7 @@ class Callout < ApplicationRecord
 
   has_many :callout_populations,
            class_name: "BatchOperation::CalloutPopulation"
+  has_one :callout_population, class_name: "BatchOperation::CalloutPopulation", autosave: true
 
   has_many :phone_calls,
            through: :callout_participations
@@ -35,6 +36,9 @@ class Callout < ApplicationRecord
     presence: true, type: AUDIO_CONTENT_TYPES,
     size: 10.megabytes
   }
+
+  validates :call_flow_logic,
+            presence: true
 
   include AASM
 

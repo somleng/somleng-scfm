@@ -275,10 +275,6 @@ RSpec.describe "Remote Phone Call Events" do
               let(:asserted_twiml) { my_callflow_logic_twiml }
               it { assert_created! }
             end
-
-            context "not setting the call_flow_logic" do
-              it { assert_created! }
-            end
           end
         end
       end

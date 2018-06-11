@@ -6,7 +6,7 @@ class Dashboard::UsersController < Dashboard::AdminController
   end
 
   def permitted_params
-    params.require(:user).permit(:roles, location_ids: [])
+    params.require(:user).permit(:roles, province_ids: [])
   end
 
   def resources_path

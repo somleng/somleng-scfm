@@ -11,7 +11,7 @@
         %button.btn.btn-secondary.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", :type => "button"}
           = octicon "person"
         .dropdown-menu.dropdown-menu-right
-          - if current_user.is_admin?
+          - if current_user.admin?
             = link_to edit_dashboard_account_path do
               %button.dropdown-item{:type => "button"}
                 = translate(:"titles.accounts.edit")

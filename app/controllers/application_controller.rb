@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
   protected
 
   def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:invite, keys: [:roles, location_ids: []])
+    devise_parameter_sanitizer.permit(:invite, keys: [:roles, province_ids: []])
   end
 
   private
@@ -23,7 +23,7 @@ class ApplicationController < ActionController::Base
   end
 
   def authorize_admin!
-    deny_access! unless current_user.is_admin?
+    deny_access! unless current_user.admin?
   end
 
   def deny_access!

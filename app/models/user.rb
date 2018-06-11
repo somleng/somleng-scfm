@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   include MetadataHelpers
 
-  store_accessor :metadata, :location_ids
+  store_accessor :metadata, :province_ids
 
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
@@ -12,17 +12,17 @@ class User < ApplicationRecord
 
   bitmask :roles, as: %i[member admin], null: false
 
-  before_validation :remove_empty_location_ids
+  before_validation :remove_empty_province_ids
 
   validates :roles, presence: true
 
-  def is_admin?
+  def admin?
     roles?(:admin)
   end
 
   private
 
-  def remove_empty_location_ids
-    self.location_ids = Array(location_ids).reject(&:blank?).presence
+  def remove_empty_province_ids
+    self.province_ids = Array(province_ids).reject(&:blank?).presence
   end
 end

@@ -25,7 +25,9 @@ class Dashboard::CalloutsController < Dashboard::BaseController
   end
 
   def permitted_params
-    params.require(:callout).permit(:voice, commune_ids: [])
+    params.require(
+      :callout).permit(:voice, commune_ids: []
+    ).merge(created_by: current_user)
   end
 
   def resources_path

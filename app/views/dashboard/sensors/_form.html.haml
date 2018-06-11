@@ -16,7 +16,7 @@
                 wrapper_html: { id: 'communes' },
                 required: true, include_blank: false,
                 input_html: { class: 'js-select-communes',
-                  style: "width: 100%", multiple: 'multiple',
+                  style: "width: 100%", multiple: true,
                   data: { default_value: f.object.commune_ids }}
       .form-group.actions
         = f.button :submit, class: 'btn btn-primary'

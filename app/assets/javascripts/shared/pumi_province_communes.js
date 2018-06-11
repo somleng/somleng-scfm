@@ -13,7 +13,6 @@ PumiProvinceCommunes = function () {
       valueField: 'id',
       preload: true,
       searchField: ['name_en', 'name_km'],
-      closeAfterSelect: true,
       render: {
         item: renderItem,
         option: renderOption,

@@ -29,6 +29,7 @@ class Callout < ApplicationRecord
   has_one_attached :voice
 
   alias_attribute :calls, :phone_calls
+  attr_accessor :created_by
 
   validates :status, presence: true
 
@@ -36,6 +37,9 @@ class Callout < ApplicationRecord
     presence: true, type: AUDIO_CONTENT_TYPES,
     size: 10.megabytes
   }
+
+  validates :commune_ids,
+            array_inclusion: { in: :permitted_commune_ids }, if: :created_by
 
   include AASM
 
@@ -72,5 +76,15 @@ class Callout < ApplicationRecord
         to: :stopped
       )
     end
+  end
+
+  private
+
+  def permitted_commune_ids
+    ids = []
+    created_by.province_ids.each do |id|
+      ids += Pumi::Commune.where(province_id: id).map(&:id)
+    end
+    ids
   end
 end

@@ -32,7 +32,7 @@ RSpec.describe "Callouts", :aggregate_failures do
   end
 
   it "can create a callout", :js do
-    user = create(:user)
+    user = create(:user, province_ids: ["02"])
 
     sign_in(user)
     visit new_dashboard_callout_path
@@ -59,9 +59,9 @@ RSpec.describe "Callouts", :aggregate_failures do
   end
 
   it "can update a callout with an existing callout population", :js do
-    user = create(:user)
+    user = create(:user, province_ids: %w[01 02])
     callout = create(:callout, account: user.account, commune_ids: ["010201"])
-    callout_population = create(:callout_population, callout: callout, account: callout.account)
+    _callout_population = create(:callout_population, callout: callout, account: callout.account)
 
     sign_in(user)
     visit edit_dashboard_callout_path(callout)
@@ -87,7 +87,7 @@ RSpec.describe "Callouts", :aggregate_failures do
   end
 
   it "can update a callout wihtout an existing callout population", :js do
-    user = create(:user)
+    user = create(:user, province_ids: %w[01 02])
     callout = create(:callout, account: user.account, commune_ids: ["010201"])
 
     sign_in(user)
@@ -182,5 +182,6 @@ RSpec.describe "Callouts", :aggregate_failures do
     attach_file "Voice file", file_path
     select_selectize("#province", "Battambang")
     check("Kantueu Pir")
+    expect(page).not_to have_content("Mongkol Borei")
   end
 end

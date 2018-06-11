@@ -55,6 +55,11 @@ module SystemSpecHelpers
   end
 
   # http://climber2002.github.io/blog/2014/09/22/capybara-integration-tests-with-jquery-selectize/
+  def multiple_selectize(id, text)
+    select_selectize(id, text)
+    find("body").click
+  end
+
   def select_selectize(id, text)
     within(id) do
       find("div.selectize-input").click

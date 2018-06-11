@@ -35,9 +35,9 @@ RSpec.describe User do
     end
   end
 
-  it '#is_admin?' do
+  it '#admin?' do
     user = build_stubbed(:user, roles: :admin)
 
-    expect(user.is_admin?).to eq true
+    expect(user.admin?).to eq true
   end
 end

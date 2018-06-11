@@ -1,9 +1,19 @@
 PumiSelectize = function (element) {
+  filteredProvinceIds = $(element).data('filterProvinceIds');
+
   loadData = function (selector, url) {
     $.when(
       $.getJSON(url, function (data) {
+        var provinces = data;
+
+        if (filteredProvinceIds) {
+          provinces = $.grep(data, function (province, index) {
+            return ($.inArray(province.id, filteredProvinceIds) >= 0);
+          });
+        }
+
         $(selector)[0].selectize.clearOptions();
-        $(selector)[0].selectize.addOption(data);
+        $(selector)[0].selectize.addOption(provinces);
       })
     ).done(function (data) {
       if ($(selector).data('defaultValue') && data.length) {
@@ -17,7 +27,7 @@ PumiSelectize = function (element) {
     $(element).selectize({
       valueField: 'id',
       searchField: ['name_en', 'name_km'],
-      closeAfterSelect: true,
+      closeAfterSelect: false,
       render: {
         item: renderItem,
         option: renderOption,

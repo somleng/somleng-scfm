@@ -87,14 +87,14 @@ RSpec.describe "Users" do
     expect(page).to have_link_to_action(:cancel)
 
     choose "Admin"
-    select_selectize("#locations", "Banteay Meanchey")
+    multiple_selectize("#locations", "Banteay Meanchey")
     click_action_button(:update, key: :submit, namespace: :helpers)
 
     other_user.reload
     expect(current_path).to eq(dashboard_user_path(other_user))
     expect(page).to have_text("User was successfully updated.")
     expect(other_user.roles?(:admin)).to eq true
-    expect(other_user.location_ids).to include_location("Banteay Meanchey")
+    expect(other_user.province_ids).to include_location("Banteay Meanchey")
   end
 
   it "can delete a user" do

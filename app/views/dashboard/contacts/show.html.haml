@@ -1,7 +1,7 @@
 .col
   #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
     = render("shared/disabled_button", url: dashboard_contact_path(resource), button_text: resource.model_name.human)
-    - if current_user.is_admin?
+    - if current_user.admin?
       .btn-group.mr-2{ role: 'group' }
         = render("shared/button_link", url: dashboard_contact_callout_participations_path(resource), button_text: translate(:"titles.callout_participations.index"))
       .btn-group.mr-2{ role: 'group' }

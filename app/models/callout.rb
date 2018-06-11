@@ -1,6 +1,10 @@
 class Callout < ApplicationRecord
+  AUDIO_CONTENT_TYPES = %w[audio/mpeg audio/mp3 audio/wav].freeze
+
   include MetadataHelpers
   include HasCallFlowLogic
+  include Wisper::Publisher
+  include AASM
 
   belongs_to :account
 
@@ -22,11 +26,22 @@ class Callout < ApplicationRecord
   has_many :contacts,
            through: :callout_participations
 
+  has_one_attached :audio_file
+
   alias_attribute :calls, :phone_calls
 
   validates :status, presence: true
 
-  include AASM
+  validates :audio_file,
+            file_size: {
+              less_than_or_equal_to: 10.megabytes
+            },
+            file_content_type: {
+              allow: AUDIO_CONTENT_TYPES
+            },
+            if: ->(callout) { callout.audio_file.attached? }
+
+  after_commit :publish_committed
 
   aasm column: :status, whiny_transitions: false do
     state :initialized, initial: true
@@ -63,7 +78,9 @@ class Callout < ApplicationRecord
     end
   end
 
-  def title
-    metadata["title"] || "Calout #{id}"
+  private
+
+  def publish_committed
+    broadcast(:callout_committed, self)
   end
 end

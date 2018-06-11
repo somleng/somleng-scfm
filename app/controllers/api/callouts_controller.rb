@@ -18,7 +18,13 @@ class Api::CalloutsController < Api::FilteredController
   end
 
   def permitted_params
-    params.permit(:call_flow_logic, :metadata_merge_mode, :metadata => {})
+    params.permit(
+      :call_flow_logic,
+      :audio_file,
+      :audio_url,
+      :metadata_merge_mode,
+      metadata: {}
+    )
   end
 
   def resource_location

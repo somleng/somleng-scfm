@@ -37,6 +37,19 @@ FactoryBot.define do
   factory :callout do
     account
 
+    transient do
+      audio_file nil
+    end
+
+    after(:build) do |callout, evaluator|
+      if evaluator.audio_file.present?
+        callout.audio_file.attach(
+          io: File.open(ActiveSupport::TestCase.fixture_path + "/files/#{evaluator.audio_file}"),
+          filename: evaluator.audio_file
+        )
+      end
+    end
+
     trait :initialized do
     end
 

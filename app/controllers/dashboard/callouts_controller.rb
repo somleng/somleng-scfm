@@ -8,6 +8,8 @@ class Dashboard::CalloutsController < Dashboard::BaseController
   def permitted_params
     params.fetch(:callout, {}).permit(
       :call_flow_logic,
+      :audio_file,
+      :audio_url,
       **METADATA_FIELDS_ATTRIBUTES
     )
   end

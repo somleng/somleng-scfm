@@ -1,141 +1,144 @@
 require "rails_helper"
 
 RSpec.describe "Callouts" do
-  include SomlengScfm::SpecHelpers::RequestHelpers
+  let(:account) { create(:account) }
+  let(:access_token) { create_access_token(resource_owner: account) }
 
-  let(:account_traits) { {} }
-  let(:account_attributes) { {} }
-  let(:account) { create(:account, *account_traits.keys, account_attributes) }
-  let(:access_token_model) { create_access_token(resource_owner: account) }
-  let(:factory_attributes) { { account: account } }
+  it "can list all callouts" do
+    filtered_callout = create(
+      :callout,
+      account: account,
+      metadata: {
+        "foo" => "bar"
+      }
+    )
+    create(:callout, account: account)
+    create(:callout)
 
-  let(:body) { {} }
-  let(:metadata) { { "foo" => "bar" } }
-  let(:callout) { create(:callout, factory_attributes) }
-
-  def setup_scenario
-    super
-    do_request(method, url, body)
-  end
-
-  describe "'/api/callouts'" do
-    let(:url_params) { {} }
-    let(:url) { api_callouts_path(url_params) }
-
-    describe "GET" do
-      let(:method) { :get }
-
-      it_behaves_like "resource_filtering" do
-        let(:filter_on_factory) { :callout }
-        let(:filter_factory_attributes) { factory_attributes }
-      end
-
-      it_behaves_like "authorization"
-    end
-
-    describe "POST" do
-      let(:method) { :post }
-      let(:call_flow_logic) { CallFlowLogic::HelloWorld.to_s }
-      let(:body) { { metadata: metadata, call_flow_logic: call_flow_logic } }
-      let(:asserted_created_callout) { Callout.last }
-      let(:parsed_response) { JSON.parse(response.body) }
-
-      def assert_create!
-        expect(response.code).to eq("201")
-        expect(parsed_response).to eq(JSON.parse(asserted_created_callout.to_json))
-        expect(parsed_response["metadata"]).to eq(metadata)
-        expect(parsed_response["call_flow_logic"]).to eq(call_flow_logic)
-      end
-
-      it { assert_create! }
-    end
-  end
-
-  describe "'/:id'" do
-    let(:url) { api_callout_path(callout) }
-
-    describe "GET" do
-      let(:method) { :get }
-
-      def assert_show!
-        expect(response.code).to eq("200")
-        expect(response.body).to eq(callout.to_json)
-      end
-
-      it { assert_show! }
-    end
-
-    describe "PATCH" do
-      let(:method) { :patch }
-      let(:factory_attributes) { super().merge("metadata" => { "bar" => "baz" }) }
-      let(:body) do
-        {
-          metadata: metadata,
-          metadata_merge_mode: "replace"
+    get(
+      api_callouts_path(
+        q: {
+          "metadata" => {
+            "foo" => "bar"
+          }
         }
-      end
+      ),
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-      def assert_update!
-        expect(response.code).to eq("204")
-        expect(callout.reload.metadata).to eq(metadata)
-      end
-
-      it { assert_update! }
-    end
-
-    describe "DELETE" do
-      let(:method) { :delete }
-
-      context "valid request" do
-        def assert_destroy!
-          expect(response.code).to eq("204")
-          expect(Callout.find_by_id(callout.id)).to eq(nil)
-        end
-
-        it { assert_destroy! }
-      end
-
-      context "invalid request" do
-        let(:callout_participation) { create(:callout_participation, callout: callout) }
-
-        def setup_scenario
-          callout_participation
-          super
-        end
-
-        def assert_invalid!
-          expect(response.code).to eq("422")
-        end
-
-        it { assert_invalid! }
-      end
-    end
+    expect(response.code).to eq("200")
+    parsed_body = JSON.parse(response.body)
+    expect(parsed_body.size).to eq(1)
+    expect(parsed_body.first.fetch("id")).to eq(filtered_callout.id)
   end
 
-  describe "nested indexes" do
-    let(:method) { :get }
+  it "can list callouts for a contact" do
+    contact = create(:contact, account: account)
+    callout = create(:callout, account: account)
+    _callout_participation = create_callout_participation(
+      account: account,
+      contact: contact,
+      callout: callout
+    )
+    _other_callout = create(:callout, account: account)
 
-    def setup_scenario
-      create(:callout, account: account)
-      callout
-      super
-    end
+    get(
+      api_contact_callouts_path(contact),
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-    def assert_filtered!
-      expect(JSON.parse(response.body)).to eq(JSON.parse([callout].to_json))
-    end
+    expect(response.code).to eq("200")
+    parsed_body = JSON.parse(response.body)
+    expect(parsed_body.size).to eq(1)
+    expect(parsed_body.first.fetch("id")).to eq(callout.id)
+  end
 
-    describe "GET '/api/contacts/:contact_id/callouts'" do
-      let(:contact) { create(:contact, account: account) }
+  it "can create a callout" do
+    request_body = {
+      call_flow_logic: CallFlowLogic::HelloWorld.to_s,
+      audio_file: fixture_file_upload("files/test.mp3", "audio/mp3"),
+      audio_url: "https://www.example.com/sample.mp3",
+      metadata: {
+        "foo" => "bar"
+      }
+    }
 
-      def setup_scenario
-        create(:callout_participation, contact: contact, callout: callout)
-        super
-      end
+    post(
+      api_callouts_path,
+      params: request_body,
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-      let(:url) { api_contact_callouts_path(contact) }
-      it { assert_filtered! }
-    end
+    expect(response.code).to eq("201")
+    parsed_response = JSON.parse(response.body)
+    created_callout = account.callouts.find(parsed_response.fetch("id"))
+    expect(created_callout.metadata).to eq(request_body.fetch(:metadata))
+    expect(created_callout.call_flow_logic).to eq(request_body.fetch(:call_flow_logic))
+    expect(created_callout.audio_url).to eq(request_body.fetch(:audio_url))
+    expect(created_callout.audio_file).to be_attached
+  end
+
+  it "can fetch a callout" do
+    callout = create(:callout, account: account)
+
+    get(
+      api_callout_path(callout),
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("200")
+    parsed_response = JSON.parse(response.body)
+    expect(
+      account.callouts.find(parsed_response.fetch("id"))
+    ).to eq(callout)
+  end
+
+  it "can update a callout" do
+    callout = create(
+      :callout,
+      account: account,
+      metadata: {
+        "foo" => "bar"
+      }
+    )
+
+    request_body = { metadata: { "bar" => "foo" }, metadata_merge_mode: "replace" }
+
+    patch(
+      api_callout_path(callout),
+      params: request_body,
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("204")
+    callout.reload
+    expect(callout.metadata).to eq(request_body.fetch(:metadata))
+  end
+
+  it "can delete a callout" do
+    callout = create(:callout, account: account)
+
+    delete(
+      api_callout_path(callout),
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("204")
+    expect(Callout.find_by_id(callout.id)).to eq(nil)
+  end
+
+  it "cannot delete a callout with callout participations" do
+    callout = create(:callout, account: account)
+    _callout_participation = create_callout_participation(
+      account: account, callout: callout
+    )
+
+    delete(
+      api_callout_path(callout),
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("422")
   end
 
   def create_access_token(**options)

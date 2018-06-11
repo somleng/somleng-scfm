@@ -14,8 +14,6 @@ en:
     labels:
       account:
         call_flow_logic: Default call flow logic
-      defaults:
-        phone_number: Phone Number
     'no': 'No'
     options:
       access_token:

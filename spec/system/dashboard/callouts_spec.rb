@@ -49,6 +49,8 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     expect(page).to have_link_to_action(:cancel)
 
+    attach_file("Audio file", Rails.root + file_fixture("test.mp3"))
+    fill_in("Audio URL", with: "https://www.example.com/sample.mp3")
     choose("Hello World")
     fill_in_key_value_for(:metadata, with: { key: "location:country", value: "kh" })
     click_action_button(:create, key: :submit, namespace: :helpers, model: "Callout")
@@ -57,6 +59,8 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(current_path).to eq(dashboard_callout_path(new_callout))
     expect(page).to have_text("Callout was successfully created.")
     expect(new_callout.account).to eq(user.account)
+    expect(new_callout.audio_file).to be_attached
+    expect(new_callout.audio_url).to eq("https://www.example.com/sample.mp3")
     expect(new_callout.call_flow_logic).to eq(CallFlowLogic::HelloWorld.to_s)
     expect(new_callout.metadata).to eq("location" => { "country" => "kh" })
   end

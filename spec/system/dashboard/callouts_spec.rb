@@ -181,6 +181,6 @@ RSpec.describe "Callouts", :aggregate_failures do
     file_path = Rails.root + file_fixture("test.mp3")
     attach_file "Voice file", file_path
     select_selectize("#province", "Battambang")
-    select_selectize("#communes", "Kantueu Pir")
+    check("Kantueu Pir")
   end
 end

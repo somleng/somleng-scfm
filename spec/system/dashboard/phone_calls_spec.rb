@@ -11,11 +11,6 @@ RSpec.describe "Phone Calls" do
 
     expect(page).to have_title("Phone Calls")
 
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(:index, key: :phone_calls)
-      expect(page).not_to have_link_to_action(:back)
-    end
-
     within("#resources") do
       expect(page).to have_content_tag_for(phone_call)
       expect(page).not_to have_content_tag_for(other_phone_call)
@@ -39,13 +34,6 @@ RSpec.describe "Phone Calls" do
     sign_in(user)
     visit(dashboard_callout_participation_phone_calls_path(phone_call.callout_participation))
 
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(
-        :back,
-        href: dashboard_callout_participation_path(phone_call.callout_participation)
-      )
-    end
-
     within("#resources") do
       expect(page).to have_content_tag_for(phone_call)
       expect(page).not_to have_content_tag_for(other_phone_call)
@@ -63,13 +51,6 @@ RSpec.describe "Phone Calls" do
     sign_in(user)
     visit(dashboard_callout_phone_calls_path(callout_participation.callout))
 
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(
-        :back,
-        href: dashboard_callout_path(callout_participation.callout)
-      )
-    end
-
     within("#resources") do
       expect(page).to have_content_tag_for(phone_call)
       expect(page).not_to have_content_tag_for(other_phone_call)
@@ -83,13 +64,6 @@ RSpec.describe "Phone Calls" do
 
     sign_in(user)
     visit(dashboard_contact_phone_calls_path(phone_call.contact))
-
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(
-        :back,
-        href: dashboard_contact_path(phone_call.contact)
-      )
-    end
 
     within("#resources") do
       expect(page).to have_content_tag_for(phone_call)
@@ -107,13 +81,6 @@ RSpec.describe "Phone Calls" do
 
     sign_in(user)
     visit(dashboard_batch_operation_phone_calls_path(phone_call.create_batch_operation))
-
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(
-        :back,
-        href: dashboard_batch_operation_path(phone_call.create_batch_operation)
-      )
-    end
 
     within("#resources") do
       expect(page).to have_content_tag_for(phone_call)
@@ -133,7 +100,7 @@ RSpec.describe "Phone Calls" do
     sign_in(user)
     visit(dashboard_phone_call_path(phone_call))
 
-    within("#button_toolbar") do
+    within("#related_links") do
       expect(page).to have_link_to_action(
         :index,
         key: :remote_phone_call_events,
@@ -231,7 +198,7 @@ RSpec.describe "Phone Calls" do
     sign_in(user)
     visit dashboard_phone_call_path(phone_call)
     clear_enqueued_jobs
-    within("#button_toolbar") do
+    within("#page_actions") do
       expect {
         click_action_button(:queue, key: :phone_calls, type: :link)
       }.to enqueue_job(QueueRemoteCallJob).with(phone_call.id)
@@ -253,7 +220,7 @@ RSpec.describe "Phone Calls" do
     sign_in(user)
     visit dashboard_phone_call_path(phone_call)
     clear_enqueued_jobs
-    within("#button_toolbar") do
+    within("#page_actions") do
       expect {
         click_action_button(:queue_remote_fetch, key: :phone_calls, type: :link)
       }.to enqueue_job(FetchRemoteCallJob).with(phone_call.id)

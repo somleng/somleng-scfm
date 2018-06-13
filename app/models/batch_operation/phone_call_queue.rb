@@ -1,4 +1,6 @@
 class BatchOperation::PhoneCallQueue < BatchOperation::PhoneCallEventOperation
+  include CustomRoutesHelper["batch_operations"]
+
   has_many :phone_calls,
            class_name: "PhoneCall",
            foreign_key: :queue_batch_operation_id,

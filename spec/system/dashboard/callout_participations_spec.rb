@@ -11,11 +11,6 @@ RSpec.describe "Callout Participations" do
 
     expect(page).to have_title("Callout Participations")
 
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(:index, key: :callout_participations)
-      expect(page).not_to have_link_to_action(:back)
-    end
-
     within("#resources") do
       expect(page).to have_content_tag_for(callout_participation)
       expect(page).not_to have_content_tag_for(other_callout_participation)
@@ -37,12 +32,6 @@ RSpec.describe "Callout Participations" do
     visit(dashboard_callout_callout_participations_path(callout_participation.callout))
 
     expect(page).to have_title("Callout Participations")
-
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(
-        :back, href: dashboard_callout_path(callout_participation.callout)
-      )
-    end
 
     within("#resources") do
       expect(page).to have_content_tag_for(callout_participation)
@@ -69,12 +58,6 @@ RSpec.describe "Callout Participations" do
 
     expect(page).to have_title("Callout Participations")
 
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(
-        :back, href: dashboard_batch_operation_path(callout_population)
-      )
-    end
-
     within("#resources") do
       expect(page).to have_content_tag_for(callout_participation)
       expect(page).not_to have_content_tag_for(other_callout_participation)
@@ -90,12 +73,6 @@ RSpec.describe "Callout Participations" do
     visit(dashboard_contact_callout_participations_path(callout_participation.contact))
 
     expect(page).to have_title("Callout Participations")
-
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(
-        :back, href: dashboard_contact_path(callout_participation.contact)
-      )
-    end
 
     within("#resources") do
       expect(page).to have_content_tag_for(callout_participation)
@@ -117,7 +94,7 @@ RSpec.describe "Callout Participations" do
 
     expect(page).to have_title("Callout Participation #{callout_participation.id}")
 
-    within("#button_toolbar") do
+    within("#related_links") do
       expect(page).to have_link_to_action(
         :index,
         key: :phone_calls,
@@ -159,9 +136,7 @@ RSpec.describe "Callout Participations" do
 
     click_action_button(:delete, type: :link)
 
-    expect(current_path).to eq(
-      dashboard_callout_callout_participations_path(callout_participation.callout)
-    )
+    expect(current_path).to eq(dashboard_callout_participations_path)
     expect(page).to have_text("was successfully destroyed")
   end
 end

@@ -11,11 +11,10 @@ RSpec.describe "Contacts", :aggregate_failures do
 
     expect(page).to have_title("Contacts")
 
-    within("#button_toolbar") do
+    within("#page_actions") do
       expect(page).to have_link_to_action(
         :new, key: :contacts, href: new_dashboard_contact_path
       )
-      expect(page).to have_link_to_action(:index, key: :contacts)
     end
 
     within("#resources") do
@@ -40,15 +39,6 @@ RSpec.describe "Contacts", :aggregate_failures do
     visit new_dashboard_contact_path
 
     expect(page).to have_title("New Contact")
-
-    within("#button_toolbar") do
-      expect(page).to have_link(
-        I18n.translate!(:"titles.contacts.new"),
-        href: new_dashboard_contact_path
-      )
-    end
-
-    expect(page).to have_link_to_action(:cancel)
 
     click_action_button(:create, key: :submit, namespace: :helpers, model: "Contact")
 
@@ -78,15 +68,6 @@ RSpec.describe "Contacts", :aggregate_failures do
     visit edit_dashboard_contact_path(contact)
 
     expect(page).to have_title("Edit Contact")
-
-    within("#button_toolbar") do
-      expect(page).to have_link(
-        I18n.translate!(:"titles.contacts.edit"),
-        href: edit_dashboard_contact_path(contact)
-      )
-    end
-
-    expect(page).to have_link_to_action(:cancel)
 
     updated_phone_number = generate(:somali_msisdn)
     fill_in("Phone number", with: updated_phone_number)
@@ -130,12 +111,14 @@ RSpec.describe "Contacts", :aggregate_failures do
 
     expect(page).to have_title("Contact #{contact.id}")
 
-    within("#button_toolbar") do
+    within("#page_actions") do
       expect(page).to have_link_to_action(
         :edit,
         href: edit_dashboard_contact_path(contact)
       )
+    end
 
+    within("#related_links") do
       expect(page).to have_link_to_action(
         :index,
         key: :callout_participations,

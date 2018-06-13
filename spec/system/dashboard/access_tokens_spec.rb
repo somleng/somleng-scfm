@@ -11,11 +11,10 @@ RSpec.describe "API Key Management" do
 
     expect(page).to have_title("API Keys")
 
-    within("#button_toolbar") do
+    within("#page_actions") do
       expect(page).to have_link_to_action(
         :new, key: :access_tokens, href: new_dashboard_access_token_path
       )
-      expect(page).to have_link_to_action(:index, key: :access_tokens)
     end
 
     within("#page_entries_info") do
@@ -42,12 +41,6 @@ RSpec.describe "API Key Management" do
 
     sign_in(user)
     visit(new_dashboard_access_token_path)
-
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(
-        :new, key: :access_tokens, href: new_dashboard_access_token_path
-      )
-    end
 
     check("Write contacts")
     check("Read batch operations")
@@ -80,7 +73,7 @@ RSpec.describe "API Key Management" do
     sign_in(user)
     visit dashboard_access_token_path(access_token)
 
-    within("#button_toolbar") do
+    within("#page_actions") do
       expect(page).to have_link_to_action(
         :edit,
         href: edit_dashboard_access_token_path(access_token)
@@ -111,14 +104,6 @@ RSpec.describe "API Key Management" do
     sign_in(user)
     visit edit_dashboard_access_token_path(access_token)
 
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(
-        :edit,
-        key: :access_tokens,
-        href: edit_dashboard_access_token_path(access_token)
-      )
-    end
-
     uncheck("Write contacts")
     check("Write callouts")
     click_action_button(:update, key: :submit, namespace: :helpers)
@@ -135,7 +120,7 @@ RSpec.describe "API Key Management" do
     sign_in(user)
     visit(dashboard_access_token_path(access_token))
 
-    within("#button_toolbar") do
+    within("#page_actions") do
       click_action_button(:delete, type: :link)
     end
 

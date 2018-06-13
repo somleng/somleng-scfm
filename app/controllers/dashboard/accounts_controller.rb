@@ -30,4 +30,9 @@ class Dashboard::AccountsController < Dashboard::BaseController
   def build_key_value_fields
     resource.build_settings_field if resource.settings_fields.empty?
   end
+
+  def prepare_breadcrumbs
+    add_breadcrumb(resources_title(Account), nil)
+    add_breadcrumb(breadcrumb_action_title(breadcrumb_action_name))
+  end
 end

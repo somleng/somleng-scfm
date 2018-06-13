@@ -116,6 +116,7 @@ GEM
       autoprefixer-rails (>= 6.0.3)
       popper_js (>= 1.12.9, < 2)
       sass (>= 3.5.2)
+    breadcrumbs_on_rails (3.0.1)
     builder (3.2.3)
     capybara (3.2.1)
       addressable
@@ -418,6 +419,7 @@ DEPENDENCIES
   bitmask_attributes!
   bootsnap (>= 1.1.0)
   bootstrap (~> 4.0.0)
+  breadcrumbs_on_rails
   capybara
   cocoon
   codeclimate-test-reporter (~> 1.0.0)

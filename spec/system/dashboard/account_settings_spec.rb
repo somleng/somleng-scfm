@@ -9,13 +9,6 @@ RSpec.describe "Account Settings" do
 
     expect(page).to have_title("Account Settings")
 
-    within("#button_toolbar") do
-      expect(page).to have_link(
-        I18n.translate!(:"titles.accounts.edit"),
-        href: edit_dashboard_account_path
-      )
-    end
-
     twilio_account_sid = generate(:twilio_account_sid)
     twilio_auth_token = generate(:auth_token)
     somleng_account_sid = generate(:somleng_account_sid)

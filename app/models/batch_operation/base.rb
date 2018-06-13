@@ -1,4 +1,6 @@
 class BatchOperation::Base < ApplicationRecord
+  include CustomRoutesHelper["batch_operations"]
+
   self.table_name = :batch_operations
 
   PERMITTED_API_TYPES = [

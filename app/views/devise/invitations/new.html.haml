@@ -1,7 +1,4 @@
 .col
-  #button_toolbar.btn-toolbar.mb-2{ role: 'toolbar' }
-    = render("shared/disabled_button", url: new_user_invitation_path, button_text: translate(:"titles.user_invitations.new"), button_class: "btn-outline-success")
-.col
   .card
     .card-body
       = simple_form_for(resource, :as => resource_name, :url => invitation_path(resource_name), :html => {:method => :post}) do |f|

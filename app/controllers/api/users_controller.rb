@@ -16,8 +16,4 @@ class Api::UsersController < Api::FilteredController
   def permitted_params
     params.permit(:email, :password, :metadata_merge_mode, :metadata => {})
   end
-
-  def resource_location
-    api_user_path(resource)
-  end
 end

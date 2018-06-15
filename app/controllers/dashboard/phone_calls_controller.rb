@@ -64,8 +64,4 @@ class Dashboard::PhoneCallsController < Dashboard::BaseController
       polymorphic_path([:dashboard, parent])
     end
   end
-
-  def resources_path
-    dashboard_phone_calls_path
-  end
 end

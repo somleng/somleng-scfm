@@ -8,11 +8,11 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
 
   private
 
-  def build_resource
-    @resource = RemotePhoneCallEvent.new(details: permitted_build_params)
+  def build_resource_from_params
+    @resource = RemotePhoneCallEvent.new(details: permitted_create_params)
   end
 
-  def setup_resource
+  def prepare_resource_for_create
     subscribe_listeners
     resource.setup!
   end
@@ -58,7 +58,7 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
     @call_flow_logic ||= resource.call_flow_logic.constantize
   end
 
-  def respond_with_create_resource
+  def respond_with_created_resource
     if resource.persisted?
       respond_with(call_flow_logic_instance, location: nil)
     else
@@ -67,7 +67,7 @@ class Api::RemotePhoneCallEventsController < Api::FilteredController
   end
 
   # https://www.twilio.com/docs/api/twiml/twilio_request
-  def permitted_build_params
+  def permitted_create_params
     params.permit!.except(:action, :controller, :format)
   end
 

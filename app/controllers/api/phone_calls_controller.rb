@@ -32,10 +32,6 @@ class Api::PhoneCallsController < Api::FilteredController
     )
   end
 
-  def resource_location
-    api_phone_call_path(resource)
-  end
-
   def filter_class
     Filter::Resource::PhoneCall
   end

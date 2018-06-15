@@ -1,7 +1,7 @@
 class Api::PhoneCallEventsController < Api::ResourceEventsController
   private
 
-  def setup_resource
+  def prepare_resource_for_create
     subscribe_listeners
   end
 

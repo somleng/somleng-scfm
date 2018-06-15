@@ -49,20 +49,37 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     expect(page).to have_link_to_action(:cancel)
 
-    attach_file("Audio file", Rails.root + file_fixture("test.mp3"))
     fill_in("Audio URL", with: "https://www.example.com/sample.mp3")
     choose("Hello World")
     fill_in_key_value_for(:metadata, with: { key: "location:country", value: "kh" })
-    click_action_button(:create, key: :submit, namespace: :helpers, model: "Callout")
+
+    expect do
+      click_action_button(:create, key: :submit, namespace: :helpers, model: "Callout")
+    end.not_to have_enqueued_job(AudioFileProcessorJob)
 
     new_callout = Callout.last!
     expect(current_path).to eq(dashboard_callout_path(new_callout))
     expect(page).to have_text("Callout was successfully created.")
     expect(new_callout.account).to eq(user.account)
-    expect(new_callout.audio_file).to be_attached
+    expect(new_callout.audio_file).not_to be_attached
     expect(new_callout.audio_url).to eq("https://www.example.com/sample.mp3")
     expect(new_callout.call_flow_logic).to eq(CallFlowLogic::HelloWorld.to_s)
     expect(new_callout.metadata).to eq("location" => { "country" => "kh" })
+  end
+
+  it "can create a callout attaching an audio file" do
+    user = create(:user)
+
+    sign_in(user)
+    visit new_dashboard_callout_path
+
+    attach_file("Audio file", Rails.root + file_fixture("test.mp3"))
+    expect do
+      click_action_button(:create, key: :submit, namespace: :helpers, model: "Callout")
+    end.to have_enqueued_job(AudioFileProcessorJob)
+
+    new_callout = Callout.last!
+    expect(new_callout.audio_file).to be_attached
   end
 
   it "can update a callout", :js do

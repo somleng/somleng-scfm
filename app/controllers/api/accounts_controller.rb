@@ -42,8 +42,4 @@ class Api::AccountsController < Api::FilteredController
       metadata: {}
     )
   end
-
-  def resource_location
-    api_account_path(resource)
-  end
 end

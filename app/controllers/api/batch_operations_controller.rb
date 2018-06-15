@@ -33,7 +33,11 @@ class Api::BatchOperationsController < Api::FilteredController
     params.permit(:metadata_merge_mode, metadata: {}, parameters: {})
   end
 
-  def resource_location
+  def show_location(resource)
     api_batch_operation_path(resource)
+  end
+
+  def resources_path
+    api_batch_operations_path
   end
 end

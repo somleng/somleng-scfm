@@ -39,7 +39,7 @@ class Api::CalloutParticipationsController < Api::FilteredController
     current_account.batch_operations.can_preview_contacts
   end
 
-  def permitted_build_params
+  def permitted_create_params
     params.permit(:contact_id, :msisdn, :call_flow_logic, metadata: {})
   end
 
@@ -48,9 +48,5 @@ class Api::CalloutParticipationsController < Api::FilteredController
       :call_flow_logic, :msisdn,
       :metadata_merge_mode, metadata: {}
     )
-  end
-
-  def resource_location
-    api_callout_participation_path(resource)
   end
 end

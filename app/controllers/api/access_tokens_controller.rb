@@ -17,15 +17,11 @@ class Api::AccessTokensController < Api::FilteredController
     params.permit(:metadata_merge_mode, permissions: [], metadata: {})
   end
 
-  def setup_resource
+  def prepare_resource_for_create
     resource.created_by = current_account
   end
 
-  def before_destroy_resource
+  def prepare_resource_for_destroy
     resource.destroyer = current_account
-  end
-
-  def resource_location
-    api_access_token_path(resource)
   end
 end

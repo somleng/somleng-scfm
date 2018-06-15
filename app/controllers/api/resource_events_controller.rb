@@ -3,7 +3,7 @@ class Api::ResourceEventsController < Api::AuthenticatedController
 
   private
 
-  def respond_with_create_resource
+  def respond_with_created_resource
     if resource.errors.any?
       respond_with(resource)
     else
@@ -11,7 +11,7 @@ class Api::ResourceEventsController < Api::AuthenticatedController
     end
   end
 
-  def build_resource
+  def build_resource_from_params
     @resource = event_class.new(permitted_params.merge(eventable: parent))
   end
 

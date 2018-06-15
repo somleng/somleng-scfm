@@ -45,6 +45,32 @@ RSpec.describe Callout do
     it { expect { create(:callout) }.to broadcast(:callout_committed) }
   end
 
+  describe "audio_file=" do
+    it "tracks changes when attaching a new audio file" do
+      callout = described_class.new
+      callout.audio_file = fixture_file_upload("files/test.mp3", "audio/mp3")
+
+      expect(callout.audio_file_blob_changed?).to eq(true)
+      expect(callout.audio_file_blob_was).to eq(nil)
+    end
+
+    it "tracks changes when updating the audio file" do
+      callout = build(:callout, audio_file: "test.mp3")
+      original_blob = callout.audio_file.blob
+      callout.audio_file = fixture_file_upload("files/big_file.mp3", "audio/mp3")
+
+      expect(callout.audio_file_blob_changed?).to eq(true)
+      expect(callout.audio_file_blob_was).to eq(original_blob)
+    end
+
+    it "tracks changes when not updating the audio file" do
+      callout = create(:callout, audio_file: "test.mp3")
+      callout = Callout.find(callout.id)
+
+      expect(callout.audio_file_blob_changed?).to eq(false)
+    end
+  end
+
   describe "state_machine" do
     subject { create(factory, factory_attributes) }
 

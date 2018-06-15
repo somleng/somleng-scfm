@@ -1,10 +1,27 @@
 class Callout < ApplicationRecord
   AUDIO_CONTENT_TYPES = %w[audio/mpeg audio/mp3 audio/wav].freeze
 
+  module ActiveStorageDirty
+    attr_reader :audio_file_blob_was, :audio_file_will_change
+
+    def audio_file=(attachable)
+      @audio_file_blob_was = audio_file.blob if audio_file.attached?
+      @audio_file_will_change = true
+      super(attachable)
+    end
+
+    def audio_file_blob_changed?
+      return false unless audio_file.attached?
+      return false unless audio_file_will_change
+      audio_file.blob != audio_file_blob_was
+    end
+  end
+
   include MetadataHelpers
   include HasCallFlowLogic
   include Wisper::Publisher
   include AASM
+  prepend ActiveStorageDirty
 
   belongs_to :account
 

@@ -69,7 +69,7 @@ RSpec.describe "Callouts" do
         params: request_body,
         headers: build_authorization_headers(access_token: access_token)
       )
-    end.not_to have_enqueued_job(AudioFileProcessorJob)
+    end.to have_enqueued_job(AudioFileProcessorJob)
 
     expect(response.code).to eq("201")
     parsed_response = JSON.parse(response.body)
@@ -78,22 +78,6 @@ RSpec.describe "Callouts" do
     expect(created_callout.call_flow_logic).to eq(request_body.fetch(:call_flow_logic))
     expect(created_callout.audio_url).to eq(request_body.fetch(:audio_url))
     expect(created_callout.audio_file).to be_attached
-  end
-
-  it "can create a callout with an attached audio file" do
-    request_body = {
-      audio_file: fixture_file_upload("files/test.mp3", "audio/mp3")
-    }
-
-    expect do
-      post(
-        api_callouts_path,
-        params: request_body,
-        headers: build_authorization_headers(access_token: access_token)
-      )
-    end.to have_enqueued_job(AudioFileProcessorJob)
-
-    expect(response.code).to eq("201")
   end
 
   it "can fetch a callout" do

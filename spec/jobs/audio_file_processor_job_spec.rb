@@ -15,6 +15,7 @@ RSpec.describe AudioFileProcessorJob do
 
       callout.reload
       expect(callout.audio_url).to be_present
+      expect(callout.audio_url).to include("test.mp3")
     end
   end
 end

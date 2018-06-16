@@ -3,7 +3,15 @@ class AudioFileProcessorJob < ApplicationJob
 
   def perform(callout_id)
     callout = Callout.find(callout_id)
-    bucket_object = s3_resource.bucket(audio_bucket).object(generate_object_uuid)
+
+    bucket_object_name = [
+      generate_object_uuid,
+      callout.audio_file.filename.sanitized
+    ].join("-")
+
+    bucket_object = s3_resource.bucket(
+      audio_bucket
+    ).object(bucket_object_name)
 
     open(callout.audio_file.service_url) do |f|
       bucket_object.put(body: f.read)

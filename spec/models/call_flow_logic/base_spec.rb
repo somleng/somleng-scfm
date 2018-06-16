@@ -1,53 +1,17 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe CallFlowLogic::Base do
-  describe ".permitted" do
-    let(:call_flow_logic) { CallFlowLogic::HelloWorld }
-    let(:asserted_call_flow_logic) { call_flow_logic }
+  describe ".registered" do
+    it "returns registered call flow logic" do
+      call_flow_logic = [
+        CallFlowLogic::HelloWorld,
+        CallFlowLogic::PlayMessage
+      ].map(&:to_s)
 
-    def assert_permitted!
-      expect(described_class.permitted).to include(asserted_call_flow_logic.to_s)
-    end
+      registered_call_flow_logic = described_class.registered
 
-    def setup_scenario
-      described_class.permitted
-      call_flow_logic
-    end
-
-    it { assert_permitted! }
-  end
-
-  describe ".register(*args)" do
-    def assert_registered!
-      expect(described_class.registered).to include(asserted_call_flow_logic.to_s)
-    end
-
-    def assert_not_registered!
-      expect(described_class.registered).not_to include(asserted_call_flow_logic.to_s)
-    end
-
-    context "using environment variables" do
-      let(:call_flow_logic) { CallFlowLogic::AvfCapom::CapomShort }
-      let(:asserted_call_flow_logic) { call_flow_logic }
-
-      def setup_scenario
-        stub_secrets(registered_call_flow_logic: call_flow_logic.to_s)
-        described_class.init
-      end
-
-      it { assert_registered! }
-    end
-
-    context "Registering invalid call flow logic" do
-      let(:call_flow_logic) { Contact }
-      let(:asserted_call_flow_logic) { call_flow_logic }
-
-      def setup_scenario
-        super
-        described_class.register(call_flow_logic.to_s)
-      end
-
-      it { assert_not_registered! }
+      expect(registered_call_flow_logic).to include(*call_flow_logic)
+      expect(registered_call_flow_logic).not_to include(CallFlowLogic::Base.to_s)
     end
   end
 end

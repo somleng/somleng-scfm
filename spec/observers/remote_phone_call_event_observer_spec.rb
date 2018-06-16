@@ -7,7 +7,6 @@ RSpec.describe RemotePhoneCallEventObserver do
     class MyCallFlowLogic < CallFlowLogic::Base; end
 
     it "handles new phone calls" do
-      register_call_flow_logic(MyCallFlowLogic)
       account = create_account(call_flow_logic: MyCallFlowLogic)
       event = build_event(account: account)
 
@@ -26,7 +25,7 @@ RSpec.describe RemotePhoneCallEventObserver do
     end
 
     it "handles existing phone calls" do
-      register_call_flow_logic(MyCallFlowLogic)
+      CallFlowLogic::HelloWorld
       account = create_account(call_flow_logic: MyCallFlowLogic)
       phone_call = create_phone_call(
         account: account,
@@ -81,10 +80,6 @@ RSpec.describe RemotePhoneCallEventObserver do
         somleng_account_sid: generate(:somleng_account_sid),
         call_flow_logic: call_flow_logic.to_s.presence
       )
-    end
-
-    def register_call_flow_logic(call_flow_logic)
-      CallFlowLogic::Base.register(call_flow_logic.to_s)
     end
 
     def generate_event_details(remote_call_id: nil, account_sid: nil, call_status: nil)

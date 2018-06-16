@@ -1,5 +1,5 @@
 class Callout < ApplicationRecord
-  AUDIO_CONTENT_TYPES = %w[audio/mpeg audio/mp3 audio/wav].freeze
+  AUDIO_CONTENT_TYPES = %w[audio/mpeg audio/mp3 audio/wav audio/x-wav].freeze
 
   module ActiveStorageDirty
     attr_reader :audio_file_blob_was, :audio_file_will_change

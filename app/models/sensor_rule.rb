@@ -1,5 +1,4 @@
 class SensorRule < ApplicationRecord
-  AUDIO_CONTENT_TYPES = %w[audio/mpeg audio/mp3 audio/wav].freeze
   include MetadataHelpers
 
   belongs_to :sensor
@@ -22,7 +21,7 @@ class SensorRule < ApplicationRecord
               less_than_or_equal_to: 10.megabytes
             },
             file_content_type: {
-              allow: AUDIO_CONTENT_TYPES
+              allow: Callout::AUDIO_CONTENT_TYPES
             },
             if: ->(sensor_rule) { sensor_rule.alert_file.attached? }
 

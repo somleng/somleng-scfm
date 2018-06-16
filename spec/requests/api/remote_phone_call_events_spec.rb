@@ -203,12 +203,6 @@ RSpec.describe "Remote Phone Call Events" do
             end
           end
 
-          def setup_scenario
-            CallFlowLogic::HelloWorld
-            CallFlowLogic::Base.registered(reload: true)
-            super
-          end
-
           context "for an inbound call" do
             let(:from) { "+85510202101" }
             let(:to) { "345" }

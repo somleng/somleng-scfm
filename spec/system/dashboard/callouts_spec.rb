@@ -33,7 +33,6 @@ RSpec.describe "Callouts", :aggregate_failures do
   end
 
   it "can create a callout" do
-    load_call_flow_logic
     user = create(:user)
 
     sign_in(user)
@@ -84,7 +83,6 @@ RSpec.describe "Callouts", :aggregate_failures do
   end
 
   it "can update a callout", :js do
-    load_call_flow_logic
     user = create(:user)
     callout = create(
       :callout,
@@ -215,9 +213,5 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(callout.reload).to be_running
     expect(page).not_to have_link_to_action(:resume_callout, key: :callouts)
     expect(page).to have_link_to_action(:stop_callout, key: :callouts)
-  end
-
-  def load_call_flow_logic
-    CallFlowLogic::HelloWorld
   end
 end

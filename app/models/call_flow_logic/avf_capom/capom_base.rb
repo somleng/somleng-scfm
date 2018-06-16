@@ -9,6 +9,10 @@ class CallFlowLogic::AvfCapom::CapomBase < CallFlowLogic::Base
 
   include AASM
 
+  def self.abstract_class?
+    true
+  end
+
   def run!
     super
     if step!

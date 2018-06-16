@@ -204,7 +204,8 @@ RSpec.describe "Remote Phone Call Events" do
           end
 
           def setup_scenario
-            CallFlowLogic::Base.register(call_flow_logic.to_s)
+            CallFlowLogic::HelloWorld
+            CallFlowLogic::Base.registered(reload: true)
             super
           end
 
@@ -213,7 +214,6 @@ RSpec.describe "Remote Phone Call Events" do
             let(:to) { "345" }
             let(:direction) { "inbound" }
             let(:call_status) { "in-progress" }
-
             let(:asserted_phone_call) { asserted_remote_phone_call_event.phone_call }
             let(:asserted_phone_call_status) { PhoneCall::STATE_IN_PROGRESS }
             let(:asserted_contact) { asserted_phone_call.contact }

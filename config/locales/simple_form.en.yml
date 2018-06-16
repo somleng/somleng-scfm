@@ -43,6 +43,7 @@ en:
       defaults:
         call_flow_logic:
           CallFlowLogic::HelloWorld: Hello World
+          CallFlowLogic::PlayMessage: Play Message
     required:
       mark: "*"
       text: required

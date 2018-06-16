@@ -49,7 +49,7 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     expect(page).to have_link_to_action(:cancel)
 
-    fill_in("Public audio URL", with: "https://www.example.com/sample.mp3")
+    fill_in("Audio url", with: "https://www.example.com/sample.mp3")
     choose("Hello World")
     fill_in_key_value_for(:metadata, with: { key: "location:country", value: "kh" })
 
@@ -177,7 +177,7 @@ RSpec.describe "Callouts", :aggregate_failures do
       expect(page).to have_content("Initialized")
       expect(page).to have_content("Created at")
       expect(page).to have_content("Audio file")
-      expect(page).to have_content("Public audio URL")
+      expect(page).to have_content("Audio url")
       expect(page).to have_content("Call flow")
       expect(page).to have_content("CallFlowLogic::HelloWorld")
       expect(page).to have_content("Metadata")

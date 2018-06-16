@@ -1,4 +1,4 @@
-class Api::SensorEventsController < Api::FilteredController
+class Api::SensorEventsController < Api::BaseController
   private
 
   def association_chain
@@ -11,8 +11,8 @@ class Api::SensorEventsController < Api::FilteredController
     end
   end
 
-  def setup_resource
-    resource.authorized_account = current_account
+  def prepare_resource_for_create
+    resource.account = current_account
   end
 
   def sensor_id

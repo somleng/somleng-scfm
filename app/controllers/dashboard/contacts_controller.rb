@@ -16,8 +16,4 @@ class Dashboard::ContactsController < Dashboard::BaseController
   def before_update_attributes
     clear_metadata
   end
-
-  def resources_path
-    dashboard_contacts_path
-  end
 end

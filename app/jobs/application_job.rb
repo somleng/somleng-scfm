@@ -1,14 +1,6 @@
 class ApplicationJob < ActiveJob::Base
-  DEFAULT_QUEUE_NAME = "default".freeze
-
   def self.aws_sqs_queue_name(job_name = nil)
-    eb_tier = Rails.application.secrets.fetch(:eb_tier)
-
-    if eb_tier.casecmp?("worker") && aws_sqs_queue_url(job_name).blank?
-      DEFAULT_QUEUE_NAME
-    else
-      aws_sqs_queue_url(job_name).split("/").last
-    end
+    aws_sqs_queue_url(job_name).split("/").last
   end
 
   def self.aws_sqs_queue_url(job_name = nil)

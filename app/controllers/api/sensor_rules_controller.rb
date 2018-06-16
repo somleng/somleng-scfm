@@ -1,4 +1,4 @@
-class Api::SensorRulesController < Api::FilteredController
+class Api::SensorRulesController < Api::BaseController
   private
 
   def association_chain

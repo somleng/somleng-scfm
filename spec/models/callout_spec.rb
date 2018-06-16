@@ -5,48 +5,68 @@ RSpec.describe Callout do
   include_examples "has_call_flow_logic"
 
   describe "associations" do
-    def assert_associations!
-      is_expected.to belong_to(:account)
-      is_expected.to have_many(:callout_participations).dependent(:restrict_with_error)
-      is_expected.to have_many(:batch_operations).dependent(:restrict_with_error)
-      is_expected.to have_many(:callout_populations)
-      is_expected.to have_many(:contacts)
-      is_expected.to have_many(:phone_calls)
-      is_expected.to have_many(:remote_phone_call_events)
-    end
-
-    it { assert_associations! }
+    it { is_expected.to have_many(:callout_participations).dependent(:restrict_with_error) }
+    it { is_expected.to have_many(:batch_operations).dependent(:restrict_with_error) }
   end
 
   describe "validations" do
     it { is_expected.to validate_presence_of(:status) }
-    it { is_expected.to validate_presence_of(:commune_ids) }
-    it { is_expected.to validate_presence_of(:call_flow_logic) }
 
-    context "voice" do
-      it "must be present" do
-        callout = build(:callout, voice_file: nil)
+    context "#audio_file" do
+      it "validates the content type" do
+        callout = build(:callout, audio_file: "image.jpg")
 
-        callout.valid?
-
-        expect(callout.errors[:voice]).to be_present
+        expect(callout).not_to be_valid
+        expect(callout.errors[:audio_file]).to be_present
       end
 
-      it "must be audio file" do
-        callout = build(:callout, voice_file: "image.jpg")
+      it "validates the file size" do
+        callout = build(:callout, audio_file: "big_file.mp3")
 
-        callout.valid?
-
-        expect(callout.errors[:voice]).to be_present
+        expect(callout).not_to be_valid
+        expect(callout.errors[:audio_file]).to be_present
       end
 
-      it "file cannot be bigger than 10MB" do
-        callout = build(:callout, voice_file: "big_file.mp3")
-
-        callout.valid?
-
-        expect(callout.errors[:voice]).to be_present
+      it "allows small audio files" do
+        callout = build(:callout, audio_file: "test.mp3")
+        expect(callout).to be_valid
       end
+
+      it "allows no audio files" do
+        callout = build(:callout)
+
+        expect(callout).to be_valid
+      end
+    end
+  end
+
+  context "saving" do
+    it { expect { create(:callout) }.to broadcast(:callout_committed) }
+  end
+
+  describe "audio_file=" do
+    it "tracks changes when attaching a new audio file" do
+      callout = described_class.new
+      callout.audio_file = fixture_file_upload("files/test.mp3", "audio/mp3")
+
+      expect(callout.audio_file_blob_changed?).to eq(true)
+      expect(callout.audio_file_blob_was).to eq(nil)
+    end
+
+    it "tracks changes when updating the audio file" do
+      callout = build(:callout, audio_file: "test.mp3")
+      original_blob = callout.audio_file.blob
+      callout.audio_file = fixture_file_upload("files/big_file.mp3", "audio/mp3")
+
+      expect(callout.audio_file_blob_changed?).to eq(true)
+      expect(callout.audio_file_blob_was).to eq(original_blob)
+    end
+
+    it "tracks changes when not updating the audio file" do
+      callout = create(:callout, audio_file: "test.mp3")
+      callout = Callout.find(callout.id)
+
+      expect(callout.audio_file_blob_changed?).to eq(false)
     end
   end
 

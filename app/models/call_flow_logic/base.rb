@@ -1,35 +1,12 @@
 class CallFlowLogic::Base
-  DEFAULT = "CallFlowLogic::HelloWorld".freeze
-
   attr_accessor :options
 
-  def self.init
-    names = Rails.application.secrets[:registered_call_flow_logic]
-    return if names.blank?
-
-    class_names = names.to_s.split(",").each_with_object([]) do |name, result|
-      name.constantize
-      result << name.to_s
-    rescue StandardError
-      nil
-    end
-
-    register(*class_names)
+  def self.registered(reload: false)
+    @registered = (!reload && @registered) || descendants.reject(&:abstract_class?).map(&:to_s)
   end
 
-  def self.registered
-    @registered ||= [DEFAULT]
-  end
-
-  def self.register(*args)
-    args.each do |arg|
-      registered << arg if arg && permitted.include?(arg)
-    end
-    registered
-  end
-
-  def self.permitted
-    CallFlowLogic::Base.descendants.map(&:to_s)
+  def self.abstract_class?
+    false
   end
 
   def initialize(options = {})
@@ -54,5 +31,3 @@ class CallFlowLogic::Base
     end.to_s
   end
 end
-
-CallFlowLogic::Base.init

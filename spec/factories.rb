@@ -41,10 +41,19 @@ FactoryBot.define do
   factory :callout do
     account
     commune_ids ["040202"]
-    call_flow_logic "CallFlowLogic::HelloWorld"
+    call_flow_logic CallFlowLogic::HelloWorld
 
     transient do
-      voice_file "test.mp3"
+      audio_file "test.mp3"
+    end
+
+    after(:build) do |callout, evaluator|
+      if evaluator.audio_file.present?
+        callout.audio_file = Rack::Test::UploadedFile.new(
+          ActiveSupport::TestCase.fixture_path + "/files/#{evaluator.audio_file}",
+          "audio/mp3"
+        )
+      end
     end
 
     trait :initialized do
@@ -67,15 +76,6 @@ FactoryBot.define do
 
     trait :running do
       status Callout::STATE_RUNNING
-    end
-
-    after(:build) do |callout, evaluator|
-      if evaluator.voice_file.present?
-        callout.voice.attach(
-          io: File.open(ActiveSupport::TestCase.fixture_path + "/files/#{evaluator.voice_file}"),
-          filename: evaluator.voice_file
-        )
-      end
     end
   end
 
@@ -119,12 +119,6 @@ FactoryBot.define do
   factory :phone_call do
     outbound
 
-    trait :with_default_provider do
-      after(:build) do |phone_call|
-        phone_call.contact ||= build(:contact, account: build(:account, :with_default_provider))
-      end
-    end
-
     trait :outbound do
       callout_participation
       remote_request_params { generate(:twilio_request_params) }
@@ -162,6 +156,10 @@ FactoryBot.define do
 
   factory :account do
     trait :with_default_provider do
+      with_twilio_provider
+    end
+
+    trait :with_twilio_provider do
       platform_provider_name "twilio"
       twilio_account_sid
       twilio_auth_token { generate(:auth_token) }

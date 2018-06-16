@@ -1,14 +1,15 @@
 class Dashboard::CalloutsController < Dashboard::BaseController
-  CALL_FLOW_LOGIC = "CallFlowLogic::PeopleInNeed::EWS::EmergencyMessage".freeze
+  CALL_FLOW_LOGIC = "CallFlowLogic::PlayMessage".freeze
 
   private
 
-  def prepare_for_render
+  def prepare_resource_for_new
     resource.call_flow_logic ||= CALL_FLOW_LOGIC
   end
 
   def prepare_resource_for_create
     build_callout_population
+    resource.subscribe(CalloutObserver.new)
   end
 
   def prepare_resource_for_update
@@ -24,15 +25,12 @@ class Dashboard::CalloutsController < Dashboard::BaseController
   end
 
   def permitted_params
-    params.require(:callout).permit(:voice, :call_flow_logic, commune_ids: [])
-  end
-
-  def resources_path
-    dashboard_callouts_path
-  end
-
-  def show_location(resource)
-    dashboard_callout_path(resource)
+    params.fetch(:callout, {}).permit(
+      :call_flow_logic,
+      :audio_file,
+      :audio_url,
+      commune_ids: []
+    )
   end
 
   def build_callout_population

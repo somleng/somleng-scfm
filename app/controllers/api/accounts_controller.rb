@@ -1,4 +1,4 @@
-class Api::AccountsController < Api::FilteredController
+class Api::AccountsController < Api::BaseController
   before_action :authorize_super_admin!
 
   private
@@ -41,9 +41,5 @@ class Api::AccountsController < Api::FilteredController
       settings: {},
       metadata: {}
     )
-  end
-
-  def resource_location
-    api_account_path(resource)
   end
 end

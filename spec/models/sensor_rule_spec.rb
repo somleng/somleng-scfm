@@ -10,12 +10,11 @@ RSpec.describe SensorRule do
     it { is_expected.to validate_presence_of(:level) }
     it { is_expected.to validate_numericality_of(:level).only_integer }
 
-    context "voice" do
+    context "alert_file" do
       it "must be present" do
         sensor_rule = build(:sensor_rule, alert_filename: nil)
 
-        sensor_rule.valid?
-
+        expect(sensor_rule).not_to be_valid
         expect(sensor_rule.errors[:alert_file]).to be_present
       end
 

@@ -31,9 +31,9 @@
             = resource.status.humanize
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
-          = Callout.human_attribute_name(:voice)
+          = Callout.human_attribute_name(:audio_file)
         %dd.col-sm-7.col-md-6
-          = link_to resource.voice.blob.filename, url_for(resource.voice)
+          = link_to resource.audio_file.blob.filename, url_for(resource.audio_file)
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Callout.human_attribute_name(:province_id)

@@ -9,10 +9,6 @@ class Dashboard::AccessTokensController < Dashboard::AdminController
     resource.created_by = current_user.account
   end
 
-  def resources_path
-    dashboard_access_tokens_path
-  end
-
   def permitted_params
     params.require(:access_token).permit(permissions: [])
   end

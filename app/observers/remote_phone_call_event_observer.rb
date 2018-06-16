@@ -46,8 +46,7 @@ class RemotePhoneCallEventObserver < ApplicationObserver
   end
 
   def registered_call_flow_logic(call_flow_logic)
-    if call_flow_logic
-      CallFlowLogic::Base.registered.map(&:to_s).detect { |r| r == call_flow_logic }
-    end
+    return unless call_flow_logic
+    CallFlowLogic::Base.registered.map(&:to_s).detect { |r| r == call_flow_logic }
   end
 end

@@ -1,9 +1,28 @@
 class Callout < ApplicationRecord
+  AUDIO_CONTENT_TYPES = %w[audio/mpeg audio/mp3 audio/wav].freeze
+
+  module ActiveStorageDirty
+    attr_reader :audio_file_blob_was, :audio_file_will_change
+
+    def audio_file=(attachable)
+      @audio_file_blob_was = audio_file.blob if audio_file.attached?
+      @audio_file_will_change = true
+      super(attachable)
+    end
+
+    def audio_file_blob_changed?
+      return false unless audio_file.attached?
+      return false unless audio_file_will_change
+      audio_file.blob != audio_file_blob_was
+    end
+  end
+
   include MetadataHelpers
   include HasCallFlowLogic
+  include Wisper::Publisher
+  include AASM
   include PumiHelpers
-
-  AUDIO_CONTENT_TYPES = %w[audio/mpeg audio/mp3 audio/wav].freeze
+  prepend ActiveStorageDirty
 
   belongs_to :account
 
@@ -26,21 +45,25 @@ class Callout < ApplicationRecord
   has_many :contacts,
            through: :callout_participations
 
-  has_one_attached :voice
+  has_one_attached :audio_file
 
   alias_attribute :calls, :phone_calls
 
   validates :status, presence: true
 
-  validates :voice, file: {
-    presence: true, type: AUDIO_CONTENT_TYPES,
-    size: 10.megabytes
-  }
-
   validates :call_flow_logic,
             presence: true
 
-  include AASM
+  validates :audio_file,
+            file_size: {
+              less_than_or_equal_to: 10.megabytes
+            },
+            file_content_type: {
+              allow: AUDIO_CONTENT_TYPES
+            },
+            if: ->(callout) { callout.audio_file.attached? }
+
+  after_commit :publish_committed
 
   aasm column: :status, whiny_transitions: false do
     state :initialized, initial: true
@@ -75,5 +98,11 @@ class Callout < ApplicationRecord
         to: :stopped
       )
     end
+  end
+
+  private
+
+  def publish_committed
+    broadcast(:callout_committed, self)
   end
 end

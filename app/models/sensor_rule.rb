@@ -15,10 +15,21 @@ class SensorRule < ApplicationRecord
             presence: true,
             numericality: { only_integer: true }
 
+  validate :validate_presence_of_alert_file
+
   validates :alert_file,
-            file: {
-              presence: true,
-              type: AUDIO_CONTENT_TYPES,
-              size: 10.megabytes
-            }
+            file_size: {
+              less_than_or_equal_to: 10.megabytes
+            },
+            file_content_type: {
+              allow: AUDIO_CONTENT_TYPES
+            },
+            if: ->(sensor_rule) { sensor_rule.alert_file.attached? }
+
+  private
+
+  def validate_presence_of_alert_file
+    return if alert_file.attached?
+    errors.add(:alert_file, :blank)
+  end
 end

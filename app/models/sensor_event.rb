@@ -7,7 +7,7 @@ class SensorEvent < ApplicationRecord
   belongs_to :sensor
   belongs_to :sensor_rule, optional: true
 
-  attr_accessor :authorized_account
+  attr_accessor :account
 
   before_validation :attach_to_sensor
 
@@ -16,8 +16,8 @@ class SensorEvent < ApplicationRecord
   private
 
   def attach_to_sensor
-    return unless authorized_account.present?
-    self.sensor ||= authorized_account.sensors.find_by(external_id: payload_sensor_id)
+    return unless account.present?
+    self.sensor ||= account.sensors.find_by(external_id: payload_sensor_id)
   end
 
   def payload_sensor_id

@@ -17,7 +17,7 @@ km:
       account:
         platform_provider_name: Platform provider
       callout:
-        voice: Voice file
+        audio_url: Audio URL
       phone_call:
         remote_call_id: Remote call sid
       sensor:

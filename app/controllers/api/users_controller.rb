@@ -1,4 +1,4 @@
-class Api::UsersController < Api::FilteredController
+class Api::UsersController < Api::BaseController
   private
 
   def find_resources_association_chain
@@ -15,9 +15,5 @@ class Api::UsersController < Api::FilteredController
 
   def permitted_params
     params.permit(:email, :password, :metadata_merge_mode, :metadata => {})
-  end
-
-  def resource_location
-    api_user_path(resource)
   end
 end

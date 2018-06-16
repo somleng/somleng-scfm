@@ -36,6 +36,7 @@ RSpec.describe "Callouts", :aggregate_failures do
 
   it "can create a callout", :js do
     user = create(:user)
+    _call_flow_logic = CallFlowLogic::PlayMessage
 
     sign_in(user)
     visit new_dashboard_callout_path
@@ -51,22 +52,25 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     expect(page).to have_link_to_action(:cancel)
 
-    fill_in_callout_information
-    click_action_button(:create, key: :submit, namespace: :helpers, model: "Callout")
+    attach_file("Audio file", Rails.root + file_fixture("test.mp3"))
+    select_commune
 
-    expect(page).to have_text("Callout was successfully created.")
+    expect do
+      click_action_button(:create, key: :submit, namespace: :helpers, model: "Callout")
+      expect(page).to have_text("Callout was successfully created.")
+    end.to have_enqueued_job(AudioFileProcessorJob)
 
-    callout = Callout.first
-    expect(callout.voice.attached?).to eq(true)
-    expect(callout.callout_population).to be_present
-    expect(callout.callout_population.contact_filter_metadata[:commune_id]).to eq(callout.commune_ids)
-    expect(callout.call_flow_logic).to eq(CallFlowLogic::PeopleInNeed::EWS::EmergencyMessage.name)
+    new_callout = Callout.first
+    expect(new_callout.audio_file).to be_attached
+    expect(new_callout.call_flow_logic).to eq(CallFlowLogic::PlayMessage.to_s)
+    expect(new_callout.callout_population).to be_present
+    expect(new_callout.callout_population.contact_filter_metadata[:commune_id]).to eq(new_callout.commune_ids)
   end
 
-  it "can update a callout with an existing callout population", :js do
+  it "can update a callout", :js do
     user = create(:user)
     callout = create(:callout, account: user.account, commune_ids: ["010201"])
-    callout_population = create(:callout_population, callout: callout, account: callout.account)
+    _callout_population = create(:callout_population, callout: callout, account: callout.account)
 
     sign_in(user)
     visit edit_dashboard_callout_path(callout)
@@ -83,17 +87,16 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(page).to have_content("Banteay Neang")
     expect(page).to have_link_to_action(:cancel)
 
-    fill_in_callout_information
+    select_commune
     click_action_button(:update, key: :submit, namespace: :helpers)
 
     expect(page).to have_text("Callout was successfully updated.")
 
     callout.reload
-    expect(callout.reload.voice.attached?).to eq true
     expect(callout.callout_population.contact_filter_metadata[:commune_id]).to eq(callout.commune_ids)
   end
 
-  it "can update a callout wihtout an existing callout population", :js do
+  it "can update a callout without an existing callout population", :js do
     user = create(:user)
     callout = create(:callout, account: user.account, commune_ids: ["010201"])
 
@@ -102,7 +105,7 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     expect(page).to have_content("Banteay Neang")
 
-    fill_in_callout_information
+    select_commune
     click_action_button(:update, key: :submit, namespace: :helpers)
 
     expect(page).to have_text("Callout was successfully updated.")
@@ -190,13 +193,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(page).to have_link_to_action(:stop_callout, key: :callouts)
   end
 
-  def have_callout(callout)
-    have_selector("#callout_#{callout.id}")
-  end
-
-  def fill_in_callout_information
-    file_path = Rails.root + file_fixture("test.mp3")
-    attach_file "Voice file", file_path
+  def select_commune
     select_selectize("#province", "Battambang")
     select_selectize("#communes", "Kantueu Pir")
   end

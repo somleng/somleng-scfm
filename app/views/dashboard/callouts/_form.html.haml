@@ -1,7 +1,8 @@
 .card
   .card-body
     = simple_form_for([:dashboard, resource]) do |f|
-      = f.input :voice, as: :file, input_html: { direct_upload: true, accept: Callout::AUDIO_CONTENT_TYPES.join(", ") }
+      = f.input :audio_file, as: :file, input_html: { direct_upload: true, accept: Callout::AUDIO_CONTENT_TYPES.join(", ") }
+      = f.input :audio_url
       = f.input :province_id, collection: [], prompt: true, required: true,
                 wrapper_html: { id: 'province' },
                 input_html: { class: 'js-select-province',

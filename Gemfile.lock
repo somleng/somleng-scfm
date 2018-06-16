@@ -6,6 +6,12 @@ GIT
       concurrent-ruby (~> 1.0)
 
 GIT
+  remote: https://github.com/davidcelis/api-pagination.git
+  revision: 6c7ff5662da24bb3a5f40fe19a3b109a658a1830
+  specs:
+    api-pagination (4.8.0)
+
+GIT
   remote: https://github.com/dwilkie/pumi.git
   revision: 57e777cefb72215bf940f79c1c8ec96bd94f7d16
   specs:
@@ -86,7 +92,6 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
-    api-pagination (4.6.3)
     arel (9.0.0)
     ast (2.4.0)
     autoprefixer-rails (8.0.0)
@@ -181,6 +186,9 @@ GEM
     faraday (0.15.2)
       multipart-post (>= 1.2, < 3)
     ffi (1.9.23)
+    file_validators (2.3.0)
+      activemodel (>= 3.2)
+      mime-types (>= 1.0)
     font-awesome-rails (4.7.0.4)
       railties (>= 3.2, < 6.0)
     globalid (0.4.1)
@@ -240,6 +248,9 @@ GEM
     marcel (0.3.2)
       mimemagic (~> 0.3.2)
     method_source (0.8.2)
+    mime-types (3.1)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2016.0521)
     mimemagic (0.3.2)
     mini_mime (1.0.0)
     mini_portile2 (2.3.0)
@@ -412,7 +423,7 @@ PLATFORMS
 DEPENDENCIES
   aasm!
   active_elastic_job!
-  api-pagination
+  api-pagination!
   aws-sdk-s3
   bitmask_attributes!
   bootsnap (>= 1.1.0)
@@ -429,6 +440,7 @@ DEPENDENCIES
   doorkeeper
   email_spec
   factory_bot_rails
+  file_validators
   font-awesome-rails
   haml
   i18n-tasks

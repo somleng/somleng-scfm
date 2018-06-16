@@ -14,8 +14,6 @@ km:
     labels:
       account:
         call_flow_logic: Default call flow logic
-      sensor:
-        external_id: External id
     options:
       access_token:
         permissions:
@@ -50,7 +48,7 @@ km:
       defaults:
         call_flow_logic:
           CallFlowLogic::HelloWorld: Hello World
-          CallFlowLogic::PeopleInNeed::EWS::EmergencyMessage: Emergency Message
+          CallFlowLogic::PlayMessage: Emergency Message
     prompts:
       defaults:
         commune_id: Select a commune

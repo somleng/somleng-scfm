@@ -3,7 +3,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 gem "aasm", github: "aasm/aasm"
 gem "active_elastic_job", github: "samnang/active-elastic-job", branch: "upgrade_to_aws_sdk_3"
-gem "api-pagination"
+gem "api-pagination", github: "davidcelis/api-pagination"
 gem "aws-sdk-s3", require: false
 gem "bitmask_attributes", github: "numerex/bitmask_attributes"
 gem "bootsnap", ">= 1.1.0", require: false
@@ -15,6 +15,7 @@ gem "devise"
 gem "devise-async"
 gem "devise_invitable"
 gem "doorkeeper"
+gem "file_validators"
 gem "font-awesome-rails"
 gem "haml"
 gem "jbuilder", "~> 2.5"

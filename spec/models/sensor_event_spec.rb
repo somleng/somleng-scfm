@@ -1,11 +1,6 @@
 require "rails_helper"
 
 RSpec.describe SensorEvent do
-  describe "associations" do
-    it { is_expected.to belong_to(:sensor) }
-    it { is_expected.to belong_to(:sensor_rule).optional }
-  end
-
   describe "validations" do
     it "can attach the event to a sensor" do
       account = create(:account)
@@ -14,7 +9,7 @@ RSpec.describe SensorEvent do
         payload: {
           "sensor_id" => sensor.external_id
         },
-        authorized_account: account
+        account: account
       )
 
       expect(sensor_event).to be_valid

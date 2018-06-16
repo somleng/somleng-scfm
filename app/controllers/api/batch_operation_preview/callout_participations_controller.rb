@@ -1,4 +1,4 @@
-class Api::BatchOperationPreview::CalloutParticipationsController < Api::FilteredController
+class Api::BatchOperationPreview::CalloutParticipationsController < Api::BaseController
   include BatchOperationResource
 
   private

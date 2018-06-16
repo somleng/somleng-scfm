@@ -1,4 +1,4 @@
-class Api::CalloutsController < Api::FilteredController
+class Api::CalloutsController < Api::BaseController
   private
 
   def find_resources_association_chain
@@ -18,14 +18,20 @@ class Api::CalloutsController < Api::FilteredController
   end
 
   def permitted_params
-    params.permit(:call_flow_logic, :metadata_merge_mode, :metadata => {})
-  end
-
-  def resource_location
-    api_callout_path(resource)
+    params.permit(
+      :call_flow_logic,
+      :audio_file,
+      :audio_url,
+      :metadata_merge_mode,
+      metadata: {}
+    )
   end
 
   def contact
     @contact ||= current_account.contacts.find(params[:contact_id])
+  end
+
+  def prepare_resource_for_create
+    resource.subscribe(CalloutObserver.new)
   end
 end

@@ -12,12 +12,4 @@ class Dashboard::UsersController < Dashboard::BaseController
   def permitted_params
     params.fetch(:user, {}).permit(METADATA_FIELDS_ATTRIBUTES)
   end
-
-  def resources_path
-    dashboard_users_path
-  end
-
-  def show_location(resource)
-    dashboard_user_path(resource)
-  end
 end

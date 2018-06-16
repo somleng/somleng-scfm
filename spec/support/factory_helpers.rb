@@ -9,7 +9,7 @@ module FactoryHelpers
     callout_participation = options.delete(:callout_participation) || create_callout_participation(
       account: account
     )
-    create(:phone_call, { callout_participation: callout_participation }.merge(options))
+    create(:phone_call, callout_participation: callout_participation, **options)
   end
 
   def create_remote_phone_call_event(account:, **options)
@@ -22,4 +22,5 @@ RSpec.configure do |config|
   config.include(FactoryHelpers, type: :system)
   config.include(FactoryHelpers, type: :model)
   config.include(FactoryHelpers, type: :request)
+  config.include(FactoryHelpers, type: :job)
 end

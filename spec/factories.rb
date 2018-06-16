@@ -37,6 +37,19 @@ FactoryBot.define do
   factory :callout do
     account
 
+    transient do
+      audio_file nil
+    end
+
+    after(:build) do |callout, evaluator|
+      if evaluator.audio_file.present?
+        callout.audio_file = Rack::Test::UploadedFile.new(
+          ActiveSupport::TestCase.fixture_path + "/files/#{evaluator.audio_file}",
+          "audio/mp3"
+        )
+      end
+    end
+
     trait :initialized do
     end
 
@@ -100,12 +113,6 @@ FactoryBot.define do
   factory :phone_call do
     outbound
 
-    trait :with_default_provider do
-      after(:build) do |phone_call|
-        phone_call.contact ||= build(:contact, account: build(:account, :with_default_provider))
-      end
-    end
-
     trait :outbound do
       callout_participation
       remote_request_params { generate(:twilio_request_params) }
@@ -143,6 +150,10 @@ FactoryBot.define do
 
   factory :account do
     trait :with_default_provider do
+      with_twilio_provider
+    end
+
+    trait :with_twilio_provider do
       platform_provider_name "twilio"
       twilio_account_sid
       twilio_auth_token { generate(:auth_token) }

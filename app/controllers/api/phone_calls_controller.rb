@@ -1,4 +1,4 @@
-class Api::PhoneCallsController < Api::FilteredController
+class Api::PhoneCallsController < Api::BaseController
   include BatchOperationResource
 
   private
@@ -30,10 +30,6 @@ class Api::PhoneCallsController < Api::FilteredController
       :call_flow_logic, :msisdn,
       :metadata_merge_mode, metadata: {}, remote_request_params: {}
     )
-  end
-
-  def resource_location
-    api_phone_call_path(resource)
   end
 
   def filter_class

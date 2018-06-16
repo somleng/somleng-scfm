@@ -6,22 +6,18 @@ RSpec.describe QueueRemoteCallJob do
   describe "#perform" do
     it "queues the call remotely" do
       phone_call = create_phone_call(account: account)
-
       response_body = {
         "sid" => "1234",
         "direction" => "outbound-api",
         "status" => "queued"
       }
-
-      stub_request(
-        :post,
-        "https://api.twilio.com/2010-04-01/Accounts/#{account.twilio_account_sid}/Calls.json"
-      ).to_return(body: response_body.to_json)
+      stub_twilio_request(
+        account: account, response: { body: response_body.to_json }
+      )
 
       subject.perform(phone_call.id)
 
       phone_call.reload
-
       assert_request_made!(account: account, phone_call: phone_call)
       expect(phone_call.remote_queue_response).to include(response_body)
       expect(phone_call.remote_status).to eq(response_body.fetch("status"))
@@ -32,10 +28,9 @@ RSpec.describe QueueRemoteCallJob do
 
     it "handles remote errors" do
       phone_call = create_phone_call(account: account)
-      stub_request(
-        :post,
-        "https://api.twilio.com/2010-04-01/Accounts/#{account.twilio_account_sid}/Calls.json"
-      ).to_return(status: 422)
+      stub_twilio_request(
+        account: account, response: { status: 422 }
+      )
 
       subject.perform(phone_call.id)
 
@@ -46,6 +41,13 @@ RSpec.describe QueueRemoteCallJob do
     end
 
     let(:account) { create(:account, :with_twilio_provider) }
+
+    def stub_twilio_request(account:, response:)
+      stub_request(
+        :post,
+        "https://api.twilio.com/2010-04-01/Accounts/#{account.twilio_account_sid}/Calls.json"
+      ).to_return(response)
+    end
 
     def create_phone_call(account:, **options)
       super(

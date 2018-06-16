@@ -3,14 +3,9 @@ class FetchRemoteCallJob < ApplicationJob
 
   def perform(phone_call_id)
     self.phone_call_id = phone_call_id
-    begin
-      response = fetch_remote_call!
-      phone_call.remote_response = response.instance_variable_get(:@properties).compact
-      phone_call.new_remote_status = phone_call.remote_status = response.status
-    rescue Twilio::REST::RestError => e
-      phone_call.remote_error_message = e.message
-    end
-
+    response = fetch_remote_call!
+    phone_call.remote_response = response.instance_variable_get(:@properties).compact
+    phone_call.new_remote_status = phone_call.remote_status = response.status
     phone_call.complete!
   end
 

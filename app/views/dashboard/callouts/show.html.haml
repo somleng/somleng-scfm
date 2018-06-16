@@ -33,6 +33,17 @@
         %dt.col-sm-5.col-md-4.text-md-right
           = Callout.human_attribute_name(:audio_file)
         %dd.col-sm-7.col-md-6
+          - if resource.audio_file.attached?
+            = link_to(resource.audio_file_blob.filename, url_for(resource.audio_file))
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Callout.human_attribute_name(:audio_url)
+        %dd.col-sm-7.col-md-6
+          = link_to(resource.audio_url, url_for(resource.audio_url))
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Callout.human_attribute_name(:audio_file)
+        %dd.col-sm-7.col-md-6
           = link_to resource.audio_file.blob.filename, url_for(resource.audio_file)
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right

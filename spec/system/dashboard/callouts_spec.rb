@@ -116,8 +116,16 @@ RSpec.describe "Callouts", :aggregate_failures do
 
   it "can show a callout" do
     user = create(:admin)
-    callout = create(:callout, :initialized, account: user.account)
+    callout = create(
+      :callout,
+      :initialized,
+      account: user.account,
+      call_flow_logic: "CallFlowLogic::HelloWorld",
+      audio_file: "test.mp3",
+      audio_url: "https://example.com/audio.mp3"
+    )
     callout_population = create(:callout_population, callout: callout, account: callout.account)
+
 
     sign_in(user)
     visit dashboard_callout_path(callout)
@@ -156,9 +164,12 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     within("#callout") do
       expect(page).to have_content(callout.id)
+      expect(page).to have_link(callout.audio_url, href: callout.audio_url)
       expect(page).to have_content("Status")
       expect(page).to have_content("Initialized")
       expect(page).to have_content("Created at")
+      expect(page).to have_content("Audio file")
+      expect(page).to have_content("Public audio URL")
       expect(page).to have_content("Call flow")
       expect(page).to have_content("Hello World")
     end

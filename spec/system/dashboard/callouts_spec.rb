@@ -36,7 +36,6 @@ RSpec.describe "Callouts", :aggregate_failures do
 
   it "can create a callout", :js do
     user = create(:user)
-    _call_flow_logic = CallFlowLogic::PlayMessage
 
     sign_in(user)
     visit new_dashboard_callout_path

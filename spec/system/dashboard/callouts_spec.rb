@@ -169,7 +169,7 @@ RSpec.describe "Callouts", :aggregate_failures do
       expect(page).to have_content("Initialized")
       expect(page).to have_content("Created at")
       expect(page).to have_content("Audio file")
-      expect(page).to have_content("Public audio URL")
+      expect(page).to have_content("Audio url")
       expect(page).to have_content("Call flow")
       expect(page).to have_content("Hello World")
     end

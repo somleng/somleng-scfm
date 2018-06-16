@@ -16,8 +16,6 @@ km:
         token: API key
       account:
         platform_provider_name: Platform provider
-      callout:
-        audio_url: Audio URL
       phone_call:
         remote_call_id: Remote call sid
       sensor:

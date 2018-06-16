@@ -1,4 +1,4 @@
-class Api::AccountsController < Api::FilteredController
+class Api::AccountsController < Api::BaseController
   before_action :authorize_super_admin!
 
   private

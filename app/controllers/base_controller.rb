@@ -1,6 +1,7 @@
 class BaseController < ApplicationController
   def index
     find_resources
+    respond_with_resources
   end
 
   def create
@@ -36,10 +37,6 @@ class BaseController < ApplicationController
   private
 
   attr_reader :resource, :resources
-
-  def find_resources
-    @resources = association_chain.all
-  end
 
   def find_resource
     @resource = association_chain.find(params[:id])
@@ -85,6 +82,10 @@ class BaseController < ApplicationController
 
   def respond_with_resource(location: nil)
     respond_with(*respond_with_resource_parts, location: -> { location || show_location(resource) })
+  end
+
+  def respond_with_resources
+    respond_with(resources)
   end
 
   def update_resource_attributes

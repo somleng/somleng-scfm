@@ -1,4 +1,4 @@
-class Api::PhoneCallsController < Api::FilteredController
+class Api::PhoneCallsController < Api::BaseController
   include BatchOperationResource
 
   private

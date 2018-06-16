@@ -1,6 +1,4 @@
-class Api::ResourceEventsController < Api::AuthenticatedController
-  respond_to :json
-
+class Api::ResourceEventsController < Api::BaseController
   private
 
   def respond_with_created_resource

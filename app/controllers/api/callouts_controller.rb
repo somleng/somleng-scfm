@@ -1,4 +1,4 @@
-class Api::CalloutsController < Api::FilteredController
+class Api::CalloutsController < Api::BaseController
   private
 
   def find_resources_association_chain

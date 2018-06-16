@@ -1,4 +1,4 @@
-class Api::AccessTokensController < Api::FilteredController
+class Api::AccessTokensController < Api::BaseController
   private
 
   def find_resources_association_chain

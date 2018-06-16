@@ -1,4 +1,4 @@
-class Api::UsersController < Api::FilteredController
+class Api::UsersController < Api::BaseController
   private
 
   def find_resources_association_chain

@@ -1,4 +1,4 @@
-class Api::FilteredContactsController < Api::FilteredController
+class Api::FilteredContactsController < Api::BaseController
   include BatchOperationResource
 
   private

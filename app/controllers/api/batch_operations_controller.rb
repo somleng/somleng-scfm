@@ -1,4 +1,4 @@
-class Api::BatchOperationsController < Api::FilteredController
+class Api::BatchOperationsController < Api::BaseController
   respond_to :json
 
   private

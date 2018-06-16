@@ -1,4 +1,4 @@
-class Api::RemotePhoneCallEventsController < Api::FilteredController
+class Api::RemotePhoneCallEventsController < Api::BaseController
   respond_to :xml,  only: :create
   respond_to :json, except: :create
 

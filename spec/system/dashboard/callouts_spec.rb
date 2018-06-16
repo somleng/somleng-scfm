@@ -33,6 +33,7 @@ RSpec.describe "Callouts", :aggregate_failures do
   end
 
   it "can create a callout" do
+    load_call_flow_logic
     user = create(:user)
 
     sign_in(user)
@@ -83,6 +84,7 @@ RSpec.describe "Callouts", :aggregate_failures do
   end
 
   it "can update a callout", :js do
+    load_call_flow_logic
     user = create(:user)
     callout = create(
       :callout,
@@ -134,7 +136,7 @@ RSpec.describe "Callouts", :aggregate_failures do
       :callout,
       :initialized,
       account: user.account,
-      call_flow_logic: "CallFlowLogic::HelloWorld",
+      call_flow_logic: CallFlowLogic::HelloWorld,
       audio_file: "test.mp3",
       audio_url: "https://example.com/audio.mp3",
       metadata: { "location" => { "country" => "Cambodia" } }
@@ -213,5 +215,9 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(callout.reload).to be_running
     expect(page).not_to have_link_to_action(:resume_callout, key: :callouts)
     expect(page).to have_link_to_action(:stop_callout, key: :callouts)
+  end
+
+  def load_call_flow_logic
+    CallFlowLogic::HelloWorld
   end
 end

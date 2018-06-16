@@ -120,7 +120,7 @@ RSpec.describe "Callouts", :aggregate_failures do
       :callout,
       :initialized,
       account: user.account,
-      call_flow_logic: "CallFlowLogic::HelloWorld",
+      call_flow_logic: CallFlowLogic::HelloWorld,
       audio_file: "test.mp3",
       audio_url: "https://example.com/audio.mp3"
     )

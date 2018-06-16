@@ -1,8 +1,8 @@
 class CallFlowLogic::Base
   attr_accessor :options
 
-  def self.registered(reload: false)
-    @registered = (!reload && @registered) || descendants.reject(&:abstract_class?).map(&:to_s)
+  def self.registered
+    @registered ||= descendants.reject(&:abstract_class?).map(&:to_s)
   end
 
   def self.abstract_class?

@@ -183,6 +183,45 @@ RSpec.describe "Contacts" do
     expect(contact.metadata).to eq(request_body.fetch(:metadata))
   end
 
+  it "can create contact data" do
+    request_body = {
+      msisdn: generate(:somali_msisdn),
+      metadata: {
+        "foo" => "bar"
+      }
+    }
+
+    post(
+      api_contact_data_path,
+      params: request_body,
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("201")
+    parsed_response = JSON.parse(response.body)
+    created_contact = account.contacts.find(parsed_response.fetch("id"))
+    expect(created_contact.msisdn).to include(request_body.fetch(:msisdn))
+    expect(created_contact.metadata).to eq(request_body.fetch(:metadata))
+  end
+
+  it "can update contact data" do
+    msisdn = generate(:somali_msisdn)
+    contact = create(:contact, account: account, msisdn: msisdn, metadata: { "bar" => "foo" })
+    request_body = { msisdn: msisdn, metadata_merge_mode: "replace", metadata: { "foo" => "bar" } }
+
+    post(
+      api_contact_data_path,
+      params: request_body,
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("201")
+    parsed_response = JSON.parse(response.body)
+    contact.reload
+    expect(parsed_response.fetch("id")).to eq(contact.id)
+    expect(contact.metadata).to eq(request_body.fetch(:metadata))
+  end
+
   it "can delete a contact" do
     contact = create(:contact, account: account)
 

@@ -9,7 +9,7 @@ class Api::BatchOperationEventsController < Api::ResourceEventsController
     batch_operation.subscribe(BatchOperationObserver.new)
   end
 
-  def parent
+  def parent_resource
     batch_operation
   end
 

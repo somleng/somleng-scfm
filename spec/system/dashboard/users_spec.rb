@@ -22,11 +22,10 @@ RSpec.describe "Users" do
 
     expect(page).to have_title("Users")
 
-    within("#button_toolbar") do
+    within("#page_actions") do
       expect(page).to have_link_to_action(
         :new, key: :user_invitations, href: new_user_invitation_path
       )
-      expect(page).to have_link_to_action(:index, key: :users)
     end
 
     within("#resources") do
@@ -59,7 +58,7 @@ RSpec.describe "Users" do
 
     expect(page).to have_title("User #{user.id}")
 
-    within("#button_toolbar") do
+    within("#page_actions") do
       expect(page).to have_link_to_action(
         :edit,
         href: edit_dashboard_user_path(user)
@@ -86,16 +85,6 @@ RSpec.describe "Users" do
 
     expect(page).to have_title("Edit User")
 
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(
-        :edit,
-        key: :users,
-        href: edit_dashboard_user_path(other_user)
-      )
-    end
-
-    expect(page).to have_link_to_action(:cancel)
-
     choose "Admin"
     select_selectize("#locations", "Banteay Meanchey")
     click_action_button(:update, key: :submit, namespace: :helpers)
@@ -114,7 +103,7 @@ RSpec.describe "Users" do
     sign_in(user)
     visit dashboard_user_path(other_user)
 
-    within("#button_toolbar") do
+    within("#page_actions") do
       click_action_button(:delete, type: :link)
     end
 

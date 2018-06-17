@@ -1,5 +1,4 @@
-- content_for(:button_toolbar) do
-  = render("shared/disabled_button", url: dashboard_contacts_path, button_text: translate(:"titles.contacts.index"), count: resources.count)
+- content_for(:page_actions) do
   = link_to(translate(:"titles.contacts.new"), new_dashboard_contact_path, class: 'btn btn-outline-success')
 
 - content_for(:resources_table) do

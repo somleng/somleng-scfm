@@ -1,17 +1,15 @@
 class Dashboard::CalloutParticipationsController < Dashboard::BaseController
-  helper_method :parent_show_path
-
   private
 
   def association_chain
-    if parent
-      parent.callout_participations
+    if parent_resource
+      parent_resource.callout_participations
     else
       current_account.callout_participations
     end
   end
 
-  def parent
+  def parent_resource
     if callout_id
       callout
     elsif callout_population_id
@@ -43,17 +41,5 @@ class Dashboard::CalloutParticipationsController < Dashboard::BaseController
 
   def contact
     @contact ||= current_account.contacts.find(contact_id)
-  end
-
-  def parent_show_path
-    if callout_id || contact_id
-      polymorphic_path([:dashboard, parent])
-    elsif callout_population_id
-      dashboard_batch_operation_path(callout_population)
-    end
-  end
-
-  def resources_path
-    dashboard_callout_callout_participations_path(resource.callout)
   end
 end

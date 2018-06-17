@@ -3,11 +3,13 @@ class Dashboard::BatchOperation::CalloutPopulationsController < Dashboard::BaseC
 
   private
 
-  attr_accessor :callout
+  def parent_resource
+    callout if params[:callout_id]
+  end
 
   def association_chain
     if params[:callout_id]
-      find_callout.callout_populations
+      callout.callout_populations
     else
       current_account.batch_operations
     end
@@ -27,8 +29,8 @@ class Dashboard::BatchOperation::CalloutPopulationsController < Dashboard::BaseC
     resource.account = callout.account
   end
 
-  def find_callout
-    @callout = current_account.callouts.find(params[:callout_id])
+  def callout
+    @callout ||= current_account.callouts.find(params[:callout_id])
   end
 
   def build_key_value_fields

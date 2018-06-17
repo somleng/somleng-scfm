@@ -1,6 +1,7 @@
 class BaseController < ApplicationController
   def index
     find_resources
+    _prepare_for_render
     respond_with_resources
   end
 
@@ -9,6 +10,7 @@ class BaseController < ApplicationController
     prepare_resource_for_create
     save_resource
     after_create_resource
+    _prepare_for_render
     respond_with_created_resource
   end
 
@@ -19,6 +21,7 @@ class BaseController < ApplicationController
     prepare_resource_for_update
     save_resource
     after_update_resource
+    _prepare_for_render
     respond_with_updated_resource
   end
 
@@ -26,11 +29,13 @@ class BaseController < ApplicationController
     find_resource
     prepare_resource_for_destroy
     destroy_resource
+    _prepare_for_render
     respond_with_destroyed_resource
   end
 
   def show
     find_resource
+    _prepare_for_render
     respond_with_resource
   end
 
@@ -71,6 +76,8 @@ class BaseController < ApplicationController
   def save_resource
     resource.save
   end
+
+  def _prepare_for_render; end
 
   def respond_with_created_resource
     respond_with_resource
@@ -115,4 +122,6 @@ class BaseController < ApplicationController
   def destroy_resource
     resource.destroy
   end
+
+  def parent_resource; end
 end

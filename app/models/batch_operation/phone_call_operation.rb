@@ -1,4 +1,6 @@
 class BatchOperation::PhoneCallOperation < BatchOperation::Base
+  include CustomRoutesHelper["batch_operations"]
+
   DEFAULT_MAX_PER_PERIOD_HOURS = 24
   DEFAULT_MAX_PER_PERIOD_TIMESTAMP_ATTRIBUTE = "remotely_queued_at".freeze
 

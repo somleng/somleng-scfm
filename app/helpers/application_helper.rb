@@ -15,4 +15,11 @@ module ApplicationHelper
       default: :"titles.app_name"
     )
   end
+
+  def related_link_to(title, url, options = {})
+    options[:class] ||= ""
+    options[:class] << " dropdown-item"
+
+    link_to(title, url, options)
+  end
 end

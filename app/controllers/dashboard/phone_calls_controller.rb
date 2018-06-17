@@ -1,17 +1,15 @@
 class Dashboard::PhoneCallsController < Dashboard::BaseController
-  helper_method :parent_show_path
-
   private
 
   def association_chain
-    if parent
-      parent.phone_calls
+    if parent_resource
+      parent_resource.phone_calls
     else
       current_account.phone_calls
     end
   end
 
-  def parent
+  def parent_resource
     if callout_participation_id
       callout_participation
     elsif callout_id
@@ -55,13 +53,5 @@ class Dashboard::PhoneCallsController < Dashboard::BaseController
     @batch_operation ||= current_account.batch_operations.applies_on_phone_calls.find(
       batch_operation_id
     )
-  end
-
-  def parent_show_path
-    if batch_operation_id
-      dashboard_batch_operation_path(batch_operation)
-    elsif parent
-      polymorphic_path([:dashboard, parent])
-    end
   end
 end

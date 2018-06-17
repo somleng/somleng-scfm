@@ -1,5 +1,10 @@
 ---
 km:
+  breadcrumbs:
+    edit: កែប្រែ
+    more: ព័ត៌មានបន្ថែម
+    new: បង្កើតថ្មី
+    show: "%{id}"
   titles:
     access_tokens:
       edit: កែប្រែ API Key

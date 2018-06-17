@@ -1,8 +1,6 @@
-.col
-  #button_toolbar
-    = render("shared/disabled_button", url: dashboard_user_path(resource), button_text: resource.model_name.human)
-    = link_to(translate(:"titles.actions.edit"), edit_dashboard_user_path(resource), class: 'btn btn-outline-primary')
-    = link_to(translate(:"titles.actions.delete"), dashboard_user_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+- content_for(:page_actions) do
+  = link_to(translate(:"titles.actions.edit"), edit_dashboard_user_path(resource), class: 'btn btn-outline-primary')
+  = link_to(translate(:"titles.actions.delete"), dashboard_user_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
 .col-lg-8.col-sm-12
   #user.card
     .card-body

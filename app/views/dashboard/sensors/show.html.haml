@@ -1,14 +1,11 @@
-.col-12
-  #button_toolbar.btn-toolbar.mb-3{ role: 'toolbar' }
-    = render("shared/disabled_button", url: dashboard_sensor_path(resource), button_text: resource.model_name.human)
-    .btn-group.mr-2{ role: 'group' }
-      = render("shared/button_link", url: dashboard_sensor_sensor_rules_path(resource), button_text: translate(:"titles.sensor_rules.index"))
-    .btn-group.mr-2{ role: 'group' }
-      = render("shared/button_link", url: dashboard_sensor_sensor_events_path(resource), button_text: translate(:"titles.sensor_events.index"))
-    .btn-group.mr-2{ role: 'group' }
-      = link_to(translate(:"titles.actions.edit"), edit_dashboard_sensor_path(resource), class: 'btn btn-outline-primary')
-    .btn-group.mr-2{ role: 'group' }
-      = link_to(translate(:"titles.actions.delete"), dashboard_sensor_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+- content_for(:page_actions) do
+  = link_to(translate(:"titles.actions.edit"), edit_dashboard_sensor_path(resource), class: 'btn btn-outline-primary')
+  = link_to(translate(:"titles.actions.delete"), dashboard_sensor_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+
+- content_for(:related_links) do
+  = related_link_to t(:"titles.sensor_rules.index"), dashboard_sensor_sensor_rules_path(resource)
+  = related_link_to t(:"titles.sensor_events.index"), dashboard_sensor_sensor_events_path(resource)
+
 .col-lg-10.col-xl-8
   #sensor.card
     .card-body

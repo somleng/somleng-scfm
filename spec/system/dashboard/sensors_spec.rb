@@ -17,11 +17,10 @@ RSpec.describe "Sensors", :aggregate_failures do
     sign_in(admin)
     visit dashboard_sensors_path
 
-    within("#button_toolbar") do
+    within("#page_actions") do
       expect(page).to have_link_to_action(
         :new, key: :sensors, href: new_dashboard_sensor_path
       )
-      expect(page).to have_link_to_action(:index, key: :sensors)
     end
 
     within("#resources") do
@@ -41,13 +40,6 @@ RSpec.describe "Sensors", :aggregate_failures do
   it "can create a sensor", :js do
     sign_in(admin)
     visit new_dashboard_sensor_path
-
-    within("#button_toolbar") do
-      expect(page).to have_link(
-        I18n.translate!(:"titles.sensors.new"),
-        href: new_dashboard_sensor_path
-      )
-    end
 
     expect(page).to have_link_to_action(:cancel)
 
@@ -78,12 +70,7 @@ RSpec.describe "Sensors", :aggregate_failures do
     sign_in(admin)
     visit dashboard_sensor_path(sensor)
 
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(
-        :edit,
-        href: edit_dashboard_sensor_path(sensor)
-      )
-
+    within("#related_links") do
       expect(page).to have_link_to_action(
         :index,
         key: :sensor_rules,
@@ -119,13 +106,6 @@ RSpec.describe "Sensors", :aggregate_failures do
 
     sign_in(admin)
     visit edit_dashboard_sensor_path(sensor)
-
-    within("#button_toolbar") do
-      expect(page).to have_link(
-        I18n.translate!(:"titles.sensors.edit"),
-        href: edit_dashboard_sensor_path(sensor)
-      )
-    end
 
     expect(page).to have_content("Banteay Neang")
     expect(page).to have_link_to_action(:cancel)

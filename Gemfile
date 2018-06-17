@@ -8,6 +8,7 @@ gem "aws-sdk-s3", require: false
 gem "bitmask_attributes", github: "numerex/bitmask_attributes"
 gem "bootsnap", ">= 1.1.0", require: false
 gem "bootstrap", "~> 4.0.0"
+gem "breadcrumbs_on_rails"
 gem "chosen-rails"
 gem "cocoon"
 gem "coffee-rails", "~> 4.2"

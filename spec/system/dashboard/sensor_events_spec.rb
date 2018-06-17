@@ -9,11 +9,6 @@ RSpec.describe "Sensors", :aggregate_failures do
     sign_in(user)
     visit(dashboard_sensor_events_path)
 
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(:index, key: :sensor_events)
-      expect(page).not_to have_link_to_action(:back)
-    end
-
     within("#resources") do
       expect(page).to have_content_tag_for(sensor_event)
       expect(page).not_to have_content_tag_for(other_sensor_event)
@@ -34,13 +29,6 @@ RSpec.describe "Sensors", :aggregate_failures do
     sign_in(user)
     visit(dashboard_sensor_sensor_events_path(sensor))
 
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(
-        :back,
-        href: dashboard_sensor_path(sensor)
-      )
-    end
-
     within("#resources") do
       expect(page).to have_content_tag_for(sensor_event)
       expect(page).not_to have_content_tag_for(other_sensor_event)
@@ -58,13 +46,6 @@ RSpec.describe "Sensors", :aggregate_failures do
 
     sign_in(user)
     visit(dashboard_sensor_rule_sensor_events_path(sensor_rule))
-
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(
-        :back,
-        href: dashboard_sensor_rule_path(sensor_rule)
-      )
-    end
 
     within("#resources") do
       expect(page).to have_content_tag_for(sensor_event)

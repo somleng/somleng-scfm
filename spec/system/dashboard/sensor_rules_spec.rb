@@ -11,11 +11,6 @@ RSpec.describe "Sensors", :aggregate_failures do
     sign_in(admin)
     visit dashboard_sensor_rules_path
 
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(:index, key: :sensor_rules)
-      expect(page).not_to have_link_to_action(:back)
-    end
-
     within("#resources") do
       expect(page).to have_content_tag_for(sensor_rule)
       expect(page).not_to have_content_tag_for(other_sensor_rule)
@@ -37,12 +32,7 @@ RSpec.describe "Sensors", :aggregate_failures do
     sign_in(admin)
     visit dashboard_sensor_sensor_rules_path(sensor_rule.sensor)
 
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(
-        :back,
-        href: dashboard_sensor_path(sensor_rule.sensor)
-      )
-
+    within("#page_actions") do
       expect(page).to have_link_to_action(
         :new,
         key: :sensor_rules,
@@ -60,15 +50,6 @@ RSpec.describe "Sensors", :aggregate_failures do
     sign_in(admin)
     visit new_dashboard_sensor_sensor_rule_path(sensor)
 
-    within("#button_toolbar") do
-      expect(page).to have_link(
-        I18n.translate!(:"titles.sensor_rules.new"),
-        href: new_dashboard_sensor_sensor_rule_path(sensor)
-      )
-    end
-
-    expect(page).to have_link_to_action(:cancel)
-
     fill_in_sensor_rule_info(level: 1000)
     click_action_button(:create, key: :submit, namespace: :helpers, model: "Sensor rule")
 
@@ -84,12 +65,14 @@ RSpec.describe "Sensors", :aggregate_failures do
     sign_in(admin)
     visit dashboard_sensor_rule_path(rule)
 
-    within("#button_toolbar") do
+    within("#page_actions") do
       expect(page).to have_link_to_action(
         :edit,
         href: edit_dashboard_sensor_rule_path(rule)
       )
+    end
 
+    within("#related_links") do
       expect(page).to have_link_to_action(
         :index,
         key: :sensor_events,
@@ -112,15 +95,6 @@ RSpec.describe "Sensors", :aggregate_failures do
     sign_in(admin)
     visit edit_dashboard_sensor_rule_path(rule)
 
-    within("#button_toolbar") do
-      expect(page).to have_link(
-        I18n.translate!(:"titles.sensor_rules.edit"),
-        href: edit_dashboard_sensor_rule_path(rule)
-      )
-    end
-
-    expect(page).to have_link_to_action(:cancel)
-
     fill_in_sensor_rule_info(level: 1500)
     click_action_button(:update, key: :submit, namespace: :helpers, model: "Sensor rule")
 
@@ -138,7 +112,7 @@ RSpec.describe "Sensors", :aggregate_failures do
     click_action_button(:delete, type: :link)
 
     expect(page).to have_content("Sensor rule was successfully destroyed.")
-    expect(current_path).to eq(dashboard_sensor_sensor_rules_path(sensor))
+    expect(current_path).to eq(dashboard_sensor_rules_path)
   end
 
   def fill_in_sensor_rule_info(option = {})

@@ -1,12 +1,13 @@
-.col-12
-  #button_toolbar
-    = render("shared/disabled_button", url: dashboard_phone_call_path(resource), button_text: resource.model_name.human)
-    = render("shared/button_link", url: dashboard_phone_call_remote_phone_call_events_path(resource), button_text: translate(:"titles.remote_phone_call_events.index"))
-    - if resource.may_queue?
-      = link_to(translate(:"titles.phone_calls.queue"), dashboard_phone_call_phone_call_events_path(resource, event: :queue),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
-    - if resource.may_queue_remote_fetch?
-      = link_to(translate(:"titles.phone_calls.queue_remote_fetch"), dashboard_phone_call_phone_call_events_path(resource, event: :queue_remote_fetch),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
-    = link_to(translate(:"titles.actions.delete"), dashboard_phone_call_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+- content_for(:page_actions) do
+  - if resource.may_queue?
+    = link_to(translate(:"titles.phone_calls.queue"), dashboard_phone_call_phone_call_events_path(resource, event: :queue),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
+  - if resource.may_queue_remote_fetch?
+    = link_to(translate(:"titles.phone_calls.queue_remote_fetch"), dashboard_phone_call_phone_call_events_path(resource, event: :queue_remote_fetch),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
+  = link_to(translate(:"titles.actions.delete"), dashboard_phone_call_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+
+- content_for(:related_links) do
+  = related_link_to t(:"titles.remote_phone_call_events.index"), dashboard_phone_call_remote_phone_call_events_path(resource)
+
 .col-12.col-md-9.col-lg-7
   #resource.card
     .card-body

@@ -1,7 +1,7 @@
 class Api::CalloutEventsController < Api::ResourceEventsController
   private
 
-  def parent
+  def parent_resource
     callout
   end
 

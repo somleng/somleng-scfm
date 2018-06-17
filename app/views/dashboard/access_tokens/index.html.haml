@@ -1,5 +1,4 @@
-- content_for(:button_toolbar) do
-  = render("shared/disabled_button", url: dashboard_access_tokens_path, button_text: translate(:"titles.access_tokens.index"))
+- content_for(:page_actions) do
   = link_to(translate(:"titles.access_tokens.new"), new_dashboard_access_token_path, class: 'btn btn-outline-success')
 
 - content_for(:resources_table) do

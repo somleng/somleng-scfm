@@ -11,11 +11,10 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     expect(page).to have_title("Callouts")
 
-    within("#button_toolbar") do
+    within("#page_actions") do
       expect(page).to have_link_to_action(
         :new, key: :callouts, href: new_dashboard_callout_path
       )
-      expect(page).to have_link_to_action(:index, key: :callouts)
     end
 
     within("#resources") do
@@ -39,15 +38,6 @@ RSpec.describe "Callouts", :aggregate_failures do
     visit new_dashboard_callout_path
 
     expect(page).to have_title("New Callout")
-
-    within("#button_toolbar") do
-      expect(page).to have_link(
-        I18n.translate!(:"titles.callouts.new"),
-        href: new_dashboard_callout_path
-      )
-    end
-
-    expect(page).to have_link_to_action(:cancel)
 
     fill_in("Audio url", with: "https://www.example.com/sample.mp3")
     choose("Hello World")
@@ -95,15 +85,6 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     expect(page).to have_title("Edit Callout")
 
-    within("#button_toolbar") do
-      expect(page).to have_link(
-        I18n.translate!(:"titles.callouts.edit"),
-        href: edit_dashboard_callout_path(callout)
-      )
-    end
-
-    expect(page).to have_link_to_action(:cancel)
-
     choose("Hello World")
     remove_key_value_for(:metadata)
     remove_key_value_for(:metadata)
@@ -145,12 +126,14 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     expect(page).to have_title("Callout #{callout.id}")
 
-    within("#button_toolbar") do
+    within("#page_actions") do
       expect(page).to have_link_to_action(
         :edit,
         href: edit_dashboard_callout_path(callout)
       )
+    end
 
+    within("#related_links") do
       expect(page).to have_link_to_action(
         :index,
         key: :batch_operations,

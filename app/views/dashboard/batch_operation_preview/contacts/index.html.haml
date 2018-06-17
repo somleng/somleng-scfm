@@ -1,7 +1,3 @@
-- content_for(:button_toolbar) do
-  = render("shared/disabled_button", url: dashboard_batch_operation_preview_contacts_path(batch_operation), button_text: translate(:"titles.actions.preview"), count: resources.count)
-  = link_to(translate(:"titles.actions.back"), dashboard_batch_operation_path(batch_operation), class: 'btn btn-outline-dark')
-
 - content_for(:resources_table) do
   = render("shared/resources_table", resource_class: Contact, columns: [:msisdn, :created_at], partial: "dashboard/contacts/contact")
 

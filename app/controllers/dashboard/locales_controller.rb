@@ -12,4 +12,6 @@ class Dashboard::LocalesController < Dashboard::BaseController
   def respond_with_updated_resource
     redirect_back(fallback_location: root_path)
   end
+
+  def prepare_breadcrumbs; end
 end

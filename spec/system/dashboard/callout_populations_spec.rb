@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Callout Populations" do
-  it "can list all the callout participations" do
+  it "can list all the callout populations" do
     user = create(:user)
     callout_population = create(
       :callout_population, :preview,
@@ -14,7 +14,7 @@ RSpec.describe "Callout Populations" do
     sign_in(user)
     visit(dashboard_callout_batch_operations_path(callout_population.callout))
 
-    within("#button_toolbar") do
+    within("#page_actions") do
       expect(page).to have_link_to_action(
         :new,
         key: :callout_populations,
@@ -22,10 +22,6 @@ RSpec.describe "Callout Populations" do
           callout_population.callout
         )
       )
-      expect(page).to have_link_to_action(
-        :back, href: dashboard_callout_path(callout_population.callout)
-      )
-      expect(page).to have_link_to_action(:index, key: :batch_operations)
     end
 
     within("#resources") do
@@ -47,15 +43,6 @@ RSpec.describe "Callout Populations" do
 
     sign_in(user)
     visit(new_dashboard_callout_batch_operation_callout_population_path(callout))
-
-    within("#button_toolbar") do
-      expect(page).to have_link(
-        I18n.translate!(:"titles.callout_populations.new"),
-        href: new_dashboard_callout_batch_operation_callout_population_path(callout)
-      )
-    end
-
-    expect(page).to have_link_to_action(:cancel)
 
     fill_in_key_value_for(
       :contact_filter_metadata,
@@ -98,17 +85,6 @@ RSpec.describe "Callout Populations" do
       )
     )
 
-    within("#button_toolbar") do
-      expect(page).to have_link(
-        I18n.translate!(:"titles.callout_populations.edit"),
-        href: edit_dashboard_batch_operation_callout_population_path(
-          callout_population
-        )
-      )
-    end
-
-    expect(page).to have_link_to_action(:cancel)
-
     remove_key_value_for(:contact_filter_metadata)
     remove_key_value_for(:contact_filter_metadata)
     add_key_value_for(:contact_filter_metadata)
@@ -132,18 +108,20 @@ RSpec.describe "Callout Populations" do
     sign_in(user)
     visit(dashboard_batch_operation_path(callout_population))
 
-    within("#button_toolbar") do
+    within("#page_actions") do
+      expect(page).to have_link_to_action(
+        :edit,
+        href: edit_dashboard_batch_operation_callout_population_path(
+          callout_population
+        )
+      )
+    end
+
+    within("#related_links") do
       expect(page).to have_link_to_action(
         :index,
         key: :callout_participations,
         href: dashboard_batch_operation_callout_participations_path(
-          callout_population
-        )
-      )
-
-      expect(page).to have_link_to_action(
-        :edit,
-        href: edit_dashboard_batch_operation_callout_population_path(
           callout_population
         )
       )
@@ -177,16 +155,6 @@ RSpec.describe "Callout Populations" do
 
     sign_in(user)
     visit dashboard_batch_operation_preview_contacts_path(callout_population)
-
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(:preview)
-      expect(page).to have_link_to_action(
-        :back,
-        href: dashboard_batch_operation_path(
-          callout_population
-        )
-      )
-    end
 
     expect(page).to have_content_tag_for(female_contact)
     expect(page).not_to have_content_tag_for(male_contact)

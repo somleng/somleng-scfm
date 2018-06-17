@@ -1,6 +1,8 @@
 require "application_responder"
 
 class Dashboard::BaseController < BaseController
+  include Breadcrumbs
+
   KEY_VALUE_FIELD_ATTRIBUTES = %i[key value].freeze
 
   METADATA_FIELDS_ATTRIBUTES = {
@@ -11,17 +13,19 @@ class Dashboard::BaseController < BaseController
   respond_to :html
 
   before_action :authenticate_user!, :set_locale
-  helper_method :resource, :resources, :show_location,
+  helper_method :resource, :resources, :show_location, :resources_path,
                 :current_account, :sort_column, :sort_direction
 
   def new
     build_new_resource
     prepare_resource_for_new
+    _prepare_for_render
   end
 
   def edit
     find_resource
     prepare_resource_for_edit
+    _prepare_for_render
   end
 
   private
@@ -71,7 +75,11 @@ class Dashboard::BaseController < BaseController
   end
 
   def resources_path
-    polymorphic_path([:dashboard, association_chain.model])
+    polymorphic_path([:dashboard, parent_resource, association_chain.model])
+  end
+
+  def parent_resources_path
+    polymorphic_path([:dashboard, parent_resource.class])
   end
 
   def current_account
@@ -88,5 +96,9 @@ class Dashboard::BaseController < BaseController
 
   def sort_direction
     %w[asc desc].include?(params[:sort_direction]) ? params[:sort_direction] : "desc"
+  end
+
+  def _prepare_for_render
+    prepare_breadcrumbs
   end
 end

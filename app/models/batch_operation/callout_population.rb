@@ -1,4 +1,6 @@
 class BatchOperation::CalloutPopulation < BatchOperation::Base
+  include CustomRoutesHelper["batch_operations"]
+
   belongs_to :callout
 
   has_many :callout_participations,

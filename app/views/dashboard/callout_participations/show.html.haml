@@ -1,8 +1,9 @@
-.col-12
-  #button_toolbar
-    = render("shared/disabled_button", url: dashboard_callout_participation_path(resource), button_text: resource.model_name.human)
-    = render("shared/button_link", url: dashboard_callout_participation_phone_calls_path(resource), button_text: translate(:"titles.phone_calls.index"))
-    = link_to(translate(:"titles.actions.delete"), dashboard_callout_participation_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+- content_for(:page_actions) do
+  = link_to(translate(:"titles.actions.delete"), dashboard_callout_participation_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+
+- content_for(:related_links) do
+  = related_link_to t(:"titles.phone_calls.index"), dashboard_callout_participation_phone_calls_path(resource)
+
 .col-12.col-md-9.col-lg-7
   #resource.card
     .card-body

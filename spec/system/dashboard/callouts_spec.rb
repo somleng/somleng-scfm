@@ -17,6 +17,8 @@ RSpec.describe "Callouts", :aggregate_failures do
       )
     end
 
+    expect(page).to have_css("i.fa-key")
+
     within("#resources") do
       expect(page).to have_content_tag_for(callout)
       expect(page).not_to have_content_tag_for(other_callout)

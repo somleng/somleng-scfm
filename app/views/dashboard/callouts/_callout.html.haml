@@ -2,7 +2,7 @@
   %td
     = link_to(callout.id, show_location(callout))
   %td
-    = callout.status.humanize
+    = label_status(callout)
   %td
     %code
       = location_names(callout.province_id, Pumi::Province)

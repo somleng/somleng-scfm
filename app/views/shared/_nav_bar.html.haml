@@ -15,7 +15,7 @@
       %a#user_dropdown.nav-link.dropdown-toggle{href: "#", role: "button", data: {toggle: "dropdown"}, "aria-haspopup" => true, "aria-expanded" => false}
         = fa_icon("user")
       .dropdown-menu.dropdown-menu-right{"aria-labelledby" => "user_dropdown"}
-        - if current_user.is_admin?
+        - if current_user.admin?
           = link_to(translate(:"titles.accounts.edit"), edit_dashboard_account_path, class: "dropdown-item")
         = link_to(translate(:"titles.user_registrations.edit"), edit_user_registration_path, class: "dropdown-item")
         = link_to(translate(:"titles.user_sessions.destroy"), destroy_user_session_path, method: :delete, class: "dropdown-item")

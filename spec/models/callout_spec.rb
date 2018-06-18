@@ -68,6 +68,16 @@ RSpec.describe Callout do
 
       expect(callout.audio_file_blob_changed?).to eq(false)
     end
+
+    context "province_permitted" do
+      it "when created_by present, province must be in created_by provinces" do
+        user = create(:user, province_ids: ["01"])
+        callout = build(:callout, created_by: user, commune_ids: ["020101"])
+
+        expect(callout.valid?).to eq false
+        expect(callout.errors[:commune_ids]).not_to eq nil
+      end
+    end
   end
 
   describe "state_machine" do

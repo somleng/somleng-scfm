@@ -29,7 +29,7 @@ class Dashboard::CalloutsController < Dashboard::BaseController
       :call_flow_logic,
       :audio_file,
       commune_ids: []
-    )
+    ).merge(created_by: current_user)
   end
 
   def build_callout_population

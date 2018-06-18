@@ -8,7 +8,7 @@ RSpec.describe "User Invitations" do
 
     fill_in "Email", with: "bopha@somleng.com"
     choose "Admin"
-    select_selectize("#locations", "Banteay Meanchey")
+    multiple_selectize("#locations", "Banteay Meanchey")
     clear_enqueued_jobs
 
     perform_enqueued_jobs do
@@ -22,7 +22,7 @@ RSpec.describe "User Invitations" do
 
     new_user = user.account.users.find_by!(email: "bopha@somleng.com")
     expect(new_user.roles?(:admin)).to eq true
-    expect(new_user.location_ids).to include_location("Banteay Meanchey")
+    expect(new_user.province_ids).to include_location("Banteay Meanchey")
   end
 
   it "can set the password" do

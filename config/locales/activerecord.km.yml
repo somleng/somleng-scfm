@@ -26,7 +26,7 @@ km:
         alert_file: Alert file
         level: Level
       user:
-        location_ids: Provinces
+        province_ids: Provinces
     models:
       access_token:
         one: API key

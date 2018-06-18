@@ -5,16 +5,16 @@
       = f.input :province_id, collection: [], prompt: true, required: true,
                 wrapper_html: { id: 'province' },
                 input_html: { class: 'js-select-province',
-                  data: { default_value: f.object.province_id.to_s,
-                    province_url: pumi.provinces_url,
+                  data: { filter_province_ids: current_user.province_ids,
+                    default_value: f.object.province_id.to_s,
+                    default_commune_ids: f.object.commune_ids,
+                    pumi_url: pumi.provinces_url,
+                    preload: true,
                     pumi_district_collection_url: pumi.districts_url,
                     pumi_commune_collection_url: pumi.communes_url }}
 
-      = f.input :commune_ids, collection: [], wrapper_html: { id: 'communes' },
-                required: true, include_blank: false,
-                input_html: { class: 'js-select-communes',
-                  style: "width: 100%", multiple: 'multiple',
-                  data: { default_value: f.object.commune_ids }}
+      = f.input :commune_ids, input_html: { name: "callout[commune_ids][]", value: '', class: 'd-none' }
+      #districts-communes
       = f.input :call_flow_logic, collection: CallFlowLogic::Base.registered.map(&:to_sym), disabled: true
       = f.input :call_flow_logic, as: :hidden
       .form-group.actions

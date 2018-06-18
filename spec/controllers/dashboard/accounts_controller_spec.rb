@@ -25,8 +25,8 @@ RSpec.describe Dashboard::AccountsController do
       get :edit
 
       expect(response.body).to have_selector("a", count: 0)
-      expect(response.body).to have_text("Accounts")
-      expect(response.body).to have_text("Edit")
+      expect(response.body).to have_text("Account")
+      expect(response.body).to have_text("Settings")
     end
 
     it "renders for :patch" do
@@ -36,8 +36,8 @@ RSpec.describe Dashboard::AccountsController do
       patch :update
 
       expect(response.body).to have_selector("a", count: 0)
-      expect(response.body).to have_text("Accounts")
-      expect(response.body).to have_text("Edit")
+      expect(response.body).to have_text("Account")
+      expect(response.body).to have_text("Settings")
     end
   end
 end

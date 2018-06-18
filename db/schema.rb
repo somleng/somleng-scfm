@@ -249,8 +249,8 @@ ActiveRecord::Schema.define(version: 2018_06_18_023959) do
     t.integer "invitation_limit"
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
-    t.integer "roles", default: 1, null: false
     t.string "locale", default: "en", null: false
+    t.integer "roles", default: 1, null: false
     t.index ["account_id"], name: "index_users_on_account_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true

@@ -111,6 +111,20 @@ main {
   }
 }
 
+.callout_commune_ids {
+  margin: 0;
+}
+
+#districts-communes {
+  max-height: 500px;
+  overflow-y: scroll;
+  margin-bottom: 20px;
+  min-height: 30px;
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
 @media (min-width: 768px) {
   #side_navigation.collapse {
     display: block;

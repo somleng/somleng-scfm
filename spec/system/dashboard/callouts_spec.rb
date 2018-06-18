@@ -2,9 +2,10 @@ require "rails_helper"
 
 RSpec.describe "Callouts", :aggregate_failures do
   it "can list callouts" do
-    user          = create(:user)
-    callout       = create(:callout, :initialized, account: user.account)
-    other_callout = create(:callout)
+    user           = create(:user)
+    callout        = create(:callout, :initialized, account: user.account)
+    paused_callout = create(:callout, status: Callout::STATE_PAUSED, account: user.account)
+    other_callout  = create(:callout)
 
     sign_in(user)
     visit dashboard_callouts_path
@@ -34,7 +35,7 @@ RSpec.describe "Callouts", :aggregate_failures do
   end
 
   it "can create a callout", :js do
-    user = create(:user)
+    user = create(:user, province_ids: ["02"])
 
     sign_in(user)
     visit new_dashboard_callout_path
@@ -57,7 +58,7 @@ RSpec.describe "Callouts", :aggregate_failures do
   end
 
   it "can update a callout", :js do
-    user = create(:user)
+    user = create(:user, province_ids: %w[01 02])
     callout = create(:callout, account: user.account, commune_ids: ["010201"])
     _callout_population = create(:callout_population, callout: callout, account: callout.account)
 
@@ -79,7 +80,7 @@ RSpec.describe "Callouts", :aggregate_failures do
   end
 
   it "can update a callout without an existing callout population", :js do
-    user = create(:user)
+    user = create(:user, province_ids: %w[01 02])
     callout = create(:callout, account: user.account, commune_ids: ["010201"])
 
     sign_in(user)
@@ -190,6 +191,7 @@ RSpec.describe "Callouts", :aggregate_failures do
 
   def select_commune
     select_selectize("#province", "Battambang")
-    select_selectize("#communes", "Kantueu Pir")
+    check("Kantueu Pir")
+    expect(page).not_to have_content("Mongkol Borei")
   end
 end

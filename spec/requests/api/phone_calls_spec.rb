@@ -1,256 +1,251 @@
 require "rails_helper"
 
 RSpec.describe "Phone Calls" do
-  include SomlengScfm::SpecHelpers::RequestHelpers
-
-  let(:account_traits) { {} }
-  let(:account_attributes) { {} }
-  let(:account) { create(:account, *account_traits.keys, account_attributes) }
-  let(:access_token_model) { create_access_token(resource_owner: account) }
-
-  let(:callout_attributes) { { account: account } }
-  let(:callout) { create(:callout, callout_attributes) }
-
-  let(:contact_attributes) { { account: account } }
-  let(:contact) { create(:contact, contact_attributes) }
-
-  let(:callout_participation_attributes) { { callout: callout, contact: contact } }
-  let(:callout_participation) { create(:callout_participation, callout_participation_attributes) }
-
-  let(:body) { {} }
-  let(:factory_attributes) { { callout_participation: callout_participation } }
-  let(:phone_call) { create(:phone_call, factory_attributes) }
-  let(:execute_request_before) { true }
-
-  def execute_request
-    do_request(method, url, body)
-  end
-
-  def setup_scenario
-    super
-    execute_request if execute_request_before
-  end
-
-  describe "GET '/phone_calls'" do
-    let(:method) { :get }
-    let(:url_params) { {} }
-    let(:url) { api_phone_calls_path(url_params) }
-
-    it_behaves_like "resource_filtering" do
-      let(:filter_on_factory) { :phone_call }
-      let(:filter_factory_attributes) { factory_attributes }
-    end
-
-    it_behaves_like "authorization"
-  end
-
-  describe "POST '/api/callout_participation/:callout_participation_id/phone_calls'" do
-    let(:method) { :post }
-    let(:url) { api_callout_participation_phone_calls_path(callout_participation) }
-    let(:metadata) { nil }
-    let(:msisdn) { nil }
-    let(:remote_request_params) { nil }
-    let(:call_flow_logic) { nil }
-    let(:body) do
-      {
-        metadata: metadata,
-        remote_request_params: remote_request_params,
-        call_flow_logic: call_flow_logic,
-        msisdn: msisdn
+  it "can list all phone calls" do
+    phone_call = create_phone_call(
+      account: account,
+      metadata: {
+        "foo" => "bar"
       }
-    end
+    )
 
-    context "valid request" do
-      let(:msisdn) { generate(:somali_msisdn) }
-      let(:metadata) { { "foo" => "bar" } }
-      let(:remote_request_params) { generate(:twilio_request_params) }
-      let(:call_flow_logic) { CallFlowLogic::HelloWorld.to_s }
+    create_phone_call(account: account)
+    create(:phone_call)
 
-      let(:created_phone_call) { callout_participation.phone_calls.last }
-      let(:parsed_response_body) { JSON.parse(response.body) }
+    get(
+      api_phone_calls_path(q: { "metadata" => { "foo" => "bar" } }),
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-      def assert_created!
-        expect(response.code).to eq("201")
-        expect(response.headers["Location"]).to eq(api_phone_call_path(created_phone_call))
-        expect(parsed_response_body).to eq(JSON.parse(created_phone_call.to_json))
-        expect(parsed_response_body["metadata"]).to eq(metadata)
-        expect(parsed_response_body["remote_request_params"]).to eq(remote_request_params)
-        expect(parsed_response_body["call_flow_logic"]).to eq(call_flow_logic)
-        expect(parsed_response_body["msisdn"]).to eq("+#{msisdn}")
-      end
-
-      it { assert_created! }
-    end
-
-    context "invalid request" do
-      let(:remote_request_params) { { "foo" => "bar" } }
-
-      def assert_invalid!
-        expect(response.code).to eq("422")
-      end
-
-      it { assert_invalid! }
-    end
+    assert_filtered!(phone_call)
   end
 
-  describe "'/api/phone_calls/:id'" do
-    let(:url) { api_phone_call_path(phone_call) }
+  it "can list all phone calls for a callout participation" do
+    phone_call = create_phone_call(account: account)
+    _other_phone_call = create_phone_call(account: account)
 
-    describe "GET" do
-      let(:method) { :get }
+    get(
+      api_callout_participation_phone_calls_path(phone_call.callout_participation),
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-      def assert_show!
-        expect(response.code).to eq("200")
-        expect(JSON.parse(response.body)).to eq(JSON.parse(phone_call.to_json))
-      end
-
-      it { assert_show! }
-    end
-
-    describe "PATCH" do
-      let(:method) { :patch }
-      let(:factory_attributes) { super().merge("metadata" => { "bar" => "baz" }) }
-      let(:metadata) { { "foo" => "bar" } }
-      let(:msisdn) { generate(:somali_msisdn) }
-      let(:body) do
-        {
-          metadata: metadata,
-          metadata_merge_mode: "replace",
-          msisdn: msisdn
-        }
-      end
-
-      def assert_update!
-        expect(response.code).to eq("204")
-        expect(phone_call.reload.metadata).to eq(metadata)
-        expect(phone_call.msisdn).to eq("+#{msisdn}")
-      end
-
-      it { assert_update! }
-    end
-
-    describe "DELETE" do
-      let(:method) { :delete }
-
-      context "valid request" do
-        def assert_destroy!
-          expect(response.code).to eq("204")
-          expect(PhoneCall.find_by_id(phone_call.id)).to eq(nil)
-        end
-
-        it { assert_destroy! }
-      end
-
-      context "invalid request" do
-        let(:factory_attributes) { super().merge(status: PhoneCall::STATE_QUEUED) }
-
-        def assert_invalid!
-          expect(response.code).to eq("422")
-        end
-
-        it { assert_invalid! }
-      end
-    end
+    assert_filtered!(phone_call)
   end
 
-  describe "nested indexes" do
-    let(:method) { :get }
+  it "can list all phone calls for a callout" do
+    phone_call = create_phone_call(account: account)
+    _other_phone_call = create_phone_call(account: account)
 
-    let(:batch_operation_attributes) { { account: account } }
-    let(:batch_operation) { create(batch_operation_factory, batch_operation_attributes) }
+    get(
+      api_callout_phone_calls_path(phone_call.callout),
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-    def setup_scenario
-      create(
-        :phone_call,
-        callout_participation: create(
-          :callout_participation,
-          callout: create(
-            :callout, account: account
-          )
-        )
-      )
-      phone_call
-      super
-    end
+    assert_filtered!(phone_call)
+  end
 
-    def assert_filtered!
-      expect(JSON.parse(response.body)).to eq(JSON.parse([phone_call].to_json))
-    end
+  it "can list all phone calls for a contact" do
+    phone_call = create_phone_call(account: account)
+    _other_phone_call = create_phone_call(account: account)
 
-    describe "GET '/api/callout_participation/:callout_participation_id/phone_calls'" do
-      let(:url) { api_callout_participation_phone_calls_path(callout_participation) }
-      it { assert_filtered! }
-    end
+    get(
+      api_contact_phone_calls_path(phone_call.contact),
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-    describe "GET '/api/callout/:callout_id/phone_calls'" do
-      let(:url) { api_callout_phone_calls_path(callout) }
-      it { assert_filtered! }
-    end
+    assert_filtered!(phone_call)
+  end
 
-    describe "GET '/api/contact/:contact_id/phone_calls'" do
-      let(:url) { api_contact_phone_calls_path(contact) }
-      it { assert_filtered! }
-    end
+  it "can list all phone calls for a create phone calls batch operation" do
+    batch_operation = create(:phone_call_create_batch_operation, account: account)
+    phone_call = create_phone_call(account: account, create_batch_operation: batch_operation)
+    _other_phone_call = create_phone_call(account: account)
 
-    describe "GET '/api/batch_operations/:batch_operation_id/preview/phone_calls'" do
-      let(:url) { api_batch_operation_preview_phone_calls_path(batch_operation) }
+    get(
+      api_batch_operation_phone_calls_path(batch_operation),
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-      context "valid requests" do
-        let(:factory_attributes) { super().merge(metadata: { "foo" => "bar", "bar" => "foo" }) }
+    assert_filtered!(phone_call)
+  end
 
-        let(:batch_operation_attributes) do
-          super().merge(
-            phone_call_filter_params: factory_attributes.slice(:metadata)
-          )
-        end
+  it "can list all phone calls for a queue phone calls batch operation" do
+    batch_operation = create(:phone_call_queue_batch_operation, account: account)
+    phone_call = create_phone_call(account: account, queue_batch_operation: batch_operation)
+    _other_phone_call = create_phone_call(account: account)
 
-        context "BatchOperation::PhoneCallQueue" do
-          let(:batch_operation_factory) { :phone_call_queue_batch_operation }
-          it { assert_filtered! }
-        end
+    get(
+      api_batch_operation_phone_calls_path(batch_operation),
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-        context "BatchOperation::PhoneCallQueueRemoteFetch" do
-          let(:batch_operation_factory) { :phone_call_queue_remote_fetch_batch_operation }
-          it { assert_filtered! }
-        end
-      end
+    assert_filtered!(phone_call)
+  end
 
-      context "invalid request" do
-        let(:execute_request_before) { false }
-        let(:batch_operation_factory) { :phone_call_create_batch_operation }
-        it { expect { execute_request }.to raise_error(ActiveRecord::RecordNotFound) }
-      end
-    end
+  it "can list all phone calls for a queue remote fetch phone calls batch operation" do
+    batch_operation = create(:phone_call_queue_remote_fetch_batch_operation, account: account)
+    phone_call = create_phone_call(account: account, queue_remote_fetch_batch_operation: batch_operation)
+    _other_phone_call = create_phone_call(account: account)
 
-    describe "GET '/api/batch_operations/:batch_operation_id/phone_calls'" do
-      let(:url) { api_batch_operation_phone_calls_path(batch_operation) }
+    get(
+      api_batch_operation_phone_calls_path(batch_operation),
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-      context "valid requests" do
-        context "BatchOperation::PhoneCallCreate" do
-          let(:batch_operation_factory) { :phone_call_create_batch_operation }
-          let(:factory_attributes) { { create_batch_operation: batch_operation } }
-          it { assert_filtered! }
-        end
+    assert_filtered!(phone_call)
+  end
 
-        context "BatchOperation::PhoneCallQueue" do
-          let(:batch_operation_factory) { :phone_call_queue_batch_operation }
-          let(:factory_attributes) { { queue_batch_operation: batch_operation } }
-          it { assert_filtered! }
-        end
+  it "can preview phone calls for a phone call queue batch operation" do
+    phone_call = create_phone_call(
+      account: account,
+      metadata: { "foo" => "bar" }
+    )
+    _other_phone_call = create_phone_call(account: account)
 
-        context "BatchOperation::PhoneCallQueueRemoteFetch" do
-          let(:batch_operation_factory) { :phone_call_queue_remote_fetch_batch_operation }
-          let(:factory_attributes) { { queue_remote_fetch_batch_operation: batch_operation } }
-          it { assert_filtered! }
-        end
-      end
+    batch_operation = create(
+      :phone_call_queue_batch_operation,
+      account: account,
+      phone_call_filter_params: { metadata: phone_call.metadata }
+    )
 
-      context "invalid request" do
-        let(:execute_request_before) { false }
-        let(:batch_operation_factory) { :callout_population }
-        it { expect { execute_request }.to raise_error(ActiveRecord::RecordNotFound) }
-      end
-    end
+    get(
+      api_batch_operation_preview_phone_calls_path(batch_operation),
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    assert_filtered!(phone_call)
+  end
+
+  it "can preview phone calls for a phone call queue remote fetch batch operation" do
+    phone_call = create_phone_call(
+      account: account,
+      metadata: { "foo" => "bar" }
+    )
+    _other_phone_call = create_phone_call(account: account)
+
+    batch_operation = create(
+      :phone_call_queue_remote_fetch_batch_operation,
+      account: account,
+      phone_call_filter_params: { metadata: phone_call.metadata }
+    )
+
+    get(
+      api_batch_operation_preview_phone_calls_path(batch_operation),
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    assert_filtered!(phone_call)
+  end
+
+  it "can create a phone call" do
+    callout_participation = create_callout_participation(account: account)
+    request_body = build_request_body
+
+    post(
+      api_callout_participation_phone_calls_path(callout_participation),
+      params: request_body,
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("201")
+    created_phone_call = account.phone_calls.last!
+    expect(response.headers.fetch("Location")).to eq(api_phone_call_path(created_phone_call))
+    expect(created_phone_call.metadata).to eq(request_body.fetch(:metadata))
+    expect(created_phone_call.remote_request_params).to eq(request_body.fetch(:remote_request_params))
+    expect(created_phone_call.call_flow_logic).to eq(request_body.fetch(:call_flow_logic).to_s)
+    expect(created_phone_call.msisdn).to include(request_body.fetch(:msisdn))
+  end
+
+  it "cannot create a phone call with invalid request data" do
+    callout_participation = create_callout_participation(account: account)
+    request_body = build_request_body(remote_request_params: { "foo" => "bar" })
+
+    post(
+      api_callout_participation_phone_calls_path(callout_participation),
+      params: request_body,
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("422")
+  end
+
+  it "can fetch a phone call" do
+    phone_call = create_phone_call(account: account)
+
+    get(
+      api_phone_call_path(phone_call),
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("200")
+    parsed_response = JSON.parse(response.body)
+    expect(
+      account.phone_calls.find(parsed_response.fetch("id"))
+    ).to eq(phone_call)
+  end
+
+  it "can update a phone call" do
+    phone_call = create_phone_call(
+      account: account,
+      metadata: { "foo" => "bar" }
+    )
+
+    request_body = build_request_body(
+      metadata: { "bar" => "foo" },
+      metadata_merge_mode: "replace"
+    )
+
+    patch(
+      api_phone_call_path(phone_call),
+      params: request_body,
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("204")
+    phone_call.reload
+    expect(phone_call.metadata).to eq(request_body.fetch(:metadata))
+    expect(phone_call.remote_request_params).to eq(request_body.fetch(:remote_request_params))
+    expect(phone_call.call_flow_logic).to eq(request_body.fetch(:call_flow_logic).to_s)
+    expect(phone_call.msisdn).to include(request_body.fetch(:msisdn))
+  end
+
+  it "can delete a phone call" do
+    phone_call = create_phone_call(account: account)
+
+    delete(
+      api_phone_call_path(phone_call),
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("204")
+    expect(PhoneCall.find_by_id(phone_call.id)).to eq(nil)
+  end
+
+  it "cannot delete a phone call that has been queued" do
+    phone_call = create_phone_call(account: account, status: PhoneCall::STATE_QUEUED)
+
+    delete(
+      api_phone_call_path(phone_call),
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("422")
+  end
+
+  def build_request_body(options = {})
+    {
+      msisdn: options.delete(:msisdn) || generate(:somali_msisdn),
+      remote_request_params: options.delete(:remote_request_params) || generate(:twilio_request_params),
+      call_flow_logic: options.delete(:call_flow_logic) || CallFlowLogic::HelloWorld,
+      metadata: options.delete(:metadata) || { "foo" => "bar" }
+    }.merge(options)
+  end
+
+  def assert_filtered!(phone_call)
+    expect(response.code).to eq("200")
+    parsed_body = JSON.parse(response.body)
+    expect(parsed_body.size).to eq(1)
+    expect(parsed_body.first.fetch("id")).to eq(phone_call.id)
   end
 
   def create_access_token(**options)
@@ -260,4 +255,7 @@ RSpec.describe "Phone Calls" do
       **options
     )
   end
+
+  let(:account) { create(:account) }
+  let(:access_token) { create_access_token(resource_owner: account) }
 end

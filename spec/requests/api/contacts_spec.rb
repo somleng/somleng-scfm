@@ -1,233 +1,253 @@
 require "rails_helper"
 
 RSpec.describe "Contacts" do
-  include SomlengScfm::SpecHelpers::RequestHelpers
-  let(:account_traits) { {} }
-  let(:account_attributes) { {} }
-  let(:account) { create(:account, *account_traits.keys, account_attributes) }
-  let(:access_token_model) { create_access_token(resource_owner: account) }
-  let(:factory_attributes) { { account: account } }
-  let(:contact) { create(:contact, factory_attributes) }
+  it "can list all contacts" do
+    filtered_contact = create(
+      :contact,
+      account: account,
+      metadata: {
+        "foo" => "bar"
+      }
+    )
+    create(:contact, account: account)
+    create(:contact)
 
-  let(:body) { {} }
-  let(:metadata) { { "foo" => "bar" } }
+    get(
+      api_contacts_path(q: { "metadata" => { "foo" => "bar" } }),
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-  def setup_scenario
-    super
-    do_request(method, url, body)
+    expect(response.code).to eq("200")
+    parsed_body = JSON.parse(response.body)
+    expect(parsed_body.size).to eq(1)
+    expect(parsed_body.first.fetch("id")).to eq(filtered_contact.id)
   end
 
-  describe "'/api/contacts'" do
-    let(:url_params) { {} }
-    let(:url) { api_contacts_path(url_params) }
+  it "can list contacts for a callout" do
+    callout = create(:callout, account: account)
+    contact = create(:contact, account: account)
+    _callout_participation = create_callout_participation(
+      account: account,
+      callout: callout,
+      contact: contact
+    )
+    _other_contact = create(:contact, account: account)
 
-    describe "GET" do
-      let(:method) { :get }
+    get(
+      api_callout_contacts_path(callout),
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-      it_behaves_like "resource_filtering" do
-        let(:filter_on_factory) { :contact }
-        let(:filter_factory_attributes) { factory_attributes }
-      end
-
-      it_behaves_like "authorization"
-    end
-
-    describe "POST" do
-      let(:method) { :post }
-      let(:msisdn) { generate(:somali_msisdn) }
-
-      let(:body) do
-        attributes_for(:contact, msisdn: msisdn, metadata: metadata)
-      end
-
-      context "valid request" do
-        let(:asserted_created_contact) { Contact.last }
-        let(:parsed_response) { JSON.parse(response.body) }
-
-        def assert_create!
-          expect(response.code).to eq("201")
-          expect(parsed_response).to eq(JSON.parse(asserted_created_contact.to_json))
-          expect(parsed_response["metadata"]).to eq(metadata)
-        end
-
-        it { assert_create! }
-      end
-
-      context "invalid request" do
-        let(:msisdn) { nil }
-
-        def assert_invalid!
-          expect(response.code).to eq("422")
-        end
-
-        it { assert_invalid! }
-      end
-    end
+    expect(response.code).to eq("200")
+    parsed_body = JSON.parse(response.body)
+    expect(parsed_body.size).to eq(1)
+    expect(parsed_body.first.fetch("id")).to eq(contact.id)
   end
 
-  describe "'/api/contacts/:id'" do
-    let(:url) { api_contact_path(contact) }
+  it "can preview contacts to be populated for a callout population" do
+    contact = create(:contact, account: account, metadata: { "foo" => "bar" })
+    _other_contact = create(:contact, account: account)
 
-    describe "GET" do
-      let(:method) { :get }
+    callout_population = create(
+      :callout_population,
+      account: account,
+      contact_filter_params: { metadata: contact.metadata }
+    )
 
-      def assert_show!
-        expect(response.code).to eq("200")
-        expect(response.body).to eq(contact.to_json)
-      end
+    get(
+      api_batch_operation_preview_contacts_path(callout_population),
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-      it { assert_show! }
-    end
-
-    describe "PATCH" do
-      let(:existing_metadata) { { "bar" => "foo" } }
-      let(:factory_attributes) { super().merge(metadata: existing_metadata) }
-      let(:method) { :patch }
-      let(:body) { { metadata: metadata, metadata_merge_mode: "replace" } }
-
-      def assert_update!
-        expect(response.code).to eq("204")
-        expect(contact.reload.metadata).to eq(metadata)
-      end
-
-      it { assert_update! }
-    end
-
-    describe "DELETE" do
-      let(:method) { :delete }
-
-      context "valid request" do
-        def assert_destroy!
-          expect(response.code).to eq("204")
-          expect(Contact.find_by_id(contact.id)).to eq(nil)
-        end
-
-        it { assert_destroy! }
-      end
-
-      context "invalid request" do
-        let(:phone_call) { create(:phone_call, contact: contact) }
-
-        def setup_scenario
-          phone_call
-          super
-        end
-
-        def assert_invalid!
-          expect(response.code).to eq("422")
-        end
-
-        it { assert_invalid! }
-      end
-    end
+    expect(response.code).to eq("200")
+    parsed_body = JSON.parse(response.body)
+    expect(parsed_body.size).to eq(1)
+    expect(parsed_body.first.fetch("id")).to eq(contact.id)
   end
 
-  describe "nested indexes" do
-    let(:method) { :get }
+  it "can list all contacts populated by a callout population" do
+    callout_population = create(:callout_population, account: account)
+    callout_participation = create_callout_participation(
+      account: account,
+      callout_population: callout_population
+    )
+    _other_callout_participation = create_callout_participation(account: account)
 
-    let(:callout_participation_factory_attributes) { { contact: contact } }
+    get(
+      api_batch_operation_contacts_path(callout_population),
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-    let(:callout_participation) do
-      create(:callout_participation, callout_participation_factory_attributes)
-    end
-
-    def setup_scenario
-      contact
-      create(:contact, account: account)
-      super
-    end
-
-    def assert_filtered!
-      assert_index!
-      expect(JSON.parse(response.body)).to eq(JSON.parse([contact].to_json))
-    end
-
-    describe "GET '/api/callouts/:callout_id/contacts'" do
-      let(:callout) { create(:callout, account: account) }
-      let(:url) { api_callout_contacts_path(callout) }
-
-      let(:callout_participation_factory_attributes) do
-        super().merge(callout: callout)
-      end
-
-      def setup_scenario
-        callout_participation
-        super
-      end
-
-      it { assert_filtered! }
-    end
-
-    describe "'/api/batch_operations/:batch_operation_id'" do
-      let(:batch_operation_factory_attributes) { { account: account } }
-      let(:batch_operation) do
-        create(batch_operation_factory, batch_operation_factory_attributes)
-      end
-
-      describe "GET '/contacts'" do
-        let(:url) { api_batch_operation_contacts_path(batch_operation) }
-
-        context "BatchOperation::CalloutPopulation" do
-          let(:batch_operation_factory) { :callout_population }
-
-          let(:callout_participation_factory_attributes) do
-            super().merge(callout_population: batch_operation)
-          end
-
-          def setup_scenario
-            callout_participation
-            super
-          end
-
-          it { assert_filtered! }
-        end
-
-        context "BatchOperation::PhoneCallCreate" do
-          let(:batch_operation_factory) { :phone_call_create_batch_operation }
-
-          def setup_scenario
-            create(
-              :phone_call,
-              callout_participation: callout_participation,
-              create_batch_operation: batch_operation
-            )
-            super
-          end
-
-          it { assert_filtered! }
-        end
-      end
-
-      describe "GET '/preview/contacts'" do
-        let(:url) { api_batch_operation_preview_contacts_path(batch_operation) }
-
-        context "BatchOperation::CalloutPopulation" do
-          let(:batch_operation_factory) { :callout_population }
-          let(:factory_attributes) do
-            super().merge(metadata: { "foo" => "bar", "bar" => "foo" })
-          end
-
-          let(:contact_filter_params) { factory_attributes.slice(:metadata) }
-          let(:batch_operation_factory_attributes) do
-            super().merge(contact_filter_params: contact_filter_params)
-          end
-
-          it { assert_filtered! }
-        end
-
-        context "BatchOperation::PhoneCallCreate" do
-          let(:batch_operation_factory) { :phone_call_create_batch_operation }
-
-          def setup_scenario
-            callout_participation
-            super
-          end
-
-          it { assert_filtered! }
-        end
-      end
-    end
+    expect(response.code).to eq("200")
+    parsed_body = JSON.parse(response.body)
+    expect(parsed_body.size).to eq(1)
+    expect(parsed_body.first.fetch("id")).to eq(callout_participation.contact_id)
   end
+
+  it "can preview all contacts to be called by a phone call create batch operation" do
+    callout_participation = create_callout_participation(
+      account: account, metadata: { "foo" => "bar" }
+    )
+    _other_callout_participation = create_callout_participation(account: account)
+    batch_operation = create(
+      :phone_call_create_batch_operation,
+      account: account,
+      callout_participation_filter_params: { metadata: callout_participation.metadata }
+    )
+
+    get(
+      api_batch_operation_preview_contacts_path(batch_operation),
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("200")
+    parsed_body = JSON.parse(response.body)
+    expect(parsed_body.size).to eq(1)
+    expect(parsed_body.first.fetch("id")).to eq(callout_participation.contact_id)
+  end
+
+  it "can list all contacts to be called by a phone call create batch operation" do
+    batch_operation = create(:phone_call_create_batch_operation, account: account)
+    phone_call = create_phone_call(
+      account: account,
+      create_batch_operation: batch_operation
+    )
+    _other_contact = create(:contact, account: account)
+
+    get(
+      api_batch_operation_contacts_path(batch_operation),
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("200")
+    parsed_body = JSON.parse(response.body)
+    expect(parsed_body.size).to eq(1)
+    expect(parsed_body.first.fetch("id")).to eq(phone_call.contact_id)
+  end
+
+  it "can create a callout" do
+    request_body = {
+      msisdn: generate(:somali_msisdn),
+      metadata: {
+        "foo" => "bar"
+      }
+    }
+
+    post(
+      api_contacts_path,
+      params: request_body,
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("201")
+    parsed_response = JSON.parse(response.body)
+    created_contact = account.contacts.find(parsed_response.fetch("id"))
+    expect(created_contact.msisdn).to include(request_body.fetch(:msisdn))
+    expect(created_contact.metadata).to eq(request_body.fetch(:metadata))
+  end
+
+  it "can fetch a contact" do
+    contact = create(:contact, account: account)
+
+    get(
+      api_contact_path(contact),
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("200")
+    parsed_response = JSON.parse(response.body)
+    expect(
+      account.contacts.find(parsed_response.fetch("id"))
+    ).to eq(contact)
+  end
+
+  it "can update a contact" do
+    contact = create(
+      :contact,
+      account: account,
+      metadata: {
+        "foo" => "bar"
+      }
+    )
+
+    request_body = { metadata: { "bar" => "foo" }, metadata_merge_mode: "replace" }
+
+    patch(
+      api_contact_path(contact),
+      params: request_body,
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("204")
+    contact.reload
+    expect(contact.metadata).to eq(request_body.fetch(:metadata))
+  end
+
+  it "can create contact data" do
+    request_body = {
+      msisdn: generate(:somali_msisdn),
+      metadata: {
+        "foo" => "bar"
+      }
+    }
+
+    post(
+      api_contact_data_path,
+      params: request_body,
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("201")
+    parsed_response = JSON.parse(response.body)
+    created_contact = account.contacts.find(parsed_response.fetch("id"))
+    expect(created_contact.msisdn).to include(request_body.fetch(:msisdn))
+    expect(created_contact.metadata).to eq(request_body.fetch(:metadata))
+  end
+
+  it "can update contact data" do
+    msisdn = generate(:somali_msisdn)
+    contact = create(:contact, account: account, msisdn: msisdn, metadata: { "bar" => "foo" })
+    request_body = { msisdn: msisdn, metadata_merge_mode: "replace", metadata: { "foo" => "bar" } }
+
+    post(
+      api_contact_data_path,
+      params: request_body,
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("201")
+    parsed_response = JSON.parse(response.body)
+    contact.reload
+    expect(parsed_response.fetch("id")).to eq(contact.id)
+    expect(contact.metadata).to eq(request_body.fetch(:metadata))
+  end
+
+  it "can delete a contact" do
+    contact = create(:contact, account: account)
+
+    delete(
+      api_contact_path(contact),
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("204")
+    expect(Contact.find_by_id(contact.id)).to eq(nil)
+  end
+
+  it "cannot delete a contact which has phone calls" do
+    contact = create(:contact, account: account)
+    _phone_call = create_phone_call(account: account, contact: contact)
+
+    delete(
+      api_contact_path(contact),
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("422")
+  end
+
+  let(:account) { create(:account) }
+  let(:access_token) { create_access_token(resource_owner: account) }
 
   def create_access_token(**options)
     create(

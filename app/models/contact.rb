@@ -30,7 +30,8 @@ class Contact < ApplicationRecord
   delegate :id, :name_en, :name_km, to: :district, prefix: true, allow_nil: true
 
   delegate :call_flow_logic,
-           to: :account
+           to: :account,
+           allow_nil: true
 
   def commune
     @commune ||= Pumi::Commune.find_by_id(commune_id)

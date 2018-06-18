@@ -3,6 +3,7 @@ class Account < ApplicationRecord
   TWILIO_ACCOUNT_SID_PREFIX = "AC".freeze
   DEFAULT_PLATFORM_PROVIDER = "twilio".freeze
   PLATFORM_PROVIDERS = [DEFAULT_PLATFORM_PROVIDER, "somleng"].freeze
+  DEFAULT_CALL_FLOW_LOGIC = "CallFlowLogic::HelloWorld".freeze
 
   include MetadataHelpers
   include HasCallFlowLogic
@@ -58,6 +59,8 @@ class Account < ApplicationRecord
               in: PLATFORM_PROVIDERS
             }, allow_nil: true
 
+  before_validation :set_call_flow_logic, on: :create
+
   def super_admin?
     permissions?(:super_admin)
   end
@@ -90,6 +93,11 @@ class Account < ApplicationRecord
   end
 
   private
+
+  def set_call_flow_logic
+    return if call_flow_logic.present?
+    self.call_flow_logic = DEFAULT_CALL_FLOW_LOGIC
+  end
 
   def platform_configuration(key)
     read_attribute("#{platform_provider_name}_#{key}")

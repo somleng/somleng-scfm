@@ -1,9 +1,6 @@
 require "rails_helper"
 
 RSpec.describe "Callouts" do
-  let(:account) { create(:account) }
-  let(:access_token) { create_access_token(resource_owner: account) }
-
   it "can list all callouts" do
     filtered_callout = create(
       :callout,
@@ -16,13 +13,7 @@ RSpec.describe "Callouts" do
     create(:callout)
 
     get(
-      api_callouts_path(
-        q: {
-          "metadata" => {
-            "foo" => "bar"
-          }
-        }
-      ),
+      api_callouts_path(q: { "metadata" => { "foo" => "bar" } }),
       headers: build_authorization_headers(access_token: access_token)
     )
 
@@ -142,6 +133,9 @@ RSpec.describe "Callouts" do
 
     expect(response.code).to eq("422")
   end
+
+  let(:account) { create(:account) }
+  let(:access_token) { create_access_token(resource_owner: account) }
 
   def create_access_token(**options)
     create(

@@ -13,19 +13,18 @@ RSpec.describe RemotePhoneCallEventObserver do
       subject.remote_phone_call_event_initialized(event)
 
       expect(event.errors).to be_empty
-      expect(event.remote_call_id).to eq(event.details["CallSid"])
-      expect(event.remote_direction).to eq(event.details["Direction"])
+      expect(event.remote_call_id).to eq(event.details.fetch("CallSid"))
+      expect(event.remote_direction).to eq(event.details.fetch("Direction"))
       expect(event.call_flow_logic).to eq(MyCallFlowLogic.to_s)
       expect(event.phone_call.call_flow_logic).to eq(event.call_flow_logic)
       expect(event.phone_call).to be_present
       expect(event.phone_call.remote_call_id).to eq(event.remote_call_id)
       expect(event.phone_call.remote_direction).to eq(event.remote_direction)
-      expect(event.phone_call.msisdn).to eq(event.details["From"])
-      expect(event.phone_call.remote_status).to eq(event.details["CallStatus"])
+      expect(event.phone_call.msisdn).to eq(event.details.fetch("From"))
+      expect(event.phone_call.remote_status).to eq(event.details.fetch("CallStatus"))
     end
 
     it "handles existing phone calls" do
-      CallFlowLogic::HelloWorld
       account = create_account(call_flow_logic: MyCallFlowLogic)
       phone_call = create_phone_call(
         account: account,
@@ -44,21 +43,6 @@ RSpec.describe RemotePhoneCallEventObserver do
       expect(event.phone_call).to eq(phone_call)
       expect(event.call_flow_logic).to eq(CallFlowLogic::HelloWorld.to_s)
       expect(event.phone_call.remote_status).to eq("completed")
-    end
-
-    it "handles invalid call flow logic for existing phone calls" do
-      account = create_account
-      phone_call = create_phone_call(
-        account: account,
-        remote_call_id: SecureRandom.uuid
-      )
-      phone_call.update_column(:call_flow_logic, "Callout")
-      event = build_event(account: account, remote_call_id: phone_call.remote_call_id)
-
-      subject.remote_phone_call_event_initialized(event)
-
-      expect(event.phone_call).to eq(phone_call)
-      expect(event.call_flow_logic).to eq(CallFlowLogic::HelloWorld.to_s)
     end
 
     def build_event(account:, call_flow_logic: nil, remote_call_id: nil, call_status: nil)

@@ -149,16 +149,17 @@ class PhoneCall < ApplicationRecord
     where(arel_table[timestamp_column].gt(hours.hours.ago))
   end
 
-  def call_flow_logic
-    super || callout_participation_call_flow_logic || contact_call_flow_logic
-  end
-
   def inbound?
     remote_direction == TWILIO_DIRECTIONS[:inbound]
   end
 
   def direction
     inbound? ? :inbound : :outbound
+  end
+
+  def set_call_flow_logic
+    return if call_flow_logic.present?
+    self.call_flow_logic = callout_participation_call_flow_logic || contact_call_flow_logic
   end
 
   private
@@ -183,6 +184,7 @@ class PhoneCall < ApplicationRecord
   def set_defaults
     self.msisdn  ||= callout_participation_msisdn
     self.contact ||= callout_participation_contact
+    set_call_flow_logic
   end
 
   def validate_destroy

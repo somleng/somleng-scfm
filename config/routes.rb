@@ -85,6 +85,8 @@ Rails.application.routes.draw do
       resources :remote_phone_call_events, only: :index
     end
 
+    resource :contact_data, only: :create
+
     resources :callouts, except: %i[new edit] do
       resources :callout_events, only: :create
       resources :callout_participations, only: %i[index create]

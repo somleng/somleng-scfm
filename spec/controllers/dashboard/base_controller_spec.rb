@@ -108,7 +108,7 @@ RSpec.describe Dashboard::BaseController do
     it "renders for :index" do
       parent_resource = build_stubbed(:callout)
       allow(controller).to receive(:parent_resource).and_return(parent_resource)
-      allow_any_instance_of(ActionController::TestRequest).to receive(:path).and_return(dashboard_callout_callout_participations_path(parent_resource))
+      routes.draw { get "/dashboard/callouts/:callout_id/callout_participations", to: "dashboard/callout_participations#index" }
 
       user_signed_in
       get :index, params: { callout_id: parent_resource.id }

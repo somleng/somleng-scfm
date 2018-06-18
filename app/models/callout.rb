@@ -47,7 +47,7 @@ class Callout < ApplicationRecord
 
   alias_attribute :calls, :phone_calls
 
-  validates :status, presence: true
+  validates :call_flow_logic, :status, presence: true
 
   validates :audio_file,
             file_size: {

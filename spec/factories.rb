@@ -36,6 +36,7 @@ FactoryBot.define do
 
   factory :callout do
     account
+    call_flow_logic { CallFlowLogic::HelloWorld }
 
     transient do
       audio_file nil

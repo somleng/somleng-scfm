@@ -20,5 +20,6 @@ class Contact < ApplicationRecord
             uniqueness: { scope: :account_id }
 
   delegate :call_flow_logic,
-           to: :account
+           to: :account,
+           allow_nil: true
 end

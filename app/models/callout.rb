@@ -58,7 +58,13 @@ class Callout < ApplicationRecord
             },
             if: ->(callout) { callout.audio_file.attached? }
 
-  after_commit :publish_committed
+  delegate :call_flow_logic,
+           to: :account,
+           prefix: true,
+           allow_nil: true
+
+  before_validation :set_call_flow_logic, on: :create
+  after_commit      :publish_committed
 
   aasm column: :status, whiny_transitions: false do
     state :initialized, initial: true
@@ -96,6 +102,11 @@ class Callout < ApplicationRecord
   end
 
   private
+
+  def set_call_flow_logic
+    return if call_flow_logic.present?
+    self.call_flow_logic = account_call_flow_logic
+  end
 
   def publish_committed
     broadcast(:callout_committed, self)

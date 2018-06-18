@@ -29,11 +29,10 @@ class CalloutParticipation < ApplicationRecord
   delegate :msisdn, to: :contact, prefix: true, allow_nil: true
 
   before_validation :set_msisdn_from_contact,
+                    :set_call_flow_logic,
                     on: :create
 
-  def call_flow_logic
-    super || callout_call_flow_logic
-  end
+  before_validation
 
   def self.no_phone_calls_or_last_attempt(status)
     where(
@@ -67,16 +66,17 @@ class CalloutParticipation < ApplicationRecord
       "LEFT OUTER JOIN \"phone_calls\" \"future_phone_calls\" ON (\"future_phone_calls\".\"callout_participation_id\" = \"callout_participations\".\"id\" AND \"phone_calls\".\"created_at\" < \"future_phone_calls\".\"created_at\")"
     ).where(
       future_phone_calls: { id: nil }
-    ).where(
-      phone_calls: {
-        status: [status]
-      }
-    )
+    ).where(phone_calls: { status: [status] })
   end
 
   private
 
   def set_msisdn_from_contact
     self.msisdn ||= contact_msisdn
+  end
+
+  def set_call_flow_logic
+    return if call_flow_logic.present?
+    self.call_flow_logic = callout_call_flow_logic
   end
 end

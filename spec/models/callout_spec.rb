@@ -12,7 +12,6 @@ RSpec.describe Callout do
 
   describe "validations" do
     it { is_expected.to validate_presence_of(:status) }
-    it { is_expected.to validate_presence_of(:call_flow_logic) }
 
     context "#audio_file" do
       it "validates the content type" do

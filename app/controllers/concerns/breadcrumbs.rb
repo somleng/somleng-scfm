@@ -29,6 +29,7 @@ module Breadcrumbs
   end
 
   def breadcrumb_action_title(action_name, resource = nil)
-    I18n.t(:"breadcrumbs.#{action_name}", id: resource&.id)
+    default_title = I18n.t(:"breadcrumbs.defaults.#{action_name}", id: resource&.id)
+    I18n.t(:"breadcrumbs.#{controller_name}.#{action_name}", default: default_title, id: resource&.id)
   end
 end

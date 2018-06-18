@@ -8,7 +8,7 @@
       - if content_for?(:related_links)
         #related_links.btn-group
           %button.btn.btn-outline-info.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", "type" => "button"}
-            = t(:"breadcrumbs.more")
+            = t(:"breadcrumbs.defaults.more")
           .dropdown-menu
             = yield(:related_links)
     .col-4

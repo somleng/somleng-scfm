@@ -1,10 +1,13 @@
 ---
 en:
   breadcrumbs:
-    edit: Edit
-    more: More
-    new: New
-    show: "%{id}"
+    accounts:
+      edit: Settings
+    defaults:
+      edit: Edit
+      more: More
+      new: New
+      show: "%{id}"
   titles:
     access_tokens:
       edit: Edit API Key

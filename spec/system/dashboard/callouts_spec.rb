@@ -64,6 +64,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     visit new_dashboard_callout_path
 
     attach_file("Audio file", Rails.root + file_fixture("test.mp3"))
+    choose("Hello World")
     expect do
       click_action_button(:create, key: :submit, namespace: :helpers, model: "Callout")
     end.to have_enqueued_job(AudioFileProcessorJob)

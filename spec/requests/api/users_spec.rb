@@ -1,136 +1,134 @@
 require "rails_helper"
 
 RSpec.describe "Users" do
-  include SomlengScfm::SpecHelpers::RequestHelpers
+  it "can list all users" do
+    filtered_user = create(
+      :user,
+      account: account,
+      metadata: {
+        "foo" => "bar"
+      }
+    )
+    create(:user, account: account)
+    create(:user)
 
-  let(:account_attributes) { {} }
-  let(:account_traits) { {} }
-  let(:account) { create(:account, *account_traits.keys, account_attributes) }
-  let(:access_token_model) { create_access_token(resource_owner: account) }
-  let(:factory_attributes) { { account: account } }
-  let(:user) { create(:user, factory_attributes) }
+    get(
+      api_users_path(q: { "metadata" => { "foo" => "bar" } }),
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-  let(:body) { {} }
-
-  def setup_scenario
-    super
-    do_request(method, url, body)
+    expect(response.code).to eq("200")
+    parsed_body = JSON.parse(response.body)
+    expect(parsed_body.size).to eq(1)
+    expect(parsed_body.first.fetch("id")).to eq(filtered_user.id)
   end
 
-  describe "'/api/users'" do
-    let(:url) { api_users_path(url_params) }
-    let(:url_params) { {} }
+  it "super admin can list all users under an account" do
+    super_admin_account = create(:account, :super_admin)
+    access_token = create_access_token(resource_owner: super_admin_account)
+    user_account = create(:account)
+    user = create(:user, account: user_account)
+    _other_user = create(:user, account: super_admin_account)
 
-    describe "GET" do
-      let(:method) { :get }
+    get(
+      api_account_users_path(user_account),
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-      it_behaves_like "resource_filtering" do
-        let(:filter_on_factory) { :user }
-        let(:filter_factory_attributes) { { account: account } }
-      end
-
-      it_behaves_like "authorization"
-    end
-
-    describe "POST" do
-      let(:method) { :post }
-      let(:created_user) { User.last }
-
-      let(:body) do
-        {
-          email: generate(:email),
-          password: "secret123"
-        }
-      end
-
-      def assert_create!
-        expect(response.code).to eq("201")
-        expect(created_user.account).to eq(asserted_account)
-      end
-
-      context "super admin account" do
-        let(:account_traits) { super().merge(super_admin: nil) }
-        let(:another_account) { create(:account) }
-        let(:asserted_account) { another_account }
-        let(:body) { super().merge(account_id: another_account.id) }
-
-        it { assert_create! }
-      end
-
-      context "normal account" do
-        let(:asserted_account) { account }
-        it { assert_create! }
-      end
-    end
+    expect(response.code).to eq("200")
+    parsed_body = JSON.parse(response.body)
+    expect(parsed_body.size).to eq(1)
+    expect(parsed_body.first.fetch("id")).to eq(user.id)
   end
 
-  describe "'/:id'" do
-    let(:url) { api_user_path(user) }
+  it "can create a user" do
+    request_body = build_request_body
 
-    describe "GET" do
-      let(:method) { :get }
+    post(
+      api_users_path,
+      params: request_body,
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-      def assert_show!
-        expect(response.code).to eq("200")
-        expect(response.body).to eq(user.to_json)
-      end
-
-      it { assert_show! }
-    end
-
-    describe "PATCH" do
-      let(:method) { :patch }
-      let(:metadata) { { "foo" => "bar" } }
-      let(:factory_attributes) { super().merge("metadata" => { "bar" => "baz" }) }
-      let(:body) do
-        {
-          metadata: metadata,
-          metadata_merge_mode: "replace"
-        }
-      end
-
-      def assert_update!
-        expect(response.code).to eq("204")
-        expect(user.reload.metadata).to eq(metadata)
-      end
-
-      it { assert_update! }
-    end
-
-    describe "DELETE" do
-      let(:method) { :delete }
-
-      context "valid request" do
-        def assert_destroy!
-          expect(response.code).to eq("204")
-          expect(User.find_by_id(user.id)).to eq(nil)
-        end
-
-        it { assert_destroy! }
-      end
-    end
+    expect(response.code).to eq("201")
+    created_user = User.last
+    expect(created_user.account).to eq(account)
+    expect(created_user.email).to eq(request_body.fetch(:email))
+    expect(created_user.metadata).to eq(request_body.fetch(:metadata))
   end
 
-  describe "nested indexes" do
-    let(:account_traits) { super().merge(super_admin: nil) }
-    let(:method) { :get }
-    let(:another_account) { create(:account) }
-    let(:factory_attributes) { super().merge(account: another_account) }
+  it "super admin can create a user" do
+    super_admin_account = create(:account, :super_admin)
+    access_token = create_access_token(resource_owner: super_admin_account)
+    user_account = create(:account)
+    request_body = build_request_body(account_id: user_account.id)
 
-    def setup_scenario
-      create(:user, account: account)
-      user
-      super
-    end
+    post(
+      api_users_path,
+      params: request_body,
+      headers: build_authorization_headers(access_token: access_token)
+    )
 
-    def assert_filtered!
-      expect(JSON.parse(response.body)).to eq(JSON.parse([user].to_json))
-    end
+    expect(response.code).to eq("201")
+    created_user = User.last
+    expect(created_user.account).to eq(user_account)
+  end
 
-    describe "GET '/api/accounts/:account_id/users'" do
-      let(:url) { api_account_users_path(another_account) }
-      it { assert_filtered! }
-    end
+  it "can fetch a user" do
+    user = create(:user, account: account)
+
+    get(
+      api_user_path(user),
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("200")
+    parsed_response = JSON.parse(response.body)
+    expect(
+      account.users.find(parsed_response.fetch("id"))
+    ).to eq(user)
+  end
+
+  it "can update a user" do
+    user = create(
+      :user,
+      account: account,
+      metadata: {
+        "foo" => "bar"
+      }
+    )
+
+    request_body = { metadata: { "bar" => "foo" }, metadata_merge_mode: "replace" }
+
+    patch(
+      api_user_path(user),
+      params: request_body,
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("204")
+    user.reload
+    expect(user.metadata).to eq(request_body.fetch(:metadata))
+  end
+
+  it "can delete a user" do
+    user = create(:user, account: account)
+
+    delete(
+      api_user_path(user),
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("204")
+    expect(User.find_by_id(user.id)).to eq(nil)
+  end
+
+  def build_request_body(options = {})
+    {
+      email: options.delete(:email) || generate(:email),
+      password: options.delete(:password) || "secret123",
+      metadata: options.delete(:metadata) || { "foo" => "bar" }
+    }.merge(options)
   end
 
   def create_access_token(**options)
@@ -140,4 +138,7 @@ RSpec.describe "Users" do
       **options
     )
   end
+
+  let(:account) { create(:account) }
+  let(:access_token) { create_access_token(resource_owner: account) }
 end

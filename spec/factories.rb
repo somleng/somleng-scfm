@@ -134,7 +134,7 @@ FactoryBot.define do
     details { generate(:twilio_remote_call_event_details) }
     remote_call_id { details["CallSid"] }
     remote_direction { details["Direction"] }
-    call_flow_logic { RemotePhoneCallEventObserver::DEFAULT_CALL_FLOW_LOGIC }
+    call_flow_logic { Account::DEFAULT_CALL_FLOW_LOGIC }
 
     after(:build) do |remote_phone_call_event, evaluator|
       if evaluator.build_phone_call

@@ -13,13 +13,7 @@ RSpec.describe "Callouts" do
     create(:callout)
 
     get(
-      api_callouts_path(
-        q: {
-          "metadata" => {
-            "foo" => "bar"
-          }
-        }
-      ),
+      api_callouts_path(q: { "metadata" => { "foo" => "bar" } }),
       headers: build_authorization_headers(access_token: access_token)
     )
 

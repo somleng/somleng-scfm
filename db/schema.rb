@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_11_001802) do
+ActiveRecord::Schema.define(version: 2018_06_18_023959) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,7 +25,7 @@ ActiveRecord::Schema.define(version: 2018_06_11_001802) do
     t.integer "permissions", default: 0, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.string "call_flow_logic"
+    t.string "call_flow_logic", null: false
     t.string "platform_provider_name"
     t.string "somleng_api_host"
     t.string "somleng_api_base_url"
@@ -72,7 +72,7 @@ ActiveRecord::Schema.define(version: 2018_06_11_001802) do
     t.bigint "contact_id", null: false
     t.bigint "callout_population_id"
     t.string "msisdn", null: false
-    t.string "call_flow_logic"
+    t.string "call_flow_logic", null: false
     t.jsonb "metadata", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -85,7 +85,7 @@ ActiveRecord::Schema.define(version: 2018_06_11_001802) do
 
   create_table "callouts", force: :cascade do |t|
     t.string "status", null: false
-    t.string "call_flow_logic"
+    t.string "call_flow_logic", null: false
     t.jsonb "metadata", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -168,7 +168,7 @@ ActiveRecord::Schema.define(version: 2018_06_11_001802) do
     t.jsonb "remote_response", default: {}, null: false
     t.jsonb "remote_request_params", default: {}, null: false
     t.jsonb "remote_queue_response", default: {}, null: false
-    t.string "call_flow_logic"
+    t.string "call_flow_logic", null: false
     t.datetime "remotely_queued_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

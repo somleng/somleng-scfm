@@ -163,7 +163,7 @@ RSpec.describe "Callouts", :aggregate_failures do
       expect(page).to have_content("Audio file")
       expect(page).to have_content("Audio url")
       expect(page).to have_content("Call flow")
-      expect(page).to have_content("CallFlowLogic::HelloWorld")
+      expect(page).to have_content("Hello World")
       expect(page).to have_content("Metadata")
       expect(page).to have_content("location:country")
       expect(page).to have_content("Cambodia")

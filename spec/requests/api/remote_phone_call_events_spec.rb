@@ -227,6 +227,26 @@ RSpec.describe "Remote Phone Call Events" do
     expect(response.code).to eq("403")
   end
 
+  it "cannot create a remote phone call event with invalid params" do
+    account = create(:account, :with_twilio_provider)
+    request_body = build_request_body(
+      account_sid: account.twilio_account_sid,
+      from: "Invalid"
+    )
+
+    post(
+      api_remote_phone_call_events_url,
+      params: request_body,
+      headers: build_twilio_signature(
+        auth_token: account.twilio_auth_token,
+        url: api_remote_phone_call_events_url,
+        request_body: request_body
+      )
+    )
+
+    expect(response.code).to eq("422")
+  end
+
   def build_request_body(options)
     {
       "CallSid" => options.fetch(:call_sid) { SecureRandom.uuid },

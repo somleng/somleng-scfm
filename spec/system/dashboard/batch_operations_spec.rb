@@ -11,15 +11,6 @@ RSpec.describe "Batch Operations" do
 
     expect(page).to have_title("Batch Operations")
 
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(:index, key: :batch_operations)
-      expect(page).not_to have_link_to_action(
-        :new,
-        key: :callout_populations
-      )
-      expect(page).not_to have_link_to_action(:back)
-    end
-
     within("#page_entries_info") do
       expect(page).to have_content("batch operation")
     end
@@ -48,9 +39,12 @@ RSpec.describe "Batch Operations" do
 
     expect(page).to have_title("Batch Operation #{batch_operation.id}")
 
-    within("#button_toolbar") do
+    within("#page_actions") do
       expect(page).not_to have_link_to_action(:edit)
       expect(page).not_to have_link_to_action(:preview)
+    end
+
+    within("#related_links") do
       expect(page).to have_link_to_action(
         :index,
         key: :phone_calls,
@@ -91,7 +85,7 @@ RSpec.describe "Batch Operations" do
     clear_enqueued_jobs
 
     perform_enqueued_jobs do
-      within("#button_toolbar") do
+      within("#page_actions") do
         click_action_button(:queue, key: :batch_operations, type: :link)
       end
     end
@@ -100,7 +94,7 @@ RSpec.describe "Batch Operations" do
     expect(batch_operation.reload).to be_finished
 
     perform_enqueued_jobs do
-      within("#button_toolbar") do
+      within("#page_actions") do
         click_action_button(:requeue, key: :batch_operations, type: :link)
       end
     end

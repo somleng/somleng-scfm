@@ -9,7 +9,7 @@ class Api::PhoneCallEventsController < Api::ResourceEventsController
     phone_call.subscribe(PhoneCallObserver.new)
   end
 
-  def parent
+  def parent_resource
     phone_call
   end
 

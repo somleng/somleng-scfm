@@ -1,4 +1,6 @@
 class BatchOperation::PhoneCallEventOperation < BatchOperation::PhoneCallOperation
+  include CustomRoutesHelper["batch_operations"]
+
   store_accessor :parameters,
                  :phone_call_filter_params
 

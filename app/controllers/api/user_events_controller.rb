@@ -1,7 +1,7 @@
 class Api::UserEventsController < Api::ResourceEventsController
   private
 
-  def parent
+  def parent_resource
     user
   end
 

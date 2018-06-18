@@ -1,7 +1,7 @@
 class Dashboard::CalloutEventsController < Dashboard::EventsController
   private
 
-  def parent
+  def parent_resource
     callout
   end
 

@@ -11,11 +11,10 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     expect(page).to have_title("Callouts")
 
-    within("#button_toolbar") do
+    within("#page_actions") do
       expect(page).to have_link_to_action(
         :new, key: :callouts, href: new_dashboard_callout_path
       )
-      expect(page).to have_link_to_action(:index, key: :callouts)
     end
 
     within("#resources") do
@@ -42,15 +41,6 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     expect(page).to have_title("Make Emergency Call")
 
-    within("#button_toolbar") do
-      expect(page).to have_link(
-        I18n.translate!(:"titles.callouts.new"),
-        href: new_dashboard_callout_path
-      )
-    end
-
-    expect(page).to have_link_to_action(:cancel)
-
     attach_file("Audio file", Rails.root + file_fixture("test.mp3"))
     select_commune
 
@@ -75,13 +65,6 @@ RSpec.describe "Callouts", :aggregate_failures do
     visit edit_dashboard_callout_path(callout)
 
     expect(page).to have_title("Edit Callout")
-
-    within("#button_toolbar") do
-      expect(page).to have_link(
-        I18n.translate!(:"titles.callouts.edit"),
-        href: edit_dashboard_callout_path(callout)
-      )
-    end
 
     expect(page).to have_content("Banteay Neang")
     expect(page).to have_link_to_action(:cancel)
@@ -131,12 +114,19 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     expect(page).to have_title("Callout #{callout.id}")
 
-    within("#button_toolbar") do
+    within("#page_actions") do
+      expect(page).to have_link_to_action(
+        :preview,
+        href: dashboard_batch_operation_preview_contacts_path(callout_population)
+      )
+
       expect(page).to have_link_to_action(
         :edit,
         href: edit_dashboard_callout_path(callout)
       )
+    end
 
+    within("#related_links") do
       expect(page).to have_link_to_action(
         :index,
         key: :batch_operations,
@@ -153,11 +143,6 @@ RSpec.describe "Callouts", :aggregate_failures do
         :index,
         key: :phone_calls,
         href: dashboard_callout_phone_calls_path(callout)
-      )
-
-      expect(page).to have_link_to_action(
-        :preview,
-        href: dashboard_batch_operation_preview_contacts_path(callout_population)
       )
     end
 

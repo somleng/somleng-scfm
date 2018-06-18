@@ -1,27 +1,27 @@
 require "application_responder"
 
 class Dashboard::BaseController < BaseController
-  KEY_VALUE_FIELD_ATTRIBUTES = %i[key value].freeze
+  include Breadcrumbs
 
-  METADATA_FIELDS_ATTRIBUTES = {
-    metadata_fields_attributes: KEY_VALUE_FIELD_ATTRIBUTES
-  }.freeze
+  KEY_VALUE_FIELD_ATTRIBUTES = %i[key value].freeze
 
   self.responder = ApplicationResponder
   respond_to :html
 
   before_action :authenticate_user!, :set_locale
-  helper_method :resource, :resources, :show_location,
+  helper_method :resource, :resources, :parent_resource, :show_location, :resources_path,
                 :current_account, :sort_column, :sort_direction
 
   def new
     build_new_resource
     prepare_resource_for_new
+    _prepare_for_render
   end
 
   def edit
     find_resource
     prepare_resource_for_edit
+    _prepare_for_render
   end
 
   private
@@ -58,10 +58,6 @@ class Dashboard::BaseController < BaseController
 
   def build_key_value_fields; end
 
-  def build_metadata_field
-    resource.build_metadata_field if resource.metadata_fields.empty?
-  end
-
   def clear_metadata
     resource.metadata.clear
   end
@@ -75,7 +71,11 @@ class Dashboard::BaseController < BaseController
   end
 
   def resources_path
-    polymorphic_path([:dashboard, association_chain.model])
+    polymorphic_path([:dashboard, parent_resource, association_chain.model])
+  end
+
+  def parent_resources_path
+    polymorphic_path([:dashboard, parent_resource.class])
   end
 
   def current_account
@@ -92,5 +92,9 @@ class Dashboard::BaseController < BaseController
 
   def sort_direction
     %w[asc desc].include?(params[:sort_direction]) ? params[:sort_direction] : "desc"
+  end
+
+  def _prepare_for_render
+    prepare_breadcrumbs
   end
 end

@@ -11,11 +11,6 @@ RSpec.describe "Remote Phone Call Events" do
 
     expect(page).to have_title("Phone Call Events")
 
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(:index, key: :remote_phone_call_events)
-      expect(page).not_to have_link_to_action(:back)
-    end
-
     within("#resources") do
       expect(page).to have_content_tag_for(remote_phone_call_event)
       expect(page).not_to have_content_tag_for(other_remote_phone_call_event)
@@ -35,13 +30,6 @@ RSpec.describe "Remote Phone Call Events" do
 
     sign_in(user)
     visit(dashboard_phone_call_remote_phone_call_events_path(remote_phone_call_event.phone_call))
-
-    within("#button_toolbar") do
-      expect(page).to have_link_to_action(
-        :back,
-        href: dashboard_phone_call_path(remote_phone_call_event.phone_call)
-      )
-    end
 
     within("#resources") do
       expect(page).to have_content_tag_for(remote_phone_call_event)

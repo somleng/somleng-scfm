@@ -1,17 +1,15 @@
 class Dashboard::RemotePhoneCallEventsController < Dashboard::BaseController
-  helper_method :parent_show_path
-
   private
 
   def association_chain
-    if parent
-      parent.remote_phone_call_events
+    if parent_resource
+      parent_resource.remote_phone_call_events
     else
       current_account.remote_phone_call_events
     end
   end
 
-  def parent
+  def parent_resource
     phone_call if phone_call_id
   end
 
@@ -21,9 +19,5 @@ class Dashboard::RemotePhoneCallEventsController < Dashboard::BaseController
 
   def phone_call
     @phone_call ||= current_account.phone_calls.find(phone_call_id)
-  end
-
-  def parent_show_path
-    polymorphic_path([:dashboard, parent]) if parent
   end
 end

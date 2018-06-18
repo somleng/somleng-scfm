@@ -5,12 +5,12 @@ class Api::ResourceEventsController < Api::BaseController
     if resource.errors.any?
       respond_with(resource)
     else
-      respond_with(parent, location: path_to_parent)
+      respond_with(parent_resource, location: path_to_parent)
     end
   end
 
   def build_resource_from_params
-    @resource = event_class.new(permitted_params.merge(eventable: parent))
+    @resource = event_class.new(permitted_params.merge(eventable: parent_resource))
   end
 
   def permitted_params

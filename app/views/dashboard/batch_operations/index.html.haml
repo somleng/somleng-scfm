@@ -1,7 +1,5 @@
-- content_for(:button_toolbar) do
-  = render("shared/disabled_button", url: index_location, button_text: translate(:"titles.batch_operations.index"), count: resources.count)
+- content_for(:page_actions) do
   - if callout
-    = link_to(translate(:"titles.actions.back"), dashboard_callout_path(callout), class: 'btn btn-outline-dark')
     = link_to(translate(:"titles.callout_populations.new"), new_dashboard_callout_batch_operation_callout_population_path(callout), class: 'btn btn-outline-success')
 
 - content_for(:resources_table) do

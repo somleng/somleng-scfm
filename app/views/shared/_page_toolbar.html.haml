@@ -1,0 +1,15 @@
+.col-12
+  .row#page_toolbar
+    .col-8
+      - if content_for?(:page_actions)
+        #page_actions.d-inline
+          = yield(:page_actions)
+
+      - if content_for?(:related_links)
+        #related_links.btn-group
+          %button.btn.btn-outline-info.dropdown-toggle{"aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", "type" => "button"}
+            = t(:"breadcrumbs.more")
+          .dropdown-menu
+            = yield(:related_links)
+    .col-4
+      = render 'shared/breadcrumbs'

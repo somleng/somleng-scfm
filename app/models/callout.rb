@@ -58,6 +58,8 @@ class Callout < ApplicationRecord
 
   validate  :province_permitted
 
+  validate :audio_file_attached
+
   validates :audio_file,
             file_size: {
               less_than_or_equal_to: 10.megabytes
@@ -111,6 +113,11 @@ class Callout < ApplicationRecord
   end
 
   private
+
+  def audio_file_attached
+    return if audio_file.attached?
+    errors.add(:audio_file, :blank)
+  end
 
   def set_call_flow_logic
     return if call_flow_logic.present?

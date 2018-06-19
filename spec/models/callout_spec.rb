@@ -11,6 +11,7 @@ RSpec.describe Callout do
 
   describe "validations" do
     it { is_expected.to validate_presence_of(:status) }
+    it { is_expected.to validate_presence_of(:audio_file) }
 
     context "#audio_file" do
       it "validates the content type" do
@@ -31,17 +32,11 @@ RSpec.describe Callout do
         callout = build(:callout, audio_file: "test.mp3")
         expect(callout).to be_valid
       end
-
-      it "allows no audio files" do
-        callout = build(:callout)
-
-        expect(callout).to be_valid
-      end
     end
 
     it "validates the province is permitted" do
       user = create(:user, province_ids: %w[11 12])
-      callout = build_stubbed(
+      callout = build(
         :callout,
         account: user.account,
         created_by: user,

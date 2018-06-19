@@ -15,9 +15,14 @@ RSpec.describe "Remote Phone Call Events" do
       expect(page).to have_content_tag_for(remote_phone_call_event)
       expect(page).not_to have_content_tag_for(other_remote_phone_call_event)
       expect(page).to have_content("#")
+      expect(page).to have_content("Phone call")
       expect(page).to have_link(
         remote_phone_call_event.id,
         href: dashboard_remote_phone_call_event_path(remote_phone_call_event)
+      )
+      expect(page).to have_link(
+        remote_phone_call_event.phone_call_id,
+        href: dashboard_phone_call_path(remote_phone_call_event.phone_call_id)
       )
       expect(page).to have_sortable_column("created_at")
     end

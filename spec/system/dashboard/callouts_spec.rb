@@ -35,7 +35,7 @@ RSpec.describe "Callouts", :aggregate_failures do
   end
 
   it "can create a callout", :js do
-    user = create(:user, province_ids: ["02"])
+    user = create(:user)
 
     sign_in(user)
     visit new_dashboard_callout_path
@@ -58,7 +58,7 @@ RSpec.describe "Callouts", :aggregate_failures do
   end
 
   it "can update a callout", :js do
-    user = create(:user, province_ids: %w[01 02])
+    user = create(:user)
     callout = create(:callout, account: user.account, commune_ids: ["010201"])
     _callout_population = create(:callout_population, callout: callout, account: callout.account)
 
@@ -80,7 +80,7 @@ RSpec.describe "Callouts", :aggregate_failures do
   end
 
   it "can update a callout without an existing callout population", :js do
-    user = create(:user, province_ids: %w[01 02])
+    user = create(:user)
     callout = create(:callout, account: user.account, commune_ids: ["010201"])
 
     sign_in(user)

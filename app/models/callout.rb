@@ -48,12 +48,14 @@ class Callout < ApplicationRecord
   has_one_attached :audio_file
 
   alias_attribute :calls, :phone_calls
+
   attr_accessor :created_by
 
   validates :call_flow_logic, :status, presence: true
 
   validates :call_flow_logic,
             presence: true
+
   validate  :province_permitted
 
   validates :audio_file,
@@ -121,6 +123,7 @@ class Callout < ApplicationRecord
 
   def province_permitted
     return if created_by.blank?
+    return if created_by.province_ids.blank?
     return if created_by.province_ids.include?(province_id)
     errors.add(:commune_ids, :inclusion)
   end

@@ -38,6 +38,25 @@ RSpec.describe Callout do
         expect(callout).to be_valid
       end
     end
+
+    it "validates the province is permitted" do
+      user = create(:user, province_ids: %w[11 12])
+      callout = build_stubbed(
+        :callout,
+        account: user.account,
+        created_by: user,
+        commune_ids: ["020101"]
+      )
+
+      expect(callout).not_to be_valid
+      expect(callout.errors[:commune_ids]).not_to be_empty
+
+      user.province_ids = nil
+      expect(callout).to be_valid
+
+      callout.created_by = nil
+      expect(callout).to be_valid
+    end
   end
 
   context "saving" do

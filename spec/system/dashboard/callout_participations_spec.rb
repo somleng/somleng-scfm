@@ -15,9 +15,19 @@ RSpec.describe "Callout Participations" do
       expect(page).to have_content_tag_for(callout_participation)
       expect(page).not_to have_content_tag_for(other_callout_participation)
       expect(page).to have_content("#")
+      expect(page).to have_content("Contact")
+      expect(page).to have_content("Callout")
       expect(page).to have_link(
         callout_participation.id,
         href: dashboard_callout_participation_path(callout_participation)
+      )
+      expect(page).to have_link(
+        callout_participation.contact_id,
+        href: dashboard_contact_path(callout_participation.contact)
+      )
+      expect(page).to have_link(
+        callout_participation.callout_id,
+        href: dashboard_callout_path(callout_participation.callout)
       )
       expect(page).to have_sortable_column("created_at")
     end

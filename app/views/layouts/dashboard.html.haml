@@ -10,9 +10,8 @@
   = content_tag :body, data: { action: action_name, controller: controller_name } do
     = render 'shared/nav_bar'
     .container-fluid
-      .row
-        = render 'shared/side_bar'
-        %main.col-12.col-md-9.col-xl-10.ml-sm-auto.pt-3.px-4
-          = render 'shared/flash_messages'
-          = render 'shared/page_toolbar'
-          = yield
+      = render 'shared/side_bar'
+      %main.col-12.col-md-9.col-xl-10.ml-sm-auto.pt-3.px-4
+        = render 'shared/flash_messages'
+        = render 'shared/page_toolbar'
+        = yield

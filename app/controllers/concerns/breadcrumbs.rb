@@ -21,7 +21,7 @@ module Breadcrumbs
   end
 
   def resources_title(model)
-    model.model_name.human.pluralize
+    model.model_name.human(count: 0)
   end
 
   def breadcrumb_action_name

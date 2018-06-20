@@ -1,6 +1,8 @@
 .col-12
   .row#page_toolbar
-    .col-8
+    .col-12
+      = render("shared/breadcrumbs")
+    .col-12
       - if content_for?(:page_actions)
         #page_actions.d-inline
           = yield(:page_actions)
@@ -11,5 +13,3 @@
             = t(:"breadcrumbs.defaults.more")
           .dropdown-menu
             = yield(:related_links)
-    .col-4
-      = render 'shared/breadcrumbs'

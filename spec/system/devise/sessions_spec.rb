@@ -27,6 +27,6 @@ RSpec.describe "User sign in" do
       click_action_button(:destroy, key: :user_sessions, type: :link)
     end
 
-    expect(current_path).to eq(new_user_session_path)
+    expect(current_path).to eq(root_path)
   end
 end

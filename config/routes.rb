@@ -8,7 +8,10 @@ Rails.application.routes.draw do
              controllers: { invitations: "dashboard/user_invitations" },
              skip: :registrations
 
-  root to: redirect("dashboard")
+  root 'home#index'
+
+  get "/about_us", to: "home#about_us"
+  get "/contact", to: "home#contact"
 
   namespace "dashboard" do
     root to: "callouts#index"

@@ -1,0 +1,28 @@
+!!!
+%html#home{:lang => "en"}
+  %head
+    = csrf_meta_tags
+    = csp_meta_tag
+    = favicon_link_tag
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %meta{:charset => "utf-8"}/
+    %meta{:content => "width=device-width, initial-scale=1, shrink-to-fit=no", :name => "viewport"}/
+    = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
+    = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+    %title= title
+  %body.text-center
+    .container.d-flex.w-100.h-100.p-3.mx-auto.flex-column
+      %header.masthead.mb-auto
+        = render 'shared/flash_messages'
+        .inner
+          %h3.masthead-brand Somleng
+          %nav#top_nav.nav.nav-masthead.justify-content-center
+            = nav_link(translate(:"titles.home.index"), root_path, turbolinks: false)
+            = nav_link(translate(:"titles.home.about_us"), about_us_path, turbolinks: false)
+            = nav_link(translate(:"titles.home.contact"), contact_path, turbolinks: false)
+            = nav_link(translate(:"titles.home.dashboard"), dashboard_root_path, turbolinks: false)
+      = yield
+      %footer.mastfoot.mt-auto
+        .inner
+          %p
+            By Somleng

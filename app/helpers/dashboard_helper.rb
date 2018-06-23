@@ -13,8 +13,8 @@ module DashboardHelper
   def location_names(province_ids, type)
     Array(province_ids).map do |location_id|
       location = type.find_by_id(location_id)
-      "#{location.name_km} (#{location.name_en})"
-    end.join(", ")
+      "#{location.name_km} (#{location.name_en})" if location
+    end.compact.join(", ")
   end
 
   def label_status(callout)

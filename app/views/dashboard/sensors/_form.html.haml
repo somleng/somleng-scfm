@@ -2,8 +2,6 @@
   .card-body
     = simple_form_for([:dashboard, resource]) do |f|
       = f.input(:external_id)
-      = f.input(:latitude)
-      = f.input(:longitude)
       = f.input :province_id, collection: [], prompt: true, required: true,
                 wrapper_html: { id: 'province' },
                 input_html: { class: 'js-select-province',
@@ -18,6 +16,7 @@
                 input_html: { class: 'js-select-communes',
                   style: "width: 100%", multiple: true,
                   data: { default_value: f.object.commune_ids }}
+      = render("shared/key_value_fields", attribute: :metadata, f: f)
       .form-group.actions
         = f.button :submit, class: 'btn btn-primary'
         = link_to(translate(:"titles.actions.cancel"), :back, class: 'btn btn-outline-dark')

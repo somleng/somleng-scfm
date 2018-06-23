@@ -2,6 +2,10 @@ class Sensor < ApplicationRecord
   include PumiHelpers
   include MetadataHelpers
 
+  REJECTABLE_METADATA_FIELDS = [
+    "commune_ids"
+  ].freeze
+
   belongs_to :account
 
   has_many   :sensor_rules,
@@ -13,11 +17,9 @@ class Sensor < ApplicationRecord
   validates :account, presence: true
   validates :external_id, presence: true, uniqueness: { scope: :account_id }
 
-  store_accessor :metadata,
-                 :latitude, :longitude
+  private
 
-  def map_link
-    return unless latitude.present? && longitude.present?
-    "https://maps.google.com/?q=#{latitude},#{longitude}"
+  def rejectable_metadata_fields
+    REJECTABLE_METADATA_FIELDS
   end
 end

@@ -1,4 +1,6 @@
 - content_for(:page_actions) do
+  - if resource.callout_population
+    = link_to translate(:"titles.actions.preview"), dashboard_batch_operation_preview_contacts_path(resource.callout_population), class: 'btn btn-outline-info'
   - if resource.may_start?
     = link_to(translate(:"titles.callouts.start_callout"), dashboard_callout_callout_events_path(resource, event: :start),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
   - if resource.may_stop?
@@ -8,10 +10,11 @@
   = link_to(translate(:"titles.actions.edit"), edit_dashboard_callout_path(resource), class: 'btn btn-outline-primary')
   = link_to(translate(:"titles.actions.delete"), dashboard_callout_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
 
-- content_for(:related_links) do
-  = related_link_to t(:"titles.batch_operations.index"), dashboard_callout_batch_operations_path(resource)
-  = related_link_to t(:"titles.callout_participations.index"), dashboard_callout_callout_participations_path(resource)
-  = related_link_to t(:"titles.phone_calls.index"), dashboard_callout_phone_calls_path(resource)
+- if current_user.admin?
+  - content_for(:related_links) do
+    = related_link_to t(:"titles.batch_operations.index"), dashboard_callout_batch_operations_path(resource)
+    = related_link_to t(:"titles.callout_participations.index"), dashboard_callout_callout_participations_path(resource)
+    = related_link_to t(:"titles.phone_calls.index"), dashboard_callout_phone_calls_path(resource)
 
 .col
   #callout.card
@@ -25,8 +28,7 @@
         %dt.col-sm-5.col-md-4.text-md-right
           = Callout.human_attribute_name(:status)
         %dd.col-sm-7.col-md-6
-          %code
-            = resource.status.humanize
+          = label_status(resource)
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Callout.human_attribute_name(:audio_file)
@@ -41,6 +43,18 @@
             = link_to(resource.audio_url, resource.audio_url)
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
+          = Callout.human_attribute_name(:province_id)
+        %dd.col-sm-7.col-md-6
+          %code
+            = location_names(resource.province_id, Pumi::Province)
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Callout.human_attribute_name(:commune_ids)
+        %dd.col-sm-7.col-md-6
+          %code
+            = location_names(resource.commune_ids, Pumi::Commune)
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
           = Callout.human_attribute_name(:call_flow_logic)
         %dd.col-sm-7.col-md-6
           %code
@@ -51,4 +65,3 @@
         %dd.col-sm-7.col-md-6
           %code
             = resource.created_at
-      = render("shared/key_value_attributes", attribute: :metadata)

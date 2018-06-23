@@ -1,0 +1,23 @@
+.card
+  .card-body
+    = simple_form_for([:dashboard, resource]) do |f|
+      = f.input(:external_id)
+      = f.input(:latitude)
+      = f.input(:longitude)
+      = f.input :province_id, collection: [], prompt: true, required: true,
+                wrapper_html: { id: 'province' },
+                input_html: { class: 'js-select-province',
+                  data: { default_value: f.object.province_id.to_s,
+                    province_url: pumi.provinces_url,
+                    pumi_district_collection_url: pumi.districts_url,
+                    pumi_commune_collection_url: pumi.communes_url }}
+
+      = f.input :commune_ids, collection: [],
+                wrapper_html: { id: 'communes' },
+                required: true, include_blank: false,
+                input_html: { class: 'js-select-communes',
+                  style: "width: 100%", multiple: true,
+                  data: { default_value: f.object.commune_ids }}
+      .form-group.actions
+        = f.button :submit, class: 'btn btn-primary'
+        = link_to(translate(:"titles.actions.cancel"), :back, class: 'btn btn-outline-dark')

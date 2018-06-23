@@ -18,6 +18,15 @@ en:
         platform_provider_name: Platform provider
       phone_call:
         remote_call_id: Remote call sid
+      sensor:
+        commune_ids: Alert communes
+        external_id: External id
+        map_link: Map
+      sensor_rule:
+        alert_file: Alert file
+        level: Level
+      user:
+        province_ids: Provinces
     models:
       access_token:
         one: API key
@@ -57,7 +66,9 @@ en:
         other: Users
   attributes:
     call_flow_logic: Call flow
+    commune_ids: Communes
     created_at: Created at
     metadata: Metadata
     msisdn: Phone number
+    province_id: Province
     status: Status

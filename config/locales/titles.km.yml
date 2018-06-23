@@ -24,7 +24,8 @@ km:
       edit: កែប្រែ
       preview: ការឃើញជាមុន
       update: កែប្រែ
-    app_name: សំឡេង SCFM
+    admin_management: Admin
+    app_name: EWS 1294
     batch_operations:
       index: Batch Operations
       queue: ចាប់ផ្ដើម
@@ -64,6 +65,16 @@ km:
     remote_phone_call_events:
       index: ព្រឹត្តិការណ៍ការហៅចេញ
       show: ព្រឹត្តិការណ៍ការហៅចេញ %{id}
+    sensor_events:
+      index: Sensor Events
+    sensor_rules:
+      edit: Edit Sensor Rule
+      index: Sensor Rules
+      new: New Sensor Rule
+    sensors:
+      edit: Edit Sensor
+      index: Sensors
+      new: New Sensor
     user_invitations:
       create: អញ្ជើញ អ្នកប្រីប្រាស
       edit: Set your password

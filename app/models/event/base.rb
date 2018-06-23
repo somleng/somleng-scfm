@@ -14,7 +14,7 @@ class Event::Base
     self.event = options[:event]
   end
 
-  def save
+  def save(*)
     if valid?
       fire_event!
     else

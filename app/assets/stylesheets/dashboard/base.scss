@@ -4,7 +4,7 @@ body {
 }
 
 main {
-  overflow-x: scroll;
+  overflow-x: visible;
 }
 
 .navbar-brand {
@@ -88,16 +88,20 @@ main {
   }
 }
 
-dl.row {
-  margin-bottom: 0;
+.form-group.check_boxes, .form-group.radio_buttons {
+  .checkbox, .radio {
+    margin-right: 12px;
+  }
+  input.check_boxes, input.radio_buttons {
+    margin-right: 8px;
+  }
 }
 
-.th-sortable {
-  a, a:hover {
-    text-decoration: none;
-  }
-  .sortable-icons {
-    margin-left: 8px;
+.select2-container--default .select2-selection--single {
+  height: 38px;
+  .select2-selection__rendered {
+    line-height: 38px;
+    font-size: 16px;
   }
 }
 
@@ -105,6 +109,20 @@ dl.row {
   .btn {
     margin-bottom: 4px;
   }
+}
+
+.callout_commune_ids {
+  margin: 0;
+}
+
+#districts-communes {
+  max-height: 500px;
+  overflow-y: scroll;
+  margin-bottom: 20px;
+  min-height: 30px;
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  padding: 4px 8px;
 }
 
 @media (min-width: 768px) {

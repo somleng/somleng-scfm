@@ -1,0 +1,7 @@
+- content_for(:page_actions) do
+  = link_to(translate(:"titles.sensors.new"), new_dashboard_sensor_path, class: 'btn btn-outline-success')
+
+- content_for(:resources_table) do
+  = render("shared/resources_table", resource_class: Sensor, columns: [:external_id, :province, :created_at])
+
+= render("shared/index")

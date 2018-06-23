@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe PhoneCallObserver do
   let(:phone_call_factory_attributes) { {:status => status} }
   let(:phone_call) { create(:phone_call, phone_call_factory_attributes) }
-  let(:enqueued_job) { enqueued_jobs.first }
+  let(:enqueued_job) { enqueued_jobs.last }
 
   def setup_scenario
     observe_event!
@@ -36,4 +36,3 @@ RSpec.describe PhoneCallObserver do
     it { assert_observed! }
   end
 end
-

@@ -1,4 +1,4 @@
-class Dashboard::AccountsController < Dashboard::BaseController
+class Dashboard::AccountsController < Dashboard::AdminController
   private
 
   def find_resource

@@ -1,5 +1,8 @@
 @import 'bootstrap';
-@import 'dashboard/base';
 @import 'devise_page';
+@import 'dashboard/base';
+@import 'shared/direct_upload';
+@import 'selectize';
+@import 'selectize.bootstrap3';
 @import 'font-awesome';
 @import 'active_storage/direct_upload';

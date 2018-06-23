@@ -50,7 +50,7 @@ RSpec.describe "Callouts" do
       audio_file: fixture_file_upload("files/test.mp3", "audio/mp3"),
       audio_url: "https://www.example.com/sample.mp3",
       metadata: {
-        "foo" => "bar"
+        commune_ids: ["120101"]
       }
     }
 
@@ -65,7 +65,7 @@ RSpec.describe "Callouts" do
     expect(response.code).to eq("201")
     parsed_response = JSON.parse(response.body)
     created_callout = account.callouts.find(parsed_response.fetch("id"))
-    expect(created_callout.metadata).to eq(request_body.fetch(:metadata))
+    expect(created_callout.commune_ids).to eq(request_body.fetch(:metadata).fetch(:commune_ids))
     expect(created_callout.call_flow_logic).to eq(request_body.fetch(:call_flow_logic))
     expect(created_callout.audio_url).to eq(request_body.fetch(:audio_url))
     expect(created_callout.audio_file).to be_attached
@@ -95,7 +95,7 @@ RSpec.describe "Callouts" do
       }
     )
 
-    request_body = { metadata: { "bar" => "foo" }, metadata_merge_mode: "replace" }
+    request_body = { metadata: { "commune_ids" => ["120101"] }, metadata_merge_mode: "replace" }
 
     patch(
       api_callout_path(callout),

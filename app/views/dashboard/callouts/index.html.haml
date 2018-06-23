@@ -2,6 +2,6 @@
   = link_to(translate(:"titles.callouts.new"), new_dashboard_callout_path, class: 'btn btn-outline-success')
 
 - content_for(:resources_table) do
-  = render("shared/resources_table", resource_class: Callout, columns: [:status, :created_at])
+  = render("shared/resources_table", resource_class: Callout, columns: [:status, :province, :created_at])
 
 = render("shared/index")

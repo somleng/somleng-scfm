@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Filter::Resource::User do
   include SomlengScfm::SpecHelpers::FilterHelpers

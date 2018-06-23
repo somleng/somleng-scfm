@@ -9,7 +9,6 @@ RSpec.describe Contact do
     super.scoped_to(:account_id)
   end
 
-  include_examples "has_metadata"
   it_behaves_like "has_msisdn"
 
   describe "associations" do
@@ -22,5 +21,45 @@ RSpec.describe Contact do
 
   describe "delegations" do
     it { is_expected.to delegate_method(:call_flow_logic).to(:account) }
+  end
+
+  describe "validations" do
+    it { is_expected.to validate_presence_of(:commune_id).on(:dashboard) }
+
+    it "validates the commune" do
+      contact = build(:contact)
+      contact.commune_id = nil
+
+      expect(contact).to be_valid
+
+      contact.commune_id = "wrong"
+
+      expect(contact).not_to be_valid
+      expect(contact.errors[:commune_id]).to be_present
+
+      contact.commune_id = "120101"
+      expect(contact).to be_valid
+    end
+  end
+
+  describe "store_accessors" do
+    it "store locations metadata" do
+      contact = build(
+        :contact,
+        "province_id" => "01",
+        "district_id" => "0102",
+        "commune_id"  => "010203"
+      )
+
+      expect(contact.province_id).to eq("01")
+      expect(contact.district_id).to eq("0102")
+      expect(contact.commune_id).to eq("010203")
+    end
+  end
+
+  it "#commune" do
+    location = Pumi::Commune.all.first
+    contact = build(:contact, commune_id: location.id)
+    expect(contact.commune).to eq location
   end
 end

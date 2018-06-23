@@ -49,6 +49,10 @@ RSpec.shared_examples_for "has_metadata" do
     end
   end
 
+  describe "#rejectable_metadata_fields" do
+    it { expect(subject.rejectable_metadata_fields).to eq([]) }
+  end
+
   describe "#metadata" do
     subject { create(factory, metadata: {}) }
     it { expect(subject.metadata).to eq({}) }

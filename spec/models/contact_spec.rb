@@ -40,6 +40,21 @@ RSpec.describe Contact do
       contact.commune_id = "120101"
       expect(contact).to be_valid
     end
+
+    it "normalizes the commune ids" do
+      contact = build_stubbed(:contact)
+      contact.metadata["commune_ids"] = %w[120101 120102]
+
+      contact.valid?
+
+      expect(contact.metadata.fetch("commune_ids")).to match_array(%w[120101 120102])
+
+      contact.metadata["commune_ids"] = "120101  120102"
+
+      contact.valid?
+
+      expect(contact.metadata.fetch("commune_ids")).to match_array(%w[120101 120102])
+    end
   end
 
   describe "store_accessors" do
@@ -57,9 +72,11 @@ RSpec.describe Contact do
     end
   end
 
-  it "#commune" do
-    location = Pumi::Commune.all.first
-    contact = build(:contact, commune_id: location.id)
-    expect(contact.commune).to eq location
+  describe "#commune" do
+    it "returns the commune from the commune_id" do
+      contact = build_stubbed(:contact, commune_id: "120101")
+
+      expect(contact.commune.id).to eq("120101")
+    end
   end
 end

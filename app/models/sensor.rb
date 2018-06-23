@@ -2,7 +2,7 @@ class Sensor < ApplicationRecord
   include PumiHelpers
   include MetadataHelpers
 
-  REJECT_METADATA_FIELDS = [
+  REJECTABLE_METADATA_FIELDS = [
     "commune_ids"
   ].freeze
 
@@ -17,7 +17,9 @@ class Sensor < ApplicationRecord
   validates :account, presence: true
   validates :external_id, presence: true, uniqueness: { scope: :account_id }
 
-  def metadata_fields
-    @metadata_fields ||= super.reject { |field| REJECT_METADATA_FIELDS.include?(field.key) }
+  private
+
+  def rejectable_metadata_fields
+    REJECTABLE_METADATA_FIELDS
   end
 end

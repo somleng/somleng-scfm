@@ -2,6 +2,8 @@ class Contact < ApplicationRecord
   include MsisdnHelpers
   include MetadataHelpers
 
+  REJECTABLE_METADATA_FIELDS = %w[commune_id].freeze
+
   store_accessor :metadata, :commune_id
   attr_accessor :province_id, :district_id
 
@@ -18,6 +20,8 @@ class Contact < ApplicationRecord
 
   has_many :remote_phone_call_events,
            through: :phone_calls
+
+  before_validation :normalize_commune_ids
 
   validates :msisdn,
             uniqueness: { scope: :account_id }
@@ -40,8 +44,19 @@ class Contact < ApplicationRecord
 
   private
 
+  def rejectable_metadata_fields
+    REJECTABLE_METADATA_FIELDS
+  end
+
   def validate_commune_id
     return if commune_id.blank?
     errors.add(:commune_id, :invalid) unless Pumi::Commune.find_by_id(commune_id)
+  end
+
+  def normalize_commune_ids
+    commune_ids = metadata["commune_ids"]
+    return if commune_ids.blank?
+    return unless commune_ids.is_a?(String)
+    metadata["commune_ids"] = commune_ids.split(/\s+/)
   end
 end

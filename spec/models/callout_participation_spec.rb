@@ -144,4 +144,22 @@ RSpec.describe CalloutParticipation do
       end
     end
   end
+
+  describe ".having_max_phone_calls_count" do
+    it "returns only callout participations that have less than or equal to count" do
+      max_phone_calls = 3
+      empty_phone_calls_callout_participation = create(:callout_participation)
+      less_than_max_phone_calls_callout_participation = create(:callout_participation)
+      more_than_max_phone_calls_callout_participation = create(:callout_participation)
+      create(:phone_call, callout_participation: less_than_max_phone_calls_callout_participation)
+      create_list(:phone_call, max_phone_calls, callout_participation: more_than_max_phone_calls_callout_participation)
+
+      results = described_class.having_max_phone_calls_count(max_phone_calls)
+
+      expect(results).to match_array([
+        empty_phone_calls_callout_participation,
+        less_than_max_phone_calls_callout_participation
+      ])
+    end
+  end
 end

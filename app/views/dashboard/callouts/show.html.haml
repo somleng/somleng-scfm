@@ -1,6 +1,4 @@
 - content_for(:page_actions) do
-  - if resource.callout_population
-    = link_to translate(:"titles.actions.preview"), dashboard_batch_operation_preview_contacts_path(resource.callout_population), class: 'btn btn-outline-info'
   - if resource.may_start?
     = link_to(translate(:"titles.callouts.start_callout"), dashboard_callout_callout_events_path(resource, event: :start),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
   - if resource.may_stop?

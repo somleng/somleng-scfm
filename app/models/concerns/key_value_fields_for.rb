@@ -1,6 +1,8 @@
 module KeyValueFieldsFor
   extend ActiveSupport::Concern
 
+  DEFAULT_REJECTABLE_FIELDS = [].freeze
+
   class_methods do
     def accepts_nested_key_value_fields_for(attribute_name)
       mod = Module.new
@@ -11,8 +13,14 @@ module KeyValueFieldsFor
             "@#{attribute_name}_fields"
           ) || instance_variable_set(
             "@#{attribute_name}_fields",
-            key_value_fields_builder.from_nested_hash(send(attribute_name))
+            key_value_fields_builder.from_nested_hash(send(attribute_name)).reject do |field|
+              rejectable_metadata_fields.include?(field.key)
+            end
           )
+        end
+
+        define_method("rejectable_#{attribute_name}_fields") do
+          DEFAULT_REJECTABLE_FIELDS
         end
 
         define_method("build_#{attribute_name}_field") do

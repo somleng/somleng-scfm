@@ -4,16 +4,36 @@ RSpec.describe "Callout Participations" do
   it "can list all callout participations for an account" do
     user = create(:user)
     callout_participation = create_callout_participation(account: user.account)
+    running_callout_participation = create_callout_participation(
+      account: user.account, callout: create(:callout, :running, account: user.account)
+    )
     other_callout_participation = create(:callout_participation)
 
     sign_in(user)
-    visit(dashboard_callout_participations_path)
+    visit(
+      dashboard_callout_participations_path(
+        q: { callout_filter_params: { status: :initialized } }
+      )
+    )
 
     expect(page).to have_title("Callout Participations")
+
+    within("#filters") do
+      expect(page).to have_link(
+        "All",
+        href: dashboard_callout_participations_path
+      )
+
+      expect(page).to have_link(
+        "Still to be called",
+        href: dashboard_callout_participations_path
+      )
+    end
 
     within("#resources") do
       expect(page).to have_content_tag_for(callout_participation)
       expect(page).not_to have_content_tag_for(other_callout_participation)
+      expect(page).not_to have_content_tag_for(running_callout_participation)
       expect(page).to have_content("#")
       expect(page).to have_content("Contact")
       expect(page).to have_content("Callout")

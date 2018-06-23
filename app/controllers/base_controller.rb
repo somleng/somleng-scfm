@@ -43,6 +43,10 @@ class BaseController < ApplicationController
 
   attr_reader :resource, :resources
 
+  def find_resources
+    @resources = find_filtered_resources
+  end
+
   def find_resource
     @resource = association_chain.find(params[:id])
   end
@@ -124,4 +128,32 @@ class BaseController < ApplicationController
   end
 
   def parent_resource; end
+
+  # Filtering
+
+  def find_filtered_resources
+    if filter_class
+      filter_class.new(filter_options, filter_params).resources
+    else
+      find_resources_association_chain
+    end
+  end
+
+  def filter_class; end
+
+  def find_resources_association_chain
+    association_chain
+  end
+
+  def filter_options
+    { association_chain: find_resources_association_chain }
+  end
+
+  def filter_params
+    permitted_query_params[:q] || {}
+  end
+
+  def permitted_query_params
+    params.permit(q: {})
+  end
 end

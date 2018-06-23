@@ -42,4 +42,8 @@ class Dashboard::CalloutParticipationsController < Dashboard::BaseController
   def contact
     @contact ||= current_account.contacts.find(contact_id)
   end
+
+  def filter_class
+    Filter::Resource::CalloutParticipation
+  end
 end

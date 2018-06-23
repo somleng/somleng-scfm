@@ -23,6 +23,7 @@ class Contact < ApplicationRecord
             uniqueness: { scope: :account_id }
 
   validates :commune_id, presence: true, on: :dashboard
+  validate  :validate_commune_id
 
   delegate :province, :district, to: :commune, allow_nil: true
   delegate :name_en, :name_km, to: :commune, prefix: true, allow_nil: true
@@ -35,5 +36,12 @@ class Contact < ApplicationRecord
 
   def commune
     @commune ||= Pumi::Commune.find_by_id(commune_id)
+  end
+
+  private
+
+  def validate_commune_id
+    return if commune_id.blank?
+    errors.add(:commune_id, :invalid) unless Pumi::Commune.find_by_id(commune_id)
   end
 end

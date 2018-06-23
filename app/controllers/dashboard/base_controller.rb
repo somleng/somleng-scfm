@@ -5,6 +5,10 @@ class Dashboard::BaseController < BaseController
 
   KEY_VALUE_FIELD_ATTRIBUTES = %i[key value].freeze
 
+  METADATA_FIELDS_ATTRIBUTES = {
+    metadata_fields_attributes: KEY_VALUE_FIELD_ATTRIBUTES
+  }.freeze
+
   self.responder = ApplicationResponder
   respond_to :html
 

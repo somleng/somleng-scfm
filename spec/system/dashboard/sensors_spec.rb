@@ -7,9 +7,7 @@ RSpec.describe "Sensors", :aggregate_failures do
     sensor = create(
       :sensor,
       account: admin.account,
-      commune_ids: ["040101"],
-      latitude: "11.5627465",
-      longitude: "104.9104493"
+      commune_ids: ["040101"]
     )
 
     other_sensor = create(:sensor)
@@ -44,18 +42,40 @@ RSpec.describe "Sensors", :aggregate_failures do
     expect(page).to have_link_to_action(:cancel)
 
     fill_in("External id", with: "sensor005")
-    fill_in("Latitude", with: "11.5627465")
-    fill_in("Longitude", with: "104.9104493")
     select_selectize("#province", "Battambang")
     select_selectize("#communes", "Kantueu Pir")
+
+    fill_in_key_value_for(
+      :metadata,
+      with: { key: "height_above_sea_level", value: "100" },
+      index: 0
+    )
+
+    add_key_value_for(:metadata)
+
+    fill_in_key_value_for(
+      :metadata,
+      with: { key: "latitude", value: "11.5627465" },
+      index: 1
+    )
+
+    add_key_value_for(:metadata)
+
+    fill_in_key_value_for(
+      :metadata,
+      with: { key: "longitude", value: "104.9104493" },
+      index: 2
+    )
+
     click_action_button(:create, key: :submit, namespace: :helpers, model: "Sensor")
 
     expect(page).to have_text("Sensor was successfully created.")
     sensor = admin.account.reload.sensors.last!
     expect(sensor).to be_persisted
     expect(sensor.external_id).to eq("sensor005")
-    expect(sensor.latitude).to eq("11.5627465")
-    expect(sensor.longitude).to eq("104.9104493")
+    expect(sensor.metadata.fetch("height_above_sea_level")).to eq("100")
+    expect(sensor.metadata.fetch("latitude")).to eq("11.5627465")
+    expect(sensor.metadata.fetch("longitude")).to eq("104.9104493")
     expect(sensor.commune_ids).to match_array(["020102"])
   end
 
@@ -63,8 +83,10 @@ RSpec.describe "Sensors", :aggregate_failures do
     sensor = create(
       :sensor,
       account: admin.account,
-      latitude: "11.5633885",
-      longitude: "104.915919"
+      metadata: {
+        "latitude": "11.5633885",
+        "longitude": "104.915919"
+      }
     )
 
     sign_in(admin)
@@ -88,12 +110,9 @@ RSpec.describe "Sensors", :aggregate_failures do
       expect(page).to have_content(sensor.id)
       expect(page).to have_content("Province")
       expect(page).to have_content("Alert communes")
-      expect(page).to have_content("Latitude")
-      expect(page).to have_content("Longitude")
-      expect(page).to have_content("Map")
+      expect(page).to have_content("latitude")
+      expect(page).to have_content("longitude")
       expect(page).to have_content("Created at")
-      expect(page).to have_content("Map")
-      expect(page).to have_link(sensor.map_link, href: sensor.map_link)
     end
   end
 
@@ -101,7 +120,10 @@ RSpec.describe "Sensors", :aggregate_failures do
     sensor = create(
       :sensor,
       account: admin.account,
-      commune_ids: ["010201"]
+      commune_ids: ["010201"],
+      metadata: {
+        "foo" => "bar"
+      }
     )
 
     sign_in(admin)
@@ -113,12 +135,21 @@ RSpec.describe "Sensors", :aggregate_failures do
     fill_in("External id", with: "sensor005")
     select_selectize("#province", "Battambang")
     select_selectize("#communes", "Kantueu Pir")
+    remove_key_value_for(:metadata, index: 0)
+    add_key_value_for(:metadata)
+    fill_in_key_value_for(
+      :metadata,
+      with: { key: "height_above_sea_level", value: "100" },
+      index: 0
+    )
     click_action_button(:update, key: :submit, namespace: :helpers, model: "Sensor")
 
     expect(page).to have_text("Sensor was successfully updated.")
     sensor.reload
     expect(sensor.external_id).to eq("sensor005")
     expect(sensor.commune_ids).to match_array(["020102"])
+    expect(sensor.metadata.fetch("height_above_sea_level")).to eq("100")
+    expect(sensor.metadata).not_to have_key("foo")
   end
 
   it "can delete sensor" do

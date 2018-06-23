@@ -12,7 +12,7 @@ module PumiHelpers
 
   def province
     return if commune_ids.blank?
-    Pumi::Commune.find_by_id(commune_ids.first).province
+    Pumi::Commune.find_by_id(commune_ids.first)&.province
   end
 
   private

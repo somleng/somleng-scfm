@@ -3,7 +3,8 @@ class Filter::Resource::CalloutParticipation < Filter::Resource::Msisdn
     super <<
       :has_phone_calls_scope <<
       :last_phone_call_attempt_scope <<
-      :no_phone_calls_or_last_attempt_scope
+      :no_phone_calls_or_last_attempt_scope <<
+      :having_max_phone_calls_count_scope
   end
 
   private
@@ -13,15 +14,19 @@ class Filter::Resource::CalloutParticipation < Filter::Resource::Msisdn
   end
 
   def has_phone_calls_scope
-    @has_phone_calls_scope ||= Filter::Scope::HasPhoneCalls.new(options, params)
+    Filter::Scope::HasPhoneCalls.new(options, params)
   end
 
   def last_phone_call_attempt_scope
-    @last_phone_call_attempt_scope ||= Filter::Scope::LastPhoneCallAttempt.new(options, params)
+    Filter::Scope::LastPhoneCallAttempt.new(options, params)
   end
 
   def no_phone_calls_or_last_attempt_scope
-    @no_phone_calls_or_last_attempt_scope ||= Filter::Scope::NoPhoneCallsOrLastAttempt.new(options, params)
+    Filter::Scope::NoPhoneCallsOrLastAttempt.new(options, params)
+  end
+
+  def having_max_phone_calls_count_scope
+    Filter::Scope::HavingMaxPhoneCallsCount.new(options, params)
   end
 end
 

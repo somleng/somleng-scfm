@@ -2,21 +2,22 @@ require "rails_helper"
 
 RSpec.describe "Callout Participations" do
   it "can list all callout participations" do
-    callout_participation = create_callout_participation(
+    no_phone_calls_callout_participation = create_callout_participation(
       account: account,
       metadata: {
         "foo" => "bar"
       }
     )
-    create_callout_participation(account: account)
+    having_phone_calls_callout_participation = create_callout_participation(account: account, metadata: { "foo" => "bar" })
+    create(:phone_call, callout_participation: having_phone_calls_callout_participation)
     create(:callout_participation)
 
     get(
-      api_callout_participations_path(q: { "metadata" => { "foo" => "bar" } }),
+      api_callout_participations_path(q: { "metadata" => { "foo" => "bar" }, having_max_phone_calls_count: 1 }),
       headers: build_authorization_headers(access_token: access_token)
     )
 
-    assert_filtered!(callout_participation)
+    assert_filtered!(no_phone_calls_callout_participation)
   end
 
   it "can list all callout participations for a callout" do

@@ -31,3 +31,6 @@ class CallFlowLogic::Base
     end.to_s
   end
 end
+
+require_relative "hello_world"
+require_relative "play_message"

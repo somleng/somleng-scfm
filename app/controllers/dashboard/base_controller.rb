@@ -35,7 +35,7 @@ class Dashboard::BaseController < BaseController
   end
 
   def find_resources
-    @resources = association_chain.page(params[:page]).order(sort_column => sort_direction)
+    @resources = super.page(params[:page]).order(sort_column => sort_direction)
   end
 
   def respond_with_destroyed_resource

@@ -7,7 +7,7 @@ gem "api-pagination", github: "davidcelis/api-pagination"
 gem "aws-sdk-s3", require: false
 gem "bitmask_attributes", github: "numerex/bitmask_attributes"
 gem "bootsnap", ">= 1.1.0", require: false
-gem "bootstrap", "~> 4.0.0"
+gem "bootstrap", "~> 4.1.1"
 gem "breadcrumbs_on_rails"
 gem "chosen-rails"
 gem "cocoon"
@@ -56,7 +56,6 @@ end
 
 group :test do
   gem "capybara"
-  gem "codeclimate-test-reporter", "~> 1.0.0"
   gem "codecov", require: false
   gem "email_spec"
   gem "factory_bot_rails"

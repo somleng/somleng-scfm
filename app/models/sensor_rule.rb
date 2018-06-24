@@ -8,8 +8,6 @@ class SensorRule < ApplicationRecord
 
   has_one_attached :alert_file
 
-  store_accessor :metadata, :level
-
   validates :level,
             presence: true,
             numericality: { only_integer: true }
@@ -26,6 +24,10 @@ class SensorRule < ApplicationRecord
             if: ->(sensor_rule) { sensor_rule.alert_file.attached? }
 
   private
+
+  def self.find_by_highest_level(level)
+    where("level <= ?", level).order(level: :desc).first
+  end
 
   def validate_presence_of_alert_file
     return if alert_file.attached?

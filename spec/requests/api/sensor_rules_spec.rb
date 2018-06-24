@@ -68,7 +68,7 @@ RSpec.describe "Sensor Rules" do
     parsed_body = JSON.parse(response.body)
     expect(sensor.reload.sensor_rules.size).to eq(1)
     sensor_rule = sensor.sensor_rules.find(parsed_body.fetch("id"))
-    expect(sensor_rule.level).to eq(request_body.fetch(:level).to_s)
+    expect(sensor_rule.level).to eq(request_body.fetch(:level))
     expect(sensor_rule.alert_file).to be_attached
     expect(sensor_rule.metadata).to include(request_body.fetch(:metadata))
   end
@@ -112,7 +112,7 @@ RSpec.describe "Sensor Rules" do
 
     expect(response.code).to eq("204")
     sensor_rule.reload
-    expect(sensor_rule.level).to eq(request_body.fetch(:level).to_s)
+    expect(sensor_rule.level).to eq(request_body.fetch(:level))
     expect(sensor_rule.metadata).to include(request_body.fetch(:metadata))
     expect(sensor_rule.metadata).to include(original_metadata)
   end

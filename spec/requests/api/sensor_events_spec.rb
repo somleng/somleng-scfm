@@ -78,6 +78,30 @@ RSpec.describe "Sensor Events" do
     expect(account.sensor_events.find(parsed_body.fetch("id"))).to eq(sensor_event)
   end
 
+  it "can create a sensor event that matches with a sensor rule" do
+    sensor = create(:sensor, account: account)
+    sensor_rule = create(:sensor_rule, sensor: sensor, level: 100)
+    request_body = {
+      payload: {
+        "voltage" => "5",
+        "sensor_id" => sensor.external_id,
+        "level" => 150
+      }
+    }
+
+    post(
+      api_sensor_events_path,
+      params: request_body,
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("201")
+    parsed_body = JSON.parse(response.body)
+    sensor_event = sensor.sensor_events.find(parsed_body.fetch("id"))
+    expect(sensor_event.sensor_rule).to eq(sensor_rule)
+    expect(sensor_event.callout).to be_present
+  end
+
   it "can create a sensor event" do
     sensor = create(:sensor, account: account)
     request_body = {

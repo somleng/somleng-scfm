@@ -1,5 +1,6 @@
 class Callout < ApplicationRecord
   AUDIO_CONTENT_TYPES = %w[audio/mpeg audio/mp3 audio/wav audio/x-wav].freeze
+  DEFAULT_CALL_FLOW_LOGIC = "CallFlowLogic::PlayMessage".freeze
 
   module ActiveStorageDirty
     attr_reader :audio_file_blob_was, :audio_file_will_change
@@ -25,6 +26,7 @@ class Callout < ApplicationRecord
   prepend ActiveStorageDirty
 
   belongs_to :account
+  belongs_to :sensor_event, optional: true
 
   has_many :callout_participations, dependent: :restrict_with_error
 

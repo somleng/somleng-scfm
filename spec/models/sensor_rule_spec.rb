@@ -35,4 +35,15 @@ RSpec.describe SensorRule do
       end
     end
   end
+
+  describe ".find_by_highest_level" do
+    it "returns a sensor rule by matching the highest rule's level" do
+      lower_level = create(:sensor_rule, level: 100)
+      higher_level = create(:sensor_rule, level: 200)
+
+      expect(SensorRule.find_by_highest_level(50)).to eq(nil)
+      expect(SensorRule.find_by_highest_level(150)).to eq(lower_level)
+      expect(SensorRule.find_by_highest_level(250)).to eq(higher_level)
+    end
+  end
 end

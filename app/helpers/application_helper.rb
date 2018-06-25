@@ -8,10 +8,10 @@ module ApplicationHelper
     end
   end
 
-  def title
+  def title(resource = nil)
     translate(
       :"titles.#{controller_name}.#{action_name}",
-      id: defined?(resource) && resource && resource.id,
+      id: resource && resource.id,
       default: :"titles.app_name"
     )
   end

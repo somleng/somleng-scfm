@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   devise_scope :user do
-    get "users/edit" => "devise/registrations#edit", as: "edit_user_registration"
-    patch "users" => "devise/registrations#update", as: "user_registration"
+    get "users/edit" => "dashboard/user_registrations#edit", as: "edit_user_registration"
+    patch "users" => "dashboard/user_registrations#update", as: "user_registration"
   end
 
   devise_for :users,
@@ -9,9 +9,6 @@ Rails.application.routes.draw do
              skip: :registrations
 
   root 'home#index'
-
-  get "/about_us", to: "home#about_us"
-  get "/contact", to: "home#contact"
 
   namespace "dashboard" do
     root to: "callouts#index"

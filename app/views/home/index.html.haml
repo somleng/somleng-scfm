@@ -1,5 +1,96 @@
-%main.inner.cover{:role => "main"}
-  %h1.cover-heading Homepage
-  %p.lead Cover is a one-page template for building simple and beautiful home pages. Download, edit the text, and add your own fullscreen background photo to make it your own.
-  %p.lead
-    %a.btn.btn-lg.btn-secondary{:href => "#"} Learn more
+.d-flex.flex-column.flex-md-row.align-items-center.p-3.px-md-4.mb-3.bg-white.border-bottom.box-shadow
+  .my-0.mr-md-auto.font-weight-normal
+    = link_to root_path do
+      %h5
+        = translate(:"titles.app_name")
+  %nav#top_nav.my-2.my-md-0.mr-md-3
+    %a.p-2.text-dark{:href => "#"} About Us
+    %a.p-2.text-dark{:href => "#"} Contact
+    %a.p-2.text-dark{:href => dashboard_root_path} Dashboard
+= render 'shared/flash_messages'
+.pricing-header.px-3.py-3.pt-md-5.pb-md-4.mx-auto.text-center
+  %h1.display-4 Pricing
+  %p.lead Quickly build an effective pricing table for your potential customers with this Bootstrap example. It's built with default Bootstrap components and utilities with little customization.
+.container
+  .card-deck.mb-3.text-center
+    .card.mb-4.box-shadow
+      .card-header
+        %h4.my-0.font-weight-normal Free
+      .card-body
+        %h1.card-title.pricing-card-title
+          $0
+          %small.text-muted / mo
+        %ul.list-unstyled.mt-3.mb-4
+          %li 10 users included
+          %li 2 GB of storage
+          %li Email support
+          %li Help center access
+        %button.btn.btn-lg.btn-block.btn-outline-primary{:type => "button"} Sign up for free
+    .card.mb-4.box-shadow
+      .card-header
+        %h4.my-0.font-weight-normal Pro
+      .card-body
+        %h1.card-title.pricing-card-title
+          $15
+          %small.text-muted / mo
+        %ul.list-unstyled.mt-3.mb-4
+          %li 20 users included
+          %li 10 GB of storage
+          %li Priority email support
+          %li Help center access
+        %button.btn.btn-lg.btn-block.btn-primary{:type => "button"} Get started
+    .card.mb-4.box-shadow
+      .card-header
+        %h4.my-0.font-weight-normal Enterprise
+      .card-body
+        %h1.card-title.pricing-card-title
+          $29
+          %small.text-muted / mo
+        %ul.list-unstyled.mt-3.mb-4
+          %li 30 users included
+          %li 15 GB of storage
+          %li Phone and email support
+          %li Help center access
+        %button.btn.btn-lg.btn-block.btn-primary{:type => "button"} Contact us
+  %footer.pt-4.my-md-5.pt-md-5.border-top
+    .row
+      .col-12.col-md
+        %img.mb-2{:alt => "", :height => "24", :src => "https://getbootstrap.com/assets/brand/bootstrap-solid.svg", :width => "24"}/
+        %small.d-block.mb-3.text-muted © 2017-2018
+      .col-6.col-md
+        %h5 Features
+        %ul.list-unstyled.text-small
+          %li
+            %a.text-muted{:href => "#"} Cool stuff
+          %li
+            %a.text-muted{:href => "#"} Random feature
+          %li
+            %a.text-muted{:href => "#"} Team feature
+          %li
+            %a.text-muted{:href => "#"} Stuff for developers
+          %li
+            %a.text-muted{:href => "#"} Another one
+          %li
+            %a.text-muted{:href => "#"} Last time
+      .col-6.col-md
+        %h5 Resources
+        %ul.list-unstyled.text-small
+          %li
+            %a.text-muted{:href => "#"} Resource
+          %li
+            %a.text-muted{:href => "#"} Resource name
+          %li
+            %a.text-muted{:href => "#"} Another resource
+          %li
+            %a.text-muted{:href => "#"} Final resource
+      .col-6.col-md
+        %h5 About
+        %ul.list-unstyled.text-small
+          %li
+            %a.text-muted{:href => "#"} Team
+          %li
+            %a.text-muted{:href => "#"} Locations
+          %li
+            %a.text-muted{:href => "#"} Privacy
+          %li
+            %a.text-muted{:href => "#"} Terms

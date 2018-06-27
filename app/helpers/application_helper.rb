@@ -26,12 +26,11 @@ module ApplicationHelper
   def nav_link(link_text, link_path, options)
     controller  = options.fetch(:controller) { "" }
     icon        = options.fetch(:icon) { nil }
-    turbolinks  = options.fetch(:turbolinks) { true }
     class_names = ["nav-link"]
 
     class_names << "active" if link_path == request.path || controller.include?(controller_name)
 
-    link_to(link_path, class: class_names.join(" "), data: { turbolinks: turbolinks }) do
+    link_to(link_path, class: class_names.join(" ")) do
       fa_icon(icon, text: link_text)
     end
   end

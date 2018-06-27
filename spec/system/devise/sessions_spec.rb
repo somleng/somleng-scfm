@@ -15,6 +15,7 @@ RSpec.describe "User sign in" do
     click_action_button(:create, key: :user_sessions)
 
     expect(page).to have_text("Signed in successfully.")
+    expect(current_path).to eq(user_root_path)
   end
 
   it "can sign out" do

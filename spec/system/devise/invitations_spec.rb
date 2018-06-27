@@ -17,6 +17,7 @@ RSpec.describe "User Invitations" do
     expect(last_email_sent.from).to match_array(
       [Rails.application.secrets.fetch(:mailer_sender)]
     )
+    expect(current_path).to eq(dashboard_users_path)
   end
 
   it "can set the password" do

@@ -8,7 +8,7 @@ module ApplicationHelper
     end
   end
 
-  def title
+  def title(resource = nil)
     translate(
       :"titles.#{controller_name}.#{action_name}",
       id: resource && resource.id,
@@ -21,5 +21,17 @@ module ApplicationHelper
     options[:class] << " dropdown-item"
 
     link_to(title, url, options)
+  end
+
+  def nav_link(link_text, link_path, options)
+    controller  = options.fetch(:controller) { "" }
+    icon        = options.fetch(:icon) { nil }
+    class_names = ["nav-link"]
+
+    class_names << "active" if link_path == request.path || controller.include?(controller_name)
+
+    link_to(link_path, class: class_names.join(" ")) do
+      fa_icon(icon, text: link_text)
+    end
   end
 end

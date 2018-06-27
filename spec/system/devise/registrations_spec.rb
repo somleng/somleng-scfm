@@ -25,5 +25,6 @@ RSpec.describe "Registrations" do
     click_action_button(:update, key: :user_registrations)
 
     expect(page).to have_text("Your account has been updated successfully.")
+    expect(current_path).to eq(user_root_path)
   end
 end

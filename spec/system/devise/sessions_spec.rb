@@ -15,6 +15,7 @@ RSpec.describe "User sign in" do
     click_action_button(:create, key: :user_sessions)
 
     expect(page).to have_text("Signed in successfully.")
+    expect(current_path).to eq(user_root_path)
   end
 
   it "can sign out" do
@@ -27,6 +28,6 @@ RSpec.describe "User sign in" do
       click_action_button(:destroy, key: :user_sessions, type: :link)
     end
 
-    expect(current_path).to eq(new_user_session_path)
+    expect(current_path).to eq(root_path)
   end
 end

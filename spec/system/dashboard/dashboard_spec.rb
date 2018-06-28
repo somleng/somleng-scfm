@@ -4,7 +4,7 @@ RSpec.describe "Dashboard" do
   it "has navigation links" do
     user = create(:admin)
     sign_in(user)
-    visit(root_path)
+    visit(dashboard_root_path)
 
     within("#top_nav") do
       expect(page).to have_link(

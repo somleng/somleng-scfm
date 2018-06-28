@@ -20,8 +20,9 @@ RSpec.describe "User Invitations" do
       [Rails.application.secrets.fetch(:mailer_sender)]
     )
 
+    expect(current_path).to eq(dashboard_users_path)
     new_user = user.account.users.find_by!(email: "bopha@somleng.com")
-    expect(new_user.roles?(:admin)).to eq true
+    expect(new_user.roles?(:admin)).to eq(true)
     expect(new_user.province_ids).to include_location("Banteay Meanchey")
   end
 

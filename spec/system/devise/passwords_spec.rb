@@ -33,5 +33,6 @@ RSpec.describe "Passwords" do
     expect(page).to have_text(
       "Your password has been changed successfully. You are now signed in."
     )
+    expect(current_path).to eq(user_root_path)
   end
 end

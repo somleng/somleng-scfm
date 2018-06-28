@@ -57,6 +57,11 @@ km:
       new: បង្កើត សមាជិកទំនាក់ទំនង
       show: សមាជិកទំនាក់ទំនង %{id}
       update: កែប្រែ សមាជិកទំនាក់ទំនង
+    home:
+      about_us: About Us
+      contact: Contact
+      dashboard: Dashboard
+      index: Home
     phone_calls:
       index: កំណត់ត្រាការហៅចេញ
       queue: Send

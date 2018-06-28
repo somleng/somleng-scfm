@@ -7,7 +7,7 @@
     %meta{:content => "reload", :name => "turbolinks-visit-control"}/
     = stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
-    %title= title
+    %title= title(resource)
   = content_tag :body, data: { action: action_name, controller: controller_name } do
     = render "shared/nav_bar"
     .container-fluid

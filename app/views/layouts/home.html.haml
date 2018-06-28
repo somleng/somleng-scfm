@@ -1,0 +1,14 @@
+!!!
+%html#home{:lang => "en"}
+  %head
+    = csrf_meta_tags
+    = csp_meta_tag
+    = favicon_link_tag
+    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %meta{:charset => "utf-8"}/
+    %meta{:content => "width=device-width, initial-scale=1, shrink-to-fit=no", :name => "viewport"}/
+    = stylesheet_link_tag    'application', media: 'all'
+    = javascript_include_tag 'application'
+    %title= title
+  %body
+    = yield

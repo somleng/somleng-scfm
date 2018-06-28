@@ -6,17 +6,6 @@ module DashboardHelper
     callout_participation_filter_params.merge(callout_filter_params).presence
   end
 
-  def nav_link(link_text, link_path, controller_names:, icon:)
-    class_names = ["nav-link"]
-    class_names << "active" if controller_names.include?(controller_name)
-
-    content_tag(:li, class: "nav-item") do
-      link_to(link_path, class: class_names.join(" ")) do
-        fa_icon(icon, text: link_text)
-      end
-    end
-  end
-
   def location_names(province_ids, type)
     Array(province_ids).map do |location_id|
       location = type.find_by_id(location_id)

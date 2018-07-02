@@ -7,9 +7,9 @@ GIT
 
 GIT
   remote: https://github.com/davidcelis/api-pagination.git
-  revision: 6c7ff5662da24bb3a5f40fe19a3b109a658a1830
+  revision: 289716e3d19d210365b69d4fee99e86f55b0f65a
   specs:
-    api-pagination (4.8.0)
+    api-pagination (4.8.1)
 
 GIT
   remote: https://github.com/dwilkie/pumi.git

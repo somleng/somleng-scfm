@@ -273,7 +273,7 @@ GEM
       ast (~> 2.4.0)
     pg (1.0.0)
     phony (2.16.4)
-    phony_rails (0.14.6)
+    phony_rails (0.14.7)
       activesupport (>= 3.0)
       phony (> 2.15)
     popper_js (1.12.9)

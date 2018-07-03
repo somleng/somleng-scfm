@@ -360,9 +360,9 @@ GEM
       rubyzip (~> 1.2)
     sentry-raven (2.7.4)
       faraday (>= 0.7.6, < 1.0)
-    simple_form (4.0.0)
-      actionpack (> 4)
-      activemodel (> 4)
+    simple_form (4.0.1)
+      actionpack (>= 5.0)
+      activemodel (>= 5.0)
     simplecov (0.8.2)
       docile (~> 1.1.0)
       multi_json

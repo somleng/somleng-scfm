@@ -36,6 +36,7 @@ gem "simple_form"
 gem "turbolinks", "~> 5"
 gem "twilio-ruby"
 gem "uglifier", ">= 1.3.0"
+gem "webpacker", "~> 3.5"
 gem "wisper", github: "krisleech/wisper"
 
 group :development, :test do

@@ -55,6 +55,7 @@ end
 group :test do
   gem "capybara"
   gem "codecov", require: false
+  gem "dox", require: false
   gem "email_spec"
   gem "factory_bot_rails"
   gem "rails-controller-testing"

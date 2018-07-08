@@ -16,6 +16,8 @@ class SensorEvent < ApplicationRecord
 
   accepts_nested_key_value_fields_for :payload
 
+  delegate :runnable?, to: :sensor_rule, allow_nil: true, prefix: true
+
   private
 
   def attach_to_sensor

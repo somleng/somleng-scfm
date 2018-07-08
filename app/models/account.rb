@@ -4,11 +4,15 @@ class Account < ApplicationRecord
   DEFAULT_PLATFORM_PROVIDER = "twilio".freeze
   PLATFORM_PROVIDERS = [DEFAULT_PLATFORM_PROVIDER, "somleng"].freeze
   DEFAULT_CALL_FLOW_LOGIC = "CallFlowLogic::HelloWorld".freeze
+  DEFAULT_SENSOR_RULE_RUN_INTERVAL_IN_HOUR = 168 # 1 week
 
   include MetadataHelpers
   include HasCallFlowLogic
 
   store_accessor :settings
+
+  attribute :sensor_rule_run_interval_in_hours, default: -> { DEFAULT_SENSOR_RULE_RUN_INTERVAL_IN_HOUR }
+  attribute :call_flow_logic, default: -> { DEFAULT_CALL_FLOW_LOGIC }
 
   accepts_nested_key_value_fields_for :settings
 
@@ -59,8 +63,6 @@ class Account < ApplicationRecord
               in: PLATFORM_PROVIDERS
             }, allow_nil: true
 
-  before_validation :set_call_flow_logic, on: :create
-
   def super_admin?
     permissions?(:super_admin)
   end
@@ -93,11 +95,6 @@ class Account < ApplicationRecord
   end
 
   private
-
-  def set_call_flow_logic
-    return if call_flow_logic.present?
-    self.call_flow_logic = DEFAULT_CALL_FLOW_LOGIC
-  end
 
   def platform_configuration(key)
     read_attribute("#{platform_provider_name}_#{key}")

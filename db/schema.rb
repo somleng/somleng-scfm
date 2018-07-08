@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_30_162221) do
+ActiveRecord::Schema.define(version: 2018_07_08_070448) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,6 +29,8 @@ ActiveRecord::Schema.define(version: 2018_06_30_162221) do
     t.string "platform_provider_name"
     t.string "somleng_api_host"
     t.string "somleng_api_base_url"
+    t.integer "sensor_rule_trigger_interval_in_hours"
+    t.integer "sensor_rule_run_interval_in_hours"
     t.index ["somleng_account_sid"], name: "index_accounts_on_somleng_account_sid", unique: true
     t.index ["twilio_account_sid"], name: "index_accounts_on_twilio_account_sid", unique: true
   end
@@ -210,6 +212,7 @@ ActiveRecord::Schema.define(version: 2018_06_30_162221) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "level", null: false
+    t.datetime "last_run_at"
     t.index ["level"], name: "index_sensor_rules_on_level"
     t.index ["sensor_id"], name: "index_sensor_rules_on_sensor_id"
   end

@@ -44,11 +44,7 @@ class Api::SensorEventsController < Api::BaseController
   end
 
   def after_create_resource
-    broadcast_emergency_callout if match_sensor_rule?
-  end
-
-  def match_sensor_rule?
-    resource.sensor_rule.present?
+    broadcast_emergency_callout if resource.sensor_rule_runnable?
   end
 
   def broadcast_emergency_callout

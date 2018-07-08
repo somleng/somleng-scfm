@@ -1,10 +1,8 @@
 class Dashboard::CalloutsController < Dashboard::BaseController
-  CALL_FLOW_LOGIC = "CallFlowLogic::PlayMessage".freeze
-
   private
 
   def prepare_resource_for_new
-    resource.call_flow_logic ||= CALL_FLOW_LOGIC
+    resource.call_flow_logic ||= Callout::DEFAULT_CALL_FLOW_LOGIC
   end
 
   def prepare_resource_for_create

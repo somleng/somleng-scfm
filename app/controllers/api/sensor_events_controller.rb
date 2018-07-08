@@ -42,4 +42,12 @@ class Api::SensorEventsController < Api::BaseController
   def permitted_params
     params.permit(payload: {})
   end
+
+  def after_create_resource
+    broadcast_emergency_callout if resource.sensor_rule_runnable?
+  end
+
+  def broadcast_emergency_callout
+    BroadcastEmergencyCallout.new(resource).call
+  end
 end

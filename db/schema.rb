@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_18_023959) do
+ActiveRecord::Schema.define(version: 2018_07_08_070448) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,6 +29,8 @@ ActiveRecord::Schema.define(version: 2018_06_18_023959) do
     t.string "platform_provider_name"
     t.string "somleng_api_host"
     t.string "somleng_api_base_url"
+    t.integer "sensor_rule_trigger_interval_in_hours"
+    t.integer "sensor_rule_run_interval_in_hours"
     t.index ["somleng_account_sid"], name: "index_accounts_on_somleng_account_sid", unique: true
     t.index ["twilio_account_sid"], name: "index_accounts_on_twilio_account_sid", unique: true
   end
@@ -91,7 +93,9 @@ ActiveRecord::Schema.define(version: 2018_06_18_023959) do
     t.datetime "updated_at", null: false
     t.bigint "account_id", null: false
     t.string "audio_url"
+    t.bigint "sensor_event_id"
     t.index ["account_id"], name: "index_callouts_on_account_id"
+    t.index ["sensor_event_id"], name: "index_callouts_on_sensor_event_id"
   end
 
   create_table "contacts", force: :cascade do |t|
@@ -207,6 +211,9 @@ ActiveRecord::Schema.define(version: 2018_06_18_023959) do
     t.jsonb "metadata", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "level", null: false
+    t.datetime "last_run_at"
+    t.index ["level"], name: "index_sensor_rules_on_level"
     t.index ["sensor_id"], name: "index_sensor_rules_on_sensor_id"
   end
 
@@ -249,8 +256,8 @@ ActiveRecord::Schema.define(version: 2018_06_18_023959) do
     t.integer "invitation_limit"
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
-    t.string "locale", default: "en", null: false
     t.integer "roles", default: 1, null: false
+    t.string "locale", default: "en", null: false
     t.index ["account_id"], name: "index_users_on_account_id"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["invitation_token"], name: "index_users_on_invitation_token", unique: true

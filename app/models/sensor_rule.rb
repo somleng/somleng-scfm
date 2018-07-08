@@ -8,8 +8,6 @@ class SensorRule < ApplicationRecord
 
   has_one_attached :alert_file
 
-  store_accessor :metadata, :level
-
   validates :level,
             presence: true,
             numericality: { only_integer: true }
@@ -25,7 +23,20 @@ class SensorRule < ApplicationRecord
             },
             if: ->(sensor_rule) { sensor_rule.alert_file.attached? }
 
+  delegate :account, to: :sensor, allow_nil: true
+
+  def runnable?
+    return true if last_run_at.blank?
+    return true if account.sensor_rule_run_interval_in_hours.blank?
+
+    (last_run_at + account.sensor_rule_run_interval_in_hours.hours) <= Time.current
+  end
+
   private
+
+  def self.find_by_highest_level(value)
+    where(arel_table[:level].lteq(value)).order(level: :desc).first
+  end
 
   def validate_presence_of_alert_file
     return if alert_file.attached?

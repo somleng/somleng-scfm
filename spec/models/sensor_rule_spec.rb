@@ -35,4 +35,41 @@ RSpec.describe SensorRule do
       end
     end
   end
+
+  describe ".find_by_highest_level" do
+    it "returns a sensor rule by matching the highest rule's level" do
+      lower_level = create(:sensor_rule, level: 100)
+      higher_level = create(:sensor_rule, level: 200)
+
+      expect(SensorRule.find_by_highest_level(50)).to eq(nil)
+      expect(SensorRule.find_by_highest_level(150)).to eq(lower_level)
+      expect(SensorRule.find_by_highest_level(250)).to eq(higher_level)
+    end
+  end
+
+  describe "#runnable?" do
+    it "can run if the rule has never run before" do
+      sensor_rule = build_stubbed(:sensor_rule, last_run_at: nil)
+
+      expect(sensor_rule.runnable?).to eq(true)
+    end
+
+    it "can run if the account doesn't specify the interval" do
+      account = build_stubbed(:account, sensor_rule_run_interval_in_hours: nil)
+      sensor = build_stubbed(:sensor, account: account)
+      sensor_rule = build_stubbed(:sensor_rule, last_run_at: 1.day.ago, sensor: sensor)
+
+      expect(sensor_rule.runnable?).to eq(true)
+    end
+
+    it "can run only once within an interval that set under each account" do
+      one_week_interval_account = build_stubbed(:account, sensor_rule_run_interval_in_hours: 168)
+      sensor = build_stubbed(:sensor, account: one_week_interval_account)
+      runnable_sensor_rule = build_stubbed(:sensor_rule, last_run_at: 8.days.ago, sensor: sensor)
+      not_runnable_sensor_rule = build_stubbed(:sensor_rule, last_run_at: 6.days.ago, sensor: sensor)
+
+      expect(runnable_sensor_rule.runnable?).to eq(true)
+      expect(not_runnable_sensor_rule.runnable?).to eq(false)
+    end
+  end
 end

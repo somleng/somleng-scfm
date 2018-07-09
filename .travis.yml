@@ -1,5 +1,8 @@
 language: ruby
-cache: bundler
+cache:
+  bundler: true
+  directories:
+    - node_modules
 addons:
   postgresql: '10'
   apt:
@@ -20,6 +23,12 @@ before_install:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - gem install bundler
+install:
+  - bundle install
+  - nvm install node
+  - node -v
+  - npm i -g yarn
+  - yarn
 before_script:
   - google-chrome-stable --headless --disable-gpu --no-sandbox
   - psql -c 'create database somleng_scfm_test;' -U travis

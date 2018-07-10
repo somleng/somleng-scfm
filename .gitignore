@@ -34,3 +34,8 @@ config/secrets.yml.key
 
 # RSpec
 examples.txt
+
+.envrc
+
+# Terraform
+.terraform

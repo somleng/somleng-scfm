@@ -27,6 +27,7 @@ class KeyValueFieldsBuilder
 
   # https://stackoverflow.com/a/23861946
   def flat_hash(h, f = [], g = {})
+    return [] if h.nil?
     return g.update(f => h) unless h.is_a? Hash
     h.each { |k, r| flat_hash(r, f + [k], g) }
     g

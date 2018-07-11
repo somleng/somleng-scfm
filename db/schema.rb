@@ -29,7 +29,6 @@ ActiveRecord::Schema.define(version: 2018_07_08_070448) do
     t.string "platform_provider_name"
     t.string "somleng_api_host"
     t.string "somleng_api_base_url"
-    t.integer "sensor_rule_trigger_interval_in_hours"
     t.integer "sensor_rule_run_interval_in_hours"
     t.index ["somleng_account_sid"], name: "index_accounts_on_somleng_account_sid", unique: true
     t.index ["twilio_account_sid"], name: "index_accounts_on_twilio_account_sid", unique: true

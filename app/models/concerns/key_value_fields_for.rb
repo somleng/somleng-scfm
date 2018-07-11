@@ -14,7 +14,7 @@ module KeyValueFieldsFor
           ) || instance_variable_set(
             "@#{attribute_name}_fields",
             key_value_fields_builder.from_nested_hash(send(attribute_name)).reject do |field|
-              rejectable_metadata_fields.include?(field.key)
+              send(:"rejectable_#{attribute_name}_fields").include?(field.key)
             end
           )
         end

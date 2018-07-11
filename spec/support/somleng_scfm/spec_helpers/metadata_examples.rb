@@ -1,52 +1,14 @@
 RSpec.shared_examples_for "has_metadata" do
   describe "validations" do
-    subject { build(factory) }
+    subject { build_stubbed(factory) }
 
-    def assert_validations!
+    it "validates metadata is a hash" do
+      is_expected.not_to allow_value("foo").for(:metadata)
       is_expected.to allow_value("foo" => "bar").for(:metadata)
+      subject.metadata = nil
+      is_expected.not_to be_valid
+      expect(subject.errors[:metadata]).not_to be_empty
     end
-
-    it { assert_validations! }
-  end
-
-  describe "#metadata_fields" do
-    it "returns key value fields" do
-      subject = build_stubbed(factory)
-      subject.metadata = { "address" => { "city" => "pp" } }
-
-      metadata_fields = subject.metadata_fields
-
-      expect(metadata_fields.first.key).to eq "address:city"
-      expect(metadata_fields.first.value).to eq "pp"
-    end
-  end
-
-  describe "#metadata_fields_attributes=(attributes)" do
-    it "builds new metadata_form and assign to metadata" do
-      subject = build_stubbed(factory)
-      attributes = { "0" => { "key" => "title", "value" => "call 1" } }
-
-      subject.metadata_fields_attributes = attributes
-
-      expect(subject.metadata).to eq("title" => "call 1")
-    end
-  end
-
-  describe "#build_metadata_field" do
-    it "build a new key value field" do
-      subject = build_stubbed(factory)
-
-      result = subject.build_metadata_field
-
-      # method must return a new KeyValueField
-      expect(result).to be_a(KeyValueField)
-      expect(subject.metadata_fields.size).to eq(1)
-      expect(subject.metadata_fields[0]).to be_a(KeyValueField)
-    end
-  end
-
-  describe "#rejectable_metadata_fields" do
-    it { expect(subject.rejectable_metadata_fields).to eq([]) }
   end
 
   describe "#metadata" do

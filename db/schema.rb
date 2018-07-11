@@ -271,6 +271,7 @@ ActiveRecord::Schema.define(version: 2018_07_08_070448) do
   add_foreign_key "callout_participations", "callouts"
   add_foreign_key "callout_participations", "contacts"
   add_foreign_key "callouts", "accounts"
+  add_foreign_key "callouts", "sensor_events"
   add_foreign_key "contacts", "accounts"
   add_foreign_key "oauth_access_grants", "accounts", column: "resource_owner_id"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"

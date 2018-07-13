@@ -28,7 +28,7 @@ RSpec.describe Account do
 
     it { expect(subject.permissions).to be_empty }
     it { expect(subject.call_flow_logic).to eq(Account::DEFAULT_CALL_FLOW_LOGIC) }
-    it { expect(subject.sensor_rule_run_interval_in_hours).to eq(Account::DEFAULT_SENSOR_RULE_RUN_INTERVAL_IN_HOURS) }
+    it { expect(subject.sensor_rule_run_interval_in_hours).to eq(nil) }
   end
 
   describe "#settings" do

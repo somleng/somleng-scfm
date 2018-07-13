@@ -7,7 +7,7 @@ GIT
 
 GIT
   remote: https://github.com/davidcelis/api-pagination.git
-  revision: 289716e3d19d210365b69d4fee99e86f55b0f65a
+  revision: 8b75996c1265a37515284f3b4b4d7a33d0ae5962
   specs:
     api-pagination (4.8.1)
 
@@ -97,7 +97,7 @@ GEM
     autoprefixer-rails (8.6.3)
       execjs
     aws-eventstream (1.0.1)
-    aws-partitions (1.94.0)
+    aws-partitions (1.96.0)
     aws-sdk-core (3.22.1)
       aws-eventstream (~> 1.0)
       aws-partitions (~> 1.0)
@@ -106,7 +106,7 @@ GEM
     aws-sdk-kms (1.6.0)
       aws-sdk-core (~> 3)
       aws-sigv4 (~> 1.0)
-    aws-sdk-s3 (1.16.0)
+    aws-sdk-s3 (1.17.0)
       aws-sdk-core (~> 3, >= 3.21.2)
       aws-sdk-kms (~> 1)
       aws-sigv4 (~> 1.0)
@@ -116,7 +116,7 @@ GEM
     aws-sigv4 (1.0.3)
     bcrypt (3.1.12)
     bindex (0.5.0)
-    bootsnap (1.3.0)
+    bootsnap (1.3.1)
       msgpack (~> 1.0)
     bootstrap (4.1.1)
       autoprefixer-rails (>= 6.0.3)
@@ -391,7 +391,7 @@ GEM
     turbolinks (5.1.1)
       turbolinks-source (~> 5.1)
     turbolinks-source (5.1.0)
-    twilio-ruby (5.10.6)
+    twilio-ruby (5.10.7)
       faraday (~> 0.9)
       jwt (>= 1.5, <= 2.5)
       nokogiri (>= 1.6, < 2.0)

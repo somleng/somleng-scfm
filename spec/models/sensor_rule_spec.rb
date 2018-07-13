@@ -63,7 +63,7 @@ RSpec.describe SensorRule do
     end
 
     it "can run only once within an interval that set under each account" do
-      one_week_interval_account = build_stubbed(:account, sensor_rule_run_interval_in_hours: 168)
+      one_week_interval_account = build_stubbed(:account, sensor_rule_run_interval_in_hours: "168")
       sensor = build_stubbed(:sensor, account: one_week_interval_account)
       runnable_sensor_rule = build_stubbed(:sensor_rule, last_run_at: 8.days.ago, sensor: sensor)
       not_runnable_sensor_rule = build_stubbed(:sensor_rule, last_run_at: 6.days.ago, sensor: sensor)

@@ -4,14 +4,16 @@ class Account < ApplicationRecord
   DEFAULT_PLATFORM_PROVIDER = "twilio".freeze
   PLATFORM_PROVIDERS = [DEFAULT_PLATFORM_PROVIDER, "somleng"].freeze
   DEFAULT_CALL_FLOW_LOGIC = "CallFlowLogic::HelloWorld".freeze
-  DEFAULT_SENSOR_RULE_RUN_INTERVAL_IN_HOURS = 168 # 1 week
 
   include MetadataHelpers
   include HasCallFlowLogic
+  include CustomStoreReaders
 
-  store_accessor :settings
+  store_accessor :settings,
+                 :sensor_rule_run_interval_in_hours
 
-  attribute :sensor_rule_run_interval_in_hours, default: -> { DEFAULT_SENSOR_RULE_RUN_INTERVAL_IN_HOURS }
+  integer_store_reader :sensor_rule_run_interval_in_hours
+
   attribute :call_flow_logic, default: -> { DEFAULT_CALL_FLOW_LOGIC }
 
   accepts_nested_key_value_fields_for :settings

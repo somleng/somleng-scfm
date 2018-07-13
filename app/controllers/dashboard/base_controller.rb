@@ -13,7 +13,7 @@ class Dashboard::BaseController < BaseController
   respond_to :html
 
   before_action :authenticate_user!, :set_locale
-  helper_method :resource, :resources, :show_location, :resources_path,
+  helper_method :resource, :resources, :parent_resource, :show_location, :resources_path,
                 :current_account, :sort_column, :sort_direction
 
   def new
@@ -45,22 +45,22 @@ class Dashboard::BaseController < BaseController
   end
 
   def prepare_resource_for_new
-    build_key_value_fields
+    prepare_resource_for_render
   end
 
   def prepare_resource_for_edit
-    build_key_value_fields
+    prepare_resource_for_render
   end
 
   def after_save_resource
     build_key_value_fields
   end
 
-  def build_key_value_fields; end
-
-  def build_metadata_field
-    resource.build_metadata_field if resource.metadata_fields.empty?
+  def prepare_resource_for_render
+    build_key_value_fields
   end
+
+  def build_key_value_fields; end
 
   def clear_metadata
     resource.metadata.clear

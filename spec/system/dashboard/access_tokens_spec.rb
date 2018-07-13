@@ -1,12 +1,14 @@
 require "rails_helper"
 
 RSpec.describe "API Key Management" do
+  let(:user) { create(:admin) }
+
   it "can list api keys" do
-    user = create(:user)
     sign_in(user)
     access_token = create(:access_token, resource_owner: user.account)
     other_access_token = create(:access_token)
 
+    sign_in(user)
     visit(dashboard_access_tokens_path)
 
     expect(page).to have_title("API Keys")
@@ -37,8 +39,6 @@ RSpec.describe "API Key Management" do
   end
 
   it "can create a new access token" do
-    user = create(:user)
-
     sign_in(user)
     visit(new_dashboard_access_token_path)
 
@@ -60,7 +60,6 @@ RSpec.describe "API Key Management" do
   end
 
   it "can show an access token" do
-    user = create(:user)
     access_token = create(
       :access_token,
       resource_owner: user.account,
@@ -91,7 +90,6 @@ RSpec.describe "API Key Management" do
   end
 
   it "can update an access token" do
-    user = create(:user)
     access_token = create(
       :access_token,
       resource_owner: user.account,
@@ -114,7 +112,6 @@ RSpec.describe "API Key Management" do
   end
 
   it "can delete an access token" do
-    user = create(:user)
     access_token = create(:access_token, resource_owner: user.account)
 
     sign_in(user)

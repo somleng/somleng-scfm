@@ -19,19 +19,19 @@ class Filter::Resource::Base < Filter::Base
   end
 
   def metadata_attribute_filter
-    @metadata_attribute_filter ||= Filter::Attribute::JSON.new(
+    Filter::Attribute::JSON.new(
       { json_attribute: :metadata }.merge(options), params
     )
   end
 
   def created_at_attribute_filter
-    @created_at_attribute_filter ||= Filter::Attribute::Timestamp.new(
+    Filter::Attribute::Timestamp.new(
       { timestamp_attribute: :created_at }.merge(options), params
     )
   end
 
   def updated_at_attribute_filter
-    @updated_at_attribute_filter ||= Filter::Attribute::Timestamp.new(
+    Filter::Attribute::Timestamp.new(
       { timestamp_attribute: :updated_at }.merge(options), params
     )
   end

@@ -16,6 +16,16 @@ module FactoryHelpers
     phone_call = options.delete(:phone_call) || create_phone_call(account: account)
     create(:remote_phone_call_event, phone_call: phone_call, **options)
   end
+
+  def create_sensor_event(account:, **options)
+    sensor = options.delete(:sensor) || create(:sensor, account: account)
+    create(:sensor_event, sensor: sensor, **options)
+  end
+
+  def create_sensor_rule(account:, **options)
+    sensor = options.delete(:sensor) || create(:sensor, account: account)
+    create(:sensor_rule, sensor: sensor, **options)
+  end
 end
 
 RSpec.configure do |config|

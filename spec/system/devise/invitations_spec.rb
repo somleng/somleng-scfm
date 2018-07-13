@@ -1,12 +1,14 @@
 require "rails_helper"
 
 RSpec.describe "User Invitations" do
-  it "can send an invitation" do
-    user = create(:user)
+  it "can send an invitation", :js do
+    user = create(:admin)
     sign_in(user)
     visit new_user_invitation_path
 
     fill_in "Email", with: "bopha@somleng.com"
+    choose "Admin"
+    multiple_selectize("#locations", "Banteay Meanchey")
     clear_enqueued_jobs
 
     perform_enqueued_jobs do
@@ -17,7 +19,11 @@ RSpec.describe "User Invitations" do
     expect(last_email_sent.from).to match_array(
       [Rails.application.secrets.fetch(:mailer_sender)]
     )
+
     expect(current_path).to eq(dashboard_users_path)
+    new_user = user.account.users.find_by!(email: "bopha@somleng.com")
+    expect(new_user.roles?(:admin)).to eq(true)
+    expect(new_user.province_ids).to include_location("Banteay Meanchey")
   end
 
   it "can set the password" do

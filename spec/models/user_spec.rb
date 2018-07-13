@@ -29,4 +29,16 @@ RSpec.describe User do
 
     it { assert_validations! }
   end
+
+  describe 'defaults' do
+    it "has `member` role as the default" do
+      expect(User.new.roles).to eq([:member])
+    end
+  end
+
+  it '#admin?' do
+    user = build_stubbed(:user, roles: :admin)
+
+    expect(user.admin?).to eq true
+  end
 end

@@ -24,7 +24,8 @@ en:
       edit: Edit
       preview: Preview
       update: Edit
-    app_name: Somleng SCFM
+    admin_management: Admin
+    app_name: EWS 1294
     batch_operations:
       index: Batch Operations
       queue: Start
@@ -43,7 +44,7 @@ en:
       create: New Callout
       edit: Edit Callout
       index: Callouts
-      new: New Callout
+      new: Make Emergency Call
       resume_callout: Resume Callout
       show: Callout %{id}
       start_callout: Start Callout
@@ -69,6 +70,16 @@ en:
     remote_phone_call_events:
       index: Phone Call Events
       show: Phone Call Event %{id}
+    sensor_events:
+      index: Sensor Events
+    sensor_rules:
+      edit: Edit Sensor Rule
+      index: Sensor Rules
+      new: New Sensor Rule
+    sensors:
+      edit: Edit Sensor
+      index: Sensors
+      new: New Sensor
     user_invitations:
       create: Invite User
       edit: Set your password

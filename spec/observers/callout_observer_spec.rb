@@ -8,12 +8,6 @@ RSpec.describe CalloutObserver do
       expect { subject.callout_committed(callout) }.to have_enqueued_job(AudioFileProcessorJob).with(callout.id)
     end
 
-    it "does not enqueue audio processing if there's no audio file" do
-      callout = create(:callout)
-
-      expect { subject.callout_committed(callout) }.not_to have_enqueued_job(AudioFileProcessorJob)
-    end
-
     it "does not enqueue audio processing if the audio file does not change" do
       callout = create(:callout, audio_file: "test.mp3")
       callout = Callout.find(callout.id)

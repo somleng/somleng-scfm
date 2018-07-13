@@ -1,0 +1,11 @@
+= content_tag_for(:tr, sensor) do
+  %td
+    = link_to(sensor.id, show_location(sensor))
+  %td
+    %code
+      = sensor.external_id
+  %td
+    %code
+      = location_names(sensor.province_id, Pumi::Province)
+  %td
+    = sensor.created_at

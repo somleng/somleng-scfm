@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  mount Pumi::Engine => "/pumi"
+
   devise_scope :user do
     get "users/edit", to: "devise/registrations#edit", as: "edit_user_registration"
     patch "users", to: "devise/registrations#update", as: "user_registration"
@@ -50,6 +52,8 @@ Rails.application.routes.draw do
       resources :phone_calls, only: :index
     end
 
+    resources :locales, only: :update
+
     resources :phone_calls, only: %i[index show destroy] do
       resources :phone_call_events, only: :create
       resources :remote_phone_call_events, only: :index
@@ -57,7 +61,17 @@ Rails.application.routes.draw do
 
     resources :remote_phone_call_events, only: %i[index show]
     resources :users, except: %i[new create]
-    resources :locales, only: :update
+
+    resources :sensors do
+      resources :sensor_rules, shallow: true
+      resources :sensor_events, only: :index
+    end
+
+    resources :sensor_rules, only: :index do
+      resources :sensor_events, only: :index
+    end
+
+    resources :sensor_events, only: %i[index show]
   end
 
   namespace "api", defaults: { format: "json" } do
@@ -120,5 +134,16 @@ Rails.application.routes.draw do
       resources :phone_call_events, only: :create
       resources :remote_phone_call_events, only: :index
     end
+
+    resources :sensors, except: %i[new edit] do
+      resources :sensor_rules, only: %i[index create]
+      resources :sensor_events, only: :index
+    end
+
+    resources :sensor_rules, except: %i[new create edit] do
+      resources :sensor_events, only: :index
+    end
+
+    resources :sensor_events, only: %i[index show create]
   end
 end

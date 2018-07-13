@@ -1,4 +1,4 @@
-class Dashboard::AccessTokensController < Dashboard::BaseController
+class Dashboard::AccessTokensController < Dashboard::AdminController
   private
 
   def association_chain

@@ -1,15 +1,11 @@
-class Dashboard::UsersController < Dashboard::BaseController
+class Dashboard::UsersController < Dashboard::AdminController
   private
 
   def association_chain
     current_account.users
   end
 
-  def build_key_value_fields
-    build_metadata_field
-  end
-
   def permitted_params
-    params.fetch(:user, {}).permit(METADATA_FIELDS_ATTRIBUTES)
+    params.require(:user).permit(:roles, province_ids: [])
   end
 end

@@ -1,10 +1,11 @@
-- content_for(:page_actions) do
-  = link_to(translate(:"titles.actions.edit"), edit_dashboard_contact_path(resource), class: 'btn btn-outline-primary')
-  = link_to(translate(:"titles.actions.delete"), dashboard_contact_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+- if current_user.admin?
+  - content_for(:page_actions) do
+    = link_to(translate(:"titles.actions.edit"), edit_dashboard_contact_path(resource), class: 'btn btn-outline-primary')
+    = link_to(translate(:"titles.actions.delete"), dashboard_contact_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
 
-- content_for(:related_links) do
-  = related_link_to t(:"titles.callout_participations.index"), dashboard_contact_callout_participations_path(resource)
-  = related_link_to t(:"titles.phone_calls.index"), dashboard_contact_phone_calls_path(resource)
+  - content_for(:related_links) do
+    = related_link_to t(:"titles.callout_participations.index"), dashboard_contact_callout_participations_path(resource)
+    = related_link_to t(:"titles.phone_calls.index"), dashboard_contact_phone_calls_path(resource)
 
 .col
   #contact.card
@@ -20,6 +21,24 @@
         %dd.col-sm-7.col-md-6
           %code
             = resource.msisdn
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Contact.human_attribute_name(:province_id)
+        %dd.col-sm-7.col-md-6
+          %code
+            = location_names(resource.province_id, Pumi::Province)
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Contact.human_attribute_name(:district_id)
+        %dd.col-sm-7.col-md-6
+          %code
+            = location_names(resource.district_id, Pumi::District)
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Contact.human_attribute_name(:commune_id)
+        %dd.col-sm-7.col-md-6
+          %code
+            = location_names(resource.commune_id, Pumi::Commune)
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Contact.human_attribute_name(:created_at)

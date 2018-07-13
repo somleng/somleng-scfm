@@ -2,9 +2,20 @@
   .card-body
     = simple_form_for([:dashboard, resource]) do |f|
       = f.input :audio_file, as: :file, input_html: { direct_upload: true, accept: Callout::AUDIO_CONTENT_TYPES.join(", ") }
-      = f.input :audio_url
-      = f.input :call_flow_logic, collection: CallFlowLogic::Base.registered.map(&:to_sym), as: :radio_buttons
-      = render("shared/key_value_fields", attribute: :metadata, f: f)
+      = f.input :province_id, collection: [], prompt: true, required: true,
+                wrapper_html: { id: 'province' },
+                input_html: { class: 'js-select-province',
+                  data: { filter_province_ids: current_user.province_ids,
+                    default_value: f.object.province_id.to_s,
+                    default_commune_ids: f.object.commune_ids,
+                    pumi_url: pumi.provinces_url,
+                    preload: true,
+                    pumi_district_collection_url: pumi.districts_url,
+                    pumi_commune_collection_url: pumi.communes_url }}
+
+      = f.input :commune_ids, input_html: { name: "callout[commune_ids][]", value: '', class: 'd-none' }
+      #districts-communes
+      = f.input :call_flow_logic, as: :hidden
       .form-group.actions
         = f.button :submit, class: 'btn btn-primary'
         = link_to(translate(:"titles.actions.cancel"), :back, class: 'btn btn-outline-dark')

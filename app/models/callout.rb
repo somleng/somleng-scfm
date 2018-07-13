@@ -1,5 +1,6 @@
 class Callout < ApplicationRecord
   AUDIO_CONTENT_TYPES = %w[audio/mpeg audio/mp3 audio/wav audio/x-wav].freeze
+  DEFAULT_CALL_FLOW_LOGIC = "CallFlowLogic::PlayMessage".freeze
 
   module ActiveStorageDirty
     attr_reader :audio_file_blob_was, :audio_file_will_change
@@ -21,9 +22,11 @@ class Callout < ApplicationRecord
   include HasCallFlowLogic
   include Wisper::Publisher
   include AASM
+  include PumiHelpers
   prepend ActiveStorageDirty
 
   belongs_to :account
+  belongs_to :sensor_event, optional: true
 
   has_many :callout_participations, dependent: :restrict_with_error
 
@@ -33,6 +36,7 @@ class Callout < ApplicationRecord
 
   has_many :callout_populations,
            class_name: "BatchOperation::CalloutPopulation"
+  has_one :callout_population, class_name: "BatchOperation::CalloutPopulation", autosave: true
 
   has_many :phone_calls,
            through: :callout_participations
@@ -47,7 +51,16 @@ class Callout < ApplicationRecord
 
   alias_attribute :calls, :phone_calls
 
+  attr_accessor :created_by
+
   validates :call_flow_logic, :status, presence: true
+
+  validates :call_flow_logic,
+            presence: true
+
+  validate  :province_permitted
+
+  validate :audio_file_attached
 
   validates :audio_file,
             file_size: {
@@ -103,6 +116,11 @@ class Callout < ApplicationRecord
 
   private
 
+  def audio_file_attached
+    return if audio_file.attached?
+    errors.add(:audio_file, :blank)
+  end
+
   def set_call_flow_logic
     return if call_flow_logic.present?
     self.call_flow_logic = account_call_flow_logic
@@ -110,5 +128,12 @@ class Callout < ApplicationRecord
 
   def publish_committed
     broadcast(:callout_committed, self)
+  end
+
+  def province_permitted
+    return if created_by.blank?
+    return if created_by.province_ids.blank?
+    return if created_by.province_ids.include?(province_id)
+    errors.add(:commune_ids, :inclusion)
   end
 end

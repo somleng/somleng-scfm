@@ -1,0 +1,4 @@
+- content_for(:resources_table) do
+  = render("shared/resources_table", resource_class: SensorEvent, columns: [:created_at])
+
+= render("shared/index")

@@ -7,8 +7,14 @@ class Account < ApplicationRecord
 
   include MetadataHelpers
   include HasCallFlowLogic
+  include CustomStoreReaders
 
-  store_accessor :settings
+  store_accessor :settings,
+                 :sensor_rule_run_interval_in_hours
+
+  integer_store_reader :sensor_rule_run_interval_in_hours
+
+  attribute :call_flow_logic, default: -> { DEFAULT_CALL_FLOW_LOGIC }
 
   accepts_nested_key_value_fields_for :settings
 
@@ -44,14 +50,20 @@ class Account < ApplicationRecord
   has_many :remote_phone_call_events,
            through: :phone_calls
 
+  has_many :sensors
+
+  has_many :sensor_rules,
+           through: :sensors
+
+  has_many :sensor_events,
+           through: :sensors
+
   delegate :twilio_account_sid?, to: :class
 
   validates :platform_provider_name,
             inclusion: {
               in: PLATFORM_PROVIDERS
             }, allow_nil: true
-
-  before_validation :set_call_flow_logic, on: :create
 
   def super_admin?
     permissions?(:super_admin)
@@ -85,11 +97,6 @@ class Account < ApplicationRecord
   end
 
   private
-
-  def set_call_flow_logic
-    return if call_flow_logic.present?
-    self.call_flow_logic = DEFAULT_CALL_FLOW_LOGIC
-  end
 
   def platform_configuration(key)
     read_attribute("#{platform_provider_name}_#{key}")

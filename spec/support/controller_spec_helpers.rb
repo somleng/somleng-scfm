@@ -6,6 +6,11 @@ module ControllerSpecHelpers
     sign_in_as(user)
   end
 
+  def admin_signed_in
+    user = create(:admin)
+    sign_in_as(user)
+  end
+
   def sign_in_as(user)
     sign_in(user, scope: :user)
     @current_user = user

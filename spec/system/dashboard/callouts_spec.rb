@@ -4,7 +4,6 @@ RSpec.describe "Callouts", :aggregate_failures do
   it "can list callouts" do
     user           = create(:user)
     callout        = create(:callout, :initialized, account: user.account)
-    paused_callout = create(:callout, status: Callout::STATE_PAUSED, account: user.account)
     other_callout  = create(:callout)
 
     sign_in(user)
@@ -56,6 +55,15 @@ RSpec.describe "Callouts", :aggregate_failures do
     callout_population = new_callout.callout_population
     expect(callout_population).to be_present
     expect(callout_population.contact_filter_metadata[:commune_id]).to eq(new_callout.commune_ids)
+  end
+
+  it "autoselects the user's province" do
+    user = create(:user, province_ids: ["01"])
+
+    sign_in(user)
+    visit new_dashboard_callout_path
+
+    expect(find_field("callout_province_id", visible: false)["data-default-value"]).to eq("01")
   end
 
   it "can update a callout", :js do

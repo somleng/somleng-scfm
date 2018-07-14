@@ -13,15 +13,32 @@ module DashboardHelper
     end.compact.join(", ")
   end
 
-  def label_status(callout)
-    label_class = case callout.status.to_sym
+  def callout_status_badge(callout)
+    badge_class = case callout.status.to_sym
                   when Callout::STATE_RUNNING     then "badge-success"
                   when Callout::STATE_PAUSED      then "badge-warning"
                   when Callout::STATE_STOPPED     then "badge-danger"
                   when Callout::STATE_INITIALIZED then "badge-primary"
                   end
-    content_tag(:span, class: "badge badge-pill #{label_class}") do
-      callout.status.humanize
-    end
+
+    badge_for(callout.status.humanize, badge_class: badge_class)
+  end
+
+  def callout_trigger_method_badge(callout)
+    badge_class = case callout.trigger_method
+                  when :manual then "badge-info"
+                  when :sensor_event then "badge-warning"
+                  end
+
+    badge_for(
+      translate("simple_form.options.callout.trigger_method.#{callout.trigger_method}"),
+      badge_class: badge_class
+    )
+  end
+
+  private
+
+  def badge_for(content, badge_class:)
+    content_tag(:span, content, class: "badge badge-pill #{badge_class}")
   end
 end

@@ -114,6 +114,10 @@ class Callout < ApplicationRecord
     end
   end
 
+  def trigger_method
+    sensor_event_id? ? :sensor_event : :manual
+  end
+
   private
 
   def audio_file_attached

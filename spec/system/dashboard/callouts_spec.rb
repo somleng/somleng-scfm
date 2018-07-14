@@ -2,9 +2,10 @@ require "rails_helper"
 
 RSpec.describe "Callouts", :aggregate_failures do
   it "can list callouts" do
-    user           = create(:user)
-    callout        = create(:callout, :initialized, account: user.account)
-    other_callout  = create(:callout)
+    user = create(:user)
+    sensor_event = create_sensor_event(account: user.account)
+    callout = create(:callout, :initialized, sensor_event: sensor_event, account: user.account)
+    other_callout = create(:callout)
 
     sign_in(user)
     visit dashboard_callouts_path
@@ -27,7 +28,9 @@ RSpec.describe "Callouts", :aggregate_failures do
       )
       expect(page).to have_sortable_column("status")
       expect(page).to have_sortable_column("created_at")
+      expect(page).to have_content("Trigger")
       expect(page).to have_content("Initialized")
+      expect(page).to have_content("Sensor Event")
       expect(page).to have_content(callout.province_name_en)
       expect(page).to have_content(callout.province_name_km)
     end
@@ -108,10 +111,12 @@ RSpec.describe "Callouts", :aggregate_failures do
 
   it "can show a callout" do
     user = create(:admin)
+    sensor_event = create_sensor_event(account: user.account)
     callout = create(
       :callout,
       :initialized,
       account: user.account,
+      sensor_event: sensor_event,
       call_flow_logic: CallFlowLogic::HelloWorld,
       audio_file: "test.mp3",
       audio_url: "https://example.com/audio.mp3"
@@ -152,6 +157,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     within("#callout") do
       expect(page).to have_content(callout.id)
       expect(page).to have_link(callout.audio_url, href: callout.audio_url)
+      expect(page).to have_link(callout.sensor_event_id, href: dashboard_sensor_event_path(sensor_event))
       expect(page).to have_content("Status")
       expect(page).to have_content("Initialized")
       expect(page).to have_content("Created at")

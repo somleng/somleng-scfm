@@ -45,6 +45,10 @@ km:
         platform_provider_name:
           somleng: Somleng
           twilio: Twilio
+      callout:
+        trigger_method:
+          manual: Manual
+          sensor_event: Sensor Event
       defaults:
         call_flow_logic:
           CallFlowLogic::HelloWorld: Hello World

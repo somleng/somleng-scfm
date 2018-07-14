@@ -57,8 +57,10 @@ RSpec.describe "Sensors", :aggregate_failures do
     user = create(:admin)
     sensor = create(:sensor, account: user.account)
     sensor_rule = create_sensor_rule(account: user.account, sensor: sensor)
+    callout = create(:callout, account: user.account)
     sensor_event = create_sensor_event(
-      account: user.account, sensor: sensor, sensor_rule: sensor_rule
+      account: user.account, sensor: sensor, sensor_rule: sensor_rule,
+      callout: callout
     )
 
     sign_in(user)
@@ -77,8 +79,14 @@ RSpec.describe "Sensors", :aggregate_failures do
         href: dashboard_sensor_rule_path(sensor_event.sensor_rule_id)
       )
 
+      expect(page).to have_link(
+        sensor_event.callout.id,
+        href: dashboard_callout_path(sensor_event.callout)
+      )
+
       expect(page).to have_content("#")
       expect(page).to have_content("Sensor")
+      expect(page).to have_content("Callout")
       expect(page).to have_content("Created at")
       expect(page).to have_content("Payload")
     end

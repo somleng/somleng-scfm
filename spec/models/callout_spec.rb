@@ -145,4 +145,16 @@ RSpec.describe Callout do
       end
     end
   end
+
+  describe "#trigger_method" do
+    context "the callout is triggered by a sensor event" do
+      subject { build_stubbed(:callout, sensor_event: build_stubbed(:sensor_event)) }
+      it { expect(subject.trigger_method).to eq(:sensor_event) }
+    end
+
+    context "the callout was created manually" do
+      subject { build_stubbed(:callout) }
+      it { expect(subject.trigger_method).to eq(:manual) }
+    end
+  end
 end

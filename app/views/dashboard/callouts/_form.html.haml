@@ -6,7 +6,7 @@
                 wrapper_html: { id: 'province' },
                 input_html: { class: 'js-select-province',
                   data: { filter_province_ids: current_user.province_ids,
-                    default_value: f.object.province_id.to_s,
+                    default_value: f.object.province_id || Array(current_user.province_ids).first,
                     default_commune_ids: f.object.commune_ids,
                     pumi_url: pumi.provinces_url,
                     preload: true,

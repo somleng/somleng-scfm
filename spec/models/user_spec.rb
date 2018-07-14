@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe User do
   let(:factory) { :user }
@@ -9,34 +9,37 @@ RSpec.describe User do
   end
 
   describe "validations" do
-    def assert_validations!
-      is_expected.to validate_presence_of(:email)
-      is_expected.to validate_presence_of(:password)
-      is_expected.to validate_confirmation_of(:password)
-      is_expected.to validate_inclusion_of(:locale).in_array(["en", "km"])
-    end
+    it { is_expected.to validate_presence_of(:email) }
+    it { is_expected.to validate_presence_of(:password) }
+    it { is_expected.to validate_confirmation_of(:password) }
+    it { is_expected.to validate_inclusion_of(:locale).in_array(%w[en km]) }
 
     context "persisted" do
-      subject { create(factory) }
-
-      def assert_validations!
-        super
-        is_expected.to validate_uniqueness_of(:email).case_insensitive
-      end
-
-      it { assert_validations! }
+      subject { create(:user) }
+      it { is_expected.to validate_uniqueness_of(:email).case_insensitive }
     end
 
-    it { assert_validations! }
-  end
+    it "cleans up the user's province ids" do
+      user = build_stubbed(:user)
+      user.province_ids = ["", "01"]
 
-  describe 'defaults' do
-    it "has `member` role as the default" do
-      expect(User.new.roles).to eq([:member])
+      user.valid?
+
+      expect(user.province_ids).to match_array(["01"])
+
+      user.province_ids = [""]
+
+      user.valid?
+
+      expect(user.metadata).to eq({})
     end
   end
 
-  it '#admin?' do
+  describe "defaults" do
+    it { expect(User.new.roles).to eq([:member]) }
+  end
+
+  it "#admin?" do
     user = build_stubbed(:user, roles: :admin)
 
     expect(user.admin?).to eq true

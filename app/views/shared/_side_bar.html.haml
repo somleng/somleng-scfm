@@ -4,7 +4,7 @@
       .card-body
         %ul.nav.flex-column
           %li.nav-item
-            = nav_link(translate(:"titles.callouts.new"), new_dashboard_callout_path, icon: :bullhorn)
+            = nav_link(translate(:"titles.callouts.new"), new_dashboard_callout_path, icon: :microphone)
           %li.nav-item
             = nav_link(translate(:"titles.callouts.index"), dashboard_callouts_path, controller: "callouts", icon: :bullhorn)
     - if current_user.admin?

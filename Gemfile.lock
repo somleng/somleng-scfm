@@ -7,7 +7,7 @@ GIT
 
 GIT
   remote: https://github.com/davidcelis/api-pagination.git
-  revision: 8b75996c1265a37515284f3b4b4d7a33d0ae5962
+  revision: c9578ad5b11e172a218de677f866fedf23db75ae
   specs:
     api-pagination (4.8.1)
 

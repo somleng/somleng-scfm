@@ -54,4 +54,8 @@ class Dashboard::PhoneCallsController < Dashboard::BaseController
       batch_operation_id
     )
   end
+
+  def filter_class
+    Filter::Resource::PhoneCall
+  end
 end

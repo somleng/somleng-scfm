@@ -3,11 +3,27 @@ require "rails_helper"
 RSpec.describe "Phone Calls" do
   it "can list all phone calls for an account" do
     user = create(:user)
-    phone_call = create_phone_call(account: user.account)
+    phone_call = create_phone_call(account: user.account, status: PhoneCall::STATE_CREATED)
     other_phone_call = create(:phone_call)
 
     sign_in(user)
-    visit(dashboard_phone_calls_path)
+    visit(
+      dashboard_phone_calls_path(
+        q: { status: "created" }
+      )
+    )
+
+    within("#filters") do
+      expect(page).to have_link(
+        "All",
+        href: dashboard_phone_calls_path
+      )
+
+      expect(page).to have_link(
+        "Created",
+        href: dashboard_phone_calls_path(q: {status: "created"})
+      )
+    end
 
     expect(page).to have_title("Phone Calls")
 

@@ -1,3 +1,8 @@
+- content_for(:resources_filter) do
+  = link_to(translate(:"filters.all"), {}, class: "dropdown-item")
+  - PhoneCall.aasm.states.map(&:name).sort.each do |state|
+    = link_to(state.to_s.titleize, {:q => {status: state}}, class: "dropdown-item")
+
 - content_for(:resources_table) do
   = render("shared/resources_table", resource_class: PhoneCall, columns: [:msisdn, :direction, :status, :created_at], unsortable_columns: [:direction])
 

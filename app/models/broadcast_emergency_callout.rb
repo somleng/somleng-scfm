@@ -29,7 +29,7 @@ class BroadcastEmergencyCallout
   def build_callout_population
     @callout_population = callout.build_callout_population(
       account: account,
-      contact_filter_metadata: contact_filter_metadata
+      contact_filter_params: contact_filter_params
     )
   end
 
@@ -47,7 +47,7 @@ class BroadcastEmergencyCallout
     callout.start!
   end
 
-  def contact_filter_metadata
-    { commune_id: callout.commune_ids }
+  def contact_filter_params
+    { has_locations_in: callout.commune_ids }
   end
 end

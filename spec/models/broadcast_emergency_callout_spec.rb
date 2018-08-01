@@ -20,9 +20,9 @@ RSpec.describe BroadcastEmergencyCallout do
 
   it "creates callout participations that matches with sensor's communes" do
     sensor = create(:sensor, commune_ids: %w[120101 120101])
-    participation1 = create(:contact, commune_id: "120101", account: sensor.account)
-    participation2 = create(:contact, commune_id: "120101", account: sensor.account)
-    _not_paticipation = create(:contact, commune_id: "110101", account: sensor.account)
+    participation1 = create(:contact, commune_ids: ["120101"], account: sensor.account)
+    participation2 = create(:contact, commune_ids: ["120101"], account: sensor.account)
+    _not_paticipation = create(:contact, commune_ids: ["110101"], account: sensor.account)
     sensor_event = create_sensor_event(sensor: sensor)
 
     perform_enqueued_jobs(only: RunBatchOperationJob) do

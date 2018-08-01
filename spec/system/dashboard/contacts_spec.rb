@@ -169,8 +169,5 @@ RSpec.describe "Contacts", :aggregate_failures do
 
   def fill_in_contact_information(phone_number)
     fill_in("Phone number", with: phone_number)
-    select_selectize("#province", "Battambang")
-    select_selectize("#district", "Banan")
-    select_selectize("#commune", "Kantueu Pir")
   end
 end

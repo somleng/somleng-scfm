@@ -14,7 +14,7 @@ class Dashboard::CalloutsController < Dashboard::BaseController
     if resource.callout_population.blank?
       build_callout_population
     else
-      resource.callout_population.contact_filter_metadata = contact_filter_metadata
+      resource.callout_population.contact_filter_params = contact_filter_params
     end
   end
 
@@ -33,11 +33,11 @@ class Dashboard::CalloutsController < Dashboard::BaseController
   def build_callout_population
     resource.build_callout_population(
       account: current_account,
-      contact_filter_metadata: contact_filter_metadata
+      contact_filter_params: contact_filter_params
     )
   end
 
-  def contact_filter_metadata
-    { commune_id: resource.commune_ids.reject(&:blank?) }
+  def contact_filter_params
+    { has_locations_in: resource.commune_ids.reject(&:blank?) }
   end
 end

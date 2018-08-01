@@ -57,7 +57,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(new_callout.call_flow_logic).to eq(CallFlowLogic::PlayMessage.to_s)
     callout_population = new_callout.callout_population
     expect(callout_population).to be_present
-    expect(callout_population.contact_filter_metadata[:commune_id]).to eq(new_callout.commune_ids)
+    expect(callout_population.contact_filter_params[:has_locations_in]).to eq(new_callout.commune_ids)
   end
 
   it "autoselects the user's province" do
@@ -88,7 +88,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(page).to have_text("Callout was successfully updated.")
 
     callout.reload
-    expect(callout.callout_population.contact_filter_metadata[:commune_id]).to eq(callout.commune_ids)
+    expect(callout.callout_population.contact_filter_params[:has_locations_in]).to eq(callout.commune_ids)
   end
 
   it "can update a callout without an existing callout population", :js do
@@ -106,7 +106,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(page).to have_text("Callout was successfully updated.")
 
     callout.reload
-    expect(callout.callout_population.contact_filter_metadata[:commune_id]).to eq(callout.commune_ids)
+    expect(callout.callout_population.contact_filter_params[:has_locations_in]).to eq(callout.commune_ids)
   end
 
   it "can show a callout" do

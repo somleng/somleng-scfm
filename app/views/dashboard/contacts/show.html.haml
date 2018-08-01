@@ -38,7 +38,7 @@
           = Contact.human_attribute_name(:commune_id)
         %dd.col-sm-7.col-md-6
           %code
-            = location_names(resource.commune_id, Pumi::Commune)
+            = location_names(resource.primary_commune_id, Pumi::Commune)
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Contact.human_attribute_name(:created_at)

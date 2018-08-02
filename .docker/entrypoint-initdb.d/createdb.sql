@@ -1,0 +1,1 @@
+CREATE DATABASE somleng_scfm_development;

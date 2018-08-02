@@ -27,7 +27,7 @@ class CallFlowLogic::Base
 
   def no_response
     Twilio::TwiML::VoiceResponse.new do |response|
-      response.say("Sorry. The application has no response. Goodbye.")
+      response.say(message: "Sorry. The application has no response. Goodbye.")
     end.to_s
   end
 end

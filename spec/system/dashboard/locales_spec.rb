@@ -12,7 +12,9 @@ RSpec.describe "Locales" do
     end
 
     expect(page).to have_content("សមាជិកទំនាក់ទំនង")
+    expect(page).to have_selector(:xpath, './/html[@lang="km"]')
+
     user.reload
-    expect(user.locale).to eq "km"
+    expect(user.locale).to eq("km")
   end
 end

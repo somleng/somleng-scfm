@@ -6,7 +6,7 @@ class CallFlowLogic::PlayMessage < CallFlowLogic::Base
           url: audio_url
         )
       else
-        response.say("No audio URL to play. Bye Bye")
+        response.say(message: "No audio URL to play. Bye Bye")
       end
     end.to_s
   end

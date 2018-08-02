@@ -44,5 +44,7 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
+  config.time_zone = Rails.application.secrets.fetch(:time_zone)
+
   Rails.application.routes.default_url_options[:host] = Rails.application.secrets.fetch(:default_url_host)
 end

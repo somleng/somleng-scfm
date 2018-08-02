@@ -120,4 +120,6 @@ Rails.application.configure do
     authentication: Rails.application.secrets.fetch(:smtp_authentication_method).to_sym,
     enable_starttls_auto: Rails.application.secrets.fetch(:smtp_enable_starttls_auto).to_i == 1
   }
+
+  config.time_zone = Rails.application.secrets.fetch(:time_zone)
 end

@@ -71,4 +71,6 @@ Rails.application.configure do
     address: Rails.application.secrets.fetch(:smtp_address),
     port: Rails.application.secrets.fetch(:smtp_port).to_i
   }
+
+  config.time_zone = Rails.application.secrets.fetch(:time_zone)
 end

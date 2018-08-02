@@ -2,8 +2,11 @@ version: '3'
 services:
   db:
     image: postgres
+    volumes:
+      - ./.docker/entrypoint-initdb.d/:/docker-entrypoint-initdb.d
   somleng-scfm:
-    image: dwilkie/somleng-scfm
+    build:
+      context: .
     command: bundle exec rails s -p 3000 -b '0.0.0.0'
     environment:
       - RAILS_ENV=development
@@ -12,6 +15,8 @@ services:
       - "3000:3000"
     depends_on:
       - db
+    volumes:
+      - ./:/usr/src/app/:cached
   curl:
     image: endeveit/docker-jq
     command: /bin/sh -c 'cat /dev/null'

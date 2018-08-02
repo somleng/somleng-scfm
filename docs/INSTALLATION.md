@@ -23,9 +23,9 @@ For the tutorial we're going to connect Somleng SCFM to Twilio. If you haven't a
 
 ### Start the SCFM Server
 
-In _another_ from the SCFM directory terminal run:
+From a new terminal, in the SCFM directory, run:
 
-        $ docker-compose up
+        docker-compose up --build
 
 Note that this command exposes port 3000 to your host. You should now see SCFM booted at <http://localhost:3000>
 
@@ -33,9 +33,10 @@ Note that this command exposes port 3000 to your host. You should now see SCFM b
 
 The next need to do is create the database and setup a Super Admin account. Go ahead and run the following commands in the first terminal:
 
-    $ docker-compose run --rm somleng-scfm /bin/bash -c './bin/rails db:setup'
-    $ SUPER_ADMIN_ACCESS_TOKEN=$(docker-compose run --rm -e CREATE_SUPER_ADMIN_ACCOUNT=1 -e OUTPUT=super_admin -e FORMAT=http_basic somleng-scfm /bin/bash -c './bin/rails db:seed')
-    $ echo $SUPER_ADMIN_ACCESS_TOKEN
+    docker-compose exec somleng-scfm /bin/bash -c 'bundle install'
+    docker-compose exec somleng-scfm /bin/bash -c './bin/rails db:setup'
+    SUPER_ADMIN_ACCESS_TOKEN=$(docker-compose run --rm -e CREATE_SUPER_ADMIN_ACCOUNT=1 -e OUTPUT=super_admin -e FORMAT=http_basic somleng-scfm /bin/bash -c './bin/rails db:seed')
+    echo $SUPER_ADMIN_ACCESS_TOKEN
 
 You should see the output of your Super Admin access token.
 

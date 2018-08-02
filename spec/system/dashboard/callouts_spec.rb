@@ -28,6 +28,8 @@ RSpec.describe "Callouts", :aggregate_failures do
       )
       expect(page).to have_sortable_column("status")
       expect(page).to have_sortable_column("created_at")
+      expect(page).not_to have_sortable_column("province")
+      expect(page).not_to have_sortable_column("trigger_method")
       expect(page).to have_content("Trigger")
       expect(page).to have_content("Initialized")
       expect(page).to have_content("Sensor Event")

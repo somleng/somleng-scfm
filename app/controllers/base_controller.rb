@@ -44,7 +44,7 @@ class BaseController < ApplicationController
   attr_reader :resource, :resources
 
   def find_resources
-    @resources = find_filtered_resources
+    @resources = find_filtered_resources.order(sort_params.order_attributes)
   end
 
   def find_resource
@@ -155,5 +155,9 @@ class BaseController < ApplicationController
 
   def permitted_query_params
     params.permit(q: {})
+  end
+
+  def sort_params
+    @sort_params ||= SortParams.new(params: params)
   end
 end

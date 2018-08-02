@@ -14,7 +14,7 @@ class Dashboard::BaseController < BaseController
 
   before_action :authenticate_user!, :set_locale
   helper_method :resource, :resources, :show_location, :resources_path,
-                :current_account, :sort_column, :sort_direction
+                :current_account, :sort_params
 
   def new
     build_new_resource
@@ -35,7 +35,7 @@ class Dashboard::BaseController < BaseController
   end
 
   def find_resources
-    @resources = super.page(params[:page]).order(sort_column => sort_direction)
+    @resources = super.page(params[:page])
   end
 
   def respond_with_destroyed_resource
@@ -88,14 +88,6 @@ class Dashboard::BaseController < BaseController
 
   def set_locale
     I18n.locale = current_user.locale
-  end
-
-  def sort_column
-    params[:sort_column] || "created_at"
-  end
-
-  def sort_direction
-    %w[asc desc].include?(params[:sort_direction]) ? params[:sort_direction] : "desc"
   end
 
   def _prepare_for_render

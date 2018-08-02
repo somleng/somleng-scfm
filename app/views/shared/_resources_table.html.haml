@@ -8,18 +8,14 @@
             .text
               = resource_class.human_attribute_name(column.to_sym)
           - else
-            - is_current_column = (column.to_s == sort_column)
-            - is_current_asc = (sort_direction == "asc")
-            - new_direction = (is_current_column && is_current_asc) ? "desc" : "asc"
-
-            = link_to url_for(action: "index", sort_column: column, sort_direction: new_direction), class: "sortable", id: column do
+            = link_to(url_for(action: :index, **SortParams.new(sort_column: column, sort_direction: sort_params.toggle_order_direction).build_params), class: "sortable", id: column) do
               = resource_class.human_attribute_name(column.to_sym)
-            - if is_current_column
+            - if column.to_s == sort_params.order_column.to_s
               %span.sortable-icons
-                - if is_current_asc
-                  = fa_icon "sort-up"
+                - if sort_params.order_direction == SortParams::ORDER_ASCENDING
+                  = fa_icon :"sort-up"
                 - else
-                  = fa_icon "sort-down"
+                  = fa_icon :"sort-down"
   %tbody
     - if local_assigns[:partial]
       = render(partial: partial, collection: resources)

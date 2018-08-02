@@ -2,24 +2,20 @@ require "rails_helper"
 
 RSpec.describe "Contacts" do
   it "can list all contacts" do
-    filtered_contact = create(
-      :contact,
-      account: account,
-      metadata: {
-        "foo" => "bar"
-      }
-    )
+    _matching_contact = create(:contact, account: account, metadata: { "foo" => "bar" })
+    filtered_contact = create(:contact, account: account, metadata: { "foo" => "bar" })
+
     create(:contact, account: account)
     create(:contact)
 
     get(
-      api_contacts_path(q: { "metadata" => { "foo" => "bar" } }),
+      api_contacts_path(q: { "metadata" => { "foo" => "bar" } }, sort: "-id,created_at"),
       headers: build_authorization_headers(access_token: access_token)
     )
 
     expect(response.code).to eq("200")
     parsed_body = JSON.parse(response.body)
-    expect(parsed_body.size).to eq(1)
+    expect(parsed_body.size).to eq(2)
     expect(parsed_body.first.fetch("id")).to eq(filtered_contact.id)
   end
 

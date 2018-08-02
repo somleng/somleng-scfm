@@ -23,18 +23,9 @@ class Contact < ApplicationRecord
   validates :msisdn,
             uniqueness: { scope: :account_id }
 
-  delegate :province, :district, to: :primary_commune, allow_nil: true
-  delegate :id, :name_en, :name_km, to: :primary_commune, prefix: true, allow_nil: true
-  delegate :id, :name_en, :name_km, to: :province, prefix: true, allow_nil: true
-  delegate :id, :name_en, :name_km, to: :district, prefix: true, allow_nil: true
-
   delegate :call_flow_logic,
            to: :account,
            allow_nil: true
-
-  def primary_commune
-    @primary_commune ||= Pumi::Commune.find_by_id(commune_ids&.first)
-  end
 
   def self.has_locations_in(commune_ids)
     where(

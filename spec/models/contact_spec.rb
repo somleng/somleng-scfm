@@ -39,12 +39,4 @@ RSpec.describe Contact do
       expect(contact.metadata.fetch("commune_ids")).to match_array(%w[120101 120102])
     end
   end
-
-  describe "#primary_commune" do
-    it "returns the commune from the commune_id" do
-      contact = build_stubbed(:contact, commune_ids: ["120101"])
-
-      expect(contact.primary_commune.id).to eq("120101")
-    end
-  end
 end

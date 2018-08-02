@@ -16,8 +16,19 @@ km:
         token: API key
       account:
         platform_provider_name: Platform provider
+      callout:
+        trigger_method: បង្កើតដើយ
       phone_call:
         remote_call_id: Remote call sid
+      sensor:
+        commune_ids: Alert communes
+        external_id: External id
+        map_link: Map
+      sensor_rule:
+        alert_file: Alert file
+        level: Level
+      user:
+        province_ids: Provinces
     models:
       access_token:
         one: API key
@@ -57,7 +68,9 @@ km:
         other: អ្នកប្រីប្រាស់
   attributes:
     call_flow_logic: វិធីសាស្រ្តការហៅចេញ
+    commune_ids: ឃុំ
     created_at: បង្កើតនៅពេល
     metadata: ទិន្នន័យបន្ថែម
     msisdn: លេខទូរស័ព​្ទ
+    province_id: ខេត្ត
     status: ស្ថានភាព

@@ -2,6 +2,9 @@
 km:
   activerecord:
     errors:
+      messages:
+        file_size: maximum size is %{size}
+        file_type: can only be an audio file
       models:
         access_token:
           attributes:

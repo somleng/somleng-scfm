@@ -45,10 +45,10 @@ class CalloutParticipation < ApplicationRecord
   end
 
   def self.having_max_phone_calls_count(count)
-    callout_participation_ids = left_outer_joins(:phone_calls).
-                                  group(:id, :"phone_calls.callout_participation_id").
-                                  having("COUNT(phone_calls.callout_participation_id) < ?", count).
-                                  select(:id)
+    callout_participation_ids = left_outer_joins(:phone_calls)
+                                .group(:id, :"phone_calls.callout_participation_id")
+                                .having("COUNT(phone_calls.callout_participation_id) < ?", count)
+                                .select(:id)
 
     where(id: callout_participation_ids)
   end

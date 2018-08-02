@@ -21,7 +21,7 @@ RSpec.describe Dashboard::AccountsController do
     it "renders for :edit" do
       routes.draw { get :edit, to: "dashboard/accounts#edit" }
 
-      user_signed_in
+      admin_signed_in
       get :edit
 
       expect(response.body).to have_selector("a", count: 0)
@@ -32,7 +32,7 @@ RSpec.describe Dashboard::AccountsController do
     it "renders for :patch" do
       routes.draw { patch :update, to: "dashboard/accounts#update" }
 
-      user_signed_in
+      admin_signed_in
       patch :update
 
       expect(response.body).to have_selector("a", count: 0)

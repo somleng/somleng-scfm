@@ -9,7 +9,6 @@ RSpec.describe Contact do
     super.scoped_to(:account_id)
   end
 
-  include_examples "has_metadata"
   it_behaves_like "has_msisdn"
 
   describe "associations" do
@@ -22,5 +21,22 @@ RSpec.describe Contact do
 
   describe "delegations" do
     it { is_expected.to delegate_method(:call_flow_logic).to(:account) }
+  end
+
+  describe "validations" do
+    it "normalizes the commune ids" do
+      contact = build_stubbed(:contact)
+      contact.metadata["commune_ids"] = %w[120101 120102]
+
+      contact.valid?
+
+      expect(contact.metadata.fetch("commune_ids")).to match_array(%w[120101 120102])
+
+      contact.metadata["commune_ids"] = "120101  120102"
+
+      contact.valid?
+
+      expect(contact.metadata.fetch("commune_ids")).to match_array(%w[120101 120102])
+    end
   end
 end

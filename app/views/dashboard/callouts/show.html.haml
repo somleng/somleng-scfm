@@ -8,10 +8,11 @@
   = link_to(translate(:"titles.actions.edit"), edit_dashboard_callout_path(resource), class: 'btn btn-outline-primary')
   = link_to(translate(:"titles.actions.delete"), dashboard_callout_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
 
-- content_for(:related_links) do
-  = related_link_to t(:"titles.batch_operations.index"), dashboard_callout_batch_operations_path(resource)
-  = related_link_to t(:"titles.callout_participations.index"), dashboard_callout_callout_participations_path(resource)
-  = related_link_to t(:"titles.phone_calls.index"), dashboard_callout_phone_calls_path(resource)
+- if current_user.admin?
+  - content_for(:related_links) do
+    = related_link_to t(:"titles.batch_operations.index"), dashboard_callout_batch_operations_path(resource)
+    = related_link_to t(:"titles.callout_participations.index"), dashboard_callout_callout_participations_path(resource)
+    = related_link_to t(:"titles.phone_calls.index"), dashboard_callout_phone_calls_path(resource)
 
 .col
   #callout.card
@@ -25,8 +26,12 @@
         %dt.col-sm-5.col-md-4.text-md-right
           = Callout.human_attribute_name(:status)
         %dd.col-sm-7.col-md-6
-          %code
-            = resource.status.humanize
+          = callout_status_badge(resource)
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Callout.human_attribute_name(:trigger_method)
+        %dd.col-sm-7.col-md-6
+          = callout_trigger_method_badge(resource)
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = Callout.human_attribute_name(:audio_file)
@@ -41,14 +46,31 @@
             = link_to(resource.audio_url, resource.audio_url)
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
+          = Callout.human_attribute_name(:province_id)
+        %dd.col-sm-7.col-md-6
+          %code
+            = location_names(resource.province_id, Pumi::Province)
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Callout.human_attribute_name(:commune_ids)
+        %dd.col-sm-7.col-md-6
+          %code
+            = location_names(resource.commune_ids, Pumi::Commune)
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
           = Callout.human_attribute_name(:call_flow_logic)
         %dd.col-sm-7.col-md-6
           %code
             = translate("simple_form.options.defaults.call_flow_logic.#{resource.call_flow_logic}")
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
+          = Callout.human_attribute_name(:sensor_event)
+        %dd.col-sm-7.col-md-6
+          - if resource.sensor_event_id
+            = link_to(resource.sensor_event_id, dashboard_sensor_event_path(resource.sensor_event_id))
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
           = Callout.human_attribute_name(:created_at)
         %dd.col-sm-7.col-md-6
           %code
             = resource.created_at
-      = render("shared/key_value_attributes", attribute: :metadata)

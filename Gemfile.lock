@@ -12,6 +12,12 @@ GIT
     api-pagination (4.8.1)
 
 GIT
+  remote: https://github.com/dwilkie/pumi.git
+  revision: b07bc7c5a536c2e76dca77db88da81d6903732c4
+  specs:
+    pumi (0.1.0)
+
+GIT
   remote: https://github.com/krisleech/wisper.git
   revision: a73b72b17e5665614f83fffd471bab65c6670e43
   specs:
@@ -127,6 +133,10 @@ GEM
       xpath (~> 3.1)
     childprocess (0.9.0)
       ffi (~> 1.0, >= 1.0.11)
+    chosen-rails (1.8.3)
+      coffee-rails (>= 3.2)
+      railties (>= 3.0)
+      sass-rails (>= 3.2)
     cocoon (1.2.11)
     codecov (0.1.10)
       json
@@ -188,7 +198,7 @@ GEM
       temple (>= 0.8.0)
       tilt
     hashdiff (0.3.7)
-    highline (2.0.0)
+    highline (1.7.10)
     htmlentities (4.3.4)
     i18n (1.0.1)
       concurrent-ruby (~> 1.0)
@@ -343,6 +353,7 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (>= 1.1, < 3)
+    selectize-rails (0.12.4.1)
     selenium-webdriver (3.13.1)
       childprocess (~> 0.5)
       rubyzip (~> 1.2)
@@ -388,7 +399,7 @@ GEM
       thread_safe (~> 0.1)
     uglifier (4.1.17)
       execjs (>= 0.3.0, < 3)
-    unicode-display_width (1.4.0)
+    unicode-display_width (1.3.2)
     url (0.3.2)
     warden (1.2.7)
       rack (>= 1.0)
@@ -421,6 +432,7 @@ DEPENDENCIES
   bootstrap (~> 4.1.1)
   breadcrumbs_on_rails
   capybara
+  chosen-rails
   cocoon
   codecov
   coffee-rails (~> 4.2)
@@ -444,13 +456,14 @@ DEPENDENCIES
   phony
   phony_rails
   pry
-  puma (~> 3.7)
-  rails (~> 5.2.0)
+  puma
+  pumi!
   rails-controller-testing
   record_tag_helper (~> 1.0)
   responders
   rspec-rails
   sass-rails (~> 5.0)
+  selectize-rails
   selenium-webdriver
   sentry-raven
   shoulda-matchers!

@@ -1,11 +1,9 @@
 require "rails_helper"
 
 RSpec.describe "Locales" do
-  let(:user) { create(:user) }
+  let(:user) { create(:admin) }
 
   it "can update the user's preferred language" do
-    user = create(:user)
-
     sign_in(user)
     visit dashboard_root_path
 

@@ -14,7 +14,6 @@ km:
     labels:
       account:
         call_flow_logic: Default call flow logic
-    'no': 'No'
     options:
       access_token:
         permissions:
@@ -34,16 +33,31 @@ km:
           phone_calls_write: Write phone calls
           remote_phone_call_events_read: Read remote phone call events
           remote_phone_call_events_write: Write remote phone call events
+          sensor_events_read: Read sensor events
+          sensor_events_write: Write sensor events
+          sensor_rules_read: Read sensor rules
+          sensor_rules_write: Write sensor rules
+          sensors_read: Read sensors
+          sensors_write: Write sensors
           users_read: Read users
           users_write: Write users
       account:
         platform_provider_name:
           somleng: Somleng
           twilio: Twilio
+      callout:
+        trigger_method:
+          manual: Manual
+          sensor_event: Sensor Event
       defaults:
         call_flow_logic:
           CallFlowLogic::HelloWorld: Hello World
-          CallFlowLogic::PlayMessage: Play Message
+          CallFlowLogic::PlayMessage: Emergency Message
+    prompts:
+      defaults:
+        commune_id: Select a commune
+        district_id: Select a district
+        province_id: Select a province
     required:
       mark: "*"
       text: required

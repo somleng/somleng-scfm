@@ -2,7 +2,6 @@ require "rails_helper"
 
 RSpec.describe Callout do
   let(:factory) { :callout }
-  include_examples "has_metadata"
   include_examples "has_call_flow_logic"
 
   describe "associations" do
@@ -12,6 +11,7 @@ RSpec.describe Callout do
 
   describe "validations" do
     it { is_expected.to validate_presence_of(:status) }
+    it { is_expected.to validate_presence_of(:audio_file) }
 
     context "#audio_file" do
       it "validates the content type" do
@@ -32,12 +32,25 @@ RSpec.describe Callout do
         callout = build(:callout, audio_file: "test.mp3")
         expect(callout).to be_valid
       end
+    end
 
-      it "allows no audio files" do
-        callout = build(:callout)
+    it "validates the province is permitted" do
+      user = create(:user, province_ids: %w[11 12])
+      callout = build(
+        :callout,
+        account: user.account,
+        created_by: user,
+        commune_ids: ["020101"]
+      )
 
-        expect(callout).to be_valid
-      end
+      expect(callout).not_to be_valid
+      expect(callout.errors[:commune_ids]).not_to be_empty
+
+      user.province_ids = nil
+      expect(callout).to be_valid
+
+      callout.created_by = nil
+      expect(callout).to be_valid
     end
   end
 
@@ -68,6 +81,16 @@ RSpec.describe Callout do
       callout = Callout.find(callout.id)
 
       expect(callout.audio_file_blob_changed?).to eq(false)
+    end
+
+    context "province_permitted" do
+      it "when created_by present, province must be in created_by provinces" do
+        user = create(:user, province_ids: ["01"])
+        callout = build(:callout, created_by: user, commune_ids: ["020101"])
+
+        expect(callout.valid?).to eq false
+        expect(callout.errors[:commune_ids]).not_to eq nil
+      end
     end
   end
 
@@ -120,6 +143,18 @@ RSpec.describe Callout do
           it { assert_transitions! }
         end
       end
+    end
+  end
+
+  describe "#trigger_method" do
+    context "the callout is triggered by a sensor event" do
+      subject { build_stubbed(:callout, sensor_event: build_stubbed(:sensor_event)) }
+      it { expect(subject.trigger_method).to eq(:sensor_event) }
+    end
+
+    context "the callout was created manually" do
+      subject { build_stubbed(:callout) }
+      it { expect(subject.trigger_method).to eq(:manual) }
     end
   end
 end

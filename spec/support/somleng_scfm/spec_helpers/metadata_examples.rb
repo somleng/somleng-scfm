@@ -1,6 +1,6 @@
 RSpec.shared_examples_for "has_metadata" do
   describe "validations" do
-    subject { build(factory) }
+    subject { build_stubbed(factory) }
 
     it "validates metadata is a hash" do
       is_expected.not_to allow_value("foo").for(:metadata)
@@ -13,7 +13,7 @@ RSpec.shared_examples_for "has_metadata" do
 
   describe "#metadata" do
     subject { create(factory, metadata: {}) }
-    it { expect(subject.metadata).to eq({}) }
+    it { expect(subject.metadata).to include({}) }
   end
 
   describe "#metadata=(value)" do

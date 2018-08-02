@@ -4,18 +4,34 @@
       .card-body
         %ul.nav.flex-column
           %li.nav-item
-            = nav_link(translate(:"titles.access_tokens.index"), dashboard_access_tokens_path, controller: "access_tokens", icon: :key)
-          %li.nav-item
-            = nav_link(translate(:"titles.batch_operations.index"), dashboard_batch_operations_path, controller: "batch_operations", icon: :tasks)
+            = nav_link(translate(:"titles.callouts.new"), new_dashboard_callout_path, icon: :microphone)
           %li.nav-item
             = nav_link(translate(:"titles.callouts.index"), dashboard_callouts_path, controller: "callouts", icon: :bullhorn)
-          %li.nav-item
-            = nav_link(translate(:"titles.callout_participations.index"), dashboard_callout_participations_path, controller: "callout_participations", icon: "list-ol")
-          %li.nav-item
-            = nav_link(translate(:"titles.contacts.index"), dashboard_contacts_path, controller: "contacts", icon: "address-book")
-          %li.nav-item
-            = nav_link(translate(:"titles.phone_calls.index"), dashboard_phone_calls_path, controller: "phone_calls", icon: "phone-square")
-          %li.nav-item
-            = nav_link(translate(:"titles.remote_phone_call_events.index"), dashboard_remote_phone_call_events_path, controller: "remote_phone_call_events", icon: "info-circle")
-          %li.nav-item
-            = nav_link(translate(:"titles.users.index"), dashboard_users_path, controller: "users", icon: :users)
+    - if current_user.admin?
+      #admin_nav.card
+        .card-header
+          %h5.mb-0
+            .btn.btn-default.text-muted
+              = translate(:"titles.admin_management")
+        .card-body
+          %ul.nav.flex-column
+            %li.nav-item
+              = nav_link(translate(:"titles.access_tokens.index"), dashboard_access_tokens_path, controller: "access_tokens", icon: :key)
+            %li.nav-item
+              = nav_link(translate(:"titles.batch_operations.index"), dashboard_batch_operations_path, controller: "batch_operations", icon: :tasks)
+            %li.nav-item
+              = nav_link(translate(:"titles.callout_participations.index"), dashboard_callout_participations_path, controller: "callout_participations", icon: "list-ol")
+            %li.nav-item
+              = nav_link(translate(:"titles.contacts.index"), dashboard_contacts_path, controller: "contacts", icon: "address-book")
+            %li.nav-item
+              = nav_link(translate(:"titles.phone_calls.index"), dashboard_phone_calls_path, controller: "phone_calls", icon: "phone-square")
+            %li.nav-item
+              = nav_link(translate(:"titles.remote_phone_call_events.index"), dashboard_remote_phone_call_events_path, controller: "remote_phone_call_events", icon: "info-circle")
+            %li.nav-item
+              = nav_link(translate(:"titles.sensors.index"), dashboard_sensors_path, controller_names: "sensors", icon: :microchip)
+            %li.nav-item
+              = nav_link(translate(:"titles.sensor_events.index"), dashboard_sensor_events_path, controller_names: "sensor_events", icon: :tint)
+            %li.nav-item
+              = nav_link(translate(:"titles.sensor_rules.index"), dashboard_sensor_rules_path, controller_names: "sensor_rules", icon: :list)
+            %li.nav-item
+              = nav_link(translate(:"titles.users.index"), dashboard_users_path, controller: "users", icon: :users)

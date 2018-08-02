@@ -22,6 +22,12 @@ class AccessToken < Doorkeeper::AccessToken
     remote_phone_call_events_write
     users_read
     users_write
+    sensors_read
+    sensors_write
+    sensor_events_read
+    sensor_events_write
+    sensor_rules_read
+    sensor_rules_write
   ].freeze
 
   include TimestampQueryHelpers

@@ -1,0 +1,5 @@
+= content_tag_for(:tr, sensor_event) do
+  %td
+    = link_to(sensor_event.id, show_location(sensor_event))
+  %td
+    = sensor_event.created_at

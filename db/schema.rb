@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_06_18_023959) do
+ActiveRecord::Schema.define(version: 2018_07_13_012005) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,7 +91,9 @@ ActiveRecord::Schema.define(version: 2018_06_18_023959) do
     t.datetime "updated_at", null: false
     t.bigint "account_id", null: false
     t.string "audio_url"
+    t.bigint "sensor_event_id"
     t.index ["account_id"], name: "index_callouts_on_account_id"
+    t.index ["sensor_event_id"], name: "index_callouts_on_sensor_event_id"
   end
 
   create_table "contacts", force: :cascade do |t|
@@ -192,6 +194,37 @@ ActiveRecord::Schema.define(version: 2018_06_18_023959) do
     t.index ["phone_call_id"], name: "index_remote_phone_call_events_on_phone_call_id"
   end
 
+  create_table "sensor_events", force: :cascade do |t|
+    t.bigint "sensor_id", null: false
+    t.bigint "sensor_rule_id"
+    t.jsonb "payload", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["sensor_id"], name: "index_sensor_events_on_sensor_id"
+    t.index ["sensor_rule_id"], name: "index_sensor_events_on_sensor_rule_id"
+  end
+
+  create_table "sensor_rules", force: :cascade do |t|
+    t.bigint "sensor_id", null: false
+    t.jsonb "metadata", default: {}, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "level", null: false
+    t.datetime "last_run_at"
+    t.index ["level"], name: "index_sensor_rules_on_level"
+    t.index ["sensor_id"], name: "index_sensor_rules_on_sensor_id"
+  end
+
+  create_table "sensors", force: :cascade do |t|
+    t.jsonb "metadata", default: {}, null: false
+    t.bigint "account_id", null: false
+    t.string "external_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id", "external_id"], name: "index_sensors_on_account_id_and_external_id", unique: true
+    t.index ["account_id"], name: "index_sensors_on_account_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.bigint "account_id", null: false
     t.jsonb "metadata", default: {}, null: false
@@ -221,6 +254,7 @@ ActiveRecord::Schema.define(version: 2018_06_18_023959) do
     t.integer "invitation_limit"
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0
+    t.integer "roles", default: 1, null: false
     t.string "locale", default: "en", null: false
     t.index ["account_id"], name: "index_users_on_account_id"
     t.index ["email"], name: "index_users_on_email", unique: true
@@ -236,6 +270,7 @@ ActiveRecord::Schema.define(version: 2018_06_18_023959) do
   add_foreign_key "callout_participations", "callouts"
   add_foreign_key "callout_participations", "contacts"
   add_foreign_key "callouts", "accounts"
+  add_foreign_key "callouts", "sensor_events"
   add_foreign_key "contacts", "accounts"
   add_foreign_key "oauth_access_grants", "accounts", column: "resource_owner_id"
   add_foreign_key "oauth_access_grants", "oauth_applications", column: "application_id"
@@ -249,6 +284,10 @@ ActiveRecord::Schema.define(version: 2018_06_18_023959) do
   add_foreign_key "phone_calls", "callout_participations"
   add_foreign_key "phone_calls", "contacts"
   add_foreign_key "remote_phone_call_events", "phone_calls"
+  add_foreign_key "sensor_events", "sensor_rules"
+  add_foreign_key "sensor_events", "sensors"
+  add_foreign_key "sensor_rules", "sensors"
+  add_foreign_key "sensors", "accounts"
   add_foreign_key "users", "accounts"
   add_foreign_key "users", "users", column: "invited_by_id"
 end

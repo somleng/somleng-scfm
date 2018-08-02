@@ -1,0 +1,37 @@
+- content_for(:page_actions) do
+  = link_to(translate(:"titles.actions.edit"), edit_dashboard_sensor_rule_path(resource), class: 'btn btn-outline-primary')
+  = link_to(translate(:"titles.actions.delete"), dashboard_sensor_rule_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+
+- content_for(:related_links) do
+  = related_link_to t(:"titles.sensor_events.index"), dashboard_sensor_rule_sensor_events_path(resource)
+
+.col-lg-10.col-xl-8
+  #sensor.card
+    .card-body
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right #
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.id
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = resource.class.human_attribute_name(:sensor)
+        %dd.col-sm-7.col-md-6
+          = link_to(resource.sensor.id, dashboard_sensor_path(resource.sensor))
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = resource.class.human_attribute_name(:level)
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.level
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = resource.class.human_attribute_name(:alert_file)
+        %dd.col-sm-7.col-md-6
+          = link_to(resource.alert_file.blob.filename, url_for(resource.alert_file))
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = resource.class.human_attribute_name(:created_at)
+        %dd.col-sm-7.col-md-6
+          %code
+            = resource.created_at

@@ -2,6 +2,11 @@
   %td
     = link_to(callout.id, show_location(callout))
   %td
-    = callout.status.humanize
+    = callout_status_badge(callout)
+  %td
+    = callout_trigger_method_badge(callout)
+  %td
+    %code
+      = location_names(callout.province_id, Pumi::Province)
   %td
     = callout.created_at

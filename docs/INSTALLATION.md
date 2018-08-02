@@ -33,7 +33,6 @@ Note that this command exposes port 3000 to your host. You should now see SCFM b
 
 The next need to do is create the database and setup a Super Admin account. Go ahead and run the following commands in the first terminal:
 
-    docker-compose exec somleng-scfm /bin/bash -c 'bundle install'
     docker-compose exec somleng-scfm /bin/bash -c './bin/rails db:setup'
     SUPER_ADMIN_ACCESS_TOKEN=$(docker-compose run --rm -e CREATE_SUPER_ADMIN_ACCOUNT=1 -e OUTPUT=super_admin -e FORMAT=http_basic somleng-scfm /bin/bash -c './bin/rails db:seed')
     echo $SUPER_ADMIN_ACCESS_TOKEN
@@ -70,6 +69,6 @@ Now that we our user account and access token, let's go ahead and create a user 
 
 Run the following command:
 
-    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/users -d "email=somleng@example.com" -d "password=secret1234" -u $ACCESS_TOKEN: | jq'
+    $ docker-compose run --rm -e ACCESS_TOKEN=$ACCESS_TOKEN curl /bin/sh -c 'curl -s -XPOST http://somleng-scfm:3000/api/users -d "email=tiadmin@peopleinneed.cz" -d "password=secret1234" -u $ACCESS_TOKEN: | jq'
 
 You should be able to now sign in at <http://localhost:3000> with the email and password that you used in the request above.

@@ -144,6 +144,7 @@ GEM
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     crass (1.0.4)
+    deepl-rb (2.1.0)
     devise (4.4.3)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
@@ -192,9 +193,10 @@ GEM
     htmlentities (4.3.4)
     i18n (1.0.1)
       concurrent-ruby (~> 1.0)
-    i18n-tasks (0.9.21)
+    i18n-tasks (0.9.22)
       activesupport (>= 4.0.2)
       ast (>= 2.1.0)
+      deepl-rb (>= 2.1.0)
       easy_translate (>= 0.5.1)
       erubi
       highline (>= 1.7.3)
@@ -258,7 +260,7 @@ GEM
       rails
     okcomputer (1.17.2)
     orm_adapter (0.5.0)
-    parser (2.5.1.0)
+    parser (2.5.1.2)
       ast (~> 2.4.0)
     pg (1.0.0)
     phony (2.16.4)

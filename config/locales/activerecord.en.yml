@@ -2,6 +2,14 @@
 en:
   activemodel:
     attributes:
+      callout_summary:
+        busy_calls: Busy calls
+        completed_calls: Completed calls
+        errored_calls: Errored calls
+        failed_calls: Failed calls
+        not_answered_calls: Not answered calls
+        participations: Participants
+        participations_still_to_be_called: Participants still to be called
       key_value_field:
         key: Key
         value: Value

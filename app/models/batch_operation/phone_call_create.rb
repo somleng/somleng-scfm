@@ -54,6 +54,6 @@ class BatchOperation::PhoneCallCreate < BatchOperation::PhoneCallOperation
   end
 
   def batch_operation_account_settings_param
-    "batch_operation_phone_call_create_parameters"
+    Filter::Params::CalloutParticipation::ACCOUNT_SETTINGS_KEY
   end
 end

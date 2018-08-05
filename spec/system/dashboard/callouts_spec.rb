@@ -168,6 +168,18 @@ RSpec.describe "Callouts", :aggregate_failures do
       expect(page).to have_content("location:country")
       expect(page).to have_content("Cambodia")
     end
+
+    within("#callout_summary") do
+      expect(page).to have_content("Callout Summary")
+      expect(page).to have_link("Refresh", href: dashboard_callout_path(callout))
+      expect(page).to have_content("Participants")
+      expect(page).to have_content("Participants still to be called")
+      expect(page).to have_content("Completed calls")
+      expect(page).to have_content("Busy calls")
+      expect(page).to have_content("Not answered calls")
+      expect(page).to have_content("Failed calls")
+      expect(page).to have_content("Errored calls")
+    end
   end
 
   it "can perform actions on callouts" do

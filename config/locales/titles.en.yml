@@ -23,6 +23,7 @@ en:
       delete: Delete
       edit: Edit
       preview: Preview
+      refresh: Refresh
       update: Edit
     app_name: Somleng SCFM
     batch_operations:
@@ -48,6 +49,7 @@ en:
       show: Callout %{id}
       start_callout: Start Callout
       stop_callout: Stop Callout
+      summary: Callout Summary
       update: Edit Callout
     contacts:
       create: New Contact

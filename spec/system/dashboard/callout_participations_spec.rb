@@ -18,18 +18,6 @@ RSpec.describe "Callout Participations" do
 
     expect(page).to have_title("Callout Participations")
 
-    within("#filters") do
-      expect(page).to have_link(
-        "All",
-        href: dashboard_callout_participations_path
-      )
-
-      expect(page).to have_link(
-        "Still to be called",
-        href: dashboard_callout_participations_path
-      )
-    end
-
     within("#resources") do
       expect(page).to have_content_tag_for(callout_participation)
       expect(page).not_to have_content_tag_for(other_callout_participation)

@@ -1,6 +1,4 @@
 ---
 km:
   filters:
-    account_defaults:
-      batch_operation_create_phone_calls_default_filter: Still to be called
     all: ទាំងអស់

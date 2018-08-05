@@ -1,4 +1,6 @@
 class Dashboard::CalloutsController < Dashboard::BaseController
+  helper_method :callout_summary
+
   private
 
   def association_chain
@@ -24,5 +26,9 @@ class Dashboard::CalloutsController < Dashboard::BaseController
 
   def prepare_resource_for_create
     resource.subscribe(CalloutObserver.new)
+  end
+
+  def callout_summary
+    @callout_summary ||= CalloutSummary.new(resource)
   end
 end

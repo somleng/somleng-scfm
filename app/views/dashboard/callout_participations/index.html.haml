@@ -1,7 +1,3 @@
-- content_for(:resources_filter) do
-  = link_to(translate(:"filters.all"), {}, class: "dropdown-item")
-  = link_to(translate(:"filters.account_defaults.batch_operation_create_phone_calls_default_filter"), {:q => batch_operation_create_phone_calls_default_filter_params}.compact, class: "dropdown-item")
-
 - content_for(:resources_table) do
   = render("shared/resources_table", resource_class: CalloutParticipation, columns: [:contact_id, :callout_id, :created_at])
 

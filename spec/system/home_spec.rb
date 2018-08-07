@@ -12,6 +12,16 @@ RSpec.describe "home" do
     within("#top_nav") do
       expect(page).to have_link("About Us", href: "#")
       expect(page).to have_link("Contact", href: "#")
+      expect(page).to have_link("Sign In", href: new_user_session_path)
+    end
+  end
+
+  it "has dashboard links when user signed in" do
+    user = create(:user)
+    sign_in(user)
+    visit(root_path)
+
+    within("#top_nav") do
       expect(page).to have_link("Dashboard", href: dashboard_root_path)
     end
   end

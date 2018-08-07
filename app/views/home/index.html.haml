@@ -4,12 +4,10 @@
       %h5
         = translate(:"titles.app_name")
   %nav#top_nav.my-2.my-md-0.mr-md-3
-    %a.p-2.text-dark{:href => "#"} About Us
-    %a.p-2.text-dark{:href => "#"} Contact
-    - if user_signed_in?
-      %a.p-2.text-dark{ href: dashboard_root_path } Dashboard
-    - else
-      %a.p-2.text-dark{ href: new_user_session_path } Sign In
+    = link_to "About Us", "#", class: "p-2 text-dark"
+    = link_to "Contact", "#", class: "p-2 text-dark"
+    = link_to_if(user_signed_in?, "Dashboard", dashboard_root_path, class: "p-2 text-dark") do
+      = link_to "Sign In", new_user_session_path, class: "p-2 text-dark"
 = render 'shared/flash_messages'
 .pricing-header.px-3.py-3.pt-md-5.pb-md-4.mx-auto.text-center
   %h1.display-4 Simple Call Flow Manager For Somleng

@@ -38,7 +38,7 @@ FactoryBot.define do
     account
 
     transient do
-      audio_file nil
+      audio_file { nil }
     end
 
     after(:build) do |callout, evaluator|
@@ -57,7 +57,7 @@ FactoryBot.define do
     end
 
     trait :can_stop do
-      status "running"
+      status { "running" }
     end
 
     trait :can_pause do
@@ -65,11 +65,11 @@ FactoryBot.define do
     end
 
     trait :can_resume do
-      status "paused"
+      status { "paused" }
     end
 
     trait :running do
-      status Callout::STATE_RUNNING
+      status { Callout::STATE_RUNNING }
     end
   end
 
@@ -119,7 +119,7 @@ FactoryBot.define do
     end
 
     trait :inbound do
-      callout_participation nil
+      callout_participation { nil }
       remote_request_params { {} }
       msisdn { generate(:somali_msisdn) }
       remote_direction { PhoneCall::TWILIO_DIRECTIONS[:inbound] }
@@ -128,7 +128,7 @@ FactoryBot.define do
 
   factory :remote_phone_call_event do
     transient do
-      build_phone_call true
+      build_phone_call { true }
     end
 
     details { generate(:twilio_remote_call_event_details) }
@@ -154,20 +154,20 @@ FactoryBot.define do
     end
 
     trait :with_twilio_provider do
-      platform_provider_name "twilio"
+      platform_provider_name { "twilio" }
       twilio_account_sid
       twilio_auth_token { generate(:auth_token) }
     end
 
     trait :super_admin do
-      permissions [:super_admin]
+      permissions { [:super_admin] }
     end
   end
 
   factory :user do
     account
     email
-    password "secret123"
+    password { "secret123" }
     password_confirmation { password }
   end
 

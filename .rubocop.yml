@@ -1,3 +1,5 @@
+require: rubocop-rspec
+
 Style/FrozenStringLiteralComment:
   Enabled: false
 

@@ -1,6 +1,7 @@
 language: ruby
 cache: bundler
 addons:
+  chrome: stable
   postgresql: '10'
   apt:
     packages:
@@ -12,11 +13,6 @@ env:
     - PGPORT=5433
     - CC_TEST_REPORTER_ID=d99f01c52006e27c30fcd5f4f2840fa04597d4eca56cbbc36a9f795d8466ee3f
 before_install:
-  - wget http://chromedriver.storage.googleapis.com/2.35/chromedriver_linux64.zip
-  - unzip chromedriver_linux64.zip
-  - rm chromedriver_linux64.zip
-  - sudo mv -f chromedriver /usr/local/bin/
-  - sudo chmod +x /usr/local/bin/chromedriver
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
   - gem install bundler

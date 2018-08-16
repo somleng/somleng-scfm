@@ -42,6 +42,8 @@ group :development, :test do
   gem "i18n-tasks"
   gem "pry"
   gem "rspec-rails"
+  gem "rubocop"
+  gem "rubocop-rspec"
 end
 
 group :development do

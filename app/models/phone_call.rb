@@ -38,6 +38,7 @@ class PhoneCall < ApplicationRecord
   include MsisdnHelpers
   include HasCallFlowLogic
 
+  validates :callout_participation_id, uniqueness: { scope: :status }, if: :created?
   validates :remote_call_id, uniqueness: { case_sensitive: false, allow_nil: true }
   validates :status, presence: true
   validates :callout_participation, presence: true, unless: :inbound?

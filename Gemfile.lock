@@ -86,6 +86,8 @@ GEM
       tzinfo (~> 1.1)
     addressable (2.5.2)
       public_suffix (>= 2.0.2, < 4.0)
+    archive-zip (0.11.0)
+      io-like (~> 0.3.0)
     arel (9.0.0)
     ast (2.4.0)
     autoprefixer-rails (9.0.0)
@@ -127,6 +129,9 @@ GEM
       xpath (~> 3.1)
     childprocess (0.9.0)
       ffi (~> 1.0, >= 1.0.11)
+    chromedriver-helper (1.2.0)
+      archive-zip (~> 0.10)
+      nokogiri (~> 1.8)
     cocoon (1.2.11)
     codecov (0.1.10)
       json
@@ -204,6 +209,8 @@ GEM
       parser (>= 2.2.3.0)
       rainbow (>= 2.2.2, < 4.0)
       terminal-table (>= 1.5.1)
+    io-like (0.3.0)
+    jaro_winkler (1.5.1)
     jbuilder (2.7.0)
       activesupport (>= 4.2.0)
       multi_json (>= 1.2)
@@ -260,6 +267,7 @@ GEM
       rails
     okcomputer (1.17.2)
     orm_adapter (0.5.0)
+    parallel (1.12.1)
     parser (2.5.1.2)
       ast (~> 2.4.0)
     pg (1.0.0)
@@ -268,6 +276,7 @@ GEM
       activesupport (>= 3.0)
       phony (> 2.15)
     popper_js (1.12.9)
+    powerpack (0.1.2)
     pry (0.11.3)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
@@ -331,6 +340,17 @@ GEM
       rspec-mocks (~> 3.8.0)
       rspec-support (~> 3.8.0)
     rspec-support (3.8.0)
+    rubocop (0.58.2)
+      jaro_winkler (~> 1.5.1)
+      parallel (~> 1.10)
+      parser (>= 2.5, != 2.5.1.1)
+      powerpack (~> 0.1)
+      rainbow (>= 2.2.2, < 4.0)
+      ruby-progressbar (~> 1.7)
+      unicode-display_width (~> 1.0, >= 1.0.1)
+    rubocop-rspec (1.28.0)
+      rubocop (>= 0.58.0)
+    ruby-progressbar (1.10.0)
     ruby_dep (1.5.0)
     rubyzip (1.2.1)
     safe_yaml (1.0.4)
@@ -423,6 +443,7 @@ DEPENDENCIES
   bootstrap (~> 4.1.1)
   breadcrumbs_on_rails
   capybara
+  chromedriver-helper
   cocoon
   codecov
   coffee-rails (~> 4.2)
@@ -452,6 +473,8 @@ DEPENDENCIES
   record_tag_helper (~> 1.0)
   responders
   rspec-rails
+  rubocop
+  rubocop-rspec
   sass-rails (~> 5.0)
   selenium-webdriver
   sentry-raven

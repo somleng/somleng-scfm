@@ -38,6 +38,43 @@ RSpec.describe PhoneCall do
         it { is_expected.not_to be_valid }
       end
 
+      it "prevents duplicate phone calls from being created" do
+        account = create(:account)
+        callout_participation = create_callout_participation(account: account)
+        _existing_created_phone_call = create_phone_call(
+          account: account,
+          callout_participation: callout_participation,
+          status: PhoneCall::STATE_CREATED
+        )
+
+        phone_call = build(
+          :phone_call,
+          callout_participation: callout_participation,
+          status: PhoneCall::STATE_CREATED
+        )
+
+        expect(phone_call).to be_invalid
+        expect(phone_call.errors[:callout_participation_id]).to be_present
+      end
+
+      it "allows multiple phone calls for the one callout participation" do
+        account = create(:account)
+        callout_participation = create_callout_participation(account: account)
+        _existing_failed_phone_call = create_phone_call(
+          account: account,
+          callout_participation: callout_participation,
+          status: PhoneCall::STATE_FAILED
+        )
+
+        phone_call = build(
+          :phone_call,
+          callout_participation: callout_participation,
+          status: PhoneCall::STATE_CREATED
+        )
+
+        expect(phone_call).to be_valid
+      end
+
       it { assert_validations! }
     end
 

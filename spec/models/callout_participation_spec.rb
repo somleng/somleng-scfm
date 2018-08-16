@@ -151,8 +151,17 @@ RSpec.describe CalloutParticipation do
       empty_phone_calls_callout_participation = create(:callout_participation)
       less_than_max_phone_calls_callout_participation = create(:callout_participation)
       more_than_max_phone_calls_callout_participation = create(:callout_participation)
-      create(:phone_call, callout_participation: less_than_max_phone_calls_callout_participation)
-      create_list(:phone_call, max_phone_calls, callout_participation: more_than_max_phone_calls_callout_participation)
+      create(
+        :phone_call,
+        callout_participation: less_than_max_phone_calls_callout_participation,
+        status: PhoneCall::STATE_FAILED
+      )
+      create_list(
+        :phone_call,
+        max_phone_calls,
+        callout_participation: more_than_max_phone_calls_callout_participation,
+        status: PhoneCall::STATE_FAILED
+      )
 
       results = described_class.having_max_phone_calls_count(max_phone_calls)
 

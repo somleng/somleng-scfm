@@ -54,6 +54,7 @@ end
 
 group :test do
   gem "capybara"
+  gem "chromedriver-helper"
   gem "codecov", require: false
   gem "email_spec"
   gem "factory_bot_rails"

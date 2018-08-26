@@ -1,4 +1,6 @@
 language: ruby
+dist: trusty
+sudo: false
 cache: bundler
 addons:
   chrome: stable
@@ -7,6 +9,8 @@ addons:
     packages:
       - postgresql-10
       - postgresql-client-10
+services:
+  - postgresql
 env:
   global:
     - AWS_REGION=ap-southeast-1
@@ -15,7 +19,6 @@ env:
 before_install:
   - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
   - chmod +x ./cc-test-reporter
-  - gem install bundler
 before_script:
   - google-chrome-stable --headless --disable-gpu --no-sandbox
   - psql -c 'create database somleng_scfm_test;' -U travis

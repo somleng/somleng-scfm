@@ -254,10 +254,10 @@ GEM
     nio4r (2.3.1)
     nokogiri (1.8.4)
       mini_portile2 (~> 2.3.0)
-    octicons (8.0.0)
+    octicons (8.1.0)
       nokogiri (>= 1.6.3.1)
-    octicons_helper (8.0.0)
-      octicons (= 8.0.0)
+    octicons_helper (8.1.0)
+      octicons (= 8.1.0)
       rails
     okcomputer (1.17.2)
     orm_adapter (0.5.0)

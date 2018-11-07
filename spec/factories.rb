@@ -84,6 +84,10 @@ FactoryBot.define do
     trait :preview do
     end
 
+    trait :queued do
+      status { BatchOperation::Base::STATE_QUEUED }
+    end
+
     factory :callout_population, aliases: [:batch_operation], class: BatchOperation::CalloutPopulation do
       after(:build) do |callout_population|
         callout_population.callout ||= build(:callout, account: callout_population.account)

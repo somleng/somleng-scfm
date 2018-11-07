@@ -3,7 +3,7 @@ default: &default
   mailer_sender: "support@somleng.org"
   secret_key_base: "<%= Rails.application.credentials.secret_key_base %>"
 
-production:
+production: &production
   <<: *default
   default_queue_url: <%= ENV["DEFAULT_QUEUE_URL"] %>
   default_url_host: <%= ENV["DEFAULT_URL_HOST"] %>
@@ -26,7 +26,7 @@ production:
   smtp_address: "email-smtp.us-east-1.amazonaws.com"
 
 development: &development
-  <<: *default
+  <<: *production
   default_queue_url: "https://example.com/path/to/queue_name"
   default_url_host: "localhost:3000"
   audio_bucket: "audio.example.com"

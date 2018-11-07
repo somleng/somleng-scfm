@@ -4,58 +4,51 @@ RSpec.describe AccessToken do
   let(:factory) { :access_token }
   include_examples "has_metadata"
 
-  describe "associations" do
-    def assert_associations!
-      is_expected.to belong_to(:resource_owner)
-      is_expected.to belong_to(:created_by)
-    end
-
-    it { assert_associations! }
-  end
-
   describe "destroying" do
-    let(:creator) { create(:account) }
-    let(:destroyer_traits) { {} }
-    let(:destroyer) { create(:account, *destroyer_traits.keys) }
-    let(:factory_attributes) { { destroyer: destroyer, created_by: creator } }
-    subject { create(factory, factory_attributes) }
+    it "allows an unknown user to delete an access token" do
+      access_token = create(:access_token)
 
-    def setup_scenario
-      super
-      subject.destroy
+      access_token.destroy
+
+      expect(AccessToken.find_by_id(access_token.id)).to eq(nil)
     end
 
-    def assert_destroy!
-      expect(described_class.find_by_id(subject.id)).to eq(nil)
+    it "allows the creator user to delete their own access token" do
+      creator = create(:account)
+      access_token = create(:access_token, created_by: creator)
+      access_token.destroyer = creator
+
+      access_token.destroy
+
+      expect(AccessToken.find_by_id(access_token.id)).to eq(nil)
     end
 
-    context "no destroyer" do
-      let(:destroyer) { nil }
-      it { assert_destroy! }
+    it "allows a super admin to delete an access token" do
+      creator = create(:account)
+      super_admin = create(:account, :super_admin)
+      access_token = create(:access_token, created_by: creator)
+      access_token.destroyer = super_admin
+
+      access_token.destroy
+
+      expect(AccessToken.find_by_id(access_token.id)).to eq(nil)
     end
 
-    context "destoyer is creator" do
-      let(:destroyer) { creator }
-      it { assert_destroy! }
-    end
+    it "does not allow another user to destroy an access token" do
+      creator = create(:account)
+      destroyer = create(:account)
+      access_token = create(:access_token, created_by: creator)
+      access_token.destroyer = destroyer
 
-    context "destroyer is super admin" do
-      let(:destroyer_traits) { super().merge(super_admin: nil) }
-      it { assert_destroy! }
-    end
+      access_token.destroy
 
-    context "not allowed to destroy" do
-      it {
-        expect(described_class.find_by_id(subject.id)).to be_present
-        expect(subject.errors[:base]).not_to be_empty
-        expect(
-          subject.errors[:base].first
-        ).to eq(
-          I18n.t!(
-            "activerecord.errors.models.access_token.attributes.base.restrict_destroy_status"
-          )
+      expect(access_token).to be_present
+      expect(access_token.errors[:base]).to be_present
+      expect(access_token.errors[:base].first).to eq(
+        I18n.t!(
+          "activerecord.errors.models.access_token.attributes.base.restrict_destroy_status"
         )
-      }
+      )
     end
   end
 

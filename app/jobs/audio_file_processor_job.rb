@@ -24,7 +24,7 @@ class AudioFileProcessorJob < ApplicationJob
   private
 
   def audio_bucket
-    Rails.application.secrets.fetch(:audio_bucket)
+    Rails.configuration.scfm.fetch("audio_bucket")
   end
 
   def generate_object_uuid

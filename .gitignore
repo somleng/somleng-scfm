@@ -30,3 +30,4 @@ vendor/ruby
 !.elasticbeanstalk/*.global.yml
 
 examples.txt
+master.key

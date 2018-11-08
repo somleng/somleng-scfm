@@ -128,6 +128,22 @@ FactoryBot.define do
       msisdn { generate(:somali_msisdn) }
       remote_direction { PhoneCall::TWILIO_DIRECTIONS[:inbound] }
     end
+
+    trait :completed do
+      status { PhoneCall::STATE_COMPLETED }
+    end
+
+    trait :failed do
+      status { PhoneCall::STATE_FAILED }
+    end
+
+    trait :remotely_queued do
+      status { PhoneCall::STATE_REMOTELY_QUEUED }
+    end
+
+    trait :queued do
+      status { PhoneCall::STATE_QUEUED }
+    end
   end
 
   factory :remote_phone_call_event do

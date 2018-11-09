@@ -146,7 +146,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
-    concurrent-ruby (1.1.1)
+    concurrent-ruby (1.1.3)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     crass (1.0.4)
@@ -240,7 +240,7 @@ GEM
       nokogiri (>= 1.5.9)
     mail (2.7.1)
       mini_mime (>= 0.1.1)
-    marcel (0.3.2)
+    marcel (0.3.3)
       mimemagic (~> 0.3.2)
     method_source (0.9.1)
     mime-types (3.1)
@@ -467,7 +467,7 @@ DEPENDENCIES
   phony_rails
   pry
   puma (~> 3.7)
-  rails (~> 5.2.0)
+  rails (~> 5.2.1)
   rails-controller-testing
   record_tag_helper (~> 1.0)
   responders
@@ -492,4 +492,4 @@ DEPENDENCIES
   wisper-rspec
 
 BUNDLED WITH
-   1.16.2
+   1.17.1

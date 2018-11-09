@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Filter::Resource::CalloutParticipation do
   include SomlengScfm::SpecHelpers::FilterHelpers
@@ -12,110 +12,80 @@ RSpec.describe Filter::Resource::CalloutParticipation do
     include_examples "timestamp_attribute_filter"
     include_examples(
       "string_attribute_filter",
-      :call_flow_logic => CallFlowLogic::HelloWorld.to_s
+      call_flow_logic: CallFlowLogic::HelloWorld.to_s
     )
 
-    context "filtering" do
-      let(:factory_attributes) { {} }
-      let(:callout_participation) { create(filterable_factory, factory_attributes) }
-      let(:asserted_results) { [callout_participation] }
-      let(:non_matching_callout_participation) { create(filterable_factory) }
+    it "filters by callout_id" do
+      _non_matching_callout_participation = create(:callout_participation)
+      callout = create(:callout)
+      callout_participation = create(:callout_participation, callout: callout)
 
-      def setup_scenario
-        non_matching_callout_participation
-        callout_participation
-      end
+      filter = build_filter(callout_id: callout.id)
 
-      def assert_filter!
-        expect(subject.resources).to match_array(asserted_results)
-      end
-
-      context "filtering by callout_id" do
-        let(:callout) { create(:callout) }
-        let(:factory_attributes) { { :callout => callout } }
-
-        def filter_params
-          super.merge(:callout_id => callout.id)
-        end
-
-        it { assert_filter! }
-      end
-
-      context "filtering by contact_id" do
-        let(:contact) { create(:contact) }
-        let(:factory_attributes) { { :contact => contact } }
-
-        def filter_params
-          super.merge(:contact_id => contact.id)
-        end
-
-        it { assert_filter! }
-      end
-
-      context "filtering by callout_population_id" do
-        let(:callout_population) { create(:callout_population) }
-        let(:factory_attributes) { { :callout_population => callout_population } }
-
-        def filter_params
-          super.merge(:callout_population_id => callout_population.id)
-        end
-
-        it { assert_filter! }
-      end
-
-      context "filtering by has_phone_calls" do
-        def setup_scenario
-          super
-          create(:phone_call, :callout_participation => callout_participation)
-        end
-
-        def filter_params
-          super.merge(:has_phone_calls => "true")
-        end
-
-        it { assert_filter! }
-      end
-
-      context "last_phone_call_attempt" do
-        let(:phone_call) {
-          create(
-            :phone_call,
-            :callout_participation => callout_participation,
-            :status => PhoneCall::STATE_FAILED
-          )
-        }
-
-        def setup_scenario
-          super
-          phone_call
-        end
-
-        context "filtering by last_phone_call_attempt" do
-          def filter_params
-            super.merge(:last_phone_call_attempt => " failed,  errored  ")
-          end
-
-          it { assert_filter! }
-        end
-
-        context "filtering by no_phone_calls_or_last_phone_attempt" do
-          def filter_params
-            super.merge(:no_phone_calls_or_last_attempt => filter_value)
-          end
-
-          context "no phone calls" do
-            let(:filter_value) { "errored" }
-            let(:asserted_results) { [non_matching_callout_participation] }
-            it { assert_filter! }
-          end
-
-          context "last attempt" do
-            let(:filter_value) { "failed" }
-            let(:asserted_results) { [callout_participation, non_matching_callout_participation] }
-            it { assert_filter! }
-          end
-        end
-      end
+      expect(filter.resources).to match_array([callout_participation])
     end
+
+    it "filters by contact_id" do
+      _non_matching_callout_participation = create(:callout_participation)
+      contact = create(:contact)
+      callout_participation = create(:callout_participation, contact: contact)
+
+      filter = build_filter(contact_id: contact.id)
+
+      expect(filter.resources).to match_array([callout_participation])
+    end
+
+    it "filters by callout_population_id" do
+      _non_matching_callout_participation = create(:callout_participation)
+      callout_population = create(:callout_population)
+      callout_participation = create(:callout_participation, callout_population: callout_population)
+
+      filter = build_filter(callout_population_id: callout_population.id)
+
+      expect(filter.resources).to match_array([callout_participation])
+    end
+
+    it "filters by has_phone_calls" do
+      _non_matching_callout_participation = create(:callout_participation)
+      callout_participation = create(:callout_participation)
+      create(:phone_call, callout_participation: callout_participation)
+
+      filter = build_filter(has_phone_calls: "true")
+
+      expect(filter.resources).to match_array([callout_participation])
+    end
+
+    it "filters by last_phone_call_attempt" do
+      _non_matching_callout_participation = create(:callout_participation)
+      callout_participation = create(:callout_participation)
+      create(:phone_call, :failed, callout_participation: callout_participation)
+
+      filter = build_filter(last_phone_call_attempt: " failed,  errored  ")
+
+      expect(filter.resources).to match_array([callout_participation])
+    end
+
+    it "filters by no_phone_calls_or_last_attempt" do
+      callout_participation_with_failed_call = create(:callout_participation)
+      create(:phone_call, :failed, callout_participation: callout_participation_with_failed_call)
+      callout_participation = create(:callout_participation)
+
+      filter = build_filter(no_phone_calls_or_last_attempt: "errored")
+
+      expect(filter.resources).to match_array([callout_participation])
+
+      filter = build_filter(no_phone_calls_or_last_attempt: "failed")
+
+      expect(filter.resources).to match_array(
+        [callout_participation, callout_participation_with_failed_call]
+      )
+    end
+  end
+
+  def build_filter(filter_params = {})
+    described_class.new(
+      { association_chain: CalloutParticipation },
+      filter_params
+    )
   end
 end

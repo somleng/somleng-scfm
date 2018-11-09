@@ -1,66 +1,53 @@
 RSpec.shared_examples_for "has_metadata" do
   describe "validations" do
-    subject { build(factory) }
+    subject { build_stubbed(factory) }
 
-    it "validates metadata is a hash" do
-      is_expected.not_to allow_value("foo").for(:metadata)
-      is_expected.to allow_value("foo" => "bar").for(:metadata)
-      subject.metadata = nil
-      is_expected.not_to be_valid
-      expect(subject.errors[:metadata]).not_to be_empty
-    end
-  end
-
-  describe "#metadata" do
-    subject { create(factory, metadata: {}) }
-    it { expect(subject.metadata).to eq({}) }
+    it { is_expected.not_to allow_value("foo").for(:metadata) }
+    it { is_expected.not_to allow_value(nil).for(:metadata) }
+    it { is_expected.to allow_value("foo" => "bar").for(:metadata) }
   end
 
   describe "#metadata=(value)" do
     let(:existing_metadata) { { "a" => "b", "foo" => "bar", "baz" => { "c" => [1, 2, 3] } } }
     let(:new_metadata) { { "foo" => "baz", "bar" => "baz", "baz" => { "x" => [4, 5, 6] } } }
-    let(:metadata_merge_mode) { nil }
 
-    subject do
-      build(
-        factory,
-        metadata_merge_mode: metadata_merge_mode,
-        metadata: existing_metadata
-      )
-    end
+    it "merges metadata by default" do
+      subject = build_with_metadata(existing_metadata)
 
-    def setup_scenario
       subject.metadata = new_metadata
+
+      expect(subject.metadata).to eq(existing_metadata.merge(new_metadata))
     end
 
-    context "by default" do
-      let(:metadata_merge_mode) { nil }
-      it { expect(subject.metadata).to eq(existing_metadata.merge(new_metadata)) }
+    it "deep merges metadata if metadata_merge_mode='deep_merge'" do
+      subject = build_with_metadata(existing_metadata)
+
+      subject.metadata_merge_mode = "deep_merge"
+      subject.metadata = new_metadata
+
+      expect(subject.metadata).to eq(existing_metadata.deep_merge(new_metadata))
     end
 
-    context "metadata_merge_mode='replace'" do
-      let(:metadata_merge_mode) { "replace" }
-      it { expect(subject.metadata).to eq(new_metadata) }
+    it "replaces metadata if metadata_merge_mode='replace'" do
+      subject = build_with_metadata(existing_metadata)
+
+      subject.metadata_merge_mode = "replace"
+      subject.metadata = new_metadata
+
+      expect(subject.metadata).to eq(new_metadata)
     end
 
-    context "metadata_merge_mode='merge'" do
-      let(:metadata_merge_mode) { "merge" }
-      it { expect(subject.metadata).to eq(existing_metadata.merge(new_metadata)) }
-    end
+    it "merges metadata if metadata_merge_mode is invalid" do
+      subject = build_with_metadata(existing_metadata)
 
-    context "metadata_merge_mode='deep_merge'" do
-      let(:metadata_merge_mode) { "deep_merge" }
-      it { expect(subject.metadata).to eq(existing_metadata.deep_merge(new_metadata)) }
-    end
+      subject.metadata_merge_mode = "foo"
+      subject.metadata = new_metadata
 
-    context "metadata_merge_mode='delete'" do
-      let(:metadata_merge_mode) { "delete" }
-      it { expect(subject.metadata).to eq(existing_metadata.merge(new_metadata)) }
+      expect(subject.metadata).to eq(existing_metadata.merge(new_metadata))
     end
+  end
 
-    context "new_metadata='foo'" do
-      let(:new_metadata) { "foo" }
-      it { expect(subject.metadata).to eq(new_metadata) }
-    end
+  def build_with_metadata(metadata)
+    build_stubbed(factory, metadata: metadata)
   end
 end

@@ -2,6 +2,7 @@ require "rails_helper"
 
 RSpec.describe PhoneCall do
   let(:factory) { :phone_call }
+
   include_examples "has_metadata"
   include_examples "has_call_flow_logic"
 
@@ -19,11 +20,12 @@ RSpec.describe PhoneCall do
   describe "validations" do
     context "new record" do
       def assert_validations!
-        is_expected.to validate_presence_of(:status)
+        expect(subject).to validate_presence_of(:status)
       end
 
       context "for an inbound call" do
         subject { build(factory, :inbound) }
+
         it { is_expected.not_to validate_presence_of(:callout_participation) }
         it { is_expected.not_to validate_presence_of(:remote_request_params) }
       end
@@ -35,6 +37,7 @@ RSpec.describe PhoneCall do
 
       context "remote_request_params" do
         subject { build(factory, remote_request_params: { "foo" => "bar" }) }
+
         it { is_expected.not_to be_valid }
       end
 
@@ -82,77 +85,51 @@ RSpec.describe PhoneCall do
       subject { create(factory) }
 
       def assert_validations!
-        is_expected.to validate_uniqueness_of(:remote_call_id).case_insensitive
-        is_expected.to validate_presence_of(:msisdn)
+        expect(subject).to validate_uniqueness_of(:remote_call_id).case_insensitive
+        expect(subject).to validate_presence_of(:msisdn)
       end
 
       it { assert_validations! }
     end
   end
 
-  describe "delegations" do
-    it { is_expected.to delegate_method(:callout).to(:callout_participation) }
-    it { is_expected.to delegate_method(:callout_id).to(:callout_participation) }
+  it "sets defaults" do
+    phone_call = build(:phone_call)
+
+    phone_call.valid?
+
+    expect(phone_call.msisdn).to be_present
   end
 
-  describe "defaults" do
-    let(:factory_attributes) { {} }
-    subject { build(factory, *factory_traits, factory_attributes) }
+  it "sets defaults for an outbound call" do
+    phone_call = build(:phone_call, :outbound)
 
-    def setup_scenario
-      super
-      subject.valid?
-    end
+    phone_call.valid?
 
-    def assert_defaults!
-      expect(subject.errors).to be_empty
-      expect(subject.msisdn).to be_present
-    end
-
-    context "outbound" do
-      let(:factory_traits) { [:outbound] }
-      it { assert_defaults! }
-
-      def assert_defaults!
-        super
-        expect(subject.contact).to eq(subject.callout_participation.contact)
-        expect(subject.msisdn).to eq(subject.callout_participation.msisdn)
-      end
-    end
+    expect(phone_call.contact).to eq(phone_call.callout_participation.contact)
+    expect(phone_call.msisdn).to eq(phone_call.callout_participation.msisdn)
   end
 
-  describe "destroying" do
-    let(:factory_attributes) { {} }
-    subject { create(factory, factory_attributes) }
+  it "can destroy a new phone call" do
+    phone_call = create(:phone_call)
 
-    def setup_scenario
-      super
-      subject.destroy
-    end
+    phone_call.destroy
 
-    context "allowed to destroy" do
-      it {
-        expect(described_class.find_by_id(subject.id)).to eq(nil)
-      }
-    end
+    expect(described_class.find_by_id(phone_call.id)).to eq(nil)
+  end
 
-    context "not allowed to destroy" do
-      let(:status) { described_class::STATE_QUEUED }
-      let(:factory_attributes) { { status: status } }
+  it "does not allow a queued call to be destroyed" do
+    phone_call = create(:phone_call, :queued)
 
-      it {
-        expect(described_class.find_by_id(subject.id)).to be_present
-        expect(subject.errors[:base]).not_to be_empty
-        expect(
-          subject.errors[:base].first
-        ).to eq(
-          I18n.t!(
-            "activerecord.errors.models.phone_call.attributes.base.restrict_destroy_status",
-            status: status
-          )
-        )
-      }
-    end
+    phone_call.destroy
+
+    expect(described_class.find_by_id(phone_call.id)).to be_present
+    expect(phone_call.errors[:base].first).to eq(
+      I18n.t!(
+        "activerecord.errors.models.phone_call.attributes.base.restrict_destroy_status",
+        status: PhoneCall::STATE_QUEUED
+      )
+    )
   end
 
   describe "state_machine" do
@@ -163,11 +140,11 @@ RSpec.describe PhoneCall do
     end
 
     def assert_transitions!
-      is_expected.to transition_from(current_status).to(asserted_new_status).on_event(event)
+      expect(subject).to transition_from(current_status).to(asserted_new_status).on_event(event)
     end
 
     def assert_not_transitioned!
-      is_expected.not_to transition_from(current_status).to(asserted_new_status).on_event(event)
+      expect(subject).not_to transition_from(current_status).to(asserted_new_status).on_event(event)
     end
 
     describe "#queue!" do
@@ -177,7 +154,7 @@ RSpec.describe PhoneCall do
 
       it { assert_transitions! }
 
-      it("should broadcast") {
+      it("broadcasts") {
         assert_broadcasted!(:phone_call_queued) { subject.queue! }
       }
     end
@@ -186,17 +163,17 @@ RSpec.describe PhoneCall do
       let(:current_status) { described_class::STATE_QUEUED }
       let(:event) { :queue_remote }
 
-      context "touching timestamp" do
-        def setup_scenario
-          super
-          subject.queue_remote!
-        end
+      it "updates the timestamp" do
+        phone_call = create(:phone_call, :queued)
 
-        it { expect(subject.remotely_queued_at).to be_present }
+        phone_call.queue_remote!
+
+        expect(phone_call.remotely_queued_at).to be_present
       end
 
       context "by default" do
         let(:asserted_new_status) { described_class::STATE_ERRORED }
+
         it { assert_transitions! }
       end
 
@@ -232,7 +209,7 @@ RSpec.describe PhoneCall do
 
             it { assert_transitions! }
 
-            it("should broadcast") {
+            it("broadcasts") {
               assert_broadcasted!(:phone_call_remote_fetch_queued) { subject.queue_remote_fetch! }
             }
           end
@@ -241,6 +218,7 @@ RSpec.describe PhoneCall do
 
       context "remote_call_id is not present" do
         let(:remote_call_id) { nil }
+
         it { assert_not_transitioned! }
       end
     end
@@ -255,7 +233,8 @@ RSpec.describe PhoneCall do
       context "can complete" do
         let(:current_status) { described_class::STATE_IN_PROGRESS }
         let(:remote_status) { "completed" }
-        it("should broadcast") {
+
+        it("broadcasts") {
           assert_broadcasted!(:phone_call_completed) { subject.complete! }
         }
       end
@@ -272,6 +251,7 @@ RSpec.describe PhoneCall do
             let(:remote_status) { "in-progress" }
             let(:current_status) { described_class::STATE_IN_PROGRESS }
             let(:asserted_new_status) { described_class::STATE_IN_PROGRESS }
+
             it { assert_transitions! }
           end
         end
@@ -286,6 +266,7 @@ RSpec.describe PhoneCall do
           context "current_status: 'remote_fetch_queued'" do
             let(:current_status) { described_class::STATE_REMOTE_FETCH_QUEUED }
             let(:asserted_new_status) { described_class::STATE_REMOTELY_QUEUED }
+
             it { assert_transitions! }
           end
         end
@@ -299,6 +280,7 @@ RSpec.describe PhoneCall do
       ].each do |current_status|
         context "status: '#{current_status}'" do
           let(:current_status) { current_status }
+
           {
             "ringing" => described_class::STATE_IN_PROGRESS,
             "in-progress" => described_class::STATE_IN_PROGRESS,
@@ -311,6 +293,7 @@ RSpec.describe PhoneCall do
             context "remote_status: '#{remote_status}'" do
               let(:remote_status) { remote_status }
               let(:asserted_new_status) { asserted_new_status }
+
               it { assert_transitions! }
             end
           end
@@ -384,11 +367,13 @@ RSpec.describe PhoneCall do
         context "was created at more than specified hours ago" do
           let(:created_at) { hours.hours.ago }
           let(:asserted_results) { [] }
+
           it { assert_scope! }
         end
 
         context "was recently created" do
           let(:asserted_results) { [phone_call, queued_phone_call] }
+
           it { assert_scope! }
         end
       end
@@ -400,12 +385,14 @@ RSpec.describe PhoneCall do
 
         context "was recently queued" do
           let(:remotely_queued_at) { Time.now }
+
           it { assert_scope! }
         end
 
         context "was queued at more than specified hours ago" do
           let(:remotely_queued_at) { hours.hours.ago }
           let(:asserted_results) { [] }
+
           it { assert_scope! }
         end
       end

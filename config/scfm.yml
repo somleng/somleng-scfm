@@ -1,4 +1,10 @@
+default: &default
+  time_zone: "UTC"
+  mailer_sender: "support@somleng.org"
+  secret_key_base: "<%= Rails.application.credentials.secret_key_base %>"
+
 production: &production
+  <<: *default
   default_queue_url: <%= ENV["DEFAULT_QUEUE_URL"] %>
   default_url_host: <%= ENV["DEFAULT_URL_HOST"] %>
   fetch_remote_call_job_queue_url: <%= ENV["FETCH_REMOTE_CALL_JOB_QUEUE_URL"] %>
@@ -6,32 +12,26 @@ production: &production
   run_batch_operation_job_queue_url: <%= ENV["RUN_BATCH_OPERATION_JOB_QUEUE_URL"] %>
   action_mailer_delivery_job_queue_url: <%= ENV["ACTION_MAILER_DELIVERY_JOB_QUEUE_URL"] %>
   active_storage_job_queue_url: <%= ENV["ACTIVE_STORAGE_JOB_QUEUE_URL"] %>
-  action_mailer_delivery_method: <%= ENV["ACTION_MAILER_DELIVERY_METHOD"] %>
-  smtp_address: <%= ENV["SMTP_ADDRESS"] %>
-  smtp_port: <%= ENV["SMTP_PORT"] %>
-  smtp_username: <%= ENV["SMTP_USERNAME"] %>
-  smtp_password: <%= ENV["SMTP_PASSWORD"] %>
-  smtp_authentication_method: <%= ENV["SMTP_AUTHENTICATION_METHOD"] %>
-  smtp_enable_starttls_auto: <%= ENV["SMTP_ENABLE_STARTTLS_AUTO"] %>
-  mailer_sender: <%= ENV["MAILER_SENDER"] %>
+  aws_region: <%= ENV["AWS_REGION"] %>
   aws_s3_access_key_id: <%= ENV["AWS_S3_ACCESS_KEY_ID"] %>
   aws_s3_secret_access_key: <%= ENV["AWS_S3_SECRET_ACCESS_KEY"] %>
-  aws_region: <%= ENV["AWS_REGION"] %>
   uploads_bucket: <%= ENV["UPLOADS_BUCKET"] %>
   audio_bucket: <%= ENV["AUDIO_BUCKET"] %>
-  time_zone: "UTC"
+  smtp_port: "587"
+  smtp_username: <%= ENV["SMTP_USERNAME"] %>
+  smtp_password: <%= ENV["SMTP_PASSWORD"] %>
+  smtp_domain: "somleng.org"
+  smtp_enable_starttls_auto: true
+  smtp_authentication_method: "login"
+  smtp_address: "email-smtp.us-east-1.amazonaws.com"
 
 development: &development
   <<: *production
-  secret_key_base: eb34f8ac327a51273947b4e99e1f7829dc1a9dd0048cc2ef2b5456c01cab65b510e5687540726b82905845857e274f4ab4a108e99cc6ade793e1efed2708de4e
   default_queue_url: "https://example.com/path/to/queue_name"
   default_url_host: "localhost:3000"
-  action_mailer_delivery_method: "smtp"
+  audio_bucket: "audio.example.com"
   smtp_address: "127.0.0.1"
   smtp_port: "1025"
-  mailer_sender: "mailer@example.com"
-  audio_bucket: "audio.example.com"
 
 test:
   <<: *development
-  secret_key_base: 328e48762afc70f1735919ff476bc7e58108b9078fdd939459244528e487c30ddf7fe934409f3d7b5f853ba3527400d790798020b3d31ee20d302389394a68ac

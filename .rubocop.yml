@@ -11,3 +11,9 @@ Metrics/LineLength:
 
 Style/Documentation:
   Enabled: false
+
+MultipleExpectations:
+  Enabled: false
+
+ExampleLength:
+  Max: 10

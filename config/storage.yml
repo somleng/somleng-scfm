@@ -10,10 +10,10 @@ local:
 
 amazon:
   service: S3
-  access_key_id: <%= Rails.application.secrets.fetch(:aws_s3_access_key_id) %>
-  secret_access_key: <%= Rails.application.secrets.fetch(:aws_s3_secret_access_key) %>
-  region: <%= Rails.application.secrets.fetch(:aws_region) %>
-  bucket: <%= Rails.application.secrets.fetch(:uploads_bucket) %>
+  access_key_id: <%= Rails.configuration.scfm.fetch("aws_s3_access_key_id") %>
+  secret_access_key: <%= Rails.configuration.scfm.fetch("aws_s3_secret_access_key") %>
+  region: <%= Rails.configuration.scfm.fetch("aws_region") %>
+  bucket: <%= Rails.configuration.scfm.fetch("uploads_bucket") %>
 
 # Remember not to checkin your GCS keyfile to a repository
 # google:

@@ -35,126 +35,95 @@ RSpec.shared_examples_for("phone_call_operation_batch_operation") do
   )
 
   describe "associations" do
-    it {
-      is_expected.to have_many(:phone_calls).dependent(:restrict_with_error)
-    }
+    it { is_expected.to have_many(:phone_calls).dependent(:restrict_with_error) }
   end
 
   describe "#calculate_limit" do
-    def factory_attributes
-      {}
+    it "returns nil by default" do
+      subject = create(factory)
+
+      result = subject.calculate_limit
+
+      expect(result).to eq(nil)
     end
 
-    def assert_calculate_limit!
-      expect(subject.calculate_limit).to eq(asserted_calculate_limit)
+    it "returns max if specified" do
+      subject = create(factory, max: "100")
+
+      result = subject.calculate_limit
+
+      expect(result).to eq(100)
     end
 
-    subject { create(factory, factory_attributes) }
+    it "returns max if max < max_per_period" do
+      subject = create(factory, max: "100", max_per_period: "150")
 
-    context "by default" do
-      let(:asserted_calculate_limit) { nil }
-      it { assert_calculate_limit! }
+      result = subject.calculate_limit
+
+      expect(result).to eq(100)
     end
 
-    context "max=100" do
-      let(:max) { "100" }
+    it "returns max_per_period if max > max_per_period" do
+      subject = create(factory, max: "100", max_per_period: "50")
 
-      def factory_attributes
-        super.merge(:max => max)
-      end
+      result = subject.calculate_limit
 
-      context "max_per_period is not specified" do
-        let(:asserted_calculate_limit) { max.to_i }
-        it { assert_calculate_limit! }
-      end
+      expect(result).to eq(50)
+    end
 
-      context "max_per_period is specified" do
-        def factory_attributes
-          super.merge(:max_per_period => max_per_period)
-        end
+    it "calculates the limit based on the max calls allowed in 24 hours" do
+      subject = create(factory, max_per_period: "50")
+      create(:phone_call, :completed, remotely_queued_at: 23.hours.ago)
+      create(:phone_call, :failed, remotely_queued_at: 23.hours.ago)
+      create(:phone_call, :remotely_queued, remotely_queued_at: 24.hours.ago)
 
-        context "max_per_period=150" do
-          # max < max_per_period
-          let(:max_per_period) { "150" }
-          let(:asserted_calculate_limit) { max.to_i }
-          it { assert_calculate_limit! }
-        end
+      result = subject.calculate_limit
 
-        context "max_per_period=50" do
-          let(:max_per_period) { "50" }
-          # max_per_period < max
-          let(:asserted_calculate_limit) { max_per_period.to_i }
+      expect(result).to eq(48)
+    end
 
-          context "no calls" do
-            let(:asserted_calculate_limit) { max_per_period.to_i }
-            it { assert_calculate_limit! }
-          end
+    it "calcluates the limit based on the max calls allowed in 25 hours" do
+      subject = create(factory, max_per_period: "50", max_per_period_hours: 25)
+      create(:phone_call, :completed, remotely_queued_at: 23.hours.ago)
+      create(:phone_call, :failed, remotely_queued_at: 23.hours.ago)
+      create(:phone_call, :remotely_queued, remotely_queued_at: 24.hours.ago)
 
-          context "calls" do
-            let(:phone_calls) {
-              [
-                create(
-                  :phone_call,
-                  :status => PhoneCall::STATE_COMPLETED,
-                  :remotely_queued_at => 23.hours.ago
-                ),
-                create(
-                  :phone_call,
-                  :status => PhoneCall::STATE_FAILED,
-                  :remotely_queued_at => 23.hours.ago
-                ),
-                create(
-                  :phone_call,
-                  :status => PhoneCall::STATE_REMOTELY_QUEUED,
-                  :remotely_queued_at => 24.hours.ago
-                )
-              ]
-            }
+      result = subject.calculate_limit
 
-            def setup_scenario
-              super
-              phone_calls
-            end
+      # all calls were remotely queued in the last 25 hours
+      expect(result).to eq(47)
+    end
 
-            context "max_per_period_hours is not specified" do
-              # 2 calls were remotely queued in the last 24 hours (default)
-              let(:asserted_calculate_limit) { 48 }
-              it { assert_calculate_limit! }
-            end
+    it "calculates the limit from the created_at attribute" do
+      subject = create(
+        factory, max_per_period: "50",
+        max_per_period_hours: 24,
+        max_per_period_timestamp_attribute: :created_at
+      )
+      create(:phone_call, :completed, remotely_queued_at: 23.hours.ago)
+      create(:phone_call, :failed, remotely_queued_at: 23.hours.ago)
+      create(:phone_call, :remotely_queued, remotely_queued_at: 24.hours.ago)
 
-            context "max_per_period_hours=25" do
-              def factory_attributes
-                super.merge(:max_per_period_hours => 25)
-              end
+      result = subject.calculate_limit
 
-              # all calls were remotely queued in the last 25 hours
-              let(:asserted_calculate_limit) { 47 }
-              it { assert_calculate_limit! }
-            end
+      # all calls were created in the last 24 hours
+      expect(result).to eq(47)
+    end
 
-            context "max_per_period_timestamp_attribute=created_at" do
-              def factory_attributes
-                super.merge(:max_per_period_timestamp_attribute => "created_at")
-              end
+    it "calculates the limit from the call status" do
+      subject = create(
+        factory, max_per_period: "50",
+        max_per_period_hours: 24,
+        max_per_period_statuses: :completed
+      )
+      create(:phone_call, :completed, remotely_queued_at: 23.hours.ago)
+      create(:phone_call, :failed, remotely_queued_at: 23.hours.ago)
+      create(:phone_call, :remotely_queued, remotely_queued_at: 24.hours.ago)
 
-              # all calls were created in the last 24 hours
-              let(:asserted_calculate_limit) { 47 }
-              it { assert_calculate_limit! }
-            end
+      result = subject.calculate_limit
 
-            context "max_per_period_statuses=completed" do
-              def factory_attributes
-                super.merge(:max_per_period_statuses => "completed")
-              end
-
-              # 1 call was remotely queued and completed in the last 24 hours
-              let(:asserted_calculate_limit) { 49 }
-              it { assert_calculate_limit! }
-            end
-          end
-        end
-      end
+      # 1 call was remotely queued and completed in the last 24 hours
+      expect(result).to eq(49)
     end
   end
 end
-

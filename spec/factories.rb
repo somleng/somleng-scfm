@@ -84,6 +84,10 @@ FactoryBot.define do
     trait :preview do
     end
 
+    trait :queued do
+      status { BatchOperation::Base::STATE_QUEUED }
+    end
+
     factory :callout_population, aliases: [:batch_operation], class: BatchOperation::CalloutPopulation do
       after(:build) do |callout_population|
         callout_population.callout ||= build(:callout, account: callout_population.account)
@@ -123,6 +127,26 @@ FactoryBot.define do
       remote_request_params { {} }
       msisdn { generate(:somali_msisdn) }
       remote_direction { PhoneCall::TWILIO_DIRECTIONS[:inbound] }
+    end
+
+    trait :completed do
+      status { PhoneCall::STATE_COMPLETED }
+    end
+
+    trait :failed do
+      status { PhoneCall::STATE_FAILED }
+    end
+
+    trait :remotely_queued do
+      status { PhoneCall::STATE_REMOTELY_QUEUED }
+    end
+
+    trait :queued do
+      status { PhoneCall::STATE_QUEUED }
+    end
+
+    trait :remote_fetch_queued do
+      status { PhoneCall::STATE_REMOTE_FETCH_QUEUED }
     end
   end
 

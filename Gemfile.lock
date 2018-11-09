@@ -256,10 +256,10 @@ GEM
     nio4r (2.3.1)
     nokogiri (1.8.5)
       mini_portile2 (~> 2.3.0)
-    octicons (8.1.0)
+    octicons (8.1.1)
       nokogiri (>= 1.6.3.1)
-    octicons_helper (8.1.0)
-      octicons (= 8.1.0)
+    octicons_helper (8.1.1)
+      octicons (= 8.1.1)
       rails
     okcomputer (1.17.3)
     orm_adapter (0.5.0)

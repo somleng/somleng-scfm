@@ -144,6 +144,10 @@ FactoryBot.define do
     trait :queued do
       status { PhoneCall::STATE_QUEUED }
     end
+
+    trait :remote_fetch_queued do
+      status { PhoneCall::STATE_REMOTE_FETCH_QUEUED }
+    end
   end
 
   factory :remote_phone_call_event do

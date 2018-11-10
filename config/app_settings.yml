@@ -24,6 +24,7 @@ production: &production
   smtp_enable_starttls_auto: true
   smtp_authentication_method: "login"
   smtp_address: "email-smtp.us-east-1.amazonaws.com"
+  sentry_dsn: "<%= Rails.application.credentials.sentry_dsn %>"
 
 development: &development
   <<: *production

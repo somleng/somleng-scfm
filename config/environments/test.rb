@@ -44,7 +44,7 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
-  config.time_zone = Rails.configuration.scfm.fetch("time_zone")
+  config.time_zone = Rails.configuration.app_settings.fetch("time_zone")
 
-  Rails.application.routes.default_url_options[:host] = Rails.configuration.scfm.fetch("default_url_host")
+  Rails.application.routes.default_url_options[:host] = Rails.configuration.app_settings.fetch("default_url_host")
 end

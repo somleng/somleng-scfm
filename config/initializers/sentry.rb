@@ -1,4 +1,4 @@
-if sentry_dsn = Rails.application.secrets[:sentry_dsn].presence
+if sentry_dsn = (Rails.application.secrets[:sentry_dsn].presence)
   Raven.configure do |config|
     config.dsn = sentry_dsn
     config.environments = %w[staging production]

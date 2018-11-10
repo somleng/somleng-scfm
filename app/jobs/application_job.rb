@@ -4,8 +4,8 @@ class ApplicationJob < ActiveJob::Base
   end
 
   def self.aws_sqs_queue_url(job_name = nil)
-    Rails.configuration.scfm["#{job_name || to_s.underscore}_queue_url"] ||
-      Rails.configuration.scfm.fetch("default_queue_url")
+    Rails.configuration.app_settings["#{job_name || to_s.underscore}_queue_url"] ||
+      Rails.configuration.app_settings.fetch("default_queue_url")
   end
 
   queue_as(aws_sqs_queue_name)

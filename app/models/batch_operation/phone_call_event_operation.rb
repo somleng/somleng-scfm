@@ -19,7 +19,9 @@ class BatchOperation::PhoneCallEventOperation < BatchOperation::PhoneCallOperati
   end
 
   def phone_calls_preview
-    preview.phone_calls(scope: account.phone_calls).limit(applied_limit)
+    preview.phone_calls(
+      scope: account.phone_calls
+    ).order(Arel.sql("RANDOM()")).limit(applied_limit)
   end
 
   private

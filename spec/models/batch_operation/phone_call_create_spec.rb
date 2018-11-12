@@ -67,4 +67,23 @@ RSpec.describe BatchOperation::PhoneCallCreate do
       expect(created_phone_call.remote_request_params).to eq(batch_operation.remote_request_params)
     end
   end
+
+  describe "#callout_participations_preview" do
+    it "selects callout participations in a random order" do
+      batch_operation = create(:phone_call_create_batch_operation)
+      callout_participations = [
+        create_callout_participation(account: batch_operation.account),
+        create_callout_participation(account: batch_operation.account)
+      ]
+
+      results = []
+      100.times do
+        results = batch_operation.callout_participations_preview
+        break results if results != callout_participations
+      end
+
+      expect(results).to match_array(callout_participations)
+      expect(results).not_to eq(callout_participations)
+    end
+  end
 end

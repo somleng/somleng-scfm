@@ -41,4 +41,23 @@ RSpec.describe BatchOperation::PhoneCallQueue do
       )
     end
   end
+
+  describe "#phone_calls_preview" do
+    it "selects phone calls in a random order" do
+      batch_operation = create(:phone_call_queue_batch_operation)
+      phone_calls = [
+        create_phone_call(account: batch_operation.account),
+        create_phone_call(account: batch_operation.account)
+      ]
+
+      results = []
+      100.times do
+        results = batch_operation.phone_calls_preview
+        break results if results != phone_calls
+      end
+
+      expect(results).to match_array(phone_calls)
+      expect(results).not_to eq(phone_calls)
+    end
+  end
 end

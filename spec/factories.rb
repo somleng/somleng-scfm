@@ -133,12 +133,20 @@ FactoryBot.define do
       remote_direction { PhoneCall::TWILIO_DIRECTIONS[:inbound] }
     end
 
+    trait :created do
+      status { PhoneCall::STATE_CREATED }
+    end
+
     trait :completed do
       status { PhoneCall::STATE_COMPLETED }
     end
 
     trait :failed do
       status { PhoneCall::STATE_FAILED }
+    end
+
+    trait :in_progress do
+      status { PhoneCall::STATE_IN_PROGRESS }
     end
 
     trait :remotely_queued do
@@ -151,6 +159,7 @@ FactoryBot.define do
 
     trait :remote_fetch_queued do
       status { PhoneCall::STATE_REMOTE_FETCH_QUEUED }
+      remote_call_id { SecureRandom.uuid }
     end
   end
 

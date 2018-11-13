@@ -67,8 +67,6 @@ class PhoneCall < ApplicationRecord
   before_validation :set_defaults, on: :create
   before_destroy    :validate_destroy
 
-  attr_accessor :new_remote_status
-
   accepts_nested_key_value_fields_for :remote_request_params
   accepts_nested_key_value_fields_for :remote_response
   accepts_nested_key_value_fields_for :remote_queue_response
@@ -80,7 +78,6 @@ class PhoneCall < ApplicationRecord
     state :queued
     state :remotely_queued
     state :errored
-    state :remote_fetch_queued
     state :failed
     state :in_progress
     state :busy
@@ -108,41 +105,30 @@ class PhoneCall < ApplicationRecord
       )
     end
 
-    event :queue_remote_fetch, after_commit: :publish_remote_fetch_queued do
-      transitions(
-        to: :remote_fetch_queued,
-        if: :remote_call_id?
-      )
-    end
-
-    event :complete, after_commit: :publish_completed do
-      transitions from: %i[created remotely_queued remote_fetch_queued in_progress],
+    event :complete do
+      transitions from: %i[created remotely_queued],
                   to: :in_progress,
                   if: :remote_status_in_progress?
 
-      transitions from: %i[created remotely_queued remote_fetch_queued in_progress],
+      transitions from: %i[created remotely_queued in_progress],
                   to: :busy,
                   if: :remote_status_busy?
 
-      transitions from: %i[created remotely_queued remote_fetch_queued in_progress],
+      transitions from: %i[created remotely_queued in_progress],
                   to: :failed,
                   if: :remote_status_failed?
 
-      transitions from: %i[created remotely_queued remote_fetch_queued in_progress],
+      transitions from: %i[created remotely_queued in_progress],
                   to: :not_answered,
                   if: :remote_status_not_answered?
 
-      transitions from: %i[created remotely_queued remote_fetch_queued in_progress],
+      transitions from: %i[created remotely_queued in_progress],
                   to: :canceled,
                   if: :remote_status_canceled?
 
-      transitions from: %i[created remotely_queued remote_fetch_queued in_progress],
+      transitions from: %i[created remotely_queued in_progress],
                   to: :completed,
                   if: :remote_status_completed?
-
-      transitions from: :remote_fetch_queued,
-                  to: :remotely_queued,
-                  if: :was_remotely_queued_and_new_remote_status_unknown?
     end
   end
 
@@ -160,6 +146,7 @@ class PhoneCall < ApplicationRecord
 
   def set_call_flow_logic
     return if call_flow_logic.present?
+
     self.call_flow_logic = callout_participation_call_flow_logic || contact_call_flow_logic
   end
 
@@ -190,23 +177,12 @@ class PhoneCall < ApplicationRecord
 
   def validate_destroy
     return true if created?
+
     errors.add(:base, :restrict_destroy_status, status: status)
     throw(:abort)
   end
 
   def publish_queued
     broadcast(:phone_call_queued, self)
-  end
-
-  def publish_remote_fetch_queued
-    broadcast(:phone_call_remote_fetch_queued, self)
-  end
-
-  def publish_completed
-    broadcast(:phone_call_completed, self)
-  end
-
-  def was_remotely_queued_and_new_remote_status_unknown?
-    remotely_queued_at? && !new_remote_status
   end
 end

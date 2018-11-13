@@ -13,7 +13,7 @@ class BatchOperation::PhoneCallQueueRemoteFetch < BatchOperation::PhoneCallEvent
   end
 
   def fire_event!(phone_call)
-    phone_call.queue_remote_fetch!
+    FetchRemoteCallJob.perform_later(phone_call.id)
   end
 
   def applied_limit

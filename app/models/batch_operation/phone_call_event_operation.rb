@@ -13,7 +13,8 @@ class BatchOperation::PhoneCallEventOperation < BatchOperation::PhoneCallOperati
   def run!
     phone_calls_preview.find_each do |phone_call|
       phone_call.subscribe(PhoneCallObserver.new)
-      set_batch_operation(phone_call)
+      assign_batch_operation(phone_call)
+      phone_call.save!
       fire_event!(phone_call)
     end
   end

@@ -228,9 +228,8 @@ RSpec.describe "Phone Calls" do
   it "can fetch the remote status of a phone call" do
     user = create(:user)
     phone_call = create_phone_call(
-      account: user.account,
-      status: PhoneCall::STATE_REMOTELY_QUEUED,
-      remote_call_id: SecureRandom.uuid
+      :remotely_queued,
+      account: user.account
     )
 
     sign_in(user)
@@ -242,7 +241,7 @@ RSpec.describe "Phone Calls" do
       }.to enqueue_job(FetchRemoteCallJob).with(phone_call.id)
     end
 
-    expect(phone_call.reload).to be_remote_fetch_queued
+    expect(phone_call.reload).to be_remotely_queued
     expect(page).to have_text("Event was successfully created.")
   end
 end

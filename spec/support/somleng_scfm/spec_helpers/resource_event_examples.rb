@@ -7,16 +7,16 @@ RSpec.shared_examples_for("resource_event") do |options = {}|
     end
 
     describe "event" do
-      subject { described_class.new(:eventable => eventable) }
+      subject { described_class.new(eventable: eventable) }
 
       it {
-        is_expected.to validate_inclusion_of(:event).in_array([event])
+        expect(subject).to validate_inclusion_of(:event).in_array([event])
       }
     end
   end
 
   describe "#save" do
-    subject { described_class.new(:eventable => eventable, :event => event) }
+    subject { described_class.new(eventable: eventable, event: event) }
 
     context "invalid" do
       let(:event) { "invalid" }

@@ -133,36 +133,17 @@ RSpec.describe PhoneCall do
   end
 
   describe "state_machine" do
-    subject { create(factory, factory_attributes) }
-
-    def factory_attributes
-      { status: current_status }
-    end
-
-    def assert_transitions!
-      expect(subject).to transition_from(current_status).to(asserted_new_status).on_event(event)
-    end
-
-    def assert_not_transitioned!
-      expect(subject).not_to transition_from(current_status).to(asserted_new_status).on_event(event)
-    end
-
     describe "#queue!" do
-      let(:current_status) { described_class::STATE_CREATED }
-      let(:asserted_new_status) { described_class::STATE_QUEUED }
-      let(:event) { :queue }
+      it "transitions to queued" do
+        phone_call = create(:phone_call, :created)
 
-      it { assert_transitions! }
+        expect { phone_call.queue! }.to broadcast(:phone_call_queued)
 
-      it("broadcasts") {
-        assert_broadcasted!(:phone_call_queued) { subject.queue! }
-      }
+        expect(phone_call).to be_queued
+      end
     end
 
     describe "#queue_remote!" do
-      let(:current_status) { described_class::STATE_QUEUED }
-      let(:event) { :queue_remote }
-
       it "updates the timestamp" do
         phone_call = create(:phone_call, :queued)
 
@@ -171,133 +152,85 @@ RSpec.describe PhoneCall do
         expect(phone_call.remotely_queued_at).to be_present
       end
 
-      context "by default" do
-        let(:asserted_new_status) { described_class::STATE_ERRORED }
+      it "transitions to errored if there is no remote call id" do
+        phone_call = create(:phone_call, :queued)
 
-        it { assert_transitions! }
+        phone_call.queue_remote!
+
+        expect(phone_call).to be_errored
       end
 
-      context "remote_call_id is present" do
-        let(:asserted_new_status) { described_class::STATE_REMOTELY_QUEUED }
+      it "transitions to remotely_queued if there is a remote call id" do
+        phone_call = create(:phone_call, :queued, remote_call_id: SecureRandom.uuid)
 
-        def factory_attributes
-          super.merge(remote_call_id: "1234")
-        end
+        phone_call.queue_remote!
 
-        it { assert_transitions! }
-      end
-    end
-
-    describe "#queue_remote_fetch!" do
-      def factory_attributes
-        super.merge(remote_call_id: remote_call_id)
-      end
-
-      let(:event) { :queue_remote_fetch }
-      let(:current_status) { described_class::STATE_REMOTELY_QUEUED }
-      let(:asserted_new_status) { described_class::STATE_REMOTE_FETCH_QUEUED }
-
-      context "remote_call_id is present" do
-        let(:remote_call_id) { "1234" }
-
-        [
-          described_class::STATE_REMOTELY_QUEUED,
-          described_class::STATE_IN_PROGRESS
-        ].each do |current_status|
-          context "status: #{current_status}" do
-            let(:current_status) { current_status }
-
-            it { assert_transitions! }
-
-            it("broadcasts") {
-              assert_broadcasted!(:phone_call_remote_fetch_queued) { subject.queue_remote_fetch! }
-            }
-          end
-        end
-      end
-
-      context "remote_call_id is not present" do
-        let(:remote_call_id) { nil }
-
-        it { assert_not_transitioned! }
+        expect(phone_call).to be_remotely_queued
       end
     end
 
     describe "#complete!" do
-      let(:event) { :complete }
+      it "transitions to completed" do
+        phone_call = create(:phone_call, :in_progress)
+        phone_call.remote_status = "completed"
 
-      def factory_attributes
-        super.merge(remote_status: remote_status)
+        phone_call.complete!
+
+        expect(phone_call).to be_completed
       end
 
-      context "can complete" do
-        let(:current_status) { described_class::STATE_IN_PROGRESS }
-        let(:remote_status) { "completed" }
+      it "transitions to failed" do
+        phone_call = create(:phone_call, :in_progress)
+        phone_call.remote_status = "failed"
 
-        it("broadcasts") {
-          assert_broadcasted!(:phone_call_completed) { subject.complete! }
-        }
+        phone_call.complete!
+
+        expect(phone_call).to be_failed
       end
 
-      context "new_remote_status: nil" do
-        # this is set when fetching the remote call
+      it "transitions to busy" do
+        phone_call = create(:phone_call, :in_progress)
+        phone_call.remote_status = "busy"
 
-        def factory_attributes
-          super.merge(new_remote_status: nil)
-        end
+        phone_call.complete!
 
-        context "was not remotely queued (inbound call)" do
-          context "current_status: 'in_progress'" do
-            let(:remote_status) { "in-progress" }
-            let(:current_status) { described_class::STATE_IN_PROGRESS }
-            let(:asserted_new_status) { described_class::STATE_IN_PROGRESS }
-
-            it { assert_transitions! }
-          end
-        end
-
-        context "was remotely queued" do
-          let(:remote_status) { "queued" }
-
-          def factory_attributes
-            super.merge(remotely_queued_at: Time.now)
-          end
-
-          context "current_status: 'remote_fetch_queued'" do
-            let(:current_status) { described_class::STATE_REMOTE_FETCH_QUEUED }
-            let(:asserted_new_status) { described_class::STATE_REMOTELY_QUEUED }
-
-            it { assert_transitions! }
-          end
-        end
+        expect(phone_call).to be_busy
       end
 
-      [
-        described_class::STATE_CREATED,
-        described_class::STATE_REMOTELY_QUEUED,
-        described_class::STATE_IN_PROGRESS,
-        described_class::STATE_REMOTE_FETCH_QUEUED
-      ].each do |current_status|
-        context "status: '#{current_status}'" do
-          let(:current_status) { current_status }
+      it "transitions to in_progress from remotely_queued" do
+        phone_call = create(:phone_call, :remotely_queued)
+        phone_call.remote_status = "in-progress"
 
-          {
-            "ringing" => described_class::STATE_IN_PROGRESS,
-            "in-progress" => described_class::STATE_IN_PROGRESS,
-            "busy" => described_class::STATE_BUSY,
-            "failed" => described_class::STATE_FAILED,
-            "no-answer" => described_class::STATE_NOT_ANSWERED,
-            "canceled" => described_class::STATE_CANCELED,
-            "completed" => described_class::STATE_COMPLETED
-          }.each do |remote_status, asserted_new_status|
-            context "remote_status: '#{remote_status}'" do
-              let(:remote_status) { remote_status }
-              let(:asserted_new_status) { asserted_new_status }
+        phone_call.complete!
 
-              it { assert_transitions! }
-            end
-          end
-        end
+        expect(phone_call).to be_in_progress
+      end
+
+      it "transitions to in_progress from ringing" do
+        phone_call = create(:phone_call, :remotely_queued)
+        phone_call.remote_status = "ringing"
+
+        phone_call.complete!
+
+        expect(phone_call).to be_in_progress
+      end
+
+      it "transitions to not_answered" do
+        phone_call = create(:phone_call, :in_progress)
+        phone_call.remote_status = "no-answer"
+
+        phone_call.complete!
+
+        expect(phone_call).to be_not_answered
+      end
+
+      it "transitions to canceled" do
+        phone_call = create(:phone_call, :remotely_queued)
+        phone_call.remote_status = "canceled"
+
+        phone_call.complete!
+
+        expect(phone_call).to be_canceled
       end
     end
   end

@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Event::PhoneCall do
   let(:eventable_factory) { :phone_call }
@@ -10,34 +10,54 @@ RSpec.describe Event::PhoneCall do
   end
 
   describe "validations" do
-    let(:eventable) { create(eventable_factory, :status => status) }
+    subject { build_event(eventable, event: event) }
+
+    let(:eventable) { create(eventable_factory, status: status) }
     let(:event) { eventable.aasm.events.map { |event| event.name.to_s }.first }
-    subject { described_class.new(:eventable => eventable, :event => event) }
 
     def assert_invalid!
-      is_expected.not_to be_valid
+      expect(subject).not_to be_valid
       expect(subject.errors[:event]).not_to be_empty
     end
 
-    context "created" do
-      let(:status) { PhoneCall::STATE_CREATED }
-      it { is_expected.to be_valid }
+    context "when phone call is created" do
+      subject { build_event(phone_call) }
+
+      let(:phone_call) { create(:phone_call, :created) }
+
+      it { is_expected.to allow_value("queue").for(:event) }
+      it { is_expected.not_to allow_value("queue_remote_fetch").for(:event) }
     end
 
-    context "queued" do
-      let(:status) { PhoneCall::STATE_QUEUED }
-      it { assert_invalid! }
+    context "when phone call is queued" do
+      subject { build_event(phone_call) }
+
+      let(:phone_call) { create(:phone_call, :queued) }
+
+      it { is_expected.not_to allow_value("queue").for(:event) }
+      it { is_expected.not_to allow_value("queue_remote_fetch").for(:event) }
     end
 
-    context "remotely_queued" do
-      let(:status) { PhoneCall::STATE_REMOTELY_QUEUED }
-      it { is_expected.to be_valid }
-    end
+    context "when phone call is remotely queued" do
+      subject { build_event(phone_call) }
 
-    context "can't transition" do
-      let(:status) { PhoneCall::STATE_REMOTELY_QUEUED }
-      let(:event) { "queue" }
-      it { assert_invalid! }
+      let(:phone_call) { create(:phone_call, :remotely_queued) }
+
+      it { is_expected.not_to allow_value("queue").for(:event) }
+      it { is_expected.to allow_value("queue_remote_fetch").for(:event) }
     end
+  end
+
+  describe "#save" do
+    it "queues a job fetching the remote status" do
+      phone_call = create(:phone_call, :remotely_queued)
+      event = build_event(phone_call, event: "queue_remote_fetch")
+
+      expect { event.save }.to have_enqueued_job(FetchRemoteCallJob)
+    end
+  end
+
+  def build_event(eventable, event: nil)
+    described_class.new(eventable: eventable, event: event)
   end
 end

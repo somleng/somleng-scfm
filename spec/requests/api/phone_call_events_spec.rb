@@ -38,8 +38,8 @@ RSpec.describe "Phone Call Events" do
     access_token = create_access_token(resource_owner: account)
     remote_call_id = SecureRandom.uuid
     phone_call = create_phone_call(
+      :remotely_queued,
       account: account,
-      status: PhoneCall::STATE_REMOTELY_QUEUED,
       remote_call_id: remote_call_id
     )
 
@@ -60,7 +60,7 @@ RSpec.describe "Phone Call Events" do
 
     expect(response.code).to eq("201")
     parsed_body = JSON.parse(response.body)
-    expect(parsed_body.fetch("status")).to eq(PhoneCall::STATE_REMOTE_FETCH_QUEUED.to_s)
+    expect(parsed_body.fetch("status")).to eq("remotely_queued")
     phone_call.reload
     expect(phone_call).to be_completed
   end

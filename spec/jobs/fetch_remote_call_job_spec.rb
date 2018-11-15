@@ -5,14 +5,16 @@ RSpec.describe FetchRemoteCallJob do
 
   describe "#perform" do
     it "fetches the remote call" do
+      account = create(:account, :with_twilio_provider)
       phone_call = create_phone_call(account: account)
       stub_twilio_request(
         account: account,
         phone_call: phone_call,
         response: { body: { "status" => "completed" }.to_json }
       )
+      job = described_class.new
 
-      subject.perform(phone_call.id)
+      job.perform(phone_call.id)
 
       phone_call.reload
       assert_request_made!(account: account)
@@ -20,7 +22,19 @@ RSpec.describe FetchRemoteCallJob do
       expect(phone_call).to be_completed
     end
 
-    let(:account) { create(:account, :with_twilio_provider) }
+    it "returns if there is no remote call id" do
+      account = create(:account)
+      phone_call = create_phone_call(
+        account: account,
+        status: PhoneCall::STATE_CREATED,
+        remote_call_id: nil
+      )
+      job = described_class.new
+
+      job.perform(phone_call.id)
+
+      expect(phone_call).to be_created
+    end
 
     def assert_request_made!(account:)
       authorization = authorization_header(request: WebMock.requests.last)
@@ -28,11 +42,10 @@ RSpec.describe FetchRemoteCallJob do
     end
 
     def create_phone_call(account:, **options)
-      remote_call_id = SecureRandom.uuid
       super(
         account: account,
-        status: PhoneCall::STATE_REMOTE_FETCH_QUEUED,
-        remote_call_id: remote_call_id,
+        status: PhoneCall::STATE_REMOTELY_QUEUED,
+        remote_call_id: SecureRandom.uuid,
         **options
       )
     end

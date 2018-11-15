@@ -5,12 +5,7 @@ RSpec.describe BatchOperation::PhoneCallQueue do
 
   include_examples("batch_operation")
   include_examples("phone_call_operation_batch_operation")
-
-  include_examples("phone_call_event_operation_batch_operation") do
-    let(:asserted_status_after_run) { PhoneCall::STATE_QUEUED }
-    let(:invalid_transition_status) { PhoneCall::STATE_QUEUED }
-    let(:phone_call_factory_attributes) { { status: PhoneCall::STATE_CREATED } }
-  end
+  include_examples("phone_call_event_operation_batch_operation")
 
   describe "#parameters" do
     it "is valid when there is a phone call to preview " do
@@ -58,6 +53,18 @@ RSpec.describe BatchOperation::PhoneCallQueue do
 
       expect(results).to match_array(phone_calls)
       expect(results).not_to eq(phone_calls)
+    end
+  end
+
+  describe "#run!" do
+    it "queues the phone calls" do
+      batch_operation = create(:phone_call_queue_batch_operation)
+      phone_call = create_phone_call(:created, account: batch_operation.account)
+
+      batch_operation.run!
+
+      expect(phone_call.reload).to be_queued
+      expect(batch_operation.reload.phone_calls).to match_array([phone_call])
     end
   end
 end

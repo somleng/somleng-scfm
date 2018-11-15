@@ -12,7 +12,7 @@ class BatchOperation::PhoneCallQueue < BatchOperation::PhoneCallEventOperation
     limit || calculate_limit
   end
 
-  def set_batch_operation(phone_call)
+  def assign_batch_operation(phone_call)
     phone_call.queue_batch_operation = self
   end
 

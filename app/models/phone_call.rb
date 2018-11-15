@@ -140,6 +140,10 @@ class PhoneCall < ApplicationRecord
     remote_direction == TWILIO_DIRECTIONS[:inbound]
   end
 
+  def may_queue_remote_fetch?
+    remote_call_id.present?
+  end
+
   def direction
     inbound? ? :inbound : :outbound
   end

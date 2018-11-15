@@ -151,15 +151,11 @@ FactoryBot.define do
 
     trait :remotely_queued do
       status { PhoneCall::STATE_REMOTELY_QUEUED }
+      remote_call_id { SecureRandom.uuid }
     end
 
     trait :queued do
       status { PhoneCall::STATE_QUEUED }
-    end
-
-    trait :remote_fetch_queued do
-      status { PhoneCall::STATE_REMOTE_FETCH_QUEUED }
-      remote_call_id { SecureRandom.uuid }
     end
   end
 

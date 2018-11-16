@@ -19,7 +19,7 @@ RSpec.describe FetchRemoteCallJob do
       phone_call.reload
       assert_request_made!(account: account)
       expect(phone_call.remote_response).to be_present
-      expect(phone_call.remote_response.fetch("status")).to eq("in-progress")
+      expect(phone_call.remote_status).to eq("in-progress")
       expect(phone_call).to be_in_progress
     end
 

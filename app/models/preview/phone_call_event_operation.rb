@@ -10,7 +10,7 @@ class Preview::PhoneCallEventOperation < Preview::PhoneCallOperation
   end
 
   def phone_call_filter
-    @phone_call_filter ||= Filter::Resource::PhoneCall.new(
+    Filter::Resource::PhoneCall.new(
       {
         association_chain: PhoneCall
       },

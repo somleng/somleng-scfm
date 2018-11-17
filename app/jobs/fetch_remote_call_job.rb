@@ -6,11 +6,13 @@ class FetchRemoteCallJob < ApplicationJob
 
     response = fetch_remote_call(phone_call)
 
-    phone_call.update!(
+    attributes = {
       remote_response: response.instance_variable_get(:@properties).compact,
-      remote_status: response.status
-    )
+      remote_status: response.status,
+      duration: response.duration
+    }.compact
 
+    phone_call.update!(attributes)
     phone_call.complete!
   end
 

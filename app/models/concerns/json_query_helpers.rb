@@ -39,6 +39,7 @@ module JsonQueryHelpers
     # https://stackoverflow.com/a/9648410
     def flatten_hash(hash, keys = [])
       return { keys => hash } unless hash.is_a?(Hash)
+
       hash.inject({}) { |h, v| h.merge! flatten_hash(v[-1], keys + [v[0]]) }
     end
   end

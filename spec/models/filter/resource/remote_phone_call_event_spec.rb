@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Filter::Resource::RemotePhoneCallEvent do
   include SomlengScfm::SpecHelpers::FilterHelpers
@@ -11,41 +11,54 @@ RSpec.describe Filter::Resource::RemotePhoneCallEvent do
     include_examples("timestamp_attribute_filter")
     include_examples(
       "string_attribute_filter",
-      :call_flow_logic => CallFlowLogic::HelloWorld.to_s,
-      :remote_call_id => SecureRandom.uuid,
-      :remote_direction => PhoneCall::TWILIO_DIRECTIONS[:inbound],
+      call_flow_logic: CallFlowLogic::HelloWorld.to_s,
+      remote_call_id: SecureRandom.uuid,
+      remote_direction: PhoneCall::TWILIO_DIRECTIONS[:inbound]
     )
 
     context "filtering by details" do
       let(:filterable_attribute) { :details }
       let(:json_data) { generate(:twilio_remote_call_event_details) }
+
       include_examples "json_attribute_filter"
     end
 
-    describe "filtering" do
-      let(:factory_attributes) { {} }
-      let(:filterable) { create(filterable_factory, factory_attributes) }
-      let(:asserted_results) { [phone_call] }
+    it "filters by call_duration" do
+      event = create(
+        :remote_phone_call_event, call_duration: 9
+      )
+      create(:remote_phone_call_event, call_duration: 10)
+      create(:remote_phone_call_event, call_duration: 8)
+      filter = build_filter(call_duration: 9)
 
-      def setup_scenario
-        super
-        phone_call
-      end
+      results = filter.resources
 
-      def assert_results!
-        expect(subject.resources).to match_array([filterable])
-      end
-
-      context "by phone_call_id" do
-        let(:phone_call) { create(:phone_call) }
-        let(:factory_attributes) { { :phone_call => phone_call } }
-
-        def filter_params
-          super.merge(:phone_call_id => phone_call.id)
-        end
-
-        it { assert_results! }
-      end
+      expect(results).to match_array([event])
     end
+
+    it "filters by lt, lteq, gt, gteq call_duration" do
+      event = create(:remote_phone_call_event, call_duration: 9)
+      create(:remote_phone_call_event, call_duration: 10)
+      create(:remote_phone_call_event, call_duration: 8)
+      filter = build_filter(call_duration_gteq: 9, call_duration_lt: 10)
+
+      results = filter.resources
+
+      expect(results).to match_array([event])
+    end
+
+    it "filters by phone_call_id" do
+      event = create(:remote_phone_call_event)
+      create(:remote_phone_call_event)
+      filter = build_filter(phone_call_id: event.phone_call.id)
+
+      results = filter.resources
+
+      expect(results).to match_array([event])
+    end
+  end
+
+  def build_filter(params)
+    described_class.new({ association_chain: RemotePhoneCallEvent }, params)
   end
 end

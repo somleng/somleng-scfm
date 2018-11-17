@@ -1,4 +1,4 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Filter::Resource::PhoneCall do
   include SomlengScfm::SpecHelpers::FilterHelpers
@@ -27,56 +27,68 @@ RSpec.describe Filter::Resource::PhoneCall do
 
     context "filtering by remote_response" do
       let(:filterable_attribute) { :remote_response }
+
       include_examples "json_attribute_filter"
     end
 
     context "filtering by remote_queue_response" do
       let(:filterable_attribute) { :remote_queue_response }
+
       include_examples "json_attribute_filter"
     end
 
     context "filtering by remote_request_params" do
       let(:filterable_attribute) { :remote_request_params }
       let(:json_data) { generate(:twilio_request_params) }
+
       include_examples "json_attribute_filter"
     end
 
-    describe "filtering" do
-      let(:factory_attributes) { {} }
-      let(:phone_call) { create(filterable_factory, factory_attributes) }
-      let(:asserted_results) { [phone_call] }
+    it "filters by duration" do
+      phone_call = create(:phone_call, duration: 10)
+      create(:phone_call, duration: 0)
+      filter = build_filter(duration: "10")
 
-      def setup_scenario
-        super
-        create(filterable_factory)
-        phone_call
-      end
+      results = filter.resources
 
-      def assert_filter!
-        expect(subject.resources).to match_array(asserted_results)
-      end
-
-      context "by callout_participation_id" do
-        let(:callout_participation) { create(:callout_participation) }
-        let(:factory_attributes) { { :callout_participation => callout_participation } }
-
-        def filter_params
-          super.merge(:callout_participation_id => callout_participation.id)
-        end
-
-        it { assert_filter! }
-      end
-
-      context "by contact_id" do
-        let(:contact) { create(:contact) }
-        let(:factory_attributes) { { :contact => contact } }
-
-        def filter_params
-          super.merge(:contact_id => contact.id)
-        end
-
-        it { assert_filter! }
-      end
+      expect(results).to match_array([phone_call])
     end
+
+    it "filters by gt, gteq, lt, lteq" do
+      phone_call = create(:phone_call, duration: 9)
+      create(:phone_call, duration: 10)
+      create(:phone_call, duration: 8)
+      filter = build_filter(duration_lt: "10", duration_gt: "8")
+
+      results = filter.resources
+
+      expect(results).to match_array([phone_call])
+    end
+
+    it "filters by callout_participation_id" do
+      callout_participation = create(:callout_participation)
+      phone_call = create(:phone_call, callout_participation: callout_participation)
+      create(:phone_call)
+      filter = build_filter(callout_participation_id: callout_participation.id)
+
+      results = filter.resources
+
+      expect(results).to match_array([phone_call])
+    end
+
+    it "filters by contact_id" do
+      contact = create(:contact)
+      phone_call = create(:phone_call, contact: contact)
+      create(:phone_call)
+      filter = build_filter(contact_id: contact.id)
+
+      results = filter.resources
+
+      expect(results).to match_array([phone_call])
+    end
+  end
+
+  def build_filter(params)
+    described_class.new({ association_chain: PhoneCall }, params)
   end
 end

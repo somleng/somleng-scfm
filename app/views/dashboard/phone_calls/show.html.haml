@@ -38,6 +38,11 @@
           = resource.status.humanize
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
+          = PhoneCall.human_attribute_name(:duration)
+        %dd.col-sm-7.col-md-6
+          = resource.duration
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
           = PhoneCall.human_attribute_name(:callout_participation_id)
         - if resource.callout_participation_id
           %dd.col-sm-7.col-md-6

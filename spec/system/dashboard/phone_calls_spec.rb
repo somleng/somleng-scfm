@@ -38,6 +38,7 @@ RSpec.describe "Phone Calls" do
 
       expect(page).to have_sortable_column("msisdn")
       expect(page).to have_sortable_column("status")
+      expect(page).to have_sortable_column("duration")
       expect(page).to have_sortable_column("created_at")
     end
   end
@@ -162,6 +163,7 @@ RSpec.describe "Phone Calls" do
       expect(page).to have_content("Contact")
       expect(page).to have_content("Direction")
       expect(page).to have_content("Status")
+      expect(page).to have_content("Duration")
       expect(page).to have_content("Callout participation")
       expect(page).to have_content("Callout")
       expect(page).to have_content("Call flow")

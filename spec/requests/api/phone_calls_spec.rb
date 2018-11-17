@@ -18,6 +18,7 @@ RSpec.describe "Phone Calls" do
     )
 
     assert_filtered!(phone_call)
+    response.body
   end
 
   it "can list all phone calls for a callout participation" do

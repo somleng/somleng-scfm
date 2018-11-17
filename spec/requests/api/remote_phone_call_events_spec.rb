@@ -253,8 +253,8 @@ RSpec.describe "Remote Phone Call Events" do
       "Direction" => options.fetch(:direction) { "inbound" },
       "CallStatus" => options.fetch(:call_status) { "in-progress" },
       "AccountSid" => options.fetch(:account_sid),
-      "CallDuration" => options.fetch(:call_duration) { "" }
-    }
+      "CallDuration" => options.fetch(:call_duration) { nil }
+    }.compact
   end
 
   def build_twilio_signature(auth_token:, url:, request_body:)

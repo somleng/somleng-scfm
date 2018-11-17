@@ -43,7 +43,7 @@ class BatchOperation::PhoneCallCreate < BatchOperation::PhoneCallOperation
   end
 
   def preview
-    @preview ||= Preview::PhoneCallCreate.new(previewable: self)
+    Preview::PhoneCallCreate.new(previewable: self)
   end
 
   def create_phone_call(callout_participation)

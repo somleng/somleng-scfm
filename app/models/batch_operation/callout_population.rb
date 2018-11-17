@@ -32,6 +32,7 @@ class BatchOperation::CalloutPopulation < BatchOperation::Base
 
   def contact_filter_metadata=(attributes)
     return if attributes.blank?
+
     self.contact_filter_params = { "metadata" => attributes }
   end
 

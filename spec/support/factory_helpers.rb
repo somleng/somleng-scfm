@@ -8,7 +8,7 @@ module FactoryHelpers
   def create_phone_call(*args)
     options = args.extract_options!
     account = options.delete(:account)
-    raise ArgumentError("Missing account") if account.blank?
+    raise(ArgumentError, "Missing account") if account.blank?
 
     callout_participation = options.delete(:callout_participation) || create_callout_participation(
       account: account

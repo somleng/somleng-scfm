@@ -66,6 +66,7 @@ en:
   attributes:
     call_flow_logic: Call flow
     created_at: Created at
+    duration: Duration (seconds)
     metadata: Metadata
     msisdn: Phone number
     status: Status

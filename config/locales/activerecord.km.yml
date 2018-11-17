@@ -66,6 +66,7 @@ km:
   attributes:
     call_flow_logic: វិធីសាស្រ្តការហៅចេញ
     created_at: បង្កើតនៅពេល
+    duration: រយៈ (វិនាទី)
     metadata: ទិន្នន័យបន្ថែម
-    msisdn: លេខទូរស័ព​្ទ
+    msisdn: លេខទូរស័ព្ទ
     status: ស្ថានភាព

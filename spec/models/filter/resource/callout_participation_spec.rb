@@ -45,12 +45,22 @@ RSpec.describe Filter::Resource::CalloutParticipation do
       expect(filter.resources).to match_array([callout_participation])
     end
 
-    it "filters by has_phone_calls" do
+    it "filters by has_phone_calls: true" do
       _non_matching_callout_participation = create(:callout_participation)
       callout_participation = create(:callout_participation)
       create(:phone_call, callout_participation: callout_participation)
 
       filter = build_filter(has_phone_calls: "true")
+
+      expect(filter.resources).to match_array([callout_participation])
+    end
+
+    it "filters by has_phone_calls: false" do
+      non_matching_callout_participation = create(:callout_participation)
+      callout_participation = create(:callout_participation)
+      create(:phone_call, callout_participation: non_matching_callout_participation)
+
+      filter = build_filter(has_phone_calls: "false")
 
       expect(filter.resources).to match_array([callout_participation])
     end

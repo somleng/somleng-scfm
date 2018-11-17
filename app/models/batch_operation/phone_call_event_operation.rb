@@ -28,6 +28,6 @@ class BatchOperation::PhoneCallEventOperation < BatchOperation::PhoneCallOperati
   private
 
   def preview
-    @preview ||= Preview::PhoneCallEventOperation.new(previewable: self)
+    Preview::PhoneCallEventOperation.new(previewable: self)
   end
 end

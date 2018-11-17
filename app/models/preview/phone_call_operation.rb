@@ -6,7 +6,7 @@ class Preview::PhoneCallOperation < Preview::Base
   end
 
   def callout_filter
-    @callout_filter ||= Filter::Resource::Callout.new(
+    Filter::Resource::Callout.new(
       {
         association_chain: Callout
       },
@@ -15,7 +15,7 @@ class Preview::PhoneCallOperation < Preview::Base
   end
 
   def callout_participation_filter
-    @callout_participation_filter ||= Filter::Resource::CalloutParticipation.new(
+    Filter::Resource::CalloutParticipation.new(
       {
         association_chain: CalloutParticipation
       },

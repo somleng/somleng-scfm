@@ -1,4 +1,4 @@
 module Rapidpro
 end
 
-require_relative "rapid_pro/client"
+require_relative "rapidpro/client"

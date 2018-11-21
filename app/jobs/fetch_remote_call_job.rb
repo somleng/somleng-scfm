@@ -13,10 +13,15 @@ class FetchRemoteCallJob < ApplicationJob
     }.compact
 
     phone_call.update!(attributes)
-    phone_call.complete!
+    call_flow_logic(phone_call).run!
   end
 
   private
+
+  def call_flow_logic(phone_call)
+    event = RemotePhoneCallEvent.new(phone_call: phone_call)
+    phone_call.call_flow_logic.constantize.new(event: event)
+  end
 
   def fetch_remote_call(phone_call)
     Somleng::Client.new(

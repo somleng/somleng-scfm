@@ -452,6 +452,7 @@ DEPENDENCIES
   doorkeeper
   email_spec
   factory_bot_rails
+  faraday
   file_validators
   font-awesome-rails
   haml

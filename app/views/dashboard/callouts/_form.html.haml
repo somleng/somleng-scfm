@@ -4,6 +4,7 @@
       = f.input :audio_file, as: :file, input_html: { direct_upload: true, accept: Callout::AUDIO_CONTENT_TYPES.join(", ") }
       = f.input :audio_url
       = f.input :call_flow_logic, collection: CallFlowLogic::Base.registered.map(&:to_sym), as: :radio_buttons
+      = render("shared/key_value_fields", attribute: :settings, f: f)
       = render("shared/key_value_fields", attribute: :metadata, f: f)
       .form-group.actions
         = f.button :submit, class: 'btn btn-primary'

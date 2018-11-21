@@ -42,6 +42,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     fill_in("Audio url", with: "https://www.example.com/sample.mp3")
     choose("Hello World")
     fill_in_key_value_for(:metadata, with: { key: "location:country", value: "kh" })
+    fill_in_key_value_for(:settings, with: { key: "rapidpro:flow_id", value: "flow-id" } )
 
     expect do
       click_action_button(:create, key: :submit, namespace: :helpers, model: "Callout")
@@ -55,6 +56,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(new_callout.audio_url).to eq("https://www.example.com/sample.mp3")
     expect(new_callout.call_flow_logic).to eq(CallFlowLogic::HelloWorld.to_s)
     expect(new_callout.metadata).to eq("location" => { "country" => "kh" })
+    expect(new_callout.settings).to eq("rapidpro" => { "flow_id" => "flow-id" })
   end
 
   it "can create a callout attaching an audio file" do
@@ -78,7 +80,8 @@ RSpec.describe "Callouts", :aggregate_failures do
     callout = create(
       :callout,
       account: user.account,
-      metadata: { "location" => { "country" => "kh", "city" => "Phnom Penh" } }
+      metadata: { "location" => { "country" => "kh", "city" => "Phnom Penh" } },
+      settings: { "rapidpro" => { "flow_id" => "flow-id" } }
     )
 
     sign_in(user)
@@ -89,11 +92,13 @@ RSpec.describe "Callouts", :aggregate_failures do
     choose("Hello World")
     remove_key_value_for(:metadata)
     remove_key_value_for(:metadata)
+    remove_key_value_for(:settings)
     click_action_button(:update, key: :submit, namespace: :helpers)
 
     expect(current_path).to eq(dashboard_callout_path(callout))
     expect(page).to have_text("Callout was successfully updated.")
     expect(callout.reload.metadata).to eq({})
+    expect(callout.reload.settings).to eq({})
     expect(callout.call_flow_logic).to eq(CallFlowLogic::HelloWorld.to_s)
   end
 
@@ -119,7 +124,8 @@ RSpec.describe "Callouts", :aggregate_failures do
       call_flow_logic: CallFlowLogic::HelloWorld,
       audio_file: "test.mp3",
       audio_url: "https://example.com/audio.mp3",
-      metadata: { "location" => { "country" => "Cambodia" } }
+      metadata: { "location" => { "country" => "Cambodia" } },
+      settings: { "rapidpro" => { "flow_id" => "flow-id" } }
     )
 
     sign_in(user)
@@ -167,6 +173,9 @@ RSpec.describe "Callouts", :aggregate_failures do
       expect(page).to have_content("Metadata")
       expect(page).to have_content("location:country")
       expect(page).to have_content("Cambodia")
+      expect(page).to have_content("Settings")
+      expect(page).to have_content("rapidpro:flow_id")
+      expect(page).to have_content("flow-id")
     end
 
     within("#callout_summary") do

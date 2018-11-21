@@ -5,8 +5,8 @@ RSpec.describe StartRapidproFlow do
     flow_id = SecureRandom.uuid
     start_flow_response = build_start_flow_response(flow_id: flow_id)
     workflow = build_workflow(
-      account_settings: { rapidpro_api_token: "api-token" },
-      callout_settings: { rapidpro_flow_id: flow_id },
+      account_settings: { "rapidpro" => { "api_token" => "api-token" } },
+      callout_settings: { "rapidpro" => { "flow_id" => flow_id } },
       rapidpro_client: fake_rapidpro_client(status: 201, response: start_flow_response)
     )
 
@@ -17,18 +17,18 @@ RSpec.describe StartRapidproFlow do
     )
 
     expect(
-      workflow.phone_call.metadata.fetch("rapidpro_flow_started_at")
+      workflow.phone_call.metadata.dig("rapidpro", "flow_started_at")
     ).to be_present
 
-    expect(workflow.phone_call.metadata).to include(
-      "rapidpro_start_flow_response_status" => 201,
-      "rapidpro_start_flow_response_body" => start_flow_response
+    expect(workflow.phone_call.metadata.fetch("rapidpro")).to include(
+      "start_flow_response_status" => 201,
+      "start_flow_response_body" => start_flow_response
     )
   end
 
   it "uses the default RapidPro client" do
     workflow = build_workflow(
-      account_settings: { rapidpro_api_token: "api-token" },
+      account_settings: { "rapidpro" => { "api_token" => "api-token" } },
       rapidpro_client: nil
     )
 

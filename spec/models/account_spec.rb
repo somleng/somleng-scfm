@@ -20,16 +20,13 @@ RSpec.describe Account do
     it { is_expected.to validate_inclusion_of(:platform_provider_name).in_array(%w[twilio somleng]).allow_nil }
   end
 
-  describe "defaults" do
-    subject { create(factory) }
+  it "sets the default settings and permissions" do
+    account = build(:account)
 
-    describe "#permissions" do
-      it { expect(subject.permissions).to be_empty }
-    end
-  end
+    account.save!
 
-  describe "#settings" do
-    it { expect(subject.settings).to eq({}) }
+    expect(account.permissions).to be_empty
+    expect(account.settings).to eq({})
   end
 
   describe "#write_batch_operation_access_token" do

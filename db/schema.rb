@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_16_004024) do
+ActiveRecord::Schema.define(version: 2018_11_20_045144) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -91,6 +91,7 @@ ActiveRecord::Schema.define(version: 2018_11_16_004024) do
     t.datetime "updated_at", null: false
     t.bigint "account_id", null: false
     t.string "audio_url"
+    t.jsonb "settings", default: {}, null: false
     t.index ["account_id"], name: "index_callouts_on_account_id"
   end
 

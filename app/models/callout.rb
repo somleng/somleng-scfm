@@ -23,6 +23,9 @@ class Callout < ApplicationRecord
   include AASM
   prepend ActiveStorageDirty
 
+  store_accessor :settings
+  accepts_nested_key_value_fields_for :settings
+
   belongs_to :account
 
   has_many :callout_participations, dependent: :restrict_with_error

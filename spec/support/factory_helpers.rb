@@ -23,8 +23,5 @@ module FactoryHelpers
 end
 
 RSpec.configure do |config|
-  config.include(FactoryHelpers, type: :system)
-  config.include(FactoryHelpers, type: :model)
-  config.include(FactoryHelpers, type: :request)
-  config.include(FactoryHelpers, type: :job)
+  config.include(FactoryHelpers)
 end

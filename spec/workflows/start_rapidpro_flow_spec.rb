@@ -16,11 +16,25 @@ RSpec.describe StartRapidproFlow do
       flow: flow_id, urns: ["tel:#{workflow.phone_call.msisdn}"]
     )
 
+    expect(
+      workflow.phone_call.metadata.fetch("rapidpro_flow_started_at")
+    ).to be_present
+
     expect(workflow.phone_call.metadata).to include(
-      "rapidpro_flow_started" => true,
       "rapidpro_start_flow_response_status" => 201,
       "rapidpro_start_flow_response_body" => start_flow_response
     )
+  end
+
+  it "uses the default RapidPro client" do
+    workflow = build_workflow(
+      account_settings: { rapidpro_api_token: "api-token" },
+      rapidpro_client: nil
+    )
+
+    api_token = workflow.rapidpro_client.api_token
+
+    expect(api_token).to eq("api-token")
   end
 
   it "does not start the flow if there is no RapidPro API token set" do
@@ -46,7 +60,7 @@ RSpec.describe StartRapidproFlow do
     )
     workflow.phone_call.update_attributes!(
       metadata: {
-        "rapidpro_flow_started" => true
+        "rapidpro_flow_started_at" => Time.current.utc
       }
     )
 
@@ -83,11 +97,11 @@ RSpec.describe StartRapidproFlow do
   def build_workflow(options = {})
     account_settings = options.delete(:account_settings) || {}
     callout_settings = options.delete(:callout_settings) || {}
-    rapidpro_client = options.delete(:rapidpro_client) || fake_rapidpro_client
+    rapidpro_client = options.key?(:rapidpro_client) ? options.delete(:rapidpro_client) : fake_rapidpro_client
     account = create(:account, settings: account_settings)
     callout = create(:callout, settings: callout_settings, account: account)
     callout_participation = create_callout_participation(account: account, callout: callout)
     phone_call = create_phone_call(account: account, callout_participation: callout_participation)
-    described_class.new(phone_call, rapidpro_client: rapidpro_client)
+    described_class.new(phone_call, { rapidpro_client: rapidpro_client }.compact)
   end
 end

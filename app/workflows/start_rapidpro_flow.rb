@@ -11,7 +11,7 @@ class StartRapidproFlow
   def call
     return if api_token.blank?
     return if flow_id.blank?
-    return if phone_call.metadata.fetch("rapidpro_flow_started") { false }
+    return if phone_call.metadata.key?("rapidpro_flow_started_at")
 
     start_flow
   end
@@ -19,7 +19,7 @@ class StartRapidproFlow
   private
 
   def start_flow
-    phone_call.metadata["rapidpro_flow_started"] = true
+    phone_call.metadata["rapidpro_flow_started_at"] = Time.current.utc
     phone_call.save!
 
     response = rapidpro_client.start_flow(

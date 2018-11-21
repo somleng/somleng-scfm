@@ -21,7 +21,8 @@ class BatchOperation::PhoneCallCreate < BatchOperation::PhoneCallOperation
   hash_store_reader :remote_request_params
 
   def run!
-    callout_participations_preview.find_each do |callout_participation|
+    # Using find_each here will override the random order
+    callout_participations_preview.each do |callout_participation|
       create_phone_call(callout_participation)
     end
   end

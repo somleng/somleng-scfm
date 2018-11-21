@@ -11,7 +11,8 @@ class BatchOperation::PhoneCallEventOperation < BatchOperation::PhoneCallOperati
             unless: :skip_validate_preview_presence?
 
   def run!
-    phone_calls_preview.find_each do |phone_call|
+    # Using find_each will override random order
+    phone_calls_preview.each do |phone_call|
       phone_call.subscribe(PhoneCallObserver.new)
       assign_batch_operation(phone_call)
       phone_call.save!

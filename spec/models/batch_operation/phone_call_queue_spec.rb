@@ -40,15 +40,12 @@ RSpec.describe BatchOperation::PhoneCallQueue do
   describe "#phone_calls_preview" do
     it "selects phone calls in a random order" do
       batch_operation = create(:phone_call_queue_batch_operation)
-      phone_calls = [
-        create_phone_call(account: batch_operation.account),
-        create_phone_call(account: batch_operation.account)
-      ]
+      phone_calls = create_phone_calls(account: batch_operation.account)
 
       results = []
       100.times do
         results = batch_operation.phone_calls_preview
-        break results if results != phone_calls
+        break results unless results == phone_calls
       end
 
       expect(results).to match_array(phone_calls)
@@ -57,14 +54,33 @@ RSpec.describe BatchOperation::PhoneCallQueue do
   end
 
   describe "#run!" do
-    it "queues the phone calls" do
-      batch_operation = create(:phone_call_queue_batch_operation)
-      phone_call = create_phone_call(:created, account: batch_operation.account)
+    it "queues the phone calls in a random order" do
+      batch_operation = nil
+      phone_calls = []
+      applied_phone_calls = []
 
-      batch_operation.run!
+      100.times do
+        batch_operation = create(:phone_call_queue_batch_operation)
+        phone_calls = create_phone_calls(:created, account: batch_operation.account)
 
-      expect(phone_call.reload).to be_queued
-      expect(batch_operation.reload.phone_calls).to match_array([phone_call])
+        batch_operation.run!
+
+        applied_phone_calls = batch_operation.phone_calls.order(:updated_at)
+
+        break unless applied_phone_calls == phone_calls
+      end
+
+      expect(applied_phone_calls).to match_array(phone_calls)
+      expect(applied_phone_calls).not_to eq(phone_calls)
+      expect(phone_calls.first.reload).to be_queued
     end
+  end
+
+  def create_phone_calls(*args, **options)
+    results = []
+    2.times do
+      results << create_phone_call(*args, **options)
+    end
+    results
   end
 end

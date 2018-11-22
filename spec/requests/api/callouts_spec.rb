@@ -51,6 +51,11 @@ RSpec.describe "Callouts" do
       audio_url: "https://www.example.com/sample.mp3",
       metadata: {
         "foo" => "bar"
+      },
+      settings: {
+        "rapidpro" => {
+          "flow_id" => "flow-id"
+        }
       }
     }
 
@@ -66,6 +71,7 @@ RSpec.describe "Callouts" do
     parsed_response = JSON.parse(response.body)
     created_callout = account.callouts.find(parsed_response.fetch("id"))
     expect(created_callout.metadata).to eq(request_body.fetch(:metadata))
+    expect(created_callout.settings).to eq(request_body.fetch(:settings))
     expect(created_callout.call_flow_logic).to eq(request_body.fetch(:call_flow_logic))
     expect(created_callout.audio_url).to eq(request_body.fetch(:audio_url))
     expect(created_callout.audio_file).to be_attached

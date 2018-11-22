@@ -23,7 +23,8 @@ class Api::CalloutsController < Api::BaseController
       :audio_file,
       :audio_url,
       :metadata_merge_mode,
-      metadata: {}
+      metadata: {},
+      settings: {}
     )
   end
 

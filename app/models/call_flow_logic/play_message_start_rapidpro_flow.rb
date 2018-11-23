@@ -3,6 +3,6 @@ class CallFlowLogic::PlayMessageStartRapidproFlow < CallFlowLogic::PlayMessage
     super
     return unless event.phone_call.completed?
 
-    StartRapidproFlowJob.perform_later(event)
+    StartRapidproFlowJob.perform_later(event.phone_call)
   end
 end

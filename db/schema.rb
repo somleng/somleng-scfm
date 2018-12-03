@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_11_20_045144) do
+ActiveRecord::Schema.define(version: 2018_12_03_113804) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -174,6 +174,7 @@ ActiveRecord::Schema.define(version: 2018_11_20_045144) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "duration", default: 0, null: false
+    t.integer "lock_version", default: 0, null: false
     t.index ["callout_participation_id", "status"], name: "index_phone_calls_on_callout_participation_id_and_status", unique: true, where: "((status)::text = 'created'::text)"
     t.index ["callout_participation_id"], name: "index_phone_calls_on_callout_participation_id"
     t.index ["contact_id"], name: "index_phone_calls_on_contact_id"

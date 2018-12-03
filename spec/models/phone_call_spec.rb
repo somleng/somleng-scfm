@@ -17,6 +17,16 @@ RSpec.describe PhoneCall do
     it { is_expected.to have_many(:remote_phone_call_events).dependent(:restrict_with_error) }
   end
 
+  describe "locking" do
+    it "prevents stale phone calls from being updated" do
+      phone_call1 = create(:phone_call)
+      phone_call2 = described_class.find(phone_call1.id)
+      phone_call1.touch
+
+      expect { phone_call2.touch }.to raise_error(ActiveRecord::StaleObjectError)
+    end
+  end
+
   describe "validations" do
     context "new record" do
       def assert_validations!

@@ -7,9 +7,9 @@ GIT
 
 GIT
   remote: https://github.com/davidcelis/api-pagination.git
-  revision: cfd0946e8fae89c6f806af7a1b75484920360dab
+  revision: df0519936951af77fccd76a8da87d48287d603d6
   specs:
-    api-pagination (4.8.1)
+    api-pagination (4.8.2)
 
 GIT
   remote: https://github.com/krisleech/wisper.git

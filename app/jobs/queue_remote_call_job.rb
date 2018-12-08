@@ -27,7 +27,8 @@ class QueueRemoteCallJob < ApplicationJob
   end
 
   def remote_request_params
-    phone_call.remote_request_params.merge("to" => phone_call.msisdn).symbolize_keys
+    call_flow_logic = phone_call.call_flow_logic.constantize.new(phone_call: phone_call)
+    call_flow_logic.remote_request_params.symbolize_keys
   end
 
   def somleng_client

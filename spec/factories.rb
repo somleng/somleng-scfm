@@ -195,6 +195,12 @@ FactoryBot.define do
       twilio_auth_token { generate(:auth_token) }
     end
 
+    trait :with_somleng_provider do
+      platform_provider_name { "somleng" }
+      somleng_account_sid
+      somleng_auth_token { generate(:auth_token) }
+    end
+
     trait :super_admin do
       permissions { [:super_admin] }
     end

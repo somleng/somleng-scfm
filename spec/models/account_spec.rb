@@ -18,7 +18,12 @@ RSpec.describe Account do
 
   describe "validations" do
     it { is_expected.to validate_inclusion_of(:platform_provider_name).in_array(%w[twilio somleng]).allow_nil }
+    it { expect(create(:account, :with_twilio_provider)).to validate_uniqueness_of(:twilio_account_sid).case_insensitive.allow_nil }
+    it { expect(create(:account, :with_somleng_provider)).to validate_uniqueness_of(:somleng_account_sid).case_insensitive.allow_nil }
   end
+
+  it { is_expected.to strip_attribute(:twilio_account_sid) }
+  it { is_expected.to strip_attribute(:somleng_account_sid) }
 
   it "sets the default settings and permissions" do
     account = build(:account)

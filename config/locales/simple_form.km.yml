@@ -45,6 +45,7 @@ km:
           CallFlowLogic::HelloWorld: Hello World
           CallFlowLogic::PlayMessage: Play Message
           CallFlowLogic::PlayMessageStartRapidproFlow: Play Message and Start RapidPro Flow
+          CallFlowLogic::Simulation: Simulation
     required:
       mark: "*"
       text: required

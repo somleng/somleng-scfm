@@ -142,16 +142,16 @@ RSpec.describe "Remote Phone Call Events" do
     expect(response.code).to eq("201")
     expect(response.headers).not_to have_key("Location")
     created_event = RemotePhoneCallEvent.last!
-    expect(created_event.details).to eq(request_body)
+    expect(created_event.details).to eq(request_body.stringify_keys)
     expect(created_event.call_flow_logic).to eq(CallFlowLogic::HelloWorld.to_s)
     created_phone_call = created_event.phone_call
     expect(created_phone_call.call_flow_logic).to eq(CallFlowLogic::HelloWorld.to_s)
     expect(created_phone_call.status).to eq(PhoneCall::STATE_IN_PROGRESS.to_s)
-    expect(created_phone_call.remote_call_id).to eq(request_body.fetch("CallSid"))
-    expect(created_phone_call.remote_status).to eq(request_body.fetch("CallStatus"))
-    expect(created_phone_call.remote_direction).to eq(request_body.fetch("Direction"))
+    expect(created_phone_call.remote_call_id).to eq(request_body.fetch(:CallSid))
+    expect(created_phone_call.remote_status).to eq(request_body.fetch(:CallStatus))
+    expect(created_phone_call.remote_direction).to eq(request_body.fetch(:Direction))
     created_contact = created_phone_call.contact
-    expect(created_contact.msisdn).to eq(request_body.fetch("From"))
+    expect(created_contact.msisdn).to eq(request_body.fetch(:From))
     expect(response.body).to eq(CallFlowLogic::HelloWorld.new.to_xml)
   end
 
@@ -169,15 +169,17 @@ RSpec.describe "Remote Phone Call Events" do
       call_duration: "87"
     )
 
-    post(
-      api_remote_phone_call_events_url,
-      params: request_body,
-      headers: build_twilio_signature(
-        auth_token: account.twilio_auth_token,
-        url: api_remote_phone_call_events_url,
-        request_body: request_body
+    perform_enqueued_jobs do
+      post(
+        api_remote_phone_call_events_url,
+        params: request_body,
+        headers: build_twilio_signature(
+          auth_token: account.twilio_auth_token,
+          url: api_remote_phone_call_events_url,
+          request_body: request_body
+        )
       )
-    )
+    end
 
     expect(response.code).to eq("201")
     created_event = RemotePhoneCallEvent.last!
@@ -186,7 +188,7 @@ RSpec.describe "Remote Phone Call Events" do
     phone_call.reload
     expect(phone_call).to be_completed
     expect(phone_call.call_flow_logic).to eq(CallFlowLogic::HelloWorld.to_s)
-    expect(phone_call.remote_status).to eq(request_body.fetch("CallStatus"))
+    expect(phone_call.remote_status).to eq(request_body.fetch(:CallStatus))
     expect(phone_call.duration).to eq(87)
     expect(response.body).to eq(CallFlowLogic::HelloWorld.new.to_xml)
   end
@@ -245,15 +247,35 @@ RSpec.describe "Remote Phone Call Events" do
     expect(response.code).to eq("422")
   end
 
+  it "handles schema validation errors" do
+    account = create(:account, :with_twilio_provider)
+    request_body = build_request_body(
+      account_sid: account.twilio_account_sid,
+      call_sid: nil
+    )
+
+    post(
+      api_remote_phone_call_events_url,
+      params: request_body,
+      headers: build_twilio_signature(
+        auth_token: account.twilio_auth_token,
+        url: api_remote_phone_call_events_url,
+        request_body: request_body
+      )
+    )
+
+    expect(response.code).to eq("422")
+  end
+
   def build_request_body(options)
     {
-      "CallSid" => options.fetch(:call_sid) { SecureRandom.uuid },
-      "From" => options.fetch(:from) { "+85510202101" },
-      "To" => options.fetch(:to) { "345" },
-      "Direction" => options.fetch(:direction) { "inbound" },
-      "CallStatus" => options.fetch(:call_status) { "in-progress" },
-      "AccountSid" => options.fetch(:account_sid),
-      "CallDuration" => options.fetch(:call_duration) { nil }
+      CallSid: options.fetch(:call_sid) { SecureRandom.uuid },
+      From: options.fetch(:from) { "+85510202101" },
+      To: options.fetch(:to) { "345" },
+      Direction: options.fetch(:direction) { "inbound" },
+      CallStatus: options.fetch(:call_status) { "in-progress" },
+      AccountSid: options.fetch(:account_sid),
+      CallDuration: options.fetch(:call_duration) { nil }
     }.compact
   end
 

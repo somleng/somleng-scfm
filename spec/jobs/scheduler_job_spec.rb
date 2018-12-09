@@ -1,8 +1,6 @@
 require "rails_helper"
 
 RSpec.describe SchedulerJob do
-  include_examples("aws_sqs_queue_url")
-
   describe "#perform" do
     it "queues batch operations" do
       account = create(

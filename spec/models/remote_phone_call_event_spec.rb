@@ -1,7 +1,8 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe RemotePhoneCallEvent do
   let(:factory) { :remote_phone_call_event }
+
   include_examples "has_metadata"
   include_examples("has_call_flow_logic")
 
@@ -14,23 +15,8 @@ RSpec.describe RemotePhoneCallEvent do
   end
 
   describe "validations" do
-    context "factory" do
-      subject { build(factory) }
-      it { is_expected.to be_valid }
-    end
-
-    context "persisted" do
-      subject { create(factory) }
-
-      it { is_expected.to validate_presence_of(:call_flow_logic) }
-      it { is_expected.to validate_presence_of(:remote_call_id) }
-      it { is_expected.to validate_presence_of(:remote_direction) }
-    end
-  end
-
-  describe "#setup!" do
-    it("should broadcast") {
-      assert_broadcasted!(:remote_phone_call_event_initialized) { subject.setup! }
-    }
+    it { is_expected.to validate_presence_of(:call_flow_logic) }
+    it { is_expected.to validate_presence_of(:remote_call_id) }
+    it { is_expected.to validate_presence_of(:remote_direction) }
   end
 end

@@ -1,8 +1,6 @@
 require "rails_helper"
 
 RSpec.describe FetchRemoteCallJob do
-  include_examples("aws_sqs_queue_url")
-
   describe "#perform" do
     it "updates the remote status of the call" do
       account = create(:account, :with_twilio_provider)

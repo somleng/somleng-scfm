@@ -1,7 +1,6 @@
 class RemotePhoneCallEvent < ApplicationRecord
   include MetadataHelpers
   include HasCallFlowLogic
-  include Wisper::Publisher
 
   belongs_to :phone_call, validate: true, autosave: true
 
@@ -23,8 +22,4 @@ class RemotePhoneCallEvent < ApplicationRecord
            to: :phone_call
 
   accepts_nested_key_value_fields_for :details
-
-  def setup!
-    broadcast(:remote_phone_call_event_initialized, self)
-  end
 end

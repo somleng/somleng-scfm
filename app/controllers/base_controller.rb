@@ -8,7 +8,7 @@ class BaseController < ApplicationController
   def create
     build_resource_from_params
     prepare_resource_for_create
-    save_resource
+    create_resource
     after_create_resource
     _prepare_for_render
     respond_with_created_resource
@@ -76,6 +76,10 @@ class BaseController < ApplicationController
   end
 
   def after_save_resource; end
+
+  def create_resource
+    save_resource
+  end
 
   def save_resource
     resource.save

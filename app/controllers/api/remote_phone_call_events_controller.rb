@@ -6,20 +6,17 @@ class Api::RemotePhoneCallEventsController < Api::BaseController
                      :authorize_access_token_for_write!,
                      only: :create
 
+  def create
+    schema_validation_result = RemotePhoneCallEventRequestSchema.call(request.request_parameters)
+    if schema_validation_result.success?
+      result = HandlePhoneCallEvent.call(request.original_url, schema_validation_result.output)
+      respond_with(result, location: nil)
+    else
+      respond_with(schema_validation_result)
+    end
+  end
+
   private
-
-  def build_resource_from_params
-    @resource = RemotePhoneCallEvent.new(details: permitted_create_params)
-  end
-
-  def prepare_resource_for_create
-    subscribe_listeners
-    resource.setup!
-  end
-
-  def subscribe_listeners
-    resource.subscribe(RemotePhoneCallEventObserver.new)
-  end
 
   def find_resources_association_chain
     if params[:phone_call_id]
@@ -41,34 +38,6 @@ class Api::RemotePhoneCallEventsController < Api::BaseController
 
   def filter_class
     Filter::Resource::RemotePhoneCallEvent
-  end
-
-  def after_save_resource
-    call_flow_logic_instance.run! if resource.persisted?
-  end
-
-  def call_flow_logic_instance
-    @call_flow_logic_instance ||= call_flow_logic.new(
-      event: resource,
-      current_url: request.original_url
-    )
-  end
-
-  def call_flow_logic
-    @call_flow_logic ||= resource.call_flow_logic.constantize
-  end
-
-  def respond_with_created_resource
-    if resource.persisted?
-      respond_with(call_flow_logic_instance, location: nil)
-    else
-      respond_with(resource)
-    end
-  end
-
-  # https://www.twilio.com/docs/api/twiml/twilio_request
-  def permitted_create_params
-    params.permit!.except(:action, :controller, :format)
   end
 
   def permitted_update_params

@@ -9,14 +9,14 @@ FactoryBot.define do
 
   sequence :twilio_remote_call_event_details do
     {
-      "CallSid" => SecureRandom.uuid,
-      "From" => FactoryBot.generate(:somali_msisdn),
-      "To" => "345",
-      "CallStatus" => "completed",
-      "Direction" => "inbound",
-      "AccountSid" => SecureRandom.uuid,
-      "ApiVersion" => "2010-04-01",
-      "Digits" => "5"
+      CallSid: SecureRandom.uuid,
+      From: FactoryBot.generate(:somali_msisdn),
+      To: "345",
+      CallStatus: "completed",
+      Direction: "inbound",
+      AccountSid: SecureRandom.uuid,
+      ApiVersion: "2010-04-01",
+      Digits: "5"
     }
   end
 
@@ -168,15 +168,15 @@ FactoryBot.define do
     end
 
     details { generate(:twilio_remote_call_event_details) }
-    remote_call_id { details["CallSid"] }
-    remote_direction { details["Direction"] }
+    remote_call_id { details[:CallSid] }
+    remote_direction { details[:Direction] }
     call_flow_logic { Account::DEFAULT_CALL_FLOW_LOGIC }
 
     after(:build) do |remote_phone_call_event, evaluator|
       if evaluator.build_phone_call
         remote_phone_call_event.phone_call ||= build(
           :phone_call,
-          msisdn: remote_phone_call_event.details["From"],
+          msisdn: remote_phone_call_event.details[:From],
           remote_call_id: remote_phone_call_event.remote_call_id,
           remote_direction: remote_phone_call_event.remote_direction
         )

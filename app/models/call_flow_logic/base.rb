@@ -14,7 +14,11 @@ class CallFlowLogic::Base
   end
 
   def event
-    options[:event]
+    options.fetch(:event)
+  end
+
+  def current_url
+    options.fetch(:current_url)
   end
 
   def run!

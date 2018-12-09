@@ -12,7 +12,7 @@ RSpec.describe CallFlowLogic::PlayMessageStartRapidproFlow do
       call_flow_logic.run!
 
       expect(phone_call.reload).to be_completed
-      expect(StartRapidproFlowJob).to have_been_enqueued.with(phone_call)
+      expect(ExecuteWorkflowJob).to have_been_enqueued.with(StartRapidproFlow.to_s, phone_call)
     end
 
     it "does not enqueue the job if the phone call is not completed" do
@@ -23,7 +23,7 @@ RSpec.describe CallFlowLogic::PlayMessageStartRapidproFlow do
       call_flow_logic.run!
 
       expect(phone_call.reload).to be_in_progress
-      expect(StartRapidproFlowJob).not_to have_been_enqueued
+      expect(ExecuteWorkflowJob).not_to have_been_enqueued
     end
   end
 end

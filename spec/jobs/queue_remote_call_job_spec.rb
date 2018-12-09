@@ -1,8 +1,6 @@
 require "rails_helper"
 
 RSpec.describe QueueRemoteCallJob do
-  include_examples("aws_sqs_queue_url")
-
   describe "#perform" do
     it "queues the call remotely" do
       phone_call = create_phone_call(account: account)

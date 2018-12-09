@@ -1,4 +1,4 @@
-class StartRapidproFlow
+class StartRapidproFlow < ApplicationWorkflow
   attr_accessor :phone_call, :rapidpro_client
 
   def initialize(phone_call, options = {})

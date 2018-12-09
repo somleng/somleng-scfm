@@ -2,6 +2,7 @@ require "rails_helper"
 
 RSpec.describe Account do
   let(:factory) { :account }
+
   include_examples "has_metadata"
   include_examples "has_call_flow_logic"
 
@@ -17,7 +18,8 @@ RSpec.describe Account do
   end
 
   describe "validations" do
-    it { is_expected.to validate_inclusion_of(:platform_provider_name).in_array(%w[twilio somleng]).allow_nil }
+    it { expect(build(:account)).to be_valid }
+    it { is_expected.to validate_inclusion_of(:platform_provider_name).in_array(%w[twilio somleng]) }
     it { expect(create(:account, :with_twilio_provider)).to validate_uniqueness_of(:twilio_account_sid).case_insensitive.allow_nil }
     it { expect(create(:account, :with_somleng_provider)).to validate_uniqueness_of(:somleng_account_sid).case_insensitive.allow_nil }
   end
@@ -73,17 +75,20 @@ RSpec.describe Account do
 
     context "given a Twilio account SID" do
       let(:account_sid) { twilio_account_sid }
+
       it { assert_results! }
     end
 
     context "given a Somleng account SID" do
       let(:account_sid) { somleng_account_sid }
+
       it { assert_results! }
     end
 
     context "given an account SID which doesn't match any accounts" do
       let(:asserted_results) { [] }
       let(:account_sid) { SecureRandom.hex }
+
       it { assert_results! }
     end
   end

@@ -1,4 +1,6 @@
 class ApplicationJob < ActiveJob::Base
+  retry_on ActiveRecord::StaleObjectError
+
   def self.parse_queue_name(queue_url)
     queue_url.split("/").last
   end

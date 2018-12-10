@@ -13,6 +13,7 @@ class Callout < ApplicationRecord
     def audio_file_blob_changed?
       return false unless audio_file.attached?
       return false unless audio_file_will_change
+
       audio_file.blob != audio_file_blob_was
     end
   end
@@ -27,6 +28,7 @@ class Callout < ApplicationRecord
   accepts_nested_key_value_fields_for :settings
 
   belongs_to :account
+  belongs_to :created_by, class_name: "User", optional: true
 
   has_many :callout_participations, dependent: :restrict_with_error
 

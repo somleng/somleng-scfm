@@ -51,6 +51,12 @@
         %dd.col-sm-7.col-md-6
           %code
             = resource.created_at
+      %dl.row
+        %dt.col-sm-5.col-md-4.text-md-right
+          = Callout.human_attribute_name(:created_by)
+        %dd.col-sm-7.col-md-6
+          - if resource.created_by_id?
+            = link_to(resource.created_by_id, dashboard_user_path(resource.created_by_id))
       = render("shared/key_value_attributes", attribute: :settings)
       = render("shared/key_value_attributes", attribute: :metadata)
 

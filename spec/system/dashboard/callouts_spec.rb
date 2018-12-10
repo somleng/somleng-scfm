@@ -42,17 +42,18 @@ RSpec.describe "Callouts", :aggregate_failures do
     fill_in("Audio url", with: "https://www.example.com/sample.mp3")
     choose("Hello World")
     fill_in_key_value_for(:metadata, with: { key: "location:country", value: "kh" })
-    fill_in_key_value_for(:settings, with: { key: "rapidpro:flow_id", value: "flow-id" } )
+    fill_in_key_value_for(:settings, with: { key: "rapidpro:flow_id", value: "flow-id" })
 
     expect do
       click_action_button(:create, key: :submit, namespace: :helpers, model: "Callout")
     end.not_to have_enqueued_job(AudioFileProcessorJob)
 
     new_callout = Callout.last!
-    expect(current_path).to eq(dashboard_callout_path(new_callout))
+    expect(page).to have_current_path(dashboard_callout_path(new_callout))
     expect(page).to have_text("Callout was successfully created.")
     expect(new_callout.account).to eq(user.account)
     expect(new_callout.audio_file).not_to be_attached
+    expect(new_callout.created_by).to eq(user)
     expect(new_callout.audio_url).to eq("https://www.example.com/sample.mp3")
     expect(new_callout.call_flow_logic).to eq(CallFlowLogic::HelloWorld.to_s)
     expect(new_callout.metadata).to eq("location" => { "country" => "kh" })
@@ -122,6 +123,7 @@ RSpec.describe "Callouts", :aggregate_failures do
       :initialized,
       account: user.account,
       call_flow_logic: CallFlowLogic::HelloWorld,
+      created_by: user,
       audio_file: "test.mp3",
       audio_url: "https://example.com/audio.mp3",
       metadata: { "location" => { "country" => "Cambodia" } },
@@ -163,6 +165,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     within("#callout") do
       expect(page).to have_content(callout.id)
       expect(page).to have_link(callout.audio_url, href: callout.audio_url)
+      expect(page).to have_link(callout.created_by_id, href: dashboard_user_path(callout.created_by))
       expect(page).to have_content("Status")
       expect(page).to have_content("Initialized")
       expect(page).to have_content("Created at")

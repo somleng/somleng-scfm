@@ -94,6 +94,7 @@ class Account < ApplicationRecord
 
   def set_call_flow_logic
     return if call_flow_logic.present?
+
     self.call_flow_logic = DEFAULT_CALL_FLOW_LOGIC
   end
 

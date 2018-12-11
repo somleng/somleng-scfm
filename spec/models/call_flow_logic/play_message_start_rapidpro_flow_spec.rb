@@ -1,8 +1,6 @@
 require "rails_helper"
 
 RSpec.describe CallFlowLogic::PlayMessageStartRapidproFlow do
-  it_behaves_like("call_flow_logic")
-
   describe "#run!" do
     it "completes the call and enqueues the StartRapidproFlowJob" do
       phone_call = create(:phone_call, :in_progress, remote_status: "completed")

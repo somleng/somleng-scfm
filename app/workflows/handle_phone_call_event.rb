@@ -27,8 +27,6 @@ class HandlePhoneCallEvent < ApplicationWorkflow
     call_flow_logic = resolve_call_flow_logic(event)
     call_flow_logic.run!
     call_flow_logic
-  rescue ActiveRecord::StaleObjectError
-    retry
   end
 
   def build_event

@@ -22,7 +22,10 @@ class CallFlowLogic::Base
   end
 
   def run!
-    event&.phone_call_complete!
+    event.phone_call.complete!
+  rescue ActiveRecord::StaleObjectError
+    event.phone_call.reload
+    retry
   end
 
   def remote_request_params

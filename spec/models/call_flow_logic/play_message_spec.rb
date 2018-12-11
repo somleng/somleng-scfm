@@ -1,8 +1,6 @@
 require "rails_helper"
 
 RSpec.describe CallFlowLogic::PlayMessage do
-  it_behaves_like("call_flow_logic")
-
   describe "#to_xml" do
     it "plays the audio url" do
       audio_url = "https://www.example.com/audio_url"

@@ -1,8 +1,6 @@
 require "rails_helper"
 
 RSpec.describe CallFlowLogic::HelloWorld do
-  it_behaves_like("call_flow_logic")
-
   describe "#to_xml" do
     it "returns TwiML for hello world" do
       event = create(:remote_phone_call_event)

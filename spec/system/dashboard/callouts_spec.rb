@@ -3,7 +3,12 @@ require "rails_helper"
 RSpec.describe "Callouts", :aggregate_failures do
   it "can list callouts" do
     user          = create(:user)
-    callout       = create(:callout, :initialized, account: user.account)
+    callout       = create(
+      :callout,
+      :initialized,
+      call_flow_logic: CallFlowLogic::HelloWorld,
+      account: user.account
+    )
     other_callout = create(:callout)
 
     sign_in(user)
@@ -28,6 +33,8 @@ RSpec.describe "Callouts", :aggregate_failures do
       expect(page).to have_sortable_column("status")
       expect(page).to have_sortable_column("created_at")
       expect(page).to have_content("Initialized")
+      expect(page).to have_sortable_column("call_flow_logic")
+      expect(page).to have_content("Hello World")
     end
   end
 

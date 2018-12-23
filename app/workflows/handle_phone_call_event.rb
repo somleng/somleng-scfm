@@ -16,9 +16,11 @@ class HandlePhoneCallEvent < ApplicationWorkflow
   private
 
   def create_event
-    event = build_event
-    event.save
-    event
+    RemotePhoneCallEvent.transaction do
+      event = build_event
+      event.save!
+      event
+    end
   rescue ActiveRecord::StaleObjectError
     retry
   end
@@ -35,15 +37,9 @@ class HandlePhoneCallEvent < ApplicationWorkflow
     event.remote_call_id = params.fetch(:CallSid)
     event.remote_direction = params.fetch(:Direction)
     event.call_duration = call_duration
-    event.phone_call ||= find_or_initialize_phone_call(event)
-    event.phone_call.msisdn ||= params.fetch(:From)
+    event.phone_call ||= create_or_find_phone_call!(event)
     event.phone_call.remote_status = params.fetch(:CallStatus)
     event.phone_call.duration = call_duration if event.phone_call.duration.zero?
-    event.phone_call.contact ||= find_or_initialize_contact(
-      params.fetch(:AccountSid),
-      event.phone_call.msisdn
-    )
-    event.phone_call.set_call_flow_logic
     event.call_flow_logic ||= event.phone_call.call_flow_logic
     event
   end
@@ -54,21 +50,16 @@ class HandlePhoneCallEvent < ApplicationWorkflow
     )
   end
 
-  def find_or_initialize_phone_call(event)
-    PhoneCall.where(
-      remote_call_id: event.remote_call_id
-    ).first_or_initialize(
-      remote_direction: event.remote_direction
-    )
+  def create_or_find_phone_call!(event)
+    PhoneCall.create_or_find_by(remote_call_id: event.remote_call_id) do |phone_call|
+      phone_call.remote_direction = event.remote_direction
+      phone_call.msisdn = phone_call.inbound? ? params.fetch(:From) : params.fetch(:To)
+      phone_call.contact = create_or_find_contact!(params.fetch(:AccountSid), phone_call.msisdn)
+    end
   end
 
-  def find_or_initialize_contact(platform_account_sid, msisdn)
-    find_or_initialize_account(
-      platform_account_sid
-    ).contacts.where_msisdn(msisdn).first_or_initialize
-  end
-
-  def find_or_initialize_account(platform_account_sid)
-    Account.by_platform_account_sid(platform_account_sid).first_or_initialize
+  def create_or_find_contact!(platform_account_sid, msisdn)
+    account = Account.find_by_account_sid(platform_account_sid)
+    Contact.create_or_find_by(account: account, msisdn: PhonyRails.normalize_number(msisdn))
   end
 end

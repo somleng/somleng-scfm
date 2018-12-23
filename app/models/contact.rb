@@ -16,9 +16,6 @@ class Contact < ApplicationRecord
   has_many :remote_phone_call_events,
            through: :phone_calls
 
-  validates :msisdn,
-            uniqueness: { scope: :account_id }
-
   delegate :call_flow_logic,
            to: :account,
            allow_nil: true

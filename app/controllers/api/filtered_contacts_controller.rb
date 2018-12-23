@@ -1,13 +1,15 @@
-class Api::FilteredContactsController < Api::BaseController
-  include BatchOperationResource
+module Api
+  class FilteredContactsController < BaseController
+    include BatchOperationResource
 
-  private
+    private
 
-  def batch_operation_scope
-    current_account.batch_operations.can_preview_contacts
-  end
+    def batch_operation_scope
+      current_account.batch_operations.can_preview_contacts
+    end
 
-  def filter_class
-    Filter::Resource::Contact
+    def filter_class
+      Filter::Resource::Contact
+    end
   end
 end

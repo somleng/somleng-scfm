@@ -1,45 +1,47 @@
-class Api::AccountsController < Api::BaseController
-  before_action :authorize_super_admin!
+module Api
+  class AccountsController < Api::BaseController
+    before_action :authorize_super_admin!
 
-  private
+    private
 
-  def singleton?
-    !params[:id]
-  end
+    def singleton?
+      !params[:id]
+    end
 
-  def authorize_super_admin!
-    super if %w[show update].exclude?(action_name) || !singleton?
-  end
+    def authorize_super_admin!
+      super if %w[show update].exclude?(action_name) || !singleton?
+    end
 
-  def find_resource
-    !singleton? && super || @resource = current_account
-  end
+    def find_resource
+      !singleton? && super || @resource = current_account
+    end
 
-  def find_resources_association_chain
-    association_chain
-  end
+    def find_resources_association_chain
+      association_chain
+    end
 
-  def association_chain
-    Account.all
-  end
+    def association_chain
+      Account.all
+    end
 
-  def filter_class
-    Filter::Resource::Account
-  end
+    def filter_class
+      Filter::Resource::Account
+    end
 
-  def permitted_params
-    params.permit(
-      :platform_provider_name,
-      :twilio_account_sid,
-      :twilio_auth_token,
-      :somleng_account_sid,
-      :somleng_auth_token,
-      :somleng_api_host,
-      :somleng_api_base_url,
-      :metadata_merge_mode,
-      :call_flow_logic,
-      settings: {},
-      metadata: {}
-    )
+    def permitted_params
+      params.permit(
+        :platform_provider_name,
+        :twilio_account_sid,
+        :twilio_auth_token,
+        :somleng_account_sid,
+        :somleng_auth_token,
+        :somleng_api_host,
+        :somleng_api_base_url,
+        :metadata_merge_mode,
+        :call_flow_logic,
+        settings: {},
+        metadata: {}
+      )
+    end
   end
 end

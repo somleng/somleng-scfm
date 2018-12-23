@@ -1,19 +1,24 @@
-class Dashboard::ContactsController < Dashboard::BaseController
-  private
+module Dashboard
+  class ContactsController < Dashboard::BaseController
+    include ValidateSchemaController
+    self.request_schema = ContactRequestSchema
 
-  def association_chain
-    current_account.contacts
-  end
+    private
 
-  def permitted_params
-    params.require(:contact).permit(:msisdn, METADATA_FIELDS_ATTRIBUTES)
-  end
+    def association_chain
+      current_account.contacts
+    end
 
-  def before_update_attributes
-    clear_metadata
-  end
+    def permitted_params
+      params.require(:contact).permit(:msisdn, METADATA_FIELDS_ATTRIBUTES).to_h
+    end
 
-  def build_key_value_fields
-    build_metadata_field
+    def before_update_attributes
+      clear_metadata
+    end
+
+    def build_key_value_fields
+      build_metadata_field
+    end
   end
 end

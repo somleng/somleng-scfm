@@ -121,7 +121,7 @@ RSpec.describe "Contacts" do
     expect(parsed_body.first.fetch("id")).to eq(phone_call.contact_id)
   end
 
-  it "can create a callout" do
+  it "can create a contact" do
     request_body = {
       msisdn: generate(:somali_msisdn),
       metadata: {
@@ -140,6 +140,16 @@ RSpec.describe "Contacts" do
     created_contact = account.contacts.find(parsed_response.fetch("id"))
     expect(created_contact.msisdn).to include(request_body.fetch(:msisdn))
     expect(created_contact.metadata).to eq(request_body.fetch(:metadata))
+  end
+
+  it "does not create invalid contacts" do
+    post(
+      api_contacts_path,
+      params: {},
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("422")
   end
 
   it "can fetch a contact" do
@@ -166,7 +176,12 @@ RSpec.describe "Contacts" do
       }
     )
 
-    request_body = { metadata: { "bar" => "foo" }, metadata_merge_mode: "replace" }
+    request_body = {
+      metadata: {
+        "bar" => "foo"
+      },
+      metadata_merge_mode: "replace"
+    }
 
     patch(
       api_contact_path(contact),
@@ -177,6 +192,19 @@ RSpec.describe "Contacts" do
     expect(response.code).to eq("204")
     contact.reload
     expect(contact.metadata).to eq(request_body.fetch(:metadata))
+  end
+
+  it "does not update a contact with invalid data" do
+    contact = create(:contact, account: account)
+    request_body = { msisdn: "1234" }
+
+    patch(
+      api_contact_path(contact),
+      params: request_body,
+      headers: build_authorization_headers(access_token: access_token)
+    )
+
+    expect(response.code).to eq("422")
   end
 
   it "can create contact data" do

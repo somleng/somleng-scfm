@@ -1,6 +1,6 @@
 module RequestSchemaHelpers
-  def validate_schema(params = {})
-    described_class.call(params)
+  def validate_schema(params = {}, options = {})
+    described_class.with(options.fetch(:with) { {} }).call(params)
   end
 end
 

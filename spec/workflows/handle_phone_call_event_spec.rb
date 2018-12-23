@@ -59,7 +59,7 @@ RSpec.describe HandlePhoneCallEvent do
   end
 
   it "does not override the phone call's duration" do
-    account = create(:account)
+    account = create_account
     phone_call = create_phone_call(
       :remotely_queued, account: account, duration: 87
     )
@@ -76,7 +76,7 @@ RSpec.describe HandlePhoneCallEvent do
   end
 
   it "retries ActiveRecord::StaleObjectError exceptions" do
-    account = create(:account)
+    account = create_account
     phone_call = create_phone_call(
       :remotely_queued, account: account
     )

@@ -63,10 +63,10 @@ class Account < ApplicationRecord
     permissions?(:super_admin)
   end
 
-  def self.by_platform_account_sid(account_sid)
+  def self.find_by_account_sid(account_sid)
     where(
       twilio_account_sid?(account_sid) ? :twilio_account_sid : :somleng_account_sid => account_sid
-    )
+    ).first
   end
 
   def platform_auth_token(account_sid)

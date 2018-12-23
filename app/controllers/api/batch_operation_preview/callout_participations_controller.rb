@@ -1,13 +1,17 @@
-class Api::BatchOperationPreview::CalloutParticipationsController < Api::BaseController
-  include BatchOperationResource
+module Api
+  module BatchOperationPreview
+    class CalloutParticipationsController < Api::BaseController
+      include BatchOperationResource
 
-  private
+      private
 
-  def find_resources_association_chain
-    batch_operation.callout_participations_preview
-  end
+      def find_resources_association_chain
+        batch_operation.callout_participations_preview
+      end
 
-  def batch_operation_scope
-    current_account.batch_operations.can_preview_callout_participations
+      def batch_operation_scope
+        current_account.batch_operations.can_preview_callout_participations
+      end
+    end
   end
 end

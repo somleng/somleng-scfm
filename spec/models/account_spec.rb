@@ -49,47 +49,19 @@ RSpec.describe Account do
     end
   end
 
-  describe ".by_platform_account_sid(account_sid)" do
-    let(:results) { described_class.by_platform_account_sid(account_sid) }
-    let(:twilio_account_sid) { generate(:twilio_account_sid) }
-    let(:somleng_account_sid) { SecureRandom.hex }
+  describe ".find_by_platform_account_sid(account_sid)" do
+    it "returns the account" do
+      twilio_account = create(:account, twilio_account_sid: generate(:twilio_account_sid))
+      expect(
+        described_class.find_by_platform_account_sid(twilio_account.twilio_account_sid)
+      ).to eq(twilio_account)
 
-    let(:account) do
-      create(
-        :account,
-        twilio_account_sid: twilio_account_sid,
-        somleng_account_sid: somleng_account_sid
-      )
-    end
+      somleng_account = create(:account, somleng_account_sid: generate(:somleng_account_sid))
+      expect(
+        described_class.find_by_platform_account_sid(somleng_account.somleng_account_sid)
+      ).to eq(somleng_account)
 
-    let(:asserted_results) { [account] }
-
-    def setup_scenario
-      super
-      account
-    end
-
-    def assert_results!
-      expect(results).to match_array(asserted_results)
-    end
-
-    context "given a Twilio account SID" do
-      let(:account_sid) { twilio_account_sid }
-
-      it { assert_results! }
-    end
-
-    context "given a Somleng account SID" do
-      let(:account_sid) { somleng_account_sid }
-
-      it { assert_results! }
-    end
-
-    context "given an account SID which doesn't match any accounts" do
-      let(:asserted_results) { [] }
-      let(:account_sid) { SecureRandom.hex }
-
-      it { assert_results! }
+      expect(described_class.find_by_platform_account_sid(SecureRandom.uuid)).to eq(nil)
     end
   end
 end

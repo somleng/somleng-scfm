@@ -10,6 +10,18 @@ RSpec.shared_examples_for "timestamp_attribute_filter" do |*timestamp_attributes
         filterable
       }
 
+      fit "does something" do
+        resource_timestamp = Time.now.utc
+        filterable = create(filterable_factory, timestamp_attribute => resource_timestamp)
+        filterable.update_column(timestamp_attribute, resource_timestamp)
+
+        filter_param = :"#{timestamp_attribute}_before"
+        filter_value = resource_timestamp + 1.second
+
+        filter = described_class.new({ association_chain: filterable.class }, filter_param => filter_value)
+        expect(filter.resources).to match_array([filterable])
+      end
+
       def setup_scenario
         resource
       end

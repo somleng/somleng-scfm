@@ -59,7 +59,7 @@ class HandlePhoneCallEvent < ApplicationWorkflow
   end
 
   def create_or_find_contact!(platform_account_sid, msisdn)
-    account = Account.find_by_account_sid(platform_account_sid)
+    account = Account.find_by_platform_account_sid(platform_account_sid)
     Contact.create_or_find_by(account: account, msisdn: PhonyRails.normalize_number(msisdn))
   end
 end

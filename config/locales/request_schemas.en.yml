@@ -1,4 +1,5 @@
+---
 en:
   errors:
-    phone_number?: "is invalid"
-    unique?: "must be unique"
+    phone_number?: is invalid
+    unique?: must be unique

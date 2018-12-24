@@ -1,10 +1,8 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Filter::Resource::AccessToken do
-  include SomlengScfm::SpecHelpers::FilterHelpers
-
   let(:filterable_factory) { :access_token }
-  let(:association_chain) { AccessToken }
+  let(:association_chain) { AccessToken.all }
 
   describe "#resources" do
     include_examples "metadata_attribute_filter"

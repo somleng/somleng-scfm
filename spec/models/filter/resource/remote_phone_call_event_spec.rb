@@ -1,10 +1,8 @@
 require "rails_helper"
 
 RSpec.describe Filter::Resource::RemotePhoneCallEvent do
-  include SomlengScfm::SpecHelpers::FilterHelpers
-
   let(:filterable_factory) { :remote_phone_call_event }
-  let(:association_chain) { RemotePhoneCallEvent }
+  let(:association_chain) { RemotePhoneCallEvent.all }
 
   describe "#resources" do
     include_examples("metadata_attribute_filter")
@@ -16,11 +14,17 @@ RSpec.describe Filter::Resource::RemotePhoneCallEvent do
       remote_direction: PhoneCall::TWILIO_DIRECTIONS[:inbound]
     )
 
-    context "filtering by details" do
-      let(:filterable_attribute) { :details }
-      let(:json_data) { generate(:twilio_remote_call_event_details) }
+    it "filters by json" do
+      remote_phone_call_event = create(:remote_phone_call_event)
+      event_details = remote_phone_call_event.details
 
-      include_examples "json_attribute_filter"
+      expect(
+        build_filter(details: event_details.slice(event_details.keys.first)).resources
+      ).to match_array([remote_phone_call_event])
+
+      expect(
+        build_filter(details: { "foo" => "baz" }).resources
+      ).to match_array([])
     end
 
     it "filters by call_duration" do

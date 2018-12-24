@@ -1,11 +1,15 @@
-class Filter::Resource::Msisdn < Filter::Resource::Base
-  def self.attribute_filters
-    super << :msisdn_attribute_filter
-  end
+module Filter
+  module Resource
+    class Msisdn < Filter::Resource::Base
+      def self.attribute_filters
+        super << :msisdn_attribute_filter
+      end
 
-  private
+      private
 
-  def msisdn_attribute_filter
-    @msisdn_attribute_filter ||= Filter::Attribute::Msisdn.new(options, params)
+      def msisdn_attribute_filter
+        @msisdn_attribute_filter ||= Filter::Attribute::Msisdn.new(options, params)
+      end
+    end
   end
 end

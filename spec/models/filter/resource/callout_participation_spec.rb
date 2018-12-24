@@ -1,10 +1,8 @@
 require "rails_helper"
 
 RSpec.describe Filter::Resource::CalloutParticipation do
-  include SomlengScfm::SpecHelpers::FilterHelpers
-
   let(:filterable_factory) { :callout_participation }
-  let(:association_chain) { CalloutParticipation }
+  let(:association_chain) { CalloutParticipation.all }
 
   describe "#resources" do
     include_examples "metadata_attribute_filter"

@@ -1,10 +1,8 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Filter::Resource::Account do
-  include SomlengScfm::SpecHelpers::FilterHelpers
-
   let(:filterable_factory) { :account }
-  let(:association_chain) { Account }
+  let(:association_chain) { Account.all }
 
   describe "#resources" do
     include_examples "metadata_attribute_filter"

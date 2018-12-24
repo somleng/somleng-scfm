@@ -1,85 +1,51 @@
 RSpec.shared_examples_for "timestamp_attribute_filter" do |*timestamp_attributes|
-  timestamp_attributes = [:created_at, :updated_at] if timestamp_attributes.empty?
+  timestamp_attributes = %i[created_at updated_at] if timestamp_attributes.empty?
 
   timestamp_attributes.each do |timestamp_attribute|
     context "filtering by #{timestamp_attribute}" do
-      let(:resource_timestamp) { Time.now.utc }
-      let(:resource) {
-        filterable = create(filterable_factory, timestamp_attribute => resource_timestamp)
-        filterable.update_column(timestamp_attribute, resource_timestamp)
-        filterable
-      }
-
-      fit "does something" do
+      it "filters by the timestamp" do
         resource_timestamp = Time.now.utc
         filterable = create(filterable_factory, timestamp_attribute => resource_timestamp)
         filterable.update_column(timestamp_attribute, resource_timestamp)
+        filter_timestamp = resource_timestamp + 1.second
 
-        filter_param = :"#{timestamp_attribute}_before"
-        filter_value = resource_timestamp + 1.second
+        filter_params = build_filter_params(timestamp_attribute, :before, filter_timestamp)
+        filter = build_filter(filter_params)
+        expect(filter.resources).to match_array([filterable])
 
-        filter = described_class.new({ association_chain: filterable.class }, filter_param => filter_value)
+        filter_params = build_filter_params(timestamp_attribute, :after, filter_timestamp)
+        filter = build_filter(filter_params)
+        expect(filter.resources).to match_array([])
+
+        filter_params = build_filter_params(timestamp_attribute, :or_before, filter_timestamp.to_date)
+        filter = build_filter(filter_params)
+        expect(filter.resources).to match_array([filterable])
+
+        filter_params = build_filter_params(timestamp_attribute, :or_after, filter_timestamp.to_date)
+        filter = build_filter(filter_params)
+        expect(filter.resources).to match_array([filterable])
+
+        filter_params = build_filter_params(timestamp_attribute, :before, filter_timestamp.to_date)
+        filter = build_filter(filter_params)
+        expect(filter.resources).to match_array([])
+
+        filter_params = build_filter_params(timestamp_attribute, :after, filter_timestamp.to_date)
+        filter = build_filter(filter_params)
+        expect(filter.resources).to match_array([])
+
+        filter_params = build_filter_params(timestamp_attribute, :after, "foo")
+        filter = build_filter(filter_params)
         expect(filter.resources).to match_array([filterable])
       end
 
-      def setup_scenario
-        resource
+      def build_filter(filter_params)
+        described_class.new({ association_chain: association_chain }, filter_params)
       end
 
-      def filter_params
-        super.merge(filter_param => timestamp_filter_value.to_s)
-      end
-
-      def assert_results!
-        expect(subject.resources).to match_array([resource])
-      end
-
-      def assert_no_results!
-        expect(subject.resources).to match_array([])
-      end
-
-      context "filter parameter is a time string" do
-        let(:timestamp_filter_value) { resource_timestamp + 1.second }
-
-        context "#{timestamp_attribute}_before" do
-          let(:filter_param) { :"#{timestamp_attribute}_before" }
-          it { assert_results! }
-        end
-
-        context "#{timestamp_attribute}_after" do
-          let(:filter_param) { :"#{timestamp_attribute}_after" }
-          it { assert_no_results! }
-        end
-      end
-
-      context "filter parameter is a date" do
-        let(:timestamp_filter_value) { resource_timestamp.to_date }
-
-        context "#{timestamp_attribute}_or_before" do
-          let(:filter_param) { :"#{timestamp_attribute}_or_before" }
-          it { assert_results! }
-        end
-
-        context "#{timestamp_attribute}_or_after" do
-          let(:filter_param) { :"#{timestamp_attribute}_or_after" }
-          it { assert_results! }
-        end
-
-        context "#{timestamp_attribute}_before" do
-          let(:filter_param) { :"#{timestamp_attribute}_before" }
-          it { assert_no_results! }
-        end
-
-        context "#{timestamp_attribute}_after" do
-          let(:filter_param) { :"#{timestamp_attribute}_after" }
-          it { assert_no_results! }
-        end
-      end
-
-      context "filter parameter is invalid" do
-        let(:timestamp_filter_value) { "foo" }
-        let(:filter_param) { :"#{timestamp_attribute}_after" }
-        it { assert_results! }
+      def build_filter_params(timestamp_attribute, comparator, timestamp)
+        {
+          :"#{timestamp_attribute}_#{comparator}" => timestamp.to_s
+        }
       end
     end
   end

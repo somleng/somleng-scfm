@@ -1,10 +1,8 @@
-require 'rails_helper'
+require "rails_helper"
 
 RSpec.describe Filter::Resource::BatchOperation do
-  include SomlengScfm::SpecHelpers::FilterHelpers
-
   let(:filterable_factory) { :callout_population }
-  let(:association_chain) { BatchOperation::Base }
+  let(:association_chain) { BatchOperation::Base.all }
 
   describe "#resources" do
     include_examples "metadata_attribute_filter"
@@ -12,6 +10,7 @@ RSpec.describe Filter::Resource::BatchOperation do
 
     context "filtering by parameters" do
       let(:filterable_attribute) { :parameters }
+
       include_examples "json_attribute_filter"
     end
   end

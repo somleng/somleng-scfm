@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe "Contacts" do
-  fit "can list all contacts" do
+  it "can list all contacts" do
     _matching_contact = create(:contact, account: account, metadata: { "foo" => "bar" })
     filtered_contact = create(:contact, account: account, metadata: { "foo" => "bar" })
 

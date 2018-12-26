@@ -9,7 +9,7 @@ module ValidateSchemaController
 
   def create_resource
     @resource = validate_schema do |permitted_params|
-      association_chain.create!(permitted_params)
+      build_resource_association_chain.create!(permitted_params)
     end
   end
 

@@ -13,15 +13,39 @@ class ApplicationRequestSchema < Dry::Validation::Schema
   end
 
   def phone_number?(value)
-    PhoneNumberValidator.new(phone_number: value).valid?
+    PhoneNumberModel.new(phone_number: value).valid?
   end
 
-  class PhoneNumberValidator
+  def call_flow_logic?(value)
+    CallFlowLogicModel.new(call_flow_logic: value).valid?
+  end
+
+  def remote_request_params?(value)
+    RemoteRequestParamsModel.new(remote_request_params: value).valid?
+  end
+
+  class PhoneNumberModel
     include ActiveModel::Model
 
     attr_accessor :phone_number
 
     validates :phone_number, phony_plausible: true
+  end
+
+  class CallFlowLogicModel
+    include ActiveModel::Model
+
+    attr_accessor :call_flow_logic
+
+    validates :call_flow_logic, call_flow_logic: true
+  end
+
+  class RemoteRequestParamsModel
+    include ActiveModel::Model
+
+    attr_accessor :remote_request_params
+
+    validates :remote_request_params, twilio_request_params: true
   end
 
   module Types

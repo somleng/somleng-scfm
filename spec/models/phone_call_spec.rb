@@ -28,78 +28,43 @@ RSpec.describe PhoneCall do
   end
 
   describe "validations" do
-    context "new record" do
-      def assert_validations!
-        expect(subject).to validate_presence_of(:status)
-      end
+    it { is_expected.to validate_presence_of(:msisdn) }
 
-      context "for an inbound call" do
-        subject { build(factory, :inbound) }
+    it "prevents duplicate phone calls from being created" do
+      account = create(:account)
+      callout_participation = create_callout_participation(account: account)
+      _existing_created_phone_call = create_phone_call(
+        account: account,
+        callout_participation: callout_participation,
+        status: PhoneCall::STATE_CREATED
+      )
 
-        it { is_expected.not_to validate_presence_of(:callout_participation) }
-        it { is_expected.not_to validate_presence_of(:remote_request_params) }
-      end
+      phone_call = build(
+        :phone_call,
+        callout_participation: callout_participation,
+        status: PhoneCall::STATE_CREATED
+      )
 
-      context "for an outbound call" do
-        it { is_expected.to validate_presence_of(:callout_participation) }
-        it { is_expected.to validate_presence_of(:remote_request_params) }
-      end
-
-      context "remote_request_params" do
-        subject { build(factory, remote_request_params: { "foo" => "bar" }) }
-
-        it { is_expected.not_to be_valid }
-      end
-
-      it "prevents duplicate phone calls from being created" do
-        account = create(:account)
-        callout_participation = create_callout_participation(account: account)
-        _existing_created_phone_call = create_phone_call(
-          account: account,
-          callout_participation: callout_participation,
-          status: PhoneCall::STATE_CREATED
-        )
-
-        phone_call = build(
-          :phone_call,
-          callout_participation: callout_participation,
-          status: PhoneCall::STATE_CREATED
-        )
-
-        expect(phone_call).to be_invalid
-        expect(phone_call.errors[:callout_participation_id]).to be_present
-      end
-
-      it "allows multiple phone calls for the one callout participation" do
-        account = create(:account)
-        callout_participation = create_callout_participation(account: account)
-        _existing_failed_phone_call = create_phone_call(
-          account: account,
-          callout_participation: callout_participation,
-          status: PhoneCall::STATE_FAILED
-        )
-
-        phone_call = build(
-          :phone_call,
-          callout_participation: callout_participation,
-          status: PhoneCall::STATE_CREATED
-        )
-
-        expect(phone_call).to be_valid
-      end
-
-      it { assert_validations! }
+      expect(phone_call).to be_invalid
+      expect(phone_call.errors[:callout_participation_id]).to be_present
     end
 
-    context "persisted" do
-      subject { create(factory) }
+    it "allows multiple phone calls for the one callout participation" do
+      account = create(:account)
+      callout_participation = create_callout_participation(account: account)
+      _existing_failed_phone_call = create_phone_call(
+        account: account,
+        callout_participation: callout_participation,
+        status: PhoneCall::STATE_FAILED
+      )
 
-      def assert_validations!
-        expect(subject).to validate_uniqueness_of(:remote_call_id).case_insensitive
-        expect(subject).to validate_presence_of(:msisdn)
-      end
+      phone_call = build(
+        :phone_call,
+        callout_participation: callout_participation,
+        status: PhoneCall::STATE_CREATED
+      )
 
-      it { assert_validations! }
+      expect(phone_call).to be_valid
     end
   end
 

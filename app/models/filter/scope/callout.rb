@@ -12,7 +12,7 @@ module Filter
       private
 
       def callout_filter
-        Filter::Resource::Callout.new({ association_chain: Callout }, callout_filter_params)
+        Filter::Resource::Callout.new({ association_chain: ::Callout }, callout_filter_params)
       end
 
       def callout_filter_params

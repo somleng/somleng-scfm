@@ -14,7 +14,7 @@ ContactRequestSchema = Dry::Validation.Params(ApplicationRequestSchema) do
     create?.then(msisdn.filled?)
   end
 
-  optional(:metadata, Hash).filled(:hash?)
+  optional(:metadata, :hash).filled(:hash?)
   optional(:metadata_merge_mode, :string).filled(:str?, included_in?: metadata_merge_modes)
-  optional(:metadata_fields_attributes, Hash).filled(:hash?)
+  optional(:metadata_fields_attributes, :hash).filled(:hash?)
 end

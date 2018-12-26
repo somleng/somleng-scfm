@@ -1,6 +1,9 @@
 module Api
   class PhoneCallsController < Api::BaseController
+    include ValidateSchemaController
     include BatchOperationResource
+
+    self.request_schema = PhoneCallRequestSchema
 
     private
 
@@ -28,8 +31,11 @@ module Api
 
     def permitted_params
       params.permit(
-        :call_flow_logic, :msisdn,
-        :metadata_merge_mode, metadata: {}, remote_request_params: {}
+        :call_flow_logic,
+        :msisdn,
+        :metadata_merge_mode,
+        metadata: {},
+        remote_request_params: {}
       )
     end
 

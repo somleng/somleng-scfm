@@ -1,7 +1,9 @@
-class Preview::Base
-  attr_accessor :previewable
+module Preview
+  class Base
+    attr_accessor :previewable
 
-  def initialize(previewable:)
-    self.previewable = previewable
+    def initialize(previewable:)
+      self.previewable = previewable
+    end
   end
 end

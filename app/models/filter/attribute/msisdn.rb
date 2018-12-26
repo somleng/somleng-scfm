@@ -1,15 +1,19 @@
-class Filter::Attribute::Msisdn < Filter::Attribute::Base
-  def apply
-    association_chain.where(msisdn: PhonyRails.normalize_number(msisdn))
-  end
+module Filter
+  module Attribute
+    class Msisdn < Filter::Base
+      def apply
+        association_chain.where(msisdn: PhonyRails.normalize_number(msisdn))
+      end
 
-  def apply?
-    msisdn.present?
-  end
+      def apply?
+        msisdn.present?
+      end
 
-  private
+      private
 
-  def msisdn
-    params[:msisdn]
+      def msisdn
+        params[:msisdn]
+      end
+    end
   end
 end

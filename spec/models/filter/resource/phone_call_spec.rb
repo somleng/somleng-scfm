@@ -1,10 +1,8 @@
 require "rails_helper"
 
 RSpec.describe Filter::Resource::PhoneCall do
-  include SomlengScfm::SpecHelpers::FilterHelpers
-
   let(:filterable_factory) { :phone_call }
-  let(:association_chain) { PhoneCall }
+  let(:association_chain) { PhoneCall.all }
 
   describe "#resources" do
     include_examples "metadata_attribute_filter"

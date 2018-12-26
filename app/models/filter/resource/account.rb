@@ -1,3 +1,6 @@
-class Filter::Resource::Account < Filter::Resource::Base
+module Filter
+  module Resource
+    class Account < Filter::Resource::Base
+    end
+  end
 end
-

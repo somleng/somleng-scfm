@@ -1,41 +1,43 @@
-class CallFlowLogic::Base
-  attr_accessor :options
+module CallFlowLogic
+  class Base
+    attr_accessor :options
 
-  def self.registered
-    @registered ||= descendants.reject(&:abstract_class?).map(&:to_s)
-  end
+    def self.registered
+      @registered ||= descendants.reject(&:abstract_class?).map(&:to_s)
+    end
 
-  def self.abstract_class?
-    false
-  end
+    def self.abstract_class?
+      false
+    end
 
-  def initialize(options = {})
-    self.options = options
-  end
+    def initialize(options = {})
+      self.options = options
+    end
 
-  def event
-    options.fetch(:event)
-  end
+    def event
+      options.fetch(:event)
+    end
 
-  def current_url
-    options.fetch(:current_url)
-  end
+    def current_url
+      options.fetch(:current_url)
+    end
 
-  def run!
-    event.phone_call.complete!
-  rescue ActiveRecord::StaleObjectError
-    event.phone_call.reload
-    retry
-  end
+    def run!
+      event.phone_call.complete!
+    rescue ActiveRecord::StaleObjectError
+      event.phone_call.reload
+      retry
+    end
 
-  def remote_request_params
-    phone_call.remote_request_params.merge("to" => phone_call.msisdn)
-  end
+    def remote_request_params
+      phone_call.remote_request_params.merge("to" => phone_call.msisdn)
+    end
 
-  private
+    private
 
-  def phone_call
-    options.fetch(:phone_call)
+    def phone_call
+      options.fetch(:phone_call)
+    end
   end
 end
 

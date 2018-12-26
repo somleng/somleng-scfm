@@ -3,21 +3,18 @@ require "rails_helper"
 RSpec.describe Contact do
   let(:factory) { :contact }
 
-  include SomlengScfm::SpecHelpers::MsisdnExamples
+  include_examples "has_metadata"
 
-  def msisdn_uniqueness_matcher
-    super.scoped_to(:account_id)
+  describe "validations" do
+    it { is_expected.to validate_presence_of(:msisdn) }
+    it { is_expected.to allow_value(generate(:somali_msisdn)).for(:msisdn) }
+    it { is_expected.not_to allow_value("252123456").for(:msisdn) }
+    it { is_expected.to allow_value("+252 66-(2)-345-678").for(:msisdn) }
   end
 
-  include_examples "has_metadata"
-  it_behaves_like "has_msisdn"
-
   describe "associations" do
-    it { is_expected.to belong_to(:account) }
     it { is_expected.to have_many(:callout_participations).dependent(:restrict_with_error) }
-    it { is_expected.to have_many(:callouts) }
     it { is_expected.to have_many(:phone_calls).dependent(:restrict_with_error) }
-    it { is_expected.to have_many(:remote_phone_call_events) }
   end
 
   describe "delegations" do

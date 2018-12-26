@@ -1,2 +1,4 @@
-class Event::Callout < Event::Base
+module Event
+  class Callout < Event::Base
+  end
 end

@@ -1,2 +1,6 @@
-class Filter::Resource::Contact < Filter::Resource::Msisdn
+module Filter
+  module Resource
+    class Contact < Filter::Resource::Msisdn
+    end
+  end
 end

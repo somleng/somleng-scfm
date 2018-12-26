@@ -1,74 +1,76 @@
-class BatchOperation::PhoneCallOperation < BatchOperation::Base
-  include CustomRoutesHelper["batch_operations"]
+module BatchOperation
+  class PhoneCallOperation < BatchOperation::Base
+    include CustomRoutesHelper["batch_operations"]
 
-  DEFAULT_MAX_PER_PERIOD_HOURS = 24
-  DEFAULT_MAX_PER_PERIOD_TIMESTAMP_ATTRIBUTE = "remotely_queued_at".freeze
+    DEFAULT_MAX_PER_PERIOD_HOURS = 24
+    DEFAULT_MAX_PER_PERIOD_TIMESTAMP_ATTRIBUTE = "remotely_queued_at".freeze
 
-  MAX_PER_PERIOD_TIMESTAMP_ATTRIBUTES = [
-    DEFAULT_MAX_PER_PERIOD_TIMESTAMP_ATTRIBUTE,
-    "created_at",
-    "updated_at"
-  ].freeze
+    MAX_PER_PERIOD_TIMESTAMP_ATTRIBUTES = [
+      DEFAULT_MAX_PER_PERIOD_TIMESTAMP_ATTRIBUTE,
+      "created_at",
+      "updated_at"
+    ].freeze
 
-  store_accessor :parameters,
-                 :callout_filter_params,
-                 :callout_participation_filter_params,
-                 :skip_validate_preview_presence,
-                 :max,
-                 :max_per_period,
-                 :max_per_period_hours,
-                 :max_per_period_timestamp_attribute,
-                 :max_per_period_statuses,
-                 :limit
+    store_accessor :parameters,
+                   :callout_filter_params,
+                   :callout_participation_filter_params,
+                   :skip_validate_preview_presence,
+                   :max,
+                   :max_per_period,
+                   :max_per_period_hours,
+                   :max_per_period_timestamp_attribute,
+                   :max_per_period_statuses,
+                   :limit
 
-  hash_store_reader   :callout_filter_params,
-                      :callout_participation_filter_params
+    hash_store_reader   :callout_filter_params,
+                        :callout_participation_filter_params
 
-  integer_store_reader :max,
-                       :max_per_period,
-                       :max_per_period_hours,
-                       :limit
+    integer_store_reader :max,
+                         :max_per_period,
+                         :max_per_period_hours,
+                         :limit
 
-  boolean_store_reader :skip_validate_preview_presence
+    boolean_store_reader :skip_validate_preview_presence
 
-  generic_store_reader :max_per_period_statuses,
-                       :max_per_period_timestamp_attribute
+    generic_store_reader :max_per_period_statuses,
+                         :max_per_period_timestamp_attribute
 
-  def calculate_limit
-    [
-      max,
-      max_per_period && calls_remaining_in_period
-    ].compact.min
-  end
+    def calculate_limit
+      [
+        max,
+        max_per_period && calls_remaining_in_period
+      ].compact.min
+    end
 
-  def max_per_period_hours
-    super || DEFAULT_MAX_PER_PERIOD_HOURS
-  end
+    def max_per_period_hours
+      super || DEFAULT_MAX_PER_PERIOD_HOURS
+    end
 
-  def max_per_period_timestamp_attribute
-    whitelisted(
-      super,
-      MAX_PER_PERIOD_TIMESTAMP_ATTRIBUTES
-    ) || DEFAULT_MAX_PER_PERIOD_TIMESTAMP_ATTRIBUTE
-  end
+    def max_per_period_timestamp_attribute
+      whitelisted(
+        super,
+        MAX_PER_PERIOD_TIMESTAMP_ATTRIBUTES
+      ) || DEFAULT_MAX_PER_PERIOD_TIMESTAMP_ATTRIBUTE
+    end
 
-  private
+    private
 
-  def split_values(value)
-    value && value.to_s.split(",").map(&:strip).reject(&:blank?)
-  end
+    def split_values(value)
+      value && value.to_s.split(",").map(&:strip).reject(&:blank?)
+    end
 
-  def whitelisted(value, list)
-    Hash[list.map { |k| [k, k] }][value]
-  end
+    def whitelisted(value, list)
+      Hash[list.map { |k| [k, k] }][value]
+    end
 
-  def calls_remaining_in_period
-    [(max_per_period - calls_in_period.count), 0].max
-  end
+    def calls_remaining_in_period
+      [(max_per_period - calls_in_period.count), 0].max
+    end
 
-  def calls_in_period
-    scope = PhoneCall.in_last_hours(max_per_period_hours, max_per_period_timestamp_attribute)
-    scope = scope.where(status: split_values(max_per_period_statuses)) if max_per_period_statuses
-    scope
+    def calls_in_period
+      scope = PhoneCall.in_last_hours(max_per_period_hours, max_per_period_timestamp_attribute)
+      scope = scope.where(status: split_values(max_per_period_statuses)) if max_per_period_statuses
+      scope
+    end
   end
 end

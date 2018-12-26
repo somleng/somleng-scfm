@@ -1,17 +1,19 @@
-class Event::User < Event::Base
-  VALID_EVENTS = ["invite"].freeze
+module Event
+  class User < Event::Base
+    VALID_EVENTS = ["invite"].freeze
 
-  private
+    private
 
-  def fire_event!
-    case event
-    when "invite"
-      eventable.invite!
+    def fire_event!
+      case event
+      when "invite"
+        eventable.invite!
+      end
+      true
     end
-    true
-  end
 
-  def valid_events
-    eventable && VALID_EVENTS || []
+    def valid_events
+      eventable && VALID_EVENTS || []
+    end
   end
 end

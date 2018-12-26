@@ -1,0 +1,7 @@
+---
+km:
+  errors:
+    call_flow_logic?: is invalid
+    phone_number?: is invalid
+    remote_request_params?: is invalid
+    unique?: must be unique

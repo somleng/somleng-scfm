@@ -1,13 +1,17 @@
-class Api::BatchOperationPreview::PhoneCallsController < Api::BaseController
-  include BatchOperationResource
+module Api
+  module BatchOperationPreview
+    class PhoneCallsController < Api::BaseController
+      include BatchOperationResource
 
-  private
+      private
 
-  def find_resources_association_chain
-    batch_operation.phone_calls_preview
-  end
+      def find_resources_association_chain
+        batch_operation.phone_calls_preview
+      end
 
-  def batch_operation_scope
-    current_account.batch_operations.can_preview_phone_calls
+      def batch_operation_scope
+        current_account.batch_operations.can_preview_phone_calls
+      end
+    end
   end
 end

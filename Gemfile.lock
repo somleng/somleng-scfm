@@ -290,7 +290,7 @@ GEM
     octicons_helper (8.5.0)
       octicons (= 8.5.0)
       rails
-    okcomputer (1.17.3)
+    okcomputer (1.17.4)
     orm_adapter (0.5.0)
     parallel (1.14.0)
     parser (2.6.0.0)

@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/aasm/aasm.git
-  revision: 4427c353a3f59a287c8ed8e6e58c3dcfc5a4ea3d
+  revision: b7342f8243fe5f3425ca27ee2c333595736f9329
   specs:
-    aasm (5.0.2)
+    aasm (5.0.3)
       concurrent-ruby (~> 1.0)
 
 GIT

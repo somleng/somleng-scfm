@@ -35,9 +35,9 @@ GIT
 
 GIT
   remote: https://github.com/thoughtbot/shoulda-matchers.git
-  revision: 10574698c3a52868cf4c37020dd886cc0bd2a5d0
+  revision: c47e6db7391963d27cb9b45c37d9aa94e53f0590
   specs:
-    shoulda-matchers (4.0.1)
+    shoulda-matchers (4.1.0)
       activesupport (>= 4.2.0)
 
 GEM

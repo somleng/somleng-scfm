@@ -134,7 +134,7 @@ GEM
     chromedriver-helper (2.1.1)
       archive-zip (~> 0.10)
       nokogiri (~> 1.8)
-    cocoon (1.2.12)
+    cocoon (1.2.14)
     codecov (0.1.14)
       json
       simplecov

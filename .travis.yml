@@ -21,7 +21,9 @@ before_install:
 - gem install bundler
 before_script:
 - google-chrome-stable --headless --disable-gpu --no-sandbox
-- psql -c 'create database somleng_scfm_test;' -U travis
+- psql --version
+- psql -c 'create database somleng_scfm_test;' -U postgres
+- psql -c 'CREATE ROLE travis SUPERUSER LOGIN CREATEDB;' -U postgres
 - "./cc-test-reporter before-build"
 after_success:
 - "./cc-test-reporter after-build --exit-code $TRAVIS_TEST_RESULT"

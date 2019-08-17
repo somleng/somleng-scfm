@@ -29,7 +29,7 @@ RSpec.describe "Callout Populations" do
       expect(page).not_to have_content_tag_for(other_callout_population)
       expect(page).to have_content("#")
       expect(page).to have_link(
-        callout_population.id,
+        callout_population.id.to_s,
         href: dashboard_batch_operation_path(callout_population)
       )
       expect(page).to have_content("Status")
@@ -131,7 +131,7 @@ RSpec.describe "Callout Populations" do
       expect(page).to have_content(callout_population.id)
 
       expect(page).to have_link(
-        callout_population.callout.id,
+        callout_population.callout.id.to_s,
         href: dashboard_callout_path(callout_population.callout)
       )
 

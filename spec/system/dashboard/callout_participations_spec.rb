@@ -26,15 +26,15 @@ RSpec.describe "Callout Participations" do
       expect(page).to have_content("Contact")
       expect(page).to have_content("Callout")
       expect(page).to have_link(
-        callout_participation.id,
+        callout_participation.id.to_s,
         href: dashboard_callout_participation_path(callout_participation)
       )
       expect(page).to have_link(
-        callout_participation.contact_id,
+        callout_participation.contact_id.to_s,
         href: dashboard_contact_path(callout_participation.contact)
       )
       expect(page).to have_link(
-        callout_participation.callout_id,
+        callout_participation.callout_id.to_s,
         href: dashboard_callout_path(callout_participation.callout)
       )
       expect(page).to have_sortable_column("created_at")
@@ -124,17 +124,17 @@ RSpec.describe "Callout Participations" do
       expect(page).to have_content(callout_participation.id)
 
       expect(page).to have_link(
-        callout_participation.callout_id,
+        callout_participation.callout_id.to_s,
         href: dashboard_callout_path(callout_participation.callout)
       )
 
       expect(page).to have_link(
-        callout_participation.contact_id,
+        callout_participation.contact_id.to_s,
         href: dashboard_contact_path(callout_participation.contact)
       )
 
       expect(page).to have_link(
-        callout_participation.callout_population_id,
+        callout_participation.callout_population_id.to_s,
         href: dashboard_batch_operation_path(callout_participation.callout_population)
       )
 

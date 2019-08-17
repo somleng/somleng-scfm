@@ -27,7 +27,7 @@ RSpec.describe "Callouts", :aggregate_failures do
       expect(page).not_to have_content_tag_for(other_callout)
       expect(page).to have_content("#")
       expect(page).to have_link(
-        callout.id,
+        callout.id.to_s,
         href: dashboard_callout_path(callout)
       )
       expect(page).to have_sortable_column("status")
@@ -172,7 +172,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     within("#callout") do
       expect(page).to have_content(callout.id)
       expect(page).to have_link(callout.audio_url, href: callout.audio_url)
-      expect(page).to have_link(callout.created_by_id, href: dashboard_user_path(callout.created_by))
+      expect(page).to have_link(callout.created_by_id.to_s, href: dashboard_user_path(callout.created_by))
       expect(page).to have_content("Status")
       expect(page).to have_content("Initialized")
       expect(page).to have_content("Created at")

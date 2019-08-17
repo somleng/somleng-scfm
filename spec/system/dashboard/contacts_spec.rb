@@ -22,7 +22,7 @@ RSpec.describe "Contacts", :aggregate_failures do
       expect(page).not_to have_content_tag_for(other_contact)
       expect(page).to have_content("#")
       expect(page).to have_link(
-        contact.id,
+        contact.id.to_s,
         href: dashboard_contact_path(contact)
       )
 

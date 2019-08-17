@@ -53,7 +53,7 @@ RSpec.describe Dashboard::BaseController do
 
       expect(response.body).to have_selector("a", count: 2)
       expect(response.body).to have_link("Callouts", href: dashboard_callouts_path)
-      expect(response.body).to have_link(resource.id, href: dashboard_callout_path(resource))
+      expect(response.body).to have_link(resource.id.to_s, href: dashboard_callout_path(resource))
       expect(response.body).to have_text("Edit")
     end
 
@@ -66,7 +66,7 @@ RSpec.describe Dashboard::BaseController do
 
       expect(response.body).to have_selector("a", count: 2)
       expect(response.body).to have_link("Callouts", href: dashboard_callouts_path)
-      expect(response.body).to have_link(resource.id, href: dashboard_callout_path(resource))
+      expect(response.body).to have_link(resource.id.to_s, href: dashboard_callout_path(resource))
       expect(response.body).to have_text("Edit")
     end
 
@@ -115,7 +115,7 @@ RSpec.describe Dashboard::BaseController do
 
       expect(response.body).to have_selector("a", count: 2)
       expect(response.body).to have_link("Callouts", href: dashboard_callouts_path)
-      expect(response.body).to have_link(parent_resource.id, href: dashboard_callout_path(parent_resource))
+      expect(response.body).to have_link(parent_resource.id.to_s, href: dashboard_callout_path(parent_resource))
       expect(response.body).to have_text("Callout participations")
     end
   end

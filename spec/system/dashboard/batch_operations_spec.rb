@@ -20,7 +20,7 @@ RSpec.describe "Batch Operations" do
       expect(page).not_to have_content_tag_for(other_batch_operation)
       expect(page).to have_content("#")
       expect(page).to have_link(
-        batch_operation.id,
+        batch_operation.id.to_s,
         href: dashboard_batch_operation_path(batch_operation)
       )
       have_sortable_column("type")

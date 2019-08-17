@@ -28,7 +28,7 @@ RSpec.describe "API Key Management" do
       expect(page).to have_content("Permissions")
       expect(page).to have_content(access_token.token)
       expect(page).to have_link(
-        access_token.id,
+        access_token.id.to_s,
         href: dashboard_access_token_path(access_token)
       )
 

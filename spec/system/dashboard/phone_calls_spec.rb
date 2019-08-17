@@ -32,7 +32,7 @@ RSpec.describe "Phone Calls" do
       expect(page).not_to have_content_tag_for(other_phone_call)
       expect(page).to have_content("#")
       expect(page).to have_link(
-        phone_call.id,
+        phone_call.id.to_s,
         href: dashboard_phone_call_path(phone_call)
       )
 
@@ -126,35 +126,35 @@ RSpec.describe "Phone Calls" do
     end
 
     within("#resource") do
-      expect(page).to have_content(phone_call.id)
+      expect(page).to have_content(phone_call.id.to_s)
 
       expect(page).to have_link(
-        phone_call.callout_participation_id,
+        phone_call.callout_participation_id.to_s,
         href: dashboard_callout_participation_path(phone_call.callout_participation)
       )
 
       expect(page).to have_link(
-        phone_call.callout_id,
+        phone_call.callout_id.to_s,
         href: dashboard_callout_path(phone_call.callout_id)
       )
 
       expect(page).to have_link(
-        phone_call.contact_id,
+        phone_call.contact_id.to_s,
         href: dashboard_contact_path(phone_call.contact_id)
       )
 
       expect(page).to have_link(
-        phone_call.create_batch_operation_id,
+        phone_call.create_batch_operation_id.to_s,
         href: dashboard_batch_operation_path(phone_call.create_batch_operation_id)
       )
 
       expect(page).to have_link(
-        phone_call.queue_batch_operation_id,
+        phone_call.queue_batch_operation_id.to_s,
         href: dashboard_batch_operation_path(phone_call.queue_batch_operation_id)
       )
 
       expect(page).to have_link(
-        phone_call.queue_remote_fetch_batch_operation_id,
+        phone_call.queue_remote_fetch_batch_operation_id.to_s,
         href: dashboard_batch_operation_path(phone_call.queue_remote_fetch_batch_operation_id)
       )
 

@@ -13,9 +13,8 @@ class AudioFileProcessorJob < ApplicationJob
       audio_bucket
     ).object(bucket_object_name)
 
-    open(callout.audio_file.service_url) do |f|
-      bucket_object.put(body: f.read)
-    end
+    audio_file = Down.download(callout.audio_file.service_url)
+    bucket_object.put(body: audio_file)
 
     callout.audio_url = bucket_object.public_url
     callout.save!

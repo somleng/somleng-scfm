@@ -4,7 +4,7 @@ orbs:
 executors:
   build_environment:
     docker:
-      - image: circleci/ruby:2.6
+      - image: circleci/ruby:2.6-node-browsers
         environment:
           BUNDLE_JOBS: 3
           BUNDLE_RETRY: 3
@@ -20,7 +20,7 @@ executors:
 
   deploy_environment:
     docker:
-      - image: circleci/ruby:2.6
+      - image: circleci/ruby:2.6-node
         environment:
           BUNDLE_JOBS: 3
           BUNDLE_RETRY: 3
@@ -157,4 +157,4 @@ workflows:
             - build_scfm
           filters:
             branches:
-              only: upgrade_travis
+              only: master

@@ -96,23 +96,23 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  Rails.application.routes.default_url_options[:host] = Rails.configuration.app_settings.fetch("default_url_host")
+  Rails.application.routes.default_url_options[:host] = Rails.configuration.app_settings.fetch(:default_url_host)
 
   config.action_mailer.default_url_options = {
-    host: Rails.configuration.app_settings.fetch("default_url_host"),
+    host: Rails.configuration.app_settings.fetch(:default_url_host),
     protocol: "https"
   }
 
   config.action_mailer.delivery_method = :smtp
 
   config.action_mailer.smtp_settings = {
-    address: Rails.configuration.app_settings.fetch("smtp_address"),
-    port: Rails.configuration.app_settings.fetch("smtp_port").to_i,
-    user_name: Rails.configuration.app_settings.fetch("smtp_username"),
-    password: Rails.configuration.app_settings.fetch("smtp_password"),
-    authentication: Rails.configuration.app_settings.fetch("smtp_authentication_method").to_sym,
-    enable_starttls_auto:  Rails.configuration.app_settings.fetch("smtp_enable_starttls_auto")
+    address: Rails.configuration.app_settings.fetch(:smtp_address),
+    port: Rails.configuration.app_settings.fetch(:smtp_port).to_i,
+    user_name: Rails.configuration.app_settings.fetch(:smtp_username),
+    password: Rails.configuration.app_settings.fetch(:smtp_password),
+    authentication: Rails.configuration.app_settings.fetch(:smtp_authentication_method).to_sym,
+    enable_starttls_auto:  Rails.configuration.app_settings.fetch(:smtp_enable_starttls_auto)
   }
 
-  config.time_zone = Rails.configuration.app_settings.fetch("time_zone")
+  config.time_zone = Rails.configuration.app_settings.fetch(:time_zone)
 end

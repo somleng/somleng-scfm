@@ -6,7 +6,7 @@ class ApplicationJob < ActiveJob::Base
   end
 
   def self.default_queue_name
-    parse_queue_name(Rails.configuration.app_settings.fetch("default_queue_url"))
+    parse_queue_name(Rails.configuration.app_settings.fetch(:default_queue_url))
   end
 
   queue_as(default_queue_name)

@@ -15,7 +15,7 @@ module ValidateSchemaController
 
   def save_resource
     validate_schema do |permitted_params|
-      resource.update_attributes!(permitted_params)
+      resource.update!(permitted_params)
     end
   end
 

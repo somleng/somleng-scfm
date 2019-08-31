@@ -59,16 +59,16 @@ Rails.application.configure do
   # routes, locales, etc. This feature depends on the listen gem.
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
-  Rails.application.routes.default_url_options[:host] = Rails.configuration.app_settings.fetch("default_url_host")
+  Rails.application.routes.default_url_options[:host] = Rails.configuration.app_settings.fetch(:default_url_host)
 
   config.action_mailer.default_url_options = { host: "localhost", port: "3000" }
 
   # use mailcatcher
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address: Rails.configuration.app_settings.fetch("smtp_address"),
-    port: Rails.configuration.app_settings.fetch("smtp_port").to_i
+    address: Rails.configuration.app_settings.fetch(:smtp_address),
+    port: Rails.configuration.app_settings.fetch(:smtp_port).to_i
   }
 
-  config.time_zone = Rails.configuration.app_settings.fetch("time_zone")
+  config.time_zone = Rails.configuration.app_settings.fetch(:time_zone)
 end

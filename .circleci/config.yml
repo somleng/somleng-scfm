@@ -99,12 +99,12 @@ commands:
     parameters:
       cache_name:
         type: string
-      bundle_install_path:
-        type: string
-        default: "."
       cache_path:
         type: string
         default: "vendor/bundle"
+      yarn_cache_path:
+        type: string
+        default: "~/.cache/yarn"
 
     steps:
       - upgrade_bundler
@@ -116,22 +116,60 @@ commands:
       - run:
           name: Bundle Install
           command: |
-              cd << parameters.bundle_install_path >>
-              BUNDLE_GEMFILE=Gemfile bundle install
+              bundle install
 
       - save_cache:
           key: << parameters.cache_name >>-{{ checksum "Gemfile.lock" }}
           paths:
             - << parameters.cache_path >>
 
+      - restore_cache:
+          keys:
+            - << parameters.cache_name >>-yarn-{{ checksum "yarn.lock" }}
+            - << parameters.cache_name >>-yarn-
+
+      - run:
+          name: Yarn Install
+          command: |
+              yarn install --cache-folder << parameters.yarn_cache_path >>
+
+      - save_cache:
+          key: << parameters.cache_name >>-yarn-{{ checksum "yarn.lock" }}
+          paths:
+            - << parameters.yarn_cache_path >>
+
   bundle_source:
     steps:
+      - install_dependencies
+      - bundle_install:
+          cache_name: "scfm-deps"
+
+      - run:
+          name: Precompile Assets
+          command: |
+            bundle exec rake assets:clobber && \
+            bundle exec rake assets:precompile
+
+      # Re-run bundle without development and test
+      - run:
+          name: Bundle Install
+          command: |
+            bundle install --without test:development
+
+      - run:
+          name: Package Gems
+          command: |
+            bundle package
+
       - run:
           name: "Bundle source code"
           command: |
               SOURCE_BUNDLE="$(git rev-parse HEAD)-$(date +%s).zip" && \
               echo "export SOURCE_BUNDLE=$SOURCE_BUNDLE" >> $BASH_ENV && \
-              git archive -o $SOURCE_BUNDLE --format=zip HEAD
+              git archive -o $SOURCE_BUNDLE --format=zip HEAD && \
+              zip -ur $SOURCE_BUNDLE public/assets && \
+              zip -ur $SOURCE_BUNDLE public/packs && \
+              zip -ur $SOURCE_BUNDLE vendor/cache
 
 workflows:
   version: 2
@@ -157,4 +195,4 @@ workflows:
             - build_scfm
           filters:
             branches:
-              only: master
+              only: upgrade_travis

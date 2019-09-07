@@ -16,7 +16,7 @@ RSpec.describe Event::User do
 
       enqueued_job = enqueued_jobs.first
       expect(enqueued_job).to be_present
-      expect(enqueued_job[:job]).to eq(ActionMailer::DeliveryJob)
+      expect(enqueued_job[:job]).to eq(ActionMailer::MailDeliveryJob)
     end
   end
 

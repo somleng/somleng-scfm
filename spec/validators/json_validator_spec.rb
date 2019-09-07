@@ -1,7 +1,7 @@
 require "rails_helper"
 
-RSpec.describe JsonValidator do
-  class JsonValidator::Validatable
+RSpec.describe JSONValidator do
+  class JSONValidator::Validatable
     include ActiveModel::Validations
     attr_accessor :json_attribute
 
@@ -12,7 +12,7 @@ RSpec.describe JsonValidator do
     end
   end
 
-  subject { JsonValidator::Validatable.new(json_attribute: json_value) }
+  subject { JSONValidator::Validatable.new(json_attribute: json_value) }
 
   def setup_scenario
     super

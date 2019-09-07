@@ -174,7 +174,7 @@ FactoryBot.define do
 
     after(:build) do |remote_phone_call_event, evaluator|
       if evaluator.build_phone_call
-        remote_phone_call_event.phone_call ||= build(
+        remote_phone_call_event.phone_call ||= create(
           :phone_call,
           msisdn: remote_phone_call_event.details[:From],
           remote_call_id: remote_phone_call_event.remote_call_id,

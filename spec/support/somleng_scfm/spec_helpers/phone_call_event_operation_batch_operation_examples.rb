@@ -3,7 +3,7 @@ RSpec.shared_examples_for("phone_call_event_operation_batch_operation") do
 
   describe "validations" do
     it "validates presence of phone_calls_preview" do
-      batch_operation = build(factory)
+      batch_operation = create(factory)
       batch_operation.skip_validate_preview_presence = nil
 
       expect(batch_operation).not_to be_valid

@@ -29,12 +29,14 @@ RSpec.describe Callout do
       end
 
       it "allows small audio files" do
-        callout = build(:callout, audio_file: "test.mp3")
+        account = create(:account)
+        callout = build(:callout, account: account, audio_file: "test.mp3")
         expect(callout).to be_valid
       end
 
       it "allows no audio files" do
-        callout = build(:callout)
+        account = create(:account)
+        callout = build(:callout, account: account)
 
         expect(callout).to be_valid
       end

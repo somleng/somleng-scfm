@@ -69,9 +69,7 @@ RSpec.describe PhoneCall do
   end
 
   it "sets defaults" do
-    phone_call = build(:phone_call)
-
-    phone_call.valid?
+    phone_call = create(:phone_call)
 
     expect(phone_call.msisdn).to be_present
   end

@@ -12,6 +12,13 @@ GIT
     api-pagination (4.8.2)
 
 GIT
+  remote: https://github.com/doorkeeper-gem/doorkeeper.git
+  revision: 45b6ce568523a5e2f2cdc9c3ed60254d7891f8dc
+  specs:
+    doorkeeper (5.2.0.rc3)
+      railties (>= 5)
+
+GIT
   remote: https://github.com/krisleech/wisper.git
   revision: d686729cd99e22ee38822a7a3f35d9dc0b03534f
   specs:
@@ -155,9 +162,9 @@ GEM
       simplecov
       url
     coderay (1.1.2)
-    coffee-rails (4.2.2)
+    coffee-rails (5.0.0)
       coffee-script (>= 2.2.0)
-      railties (>= 4.0.0)
+      railties (>= 5.2.0)
     coffee-script (2.4.1)
       coffee-script-source
       execjs
@@ -166,7 +173,7 @@ GEM
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     crass (1.0.4)
-    devise (4.7.0)
+    devise (4.7.1)
       bcrypt (~> 3.0)
       orm_adapter (~> 0.1)
       railties (>= 4.1.0)
@@ -180,8 +187,6 @@ GEM
       devise (>= 4.6)
     diff-lcs (1.3)
     docile (1.3.2)
-    doorkeeper (5.1.0)
-      railties (>= 5)
     down (4.8.1)
       addressable (~> 2.5)
     dry-configurable (0.8.3)
@@ -217,6 +222,7 @@ GEM
       launchy (~> 2.1)
       mail (~> 2.7)
     erubi (1.8.0)
+    erubis (2.7.0)
     execjs (2.7.0)
     factory_bot (5.0.2)
       activesupport (>= 4.2.0)
@@ -236,8 +242,19 @@ GEM
     haml (5.1.2)
       temple (>= 0.8.0)
       tilt
+    haml-rails (2.0.1)
+      actionpack (>= 5.1)
+      activesupport (>= 5.1)
+      haml (>= 4.0.6, < 6.0)
+      html2haml (>= 1.0.1)
+      railties (>= 5.1)
     hashdiff (1.0.0)
     highline (2.0.2)
+    html2haml (2.2.0)
+      erubis (~> 2.7.0)
+      haml (>= 4.0, < 6)
+      nokogiri (>= 1.6.0)
+      ruby_parser (~> 3.5)
     htmlentities (4.3.4)
     i18n (1.6.0)
       concurrent-ruby (~> 1.0)
@@ -396,6 +413,8 @@ GEM
       rubocop (>= 0.60.0)
     ruby-progressbar (1.10.1)
     ruby_dep (1.5.0)
+    ruby_parser (3.13.1)
+      sexp_processor (~> 4.9)
     rubyzip (1.2.3)
     safe_yaml (1.0.5)
     sass (3.7.4)
@@ -422,6 +441,7 @@ GEM
       rubyzip (~> 1.2, >= 1.2.2)
     sentry-raven (2.11.0)
       faraday (>= 0.7.6, < 1.0)
+    sexp_processor (4.12.1)
     simple_form (4.1.0)
       actionpack (>= 5.0)
       activemodel (>= 5.0)
@@ -489,7 +509,7 @@ GEM
     wisper-rspec (1.1.0)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    zeitwerk (2.1.9)
+    zeitwerk (2.1.10)
 
 PLATFORMS
   ruby
@@ -506,11 +526,11 @@ DEPENDENCIES
   capybara
   cocoon
   codecov
-  coffee-rails (~> 4.2)
+  coffee-rails
   devise
   devise-async
   devise_invitable
-  doorkeeper
+  doorkeeper!
   down
   dry-validation (~> 0.13.3)
   email_spec
@@ -518,7 +538,7 @@ DEPENDENCIES
   faraday
   file_validators
   font-awesome-rails
-  haml
+  haml-rails
   i18n-tasks
   jbuilder (~> 2.5)
   jquery-rails

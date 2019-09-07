@@ -1,7 +1,7 @@
 module MetadataHelpers
   extend ActiveSupport::Concern
 
-  include JsonQueryHelpers
+  include JSONQueryHelpers
   include KeyValueFieldsFor
 
   METADATA_MERGE_MODE_MERGE = :merge

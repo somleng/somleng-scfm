@@ -86,6 +86,7 @@ class CalloutParticipation < ApplicationRecord
 
   def set_call_flow_logic
     return if call_flow_logic.present?
+
     self.call_flow_logic = callout_call_flow_logic
   end
 end

@@ -22,7 +22,7 @@ RSpec.describe "Users" do
       expect(page).to have_content("#")
 
       expect(page).to have_link(
-        other_user.id,
+        other_user.id.to_s,
         href: dashboard_user_path(other_user)
       )
 

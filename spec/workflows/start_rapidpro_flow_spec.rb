@@ -58,7 +58,7 @@ RSpec.describe StartRapidproFlow do
       account_settings: { rapidpro_api_token: "api-token" },
       callout_settings: { rapidpro_flow_id: "flow-id" }
     )
-    workflow.phone_call.update_attributes!(
+    workflow.phone_call.update!(
       metadata: {
         "rapidpro_flow_started_at" => Time.current.utc
       }

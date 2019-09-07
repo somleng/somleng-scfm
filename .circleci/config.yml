@@ -1,0 +1,198 @@
+version: 2.1
+orbs:
+  aws-cli: circleci/aws-cli@0.1.15
+executors:
+  build_environment:
+    docker:
+      - image: circleci/ruby:2.6-node-browsers
+        environment:
+          BUNDLE_JOBS: 3
+          BUNDLE_RETRY: 3
+          BUNDLE_PATH: vendor/bundle
+          PGHOST: 127.0.0.1
+          PGUSER: somleng-scfm-test
+          RAILS_ENV: test
+      - image: postgres:latest
+        environment:
+          POSTGRES_USER: somleng-scfm-test
+          POSTGRES_DB: somleng_scfm_test
+          POSTGRES_PASSWORD: ""
+
+  deploy_environment:
+    docker:
+      - image: circleci/ruby:2.6-node
+        environment:
+          BUNDLE_JOBS: 3
+          BUNDLE_RETRY: 3
+          BUNDLE_PATH: vendor/bundle
+
+jobs:
+  build_scfm:
+    working_directory: ~/scfm
+    executor:
+      name: build_environment
+
+    steps:
+      - checkout
+      - install_dependencies
+
+      - bundle_install:
+          cache_name: "scfm-deps"
+
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+
+      - run:
+          name: Setup Database
+          command: bundle exec rails db:schema:load
+
+      - run:
+          name: Run Specs
+          command: bundle exec rspec
+
+  deploy_production:
+    working_directory: ~/scfm
+
+    executor:
+      name: deploy_environment
+
+    steps:
+      - aws-cli/install
+      - aws-cli/configure
+      - run:
+          name: Assume Role
+          command: |
+              deploy_role=$(aws sts assume-role --role-arn "$AWS_DEPLOY_ROLE_ARN" --role-session-name "Deploy") && \
+              echo "export DEPLOY_ACCESS_KEY_ID='$(echo $deploy_role | jq .Credentials.AccessKeyId | xargs)'" >> $BASH_ENV && \
+              echo "export DEPLOY_SECRET_ACCESS_KEY='$(echo $deploy_role | jq .Credentials.SecretAccessKey | xargs)'" >> $BASH_ENV && \
+              echo "export DEPLOY_SESSION_TOKEN='$(echo $deploy_role | jq .Credentials.SessionToken | xargs)'" >> $BASH_ENV
+
+      - checkout
+      - install_dependencies
+      - bundle_source
+
+      - run:
+          name: Deploy Production
+          command: |
+              ./.circleci/deploy/eb_deploy create_app_version -a somleng-scfm -b $AWS_DEPLOY_BUCKET_NAME -c $CIRCLE_SHA1 -s $SOURCE_BUNDLE --access-key-id "$DEPLOY_ACCESS_KEY_ID" --secret-access-key "$DEPLOY_SECRET_ACCESS_KEY" --session-token "$DEPLOY_SESSION_TOKEN"
+              ./.circleci/deploy/eb_deploy -s $SOURCE_BUNDLE -e somleng-scfm-worker --access-key-id "$DEPLOY_ACCESS_KEY_ID" --secret-access-key "$DEPLOY_SECRET_ACCESS_KEY" --session-token "$DEPLOY_SESSION_TOKEN"
+              ./.circleci/deploy/eb_deploy -s $SOURCE_BUNDLE -e somleng-scfm-webserver --access-key-id "$DEPLOY_ACCESS_KEY_ID" --secret-access-key "$DEPLOY_SECRET_ACCESS_KEY" --session-token "$DEPLOY_SESSION_TOKEN"
+
+commands:
+  install_dependencies:
+    steps:
+      - run:
+          name: Install Dependencies
+          command: |
+            sudo apt-get install cmake
+
+  upgrade_bundler:
+    steps:
+      - run:
+          name: Upgrade Bundler
+          command: |
+            gem update --system
+            gem install bundler
+
+  bundle_install:
+    parameters:
+      cache_name:
+        type: string
+      cache_path:
+        type: string
+        default: "vendor/bundle"
+      yarn_cache_path:
+        type: string
+        default: "~/.cache/yarn"
+
+    steps:
+      - upgrade_bundler
+      - restore_cache:
+          keys:
+            - << parameters.cache_name >>-{{ checksum "Gemfile.lock" }}
+            - << parameters.cache_name >>-
+
+      - run:
+          name: Bundle Install
+          command: |
+              bundle install
+
+      - save_cache:
+          key: << parameters.cache_name >>-{{ checksum "Gemfile.lock" }}
+          paths:
+            - << parameters.cache_path >>
+
+      - restore_cache:
+          keys:
+            - << parameters.cache_name >>-yarn-{{ checksum "yarn.lock" }}
+            - << parameters.cache_name >>-yarn-
+
+      - run:
+          name: Yarn Install
+          command: |
+              yarn install --cache-folder << parameters.yarn_cache_path >>
+
+      - save_cache:
+          key: << parameters.cache_name >>-yarn-{{ checksum "yarn.lock" }}
+          paths:
+            - << parameters.yarn_cache_path >>
+
+  bundle_source:
+    steps:
+      - install_dependencies
+      - bundle_install:
+          cache_name: "scfm-deps"
+
+      - run:
+          name: Precompile Assets
+          command: |
+            bundle exec rake assets:clobber && \
+            bundle exec rake assets:precompile
+
+      # Re-run bundle without development and test
+      - run:
+          name: Bundle Install
+          command: |
+            bundle install --without test:development
+
+      - run:
+          name: Package Gems
+          command: |
+            bundle package
+
+      - run:
+          name: "Bundle source code"
+          command: |
+              SOURCE_BUNDLE="$(git rev-parse HEAD)-$(date +%s).zip" && \
+              echo "export SOURCE_BUNDLE=$SOURCE_BUNDLE" >> $BASH_ENV && \
+              git archive -o $SOURCE_BUNDLE --format=zip HEAD && \
+              zip -ur $SOURCE_BUNDLE public/assets && \
+              zip -ur $SOURCE_BUNDLE public/packs && \
+              zip -ur $SOURCE_BUNDLE vendor/cache
+
+workflows:
+  version: 2
+  nightly:
+    triggers:
+      - schedule:
+         cron: "0 0 * * *"
+         filters:
+           branches:
+             only:
+               - develop
+               - master
+    jobs:
+      - build_scfm
+
+  build-deploy:
+    jobs:
+      - build_scfm:
+          context: Somleng
+      - deploy_production:
+          context: Somleng
+          requires:
+            - build_scfm
+          filters:
+            branches:
+              only: master

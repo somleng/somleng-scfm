@@ -11,7 +11,7 @@ RSpec.describe BatchOperation::PhoneCallCreate do
     end
 
     it "validates presence of callout participations" do
-      batch_operation = build(:phone_call_create_batch_operation)
+      batch_operation = create(:phone_call_create_batch_operation)
       batch_operation.skip_validate_preview_presence = nil
 
       expect(batch_operation).not_to be_valid

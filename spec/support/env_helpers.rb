@@ -8,11 +8,11 @@ module EnvHelpers
     settings.each do |key, value|
       allow(
         Rails.configuration.app_settings
-      ).to receive(:[]).with(key.to_s).and_return(value.present? && value.to_s)
+      ).to receive(:[]).with(key.to_sym).and_return(value.present? && value.to_s)
 
       allow(
         Rails.configuration.app_settings
-      ).to receive(:fetch).with(key.to_s).and_return(value.present? && value.to_s)
+      ).to receive(:fetch).with(key.to_sym).and_return(value.present? && value.to_s)
     end
   end
 end

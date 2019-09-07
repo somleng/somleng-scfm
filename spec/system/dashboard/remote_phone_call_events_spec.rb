@@ -17,11 +17,11 @@ RSpec.describe "Remote Phone Call Events" do
       expect(page).to have_content("#")
       expect(page).to have_content("Phone call")
       expect(page).to have_link(
-        remote_phone_call_event.id,
+        remote_phone_call_event.id.to_s,
         href: dashboard_remote_phone_call_event_path(remote_phone_call_event)
       )
       expect(page).to have_link(
-        remote_phone_call_event.phone_call_id,
+        remote_phone_call_event.phone_call_id.to_s,
         href: dashboard_phone_call_path(remote_phone_call_event.phone_call_id)
       )
       expect(page).to have_sortable_column("created_at")
@@ -55,7 +55,7 @@ RSpec.describe "Remote Phone Call Events" do
       expect(page).to have_content(remote_phone_call_event.id)
 
       expect(page).to have_link(
-        remote_phone_call_event.phone_call_id,
+        remote_phone_call_event.phone_call_id.to_s,
         href: dashboard_phone_call_path(remote_phone_call_event.phone_call_id)
       )
 

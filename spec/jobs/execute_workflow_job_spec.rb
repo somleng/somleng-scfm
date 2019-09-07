@@ -17,7 +17,7 @@ RSpec.describe ExecuteWorkflowJob do
     expect {
       described_class.perform_later(workflow.to_s)
     }.to have_enqueued_job.on_queue(
-      Rails.configuration.app_settings.fetch("default_queue_url").split("/").last
+      Rails.configuration.app_settings.fetch(:default_queue_url).split("/").last
     )
   end
 

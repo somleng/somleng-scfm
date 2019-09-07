@@ -1,4 +1,4 @@
-module JsonQueryHelpers
+module JSONQueryHelpers
   extend ActiveSupport::Concern
 
   class_methods do

@@ -22,14 +22,11 @@ Rails.application.configure do
   # Apache or NGINX already handles this.
   config.public_file_server.enabled = ENV["RAILS_SERVE_STATIC_FILES"].present?
 
-  # Compress JavaScripts and CSS.
-  config.assets.js_compressor = :uglifier
+  # Compress CSS using a preprocessor
   # config.assets.css_compressor = :sass
 
   # Do not fallback to assets pipeline if a precompiled asset is missed.
   config.assets.compile = false
-
-  # `config.assets.precompile` and `config.assets.version` have moved to config/initializers/assets.rb
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.action_controller.asset_host = 'http://assets.example.com'
@@ -96,23 +93,44 @@ Rails.application.configure do
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
 
-  Rails.application.routes.default_url_options[:host] = Rails.configuration.app_settings.fetch("default_url_host")
+  Rails.application.routes.default_url_options[:host] = Rails.configuration.app_settings.fetch(:default_url_host)
 
   config.action_mailer.default_url_options = {
-    host: Rails.configuration.app_settings.fetch("default_url_host"),
+    host: Rails.configuration.app_settings.fetch(:default_url_host),
     protocol: "https"
   }
 
   config.action_mailer.delivery_method = :smtp
 
   config.action_mailer.smtp_settings = {
-    address: Rails.configuration.app_settings.fetch("smtp_address"),
-    port: Rails.configuration.app_settings.fetch("smtp_port").to_i,
-    user_name: Rails.configuration.app_settings.fetch("smtp_username"),
-    password: Rails.configuration.app_settings.fetch("smtp_password"),
-    authentication: Rails.configuration.app_settings.fetch("smtp_authentication_method").to_sym,
-    enable_starttls_auto:  Rails.configuration.app_settings.fetch("smtp_enable_starttls_auto")
+    address: Rails.configuration.app_settings.fetch(:smtp_address),
+    port: Rails.configuration.app_settings.fetch(:smtp_port).to_i,
+    user_name: Rails.configuration.app_settings.fetch(:smtp_username),
+    password: Rails.configuration.app_settings.fetch(:smtp_password),
+    authentication: Rails.configuration.app_settings.fetch(:smtp_authentication_method).to_sym,
+    enable_starttls_auto:  Rails.configuration.app_settings.fetch(:smtp_enable_starttls_auto)
   }
 
-  config.time_zone = Rails.configuration.app_settings.fetch("time_zone")
+  config.time_zone = Rails.configuration.app_settings.fetch(:time_zone)
+
+  # Inserts middleware to perform automatic connection switching.
+  # The `database_selector` hash is used to pass options to the DatabaseSelector
+  # middleware. The `delay` is used to determine how long to wait after a write
+  # to send a subsequent read to the primary.
+  #
+  # The `database_resolver` class is used by the middleware to determine which
+  # database is appropriate to use based on the time delay.
+  #
+  # The `database_resolver_context` class is used by the middleware to set
+  # timestamps for the last write to the primary. The resolver uses the context
+  # class timestamps to determine how long to wait before reading from the
+  # replica.
+  #
+  # By default Rails will store a last write timestamp in the session. The
+  # DatabaseSelector middleware is designed as such you can define your own
+  # strategy for connection switching and pass that into the middleware through
+  # these configuration options.
+  # config.active_record.database_selector = { delay: 2.seconds }
+  # config.active_record.database_resolver = ActiveRecord::Middleware::DatabaseSelector::Resolver
+  # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
 end

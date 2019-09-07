@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe JsonQueryHelpers do
+RSpec.describe JSONQueryHelpers do
   let(:model) { Contact }
   let(:model_factory) { :contact }
   let(:json_column) { :metadata }

@@ -195,4 +195,4 @@ workflows:
             - build_scfm
           filters:
             branches:
-              only: upgrade_travis
+              only: master

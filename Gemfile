@@ -51,6 +51,7 @@ group :development, :test do
   gem "rspec-rails", ">= 4.0.0.beta2"
   gem "rubocop"
   gem "rubocop-rspec"
+  gem "rubocop-rails"
 end
 
 group :development do

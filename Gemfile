@@ -50,8 +50,8 @@ group :development, :test do
   gem "pry"
   gem "rspec-rails", ">= 4.0.0.beta2"
   gem "rubocop"
-  gem "rubocop-rspec"
   gem "rubocop-rails"
+  gem "rubocop-rspec"
 end
 
 group :development do

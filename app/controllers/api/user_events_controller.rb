@@ -1,5 +1,5 @@
-module Api
-  class UserEventsController < Api::ResourceEventsController
+module API
+  class UserEventsController < API::ResourceEventsController
     private
 
     def parent_resource

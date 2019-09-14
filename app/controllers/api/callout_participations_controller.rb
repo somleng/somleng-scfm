@@ -1,5 +1,5 @@
-module Api
-  class CalloutParticipationsController < Api::BaseController
+module API
+  class CalloutParticipationsController < API::BaseController
     include BatchOperationResource
 
     private

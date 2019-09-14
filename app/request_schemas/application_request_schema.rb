@@ -1,58 +1,28 @@
-class ApplicationRequestSchema < Dry::Validation::Schema
-  class_attribute :metadata_merge_modes, default: %w[replace merge deep_merge]
+class ApplicationRequestSchema < Dry::Validation::Contract
+  attr_reader :input_params
 
-  configure do |config|
-    config.messages = :i18n
-    config.type_specs = true
+  option :resource, optional: true
+  option :account, optional: true
 
-    option :action, String
+  delegate :success?, :errors, to: :result
 
-    def create?(_value)
-      action == "create"
-    end
+  register_macro(:phone_number_format) do
+    key.failure(text: "is invalid") if key? && !Phony.plausible?(value)
   end
 
-  def phone_number?(value)
-    PhoneNumberModel.new(phone_number: value).valid?
+  def initialize(input_params:, options: {})
+    super(options)
+
+    @input_params = input_params.to_h
   end
 
-  def call_flow_logic?(value)
-    CallFlowLogicModel.new(call_flow_logic: value).valid?
+  def output
+    result.to_h
   end
 
-  def remote_request_params?(value)
-    RemoteRequestParamsModel.new(remote_request_params: value).valid?
-  end
+  private
 
-  class PhoneNumberModel
-    include ActiveModel::Model
-
-    attr_accessor :phone_number
-
-    validates :phone_number, phony_plausible: true
-  end
-
-  class CallFlowLogicModel
-    include ActiveModel::Model
-
-    attr_accessor :call_flow_logic
-
-    validates :call_flow_logic, call_flow_logic: true
-  end
-
-  class RemoteRequestParamsModel
-    include ActiveModel::Model
-
-    attr_accessor :remote_request_params
-
-    validates :remote_request_params, twilio_request_params: true
-  end
-
-  module Types
-    include Dry::Types.module
-
-    PhoneNumber = String.constructor do |phone_number|
-      PhonyRails.normalize_number(phone_number)
-    end
+  def result
+    @result ||= call(input_params)
   end
 end

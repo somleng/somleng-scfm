@@ -1,6 +1,6 @@
-module Api
+module API
   module BatchOperationPreview
-    class ContactsController < Api::FilteredContactsController
+    class ContactsController < API::FilteredContactsController
       private
 
       def find_resources_association_chain

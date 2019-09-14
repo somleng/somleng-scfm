@@ -1,20 +1,33 @@
-ContactRequestSchema = Dry::Validation.Params(ApplicationRequestSchema) do
-  configure do
-    option :resource, Contact
-    option :account, Account
+class ContactRequestSchema < MetadataRequestSchema
+  params do
+    optional(:msisdn).filled(:string)
+    optional(:metadata_fields_attributes).filled(:hash?)
+  end
 
-    def unique?(value)
-      account.contacts.where.not(id: resource.id).where_msisdn(value).empty?
+  rule(:msisdn).validate(:phone_number_format)
+
+  rule do
+    Rules.new(self).validate
+  end
+
+  def output
+    result = super
+    result[:msisdn] = PhonyRails.normalize_number(result.fetch(:msisdn)) if result.key?(:msisdn)
+    result
+  end
+
+  class Rules < SchemaRules::ApplicationSchemaRules
+    def validate
+      return true if resource&.persisted?
+      return key(:msisdn).failure(text: "can't be blank") if values[:msisdn].blank?
+
+      key(:msisdn).failure(text: "must be unique") if contact_exists?
+    end
+
+    private
+
+    def contact_exists?
+      account.contacts.where_msisdn(values.fetch(:msisdn)).exists?
     end
   end
-
-  optional(:msisdn, ApplicationRequestSchema::Types::PhoneNumber).filled(:phone_number?, :unique?)
-
-  rule(require_msisdn: [:msisdn]) do |msisdn|
-    create?.then(msisdn.filled?)
-  end
-
-  optional(:metadata, :hash).filled(:hash?)
-  optional(:metadata_merge_mode, :string).filled(:str?, included_in?: metadata_merge_modes)
-  optional(:metadata_fields_attributes, :hash).filled(:hash?)
 end

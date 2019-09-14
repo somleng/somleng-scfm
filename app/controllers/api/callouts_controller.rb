@@ -1,5 +1,5 @@
-module Api
-  class CalloutsController < Api::BaseController
+module API
+  class CalloutsController < API::BaseController
     private
 
     def find_resources_association_chain

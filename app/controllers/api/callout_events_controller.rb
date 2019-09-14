@@ -1,5 +1,5 @@
-module Api
-  class CalloutEventsController < Api::ResourceEventsController
+module API
+  class CalloutEventsController < API::ResourceEventsController
     private
 
     def parent_resource

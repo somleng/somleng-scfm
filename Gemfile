@@ -18,7 +18,7 @@ gem "devise-async"
 gem "devise_invitable"
 gem "doorkeeper", github: "doorkeeper-gem/doorkeeper"
 gem "down"
-gem "dry-validation", "~> 0.13.3"
+gem "dry-validation"
 gem "faraday"
 gem "file_validators"
 gem "font-awesome-rails"
@@ -50,6 +50,7 @@ group :development, :test do
   gem "pry"
   gem "rspec-rails", ">= 4.0.0.beta2"
   gem "rubocop"
+  gem "rubocop-rails"
   gem "rubocop-rspec"
 end
 

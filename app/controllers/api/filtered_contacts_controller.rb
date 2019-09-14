@@ -1,5 +1,5 @@
-module Api
-  class FilteredContactsController < Api::BaseController
+module API
+  class FilteredContactsController < API::BaseController
     include BatchOperationResource
 
     private

@@ -1,5 +1,5 @@
-module Api
-  class AccessTokensController < Api::BaseController
+module API
+  class AccessTokensController < API::BaseController
     private
 
     def find_resources_association_chain

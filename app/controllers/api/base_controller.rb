@@ -1,4 +1,4 @@
-module Api
+module API
   class BaseController < ::BaseController
     include Rails::Pagination
 

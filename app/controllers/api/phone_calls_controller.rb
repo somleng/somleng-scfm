@@ -1,5 +1,5 @@
-module Api
-  class PhoneCallsController < Api::BaseController
+module API
+  class PhoneCallsController < API::BaseController
     include ValidateSchemaController
     include BatchOperationResource
 

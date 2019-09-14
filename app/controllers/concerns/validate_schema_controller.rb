@@ -20,20 +20,24 @@ module ValidateSchemaController
   end
 
   def validate_schema(&_block)
-    schema_validation_result = request_schema.with(
-      resource: resource, account: current_account, action: action_name
-    ).call(permitted_schema_params)
+    schema = request_schema.new(
+      input_params: permitted_schema_params,
+      options: {
+        resource: resource,
+        account: current_account
+      }
+    )
 
-    if schema_validation_result.success?
-      yield(schema_validation_result.output)
+    if schema.success?
+      yield(schema.output)
     else
-      build_errors(schema_validation_result)
+      build_errors(schema)
     end
   end
 
-  def build_errors(schema_validation_result)
-    schema_validation_result.errors.each do |field, messages|
-      resource.errors.add(field, messages.first)
+  def build_errors(schema)
+    schema.errors.each do |message|
+      resource.errors.add(message.path.first, message.text)
     end
 
     resource

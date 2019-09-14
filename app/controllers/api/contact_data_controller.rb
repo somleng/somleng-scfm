@@ -1,5 +1,5 @@
-module Api
-  class ContactDataController < Api::BaseController
+module API
+  class ContactDataController < API::BaseController
     private
 
     def build_resource_from_params

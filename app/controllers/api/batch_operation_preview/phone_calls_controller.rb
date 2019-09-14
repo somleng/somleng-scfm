@@ -1,6 +1,6 @@
-module Api
+module API
   module BatchOperationPreview
-    class PhoneCallsController < Api::BaseController
+    class PhoneCallsController < API::BaseController
       include BatchOperationResource
 
       private

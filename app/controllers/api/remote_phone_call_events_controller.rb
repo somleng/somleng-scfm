@@ -1,5 +1,5 @@
-module Api
-  class RemotePhoneCallEventsController < Api::BaseController
+module API
+  class RemotePhoneCallEventsController < API::BaseController
     respond_to :xml,  only: :create
     respond_to :json, except: :create
 
@@ -8,8 +8,8 @@ module Api
                        only: :create
 
     def create
-      schema_validation_result = RemotePhoneCallEventRequestSchema.call(request.request_parameters)
-      result = HandlePhoneCallEvent.call(request.original_url, schema_validation_result.output)
+      schema = RemotePhoneCallEventRequestSchema.new(input_params: request.request_parameters)
+      result = HandlePhoneCallEvent.call(request.original_url, schema.output)
       respond_with(result, location: nil)
     end
 

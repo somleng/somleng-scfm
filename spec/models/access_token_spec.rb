@@ -54,7 +54,7 @@ RSpec.describe AccessToken do
 
   describe "#to_json" do
     let(:parsed_json) { JSON.parse(subject.to_json) }
-    let(:asserted_keys) { %w[id token created_at updated_at metadata] }
+    let(:asserted_keys) { %w[id token created_at updated_at metadata permissions] }
 
     it {
       expect(parsed_json.keys).to match_array(asserted_keys)

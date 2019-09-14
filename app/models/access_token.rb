@@ -73,12 +73,14 @@ class AccessToken < Doorkeeper::AccessToken
       token: nil,
       created_at: nil,
       updated_at: nil,
-      metadata: nil
+      metadata: nil,
+      permissions: nil
     }
   end
 
   def validate_destroy
     return true if !destroyer || destroyer.super_admin? || destroyer == created_by
+
     errors.add(:base, :restrict_destroy_status)
     throw(:abort)
   end

@@ -22,16 +22,16 @@ RSpec.describe RemotePhoneCallEventRequestSchema, type: :request_schema do
 
   it { expect(validate_schema(CallDuration: nil)).not_to have_valid_field(:CallDuration) }
   it { expect(validate_schema(CallDuration: "foo")).not_to have_valid_field(:CallDuration) }
-  it { expect(validate_schema).to have_valid_field(:CallDuration) }
+  it { expect(validate_schema({})).to have_valid_field(:CallDuration) }
   it { expect(validate_schema(CallDuration: "11")).to have_valid_field(:CallDuration) }
 
   it { expect(validate_schema(ApiVersion: nil)).not_to have_valid_field(:ApiVersion) }
   it { expect(validate_schema(ApiVersion: "foo")).not_to have_valid_field(:ApiVersion) }
-  it { expect(validate_schema).to have_valid_field(:ApiVersion) }
+  it { expect(validate_schema({})).to have_valid_field(:ApiVersion) }
   it { expect(validate_schema(ApiVersion: "2010-04-01")).to have_valid_field(:ApiVersion) }
 
   it { expect(validate_schema(Digits: nil)).not_to have_valid_field(:Digits) }
   it { expect(validate_schema(Digits: "foo")).not_to have_valid_field(:Digits) }
-  it { expect(validate_schema).to have_valid_field(:Digits) }
+  it { expect(validate_schema({})).to have_valid_field(:Digits) }
   it { expect(validate_schema(ApiVersion: "5")).to have_valid_field(:Digits) }
 end

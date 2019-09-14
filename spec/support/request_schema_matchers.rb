@@ -1,19 +1,26 @@
 module RequestSchemaMatchers
   extend RSpec::Matchers::DSL
 
-  matcher :have_valid_field do |*path|
-    options = path.extract_options!
-    match do |actual|
-      actual.errors.dig(*path).blank?
+  module Helpers
+    def valid?(actual, *path)
+      actual.errors.to_h.dig(*path).blank?
     end
 
-    match_when_negated do |actual|
-      errors = actual.errors.dig(*path)
-      break false if errors.blank?
-      break true if options[:error_message].blank?
+    def invalid?(actual, *path)
+      options = path.extract_options!
+      errors = actual.errors.to_h.dig(*path)
+      return false if errors.blank?
+      return true if options[:error_message].blank?
 
       errors.any? { |err| err.match?(options.fetch(:error_message)) }
     end
+  end
+
+  matcher :have_valid_field do |*path|
+    include Helpers
+
+    match { |actual| valid?(actual, *path) }
+    match_when_negated { |actual| invalid?(actual, *path) }
   end
 end
 

@@ -1,5 +1,5 @@
-module Api
-  class PhoneCallEventsController < Api::ResourceEventsController
+module API
+  class PhoneCallEventsController < API::ResourceEventsController
     private
 
     def prepare_resource_for_create

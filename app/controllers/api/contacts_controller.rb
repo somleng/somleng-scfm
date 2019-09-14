@@ -1,4 +1,4 @@
-module Api
+module API
   class ContactsController < FilteredContactsController
     include ValidateSchemaController
     self.request_schema = ContactRequestSchema

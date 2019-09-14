@@ -1,5 +1,5 @@
-module Api
-  class AccountsController < Api::BaseController
+module API
+  class AccountsController < API::BaseController
     before_action :authorize_super_admin!
 
     private

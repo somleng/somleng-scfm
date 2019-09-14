@@ -1,5 +1,5 @@
-module Api
-  class BatchOperationsController < Api::BaseController
+module API
+  class BatchOperationsController < API::BaseController
     respond_to :json
 
     private

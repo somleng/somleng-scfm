@@ -1,5 +1,5 @@
-module Api
-  class ResourceEventsController < Api::BaseController
+module API
+  class ResourceEventsController < API::BaseController
     private
 
     def respond_with_created_resource

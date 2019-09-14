@@ -1,5 +1,5 @@
-module Api
-  class UsersController < Api::BaseController
+module API
+  class UsersController < API::BaseController
     private
 
     def find_resources_association_chain

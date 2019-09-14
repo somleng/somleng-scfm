@@ -1,5 +1,5 @@
-module Api
-  class BatchOperationEventsController < Api::ResourceEventsController
+module API
+  class BatchOperationEventsController < API::ResourceEventsController
     private
 
     def prepare_resource_for_create

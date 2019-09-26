@@ -13,7 +13,7 @@ GIT
 
 GIT
   remote: https://github.com/doorkeeper-gem/doorkeeper.git
-  revision: db8f138a2a7a0f8d12e83bc7f64e3b9ceb5afc39
+  revision: 98c155aef6a970e454ff46d79cce66e4e0e91293
   specs:
     doorkeeper (5.2.1)
       railties (>= 5)
@@ -230,7 +230,7 @@ GEM
       htmlentities (~> 4.3.3)
       launchy (~> 2.1)
       mail (~> 2.7)
-    erubi (1.8.0)
+    erubi (1.9.0)
     erubis (2.7.0)
     execjs (2.7.0)
     factory_bot (5.1.0)

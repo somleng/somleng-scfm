@@ -85,7 +85,7 @@ RSpec.resource "Access Tokens" do
       expect(created_access_token.permissions).to match_array(request_body.fetch(:permissions))
     end
 
-    example "Create an Access Token for another account" do
+    example "Create an Access Token for another account", document: false do
       super_admin_account = create(:account, :super_admin)
       access_token = create_access_token(resource_owner: super_admin_account)
       account_for_access_token = create(:account)

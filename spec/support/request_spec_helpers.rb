@@ -6,6 +6,10 @@ module RequestSpecHelpers
   def encode_credentials(access_token:)
     ActionController::HttpAuthentication::Basic.encode_credentials(access_token.token, nil)
   end
+
+  def set_authorization_header(access_token:)
+    authentication :basic, "Bearer #{access_token.token}"
+  end
 end
 
 RSpec.configure do |config|

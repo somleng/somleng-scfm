@@ -1,43 +1,42 @@
 require "rails_helper"
 
-RSpec.describe "Account" do
-  it "can fetch the account" do
-    account = create(:account)
-    access_token = create_access_token(resource_owner: account)
+RSpec.resource "Account Details" do
+  header("Content-Type", "application/json")
 
-    get(
-      api_current_account_path,
-      headers: build_authorization_headers(access_token: access_token)
-    )
+  get "/api/account" do
+    example "Retrieve account details" do
+      account = create(:account)
+      access_token = create_access_token(resource_owner: account)
 
-    expect(response.code).to eq("200")
+      set_authorization_header(access_token: access_token)
+      do_request
+
+      expect(response_status).to eq(200)
+    end
   end
 
-  it "can update the account" do
-    account = create(
-      :account,
-      metadata: {
-        "bar" => "baz"
+  patch "/api/account" do
+    example "Update account details" do
+      account = create(
+        :account,
+        metadata: {
+          "bar" => "baz"
+        }
+      )
+      access_token = create_access_token(resource_owner: account)
+      request_body = {
+        metadata: {
+          "foo" => "bar"
+        },
+        metadata_merge_mode: "replace"
       }
-    )
 
-    request_body = {
-      metadata: {
-        "foo" => "bar"
-      },
-      metadata_merge_mode: "replace"
-    }
+      set_authorization_header(access_token: access_token)
+      do_request(request_body)
 
-    access_token = create_access_token(resource_owner: account)
-
-    patch(
-      api_current_account_path,
-      params: request_body,
-      headers: build_authorization_headers(access_token: access_token)
-    )
-
-    expect(response.code).to eq("204")
-    expect(account.reload.metadata).to eq(request_body.fetch(:metadata))
+      expect(response_status).to eq(204)
+      expect(account.reload.metadata).to eq(request_body.fetch(:metadata))
+    end
   end
 
   def create_access_token(**options)

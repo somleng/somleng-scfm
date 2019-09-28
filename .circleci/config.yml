@@ -87,6 +87,7 @@ jobs:
 
       - bundle_install:
           cache_name: "slate-deps"
+          yarn_install: false
 
       - restore_cache:
           name: Restore Generated Documentation
@@ -98,6 +99,7 @@ jobs:
           command: |
               cp -R ~/scfm/doc/api/* ./source
               cp -R ~/scfm/doc/slate/source/* ./source
+              cp ~/scfm/app/assets/images/somleng_logo.png ./source/logo.png
               echo "@import 'overrides';" >> ./source/stylesheets/_variables.scss
 
       - run:
@@ -190,6 +192,9 @@ commands:
       yarn_cache_path:
         type: string
         default: "~/.cache/yarn"
+      yarn_install:
+        type: boolean
+        default: true
 
     steps:
       - upgrade_bundler
@@ -208,20 +213,23 @@ commands:
           paths:
             - << parameters.cache_path >>
 
-      - restore_cache:
-          keys:
-            - << parameters.cache_name >>-yarn-{{ checksum "yarn.lock" }}
-            - << parameters.cache_name >>-yarn-
+      - when:
+          condition: << parameters.yarn_install >>
+          steps:
+            - restore_cache:
+                keys:
+                  - << parameters.cache_name >>-yarn-{{ checksum "yarn.lock" }}
+                  - << parameters.cache_name >>-yarn-
 
-      - run:
-          name: Yarn Install
-          command: |
-              yarn install --cache-folder << parameters.yarn_cache_path >>
+            - run:
+                name: Yarn Install
+                command: |
+                    yarn install --cache-folder << parameters.yarn_cache_path >>
 
-      - save_cache:
-          key: << parameters.cache_name >>-yarn-{{ checksum "yarn.lock" }}
-          paths:
-            - << parameters.yarn_cache_path >>
+            - save_cache:
+                key: << parameters.cache_name >>-yarn-{{ checksum "yarn.lock" }}
+                paths:
+                  - << parameters.yarn_cache_path >>
 
   bundle_source:
     steps:

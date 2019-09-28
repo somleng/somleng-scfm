@@ -99,7 +99,7 @@ jobs:
           command: |
               cp -R ~/scfm/doc/api/* ./source
               cp -R ~/scfm/doc/slate/source/* ./source
-              cp ~/scfm/app/assets/images/somleng_logo.png ./source/logo.png
+              cp ~/scfm/app/assets/images/scfm_logo.png ./source/logo.png
               echo "@import 'overrides';" >> ./source/stylesheets/_variables.scss
 
       - run:

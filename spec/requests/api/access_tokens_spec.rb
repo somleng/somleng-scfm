@@ -56,7 +56,7 @@ RSpec.resource "Access Tokens" do
   post "/api/access_tokens" do
     parameter(
       :permissions,
-      "An array of permissions for the access token. Valid permissions are: #{AccessToken::PERMISSIONS.join(", ")}"
+      "An array of permissions for the access token. Valid permissions are: #{AccessToken::PERMISSIONS.map { |permission| "`#{permission}`"  }.join(", ")}"
     )
     parameter(
       :metadata,

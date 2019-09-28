@@ -129,6 +129,16 @@ jobs:
           keys:
             - slate-documentation-{{ .Environment.CIRCLE_SHA1 }}
 
+      - aws-cli/install
+      - aws-cli/configure
+      - run:
+          name: Assume Role
+          command: |
+              deploy_role=$(aws sts assume-role --role-arn "$AWS_DEPLOY_ROLE_ARN" --role-session-name "Deploy") && \
+              echo "export AWS_ACCESS_KEY_ID='$(echo $deploy_role | jq .Credentials.AccessKeyId | xargs)'" >> $BASH_ENV && \
+              echo "export AWS_SECRET_ACCESS_KEY='$(echo $deploy_role | jq .Credentials.SecretAccessKey | xargs)'" >> $BASH_ENV && \
+              echo "export AWS_SESSION_TOKEN='$(echo $deploy_role | jq .Credentials.SessionToken | xargs)'" >> $BASH_ENV
+
       - aws-s3/sync:
           from: ~/slate/build
           to: 's3://docs.somleng.org/scfm'
@@ -296,8 +306,8 @@ workflows:
       - deploy_documentation:
           context: Somleng
           requires:
-            - build_scfm
+            - build_documentation
             - deploy_production
           filters:
             branches:
-              only: master
+              only: api_documentation

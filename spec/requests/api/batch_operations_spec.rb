@@ -40,11 +40,7 @@ RSpec.resource "Batch Operations" do
 
     parameter(
       :parameters,
-      <<~HEREDOC
-        Parameters for the batch operation.
-        `limit`, specifies a limit to the number of operations that will occur in the batch operation.
-        `skip_validate_preview_presence` turns off validation for creating batch operations which would not effect any resources
-      HEREDOC
+      "Parameters for the batch operation. `limit`, specifies a limit to the number of operations that will occur in the batch operation. `skip_validate_preview_presence` turns off validation for creating batch operations which would not effect any resources"
     )
 
     parameter(
@@ -452,6 +448,52 @@ RSpec.resource "Batch Operations" do
       parsed_body = JSON.parse(response_body)
       expect(parsed_body.size).to eq(1)
       expect(parsed_body.first.fetch("id")).to eq(callout_participation.id)
+    end
+  end
+
+  get "/api/batch_operations/:batch_operation_id/preview/phone_calls" do
+    example "Preview phone calls for a phone call queue batch operation", document: false do
+      phone_call = create_phone_call(
+        account: account,
+        metadata: { "foo" => "bar" }
+      )
+      _other_phone_call = create_phone_call(account: account)
+
+      batch_operation = create(
+        :phone_call_queue_batch_operation,
+        account: account,
+        phone_call_filter_params: { metadata: phone_call.metadata }
+      )
+
+      set_authorization_header(access_token: access_token)
+      do_request(batch_operation_id: batch_operation.id)
+
+      expect(response_status).to eq(200)
+      parsed_body = JSON.parse(response_body)
+      expect(parsed_body.size).to eq(1)
+      expect(parsed_body.first.fetch("id")).to eq(phone_call.id)
+    end
+
+    example "Preview phone calls for a phone call queue remote fetch batch operation", document: false do
+      phone_call = create_phone_call(
+        account: account,
+        metadata: { "foo" => "bar" }
+      )
+      _other_phone_call = create_phone_call(account: account)
+
+      batch_operation = create(
+        :phone_call_queue_remote_fetch_batch_operation,
+        account: account,
+        phone_call_filter_params: { metadata: phone_call.metadata }
+      )
+
+      set_authorization_header(access_token: access_token)
+      do_request(batch_operation_id: batch_operation.id)
+
+      expect(response_status).to eq(200)
+      parsed_body = JSON.parse(response_body)
+      expect(parsed_body.size).to eq(1)
+      expect(parsed_body.first.fetch("id")).to eq(phone_call.id)
     end
   end
 

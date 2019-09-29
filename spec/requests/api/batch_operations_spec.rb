@@ -40,7 +40,11 @@ RSpec.resource "Batch Operations" do
 
     parameter(
       :parameters,
-      "Set of key-value pairs which will be used as parameters for the batch operation."
+      <<~HEREDOC
+        Parameters for the batch operation.
+        `limit`, specifies a limit to the number of operations that will occur in the batch operation.
+        `skip_validate_preview_presence` turns off validation for creating batch operations which would not effect any resources
+      HEREDOC
     )
 
     parameter(
@@ -48,11 +52,15 @@ RSpec.resource "Batch Operations" do
       "Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format."
     )
 
+    parameter(
+      :callout_id,
+      "The `id` of the callout. Only applicable if the type is `BatchOperation::CalloutPopulation`"
+    )
+
     example "Populate a Callout" do
       explanation <<~HEREDOC
-        "Populates a callout with callout participations.
+        Creates a batch operation for populating a callout with callout participations.
         Specify `contact_filter_params` in order to filter which contacts will participate in the callout.
-        Specify `skip_validate_preview_presence` in order to create a callout population with no participants.
       HEREDOC
 
       callout = create(:callout, account: account)
@@ -77,6 +85,12 @@ RSpec.resource "Batch Operations" do
     end
 
     example "Create Phone Calls" do
+      explanation <<~HEREDOC
+        Create a batch operation for creating phone calls.
+        Specify `remote_request_params` to provide the request parameters for the phone call.
+        You can filter which phone calls will be created using `callout_filter_params`, `contact_filter_params` and `callout_participation_filter_params`.
+      HEREDOC
+
       body = build_batch_operation_request_body(
         type: "BatchOperation::PhoneCallCreate",
         parameters: {
@@ -103,6 +117,11 @@ RSpec.resource "Batch Operations" do
     end
 
     example "Queue Phone Calls" do
+      explanation <<~HEREDOC
+        Create a batch operation for queuing phone calls to Somleng or Twilio.
+        You can filter which phone calls will be queued using `phone_call_filter_params`, `contact_filter_params`, `callout_participation_filter_params` and `callout_filter_params`.
+      HEREDOC
+
       body = build_batch_operation_request_body(
         type: "BatchOperation::PhoneCallQueue",
         parameters: {
@@ -123,6 +142,11 @@ RSpec.resource "Batch Operations" do
     end
 
     example "Queue Remote Status Fetch" do
+      explanation <<~HEREDOC
+        Create a batch operation for fetching the remote status of calls on Somleng or Twilio.
+        You can filter which phone calls will be fetched using `phone_call_filter_params`, `contact_filter_params`, `callout_participation_filter_params` and `callout_filter_params`.
+      HEREDOC
+
       body = build_batch_operation_request_body(
         type: "BatchOperation::PhoneCallQueueRemoteFetch",
         parameters: {

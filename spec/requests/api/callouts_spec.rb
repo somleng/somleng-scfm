@@ -139,7 +139,7 @@ RSpec.resource "Callouts" do
   end
 
   post "/api/callouts/:callout_id/batch_operations" do
-    example "Populate a Callout" do
+    example "Populate a Callout", document: false do
       callout = create(:callout, account: account)
       body = build_batch_operation_request_body(
         type: "BatchOperation::CalloutPopulation"

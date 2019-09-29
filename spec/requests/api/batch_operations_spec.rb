@@ -48,11 +48,51 @@ RSpec.resource "Batch Operations" do
       "Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format."
     )
 
-    example "Create a Batch Operation" do
+    example "Populate a Callout" do
+      explanation <<~HEREDOC
+        "Populates a callout with callout participations.
+        Specify `contact_filter_params` in order to filter which contacts will participate in the callout.
+        Specify `skip_validate_preview_presence` in order to create a callout population with no participants.
+      HEREDOC
+
+      callout = create(:callout, account: account)
+      body = build_batch_operation_request_body(
+        type: "BatchOperation::CalloutPopulation",
+        callout_id: callout.id,
+        parameters: {
+          "skip_validate_preview_presence" => "1",
+          "contact_filter_params" => {
+            "metadata" => {
+              "gender" => "f"
+            }
+          }
+        }
+      )
+
+      set_authorization_header(access_token: access_token)
+      do_request(callout_id: callout.id, **body)
+
+      assert_batch_operation_created!(account: account, request_body: body)
+      expect(callout.reload.callout_populations.count).to eq(1)
+    end
+
+    example "Create Phone Calls" do
       body = build_batch_operation_request_body(
         type: "BatchOperation::PhoneCallCreate",
         parameters: {
-          "remote_request_params" => generate(:twilio_request_params)
+          "remote_request_params" => {
+            "url" => "https://scfm.somleng.org/api/remote_phone_call_events",
+            "from" => "1234",
+            "status_callback" => "https://scfm.somleng.org/api/remote_phone_call_events",
+          },
+          "callout_filter_params" => {
+            "status" => "running"
+          },
+          "callout_participation_filter_params" => {
+            "having_max_phone_calls_count" => 3,
+            "no_phone_calls_or_last_attempt" => "not_answered,busy,failed"
+          },
+          "limit" => 20
         }
       )
 
@@ -62,9 +102,18 @@ RSpec.resource "Batch Operations" do
       assert_batch_operation_created!(account: account, request_body: body)
     end
 
-    example "Queue Phone Calls", document: false do
+    example "Queue Phone Calls" do
       body = build_batch_operation_request_body(
-        type: "BatchOperation::PhoneCallQueue"
+        type: "BatchOperation::PhoneCallQueue",
+        parameters: {
+          "callout_filter_params" => {
+            "status" => "running"
+          },
+          "phone_call_filter_params" => {
+            "status" => "created"
+          },
+          "limit" => 20
+        }
       )
 
       set_authorization_header(access_token: access_token)
@@ -73,9 +122,18 @@ RSpec.resource "Batch Operations" do
       assert_batch_operation_created!(account: account, request_body: body)
     end
 
-    example "Queue Remote Fetch Status", document: false do
+    example "Queue Remote Status Fetch" do
       body = build_batch_operation_request_body(
-        type: "BatchOperation::PhoneCallQueueRemoteFetch"
+        type: "BatchOperation::PhoneCallQueueRemoteFetch",
+        parameters: {
+          "callout_filter_params" => {
+            "status" => "running"
+          },
+          "phone_call_filter_params" => {
+            "status" => "remotely_queued,in_progress"
+          },
+          "limit" => 200
+        }
       )
 
       set_authorization_header(access_token: access_token)

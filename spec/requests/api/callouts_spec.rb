@@ -153,6 +153,60 @@ RSpec.resource "Callouts" do
     end
   end
 
+  post "/api/callouts/:callout_id/callout_events" do
+    parameter(
+      :event,
+      "One of: " + Callout.aasm.events.map { |event| "`#{event.name}`" }.join(", "),
+      :required
+    )
+
+    example "Create a Callout Event" do
+      callout = create(
+        :callout,
+        account: account,
+        status: Callout::STATE_INITIALIZED
+      )
+
+      set_authorization_header(access_token: access_token)
+      do_request(callout_id: callout.id, event: "start")
+
+      expect(response_status).to eq(201)
+      expect(response_headers["Location"]).to eq(api_callout_path(callout))
+      parsed_body = JSON.parse(response_body)
+      expect(parsed_body.fetch("status")).to eq("running")
+      expect(callout.reload).to be_running
+    end
+
+    example "Start a running Callout", document: false do
+      callout = create(
+        :callout,
+        account: account,
+        status: Callout::STATE_RUNNING
+      )
+
+      set_authorization_header(access_token: access_token)
+      do_request(callout_id: callout.id, event: "start")
+
+      expect(response_status).to eq(422)
+    end
+  end
+
+  get "/api/callouts/:callout_id/batch_operations" do
+    example "List all Callout Batch Operations", document: false do
+      callout = create(:callout, account: account)
+      callout_population = create(:callout_population, callout: callout, account: account)
+
+      set_authorization_header(access_token: access_token)
+      do_request(callout_id: callout.id)
+
+      expect(response_status).to eq(200)
+      parsed_response = JSON.parse(response_body)
+      expect(
+        account.batch_operations.find(parsed_response.first.fetch("id"))
+      ).to eq(callout_population)
+    end
+  end
+
   let(:account) { create(:account) }
   let(:access_token) { create_access_token(resource_owner: account) }
 

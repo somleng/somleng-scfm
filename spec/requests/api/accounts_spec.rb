@@ -2,10 +2,6 @@ require "rails_helper"
 
 RSpec.resource "Accounts" do
   explanation "Only super admins can manage accounts."
-
-  let(:account) { create(:account, :super_admin) }
-  let(:access_token) { create_access_token(resource_owner: account) }
-
   header("Content-Type", "application/json")
 
   get "/api/accounts" do
@@ -156,6 +152,9 @@ RSpec.resource "Accounts" do
       expect(response_status).to eq(422)
     end
   end
+
+  let(:account) { create(:account, :super_admin) }
+  let(:access_token) { create_access_token(resource_owner: account) }
 
   def create_access_token(**options)
     create(:access_token, permissions: %i[accounts_read accounts_write], **options)

@@ -44,7 +44,12 @@ RSpec.resource "Accounts" do
   end
 
   post "/api/accounts" do
-    example "Create an account" do
+    parameter(
+      :metadata,
+      "Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format."
+    )
+
+    example "Create an Account" do
       set_authorization_header(access_token: access_token)
       do_request
 
@@ -66,7 +71,16 @@ RSpec.resource "Accounts" do
   end
 
   patch "/api/accounts/:id" do
-    example "Update an account" do
+    explanation <<~HEREDOC
+      See <a href="create-an-account">Create an Account"</a> for more parameters.
+    HEREDOC
+
+    parameter(
+      :metadata_merge_mode,
+      "One of: `merge` (default), `replace`, `deep_merge`. `merge` merges the new metadata with the existing metadata. `replace` replaces the existing metadata with the new metadata. `deep_merge` deep merges the existing metadata with the new metadata.",
+    )
+
+    example "Update an Account" do
       other_account = create(:account, "metadata" => { "bar" => "baz" })
 
       body = {
@@ -126,7 +140,7 @@ RSpec.resource "Accounts" do
   end
 
   delete "/api/accounts/:id" do
-    example "Delete an account" do
+    example "Delete an Account" do
       other_account = create(:account)
 
       set_authorization_header(access_token: access_token)
@@ -136,7 +150,7 @@ RSpec.resource "Accounts" do
       expect(Account.find_by_id(other_account.id)).to eq(nil)
     end
 
-    example "cannot delete an account with existing users", document: false do
+    example "Delete an Account with existing users", document: false do
       other_account = create(:account)
       _user = create(:user, account: other_account)
 

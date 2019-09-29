@@ -52,13 +52,18 @@ RSpec.resource "Batch Operations" do
   post "/api/batch_operations" do
     parameter(
       :type,
-      "One of: " + BatchOperation::Base::PERMITTED_API_TYPES.map { |type| "`#{type}``" }.join(", "),
+      "One of: " + BatchOperation::Base::PERMITTED_API_TYPES.map { |type| "`#{type}`" }.join(", "),
       required: true
     )
 
     parameter(
       :parameters,
-      "List of parameters for the batch operation."
+      "Set of key-value pairs which will be used as parameters for the batch operation."
+    )
+
+    parameter(
+      :metadata,
+      "Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format."
     )
 
     example "Create a Batch Operation" do

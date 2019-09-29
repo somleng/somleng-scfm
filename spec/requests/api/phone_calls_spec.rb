@@ -51,7 +51,7 @@ RSpec.resource "Phone Calls" do
   end
 
   get "/api/contacts/:contact_id/phone_calls" do
-    example "List phone calls for a contact" do
+    example "List phone calls for a contact", document: false do
       phone_call = create_phone_call(account: account)
       _other_phone_call = create_phone_call(account: account)
 
@@ -198,7 +198,17 @@ RSpec.resource "Phone Calls" do
   end
 
   post "/api/phone_calls/:phone_call_id/phone_call_events" do
-    example "Queue a Phone Call" do
+    parameter(
+      :event,
+      "Either `queue` or `queue_remote_fetch`",
+      required: true
+    )
+
+    example "Create a Phone Call Event" do
+      explanation <<~HEREDOC
+        Queues a phone call, or a remote phone call status update on Somleng or Twilio
+      HEREDOC
+
       twilio_account_sid = generate(:twilio_account_sid)
       account = create(
         :account,

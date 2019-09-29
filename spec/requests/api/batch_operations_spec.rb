@@ -506,6 +506,7 @@ RSpec.resource "Batch Operations" do
       permissions: %i[
         contacts_read
         callout_participations_read
+        phone_calls_read
         batch_operations_read
         batch_operations_write
       ], **options

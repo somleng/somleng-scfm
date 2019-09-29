@@ -157,7 +157,7 @@ RSpec.resource "Callouts" do
     parameter(
       :event,
       "One of: " + Callout.aasm.events.map { |event| "`#{event.name}`" }.join(", "),
-      :required
+      required: true
     )
 
     example "Create a Callout Event" do

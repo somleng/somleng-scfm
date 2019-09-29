@@ -64,7 +64,7 @@ RSpec.resource "Accounts" do
   end
 
   patch "/api/accounts/:id" do
-    example "can update an account" do
+    example "Update an account" do
       other_account = create(:account, "metadata" => { "bar" => "baz" })
 
       body = {
@@ -124,7 +124,7 @@ RSpec.resource "Accounts" do
   end
 
   delete "/api/accounts/:id" do
-    example "can delete an account" do
+    example "Delete an account" do
       other_account = create(:account)
 
       set_authorization_header(access_token: access_token)

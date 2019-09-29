@@ -4,7 +4,7 @@ RSpec.resource "Account Details" do
   header("Content-Type", "application/json")
 
   get "/api/account" do
-    example "Retrieve account details" do
+    example "Retrieve Account Details" do
       account = create(:account)
       access_token = create_access_token(resource_owner: account)
 
@@ -16,7 +16,7 @@ RSpec.resource "Account Details" do
   end
 
   patch "/api/account" do
-    example "Update account details" do
+    example "Update Account Details" do
       account = create(
         :account,
         metadata: {

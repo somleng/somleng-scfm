@@ -1,6 +1,8 @@
 require "rails_helper"
 
 RSpec.resource "Accounts" do
+  explanation "Only super admins can manage accounts."
+
   let(:account) { create(:account, :super_admin) }
   let(:access_token) { create_access_token(resource_owner: account) }
 

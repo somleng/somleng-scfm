@@ -81,31 +81,6 @@ RSpec.resource "Callout Participations" do
     end
   end
 
-  get "/api/batch_operations/:batch_operation_id/preview/callout_participations" do
-    example "Preview the Callout Participations of a Batch Operation" do
-      callout_participation = create_callout_participation(
-        account: account,
-        metadata: {
-          "foo" => "bar"
-        }
-      )
-      _other_callout_participation = create_callout_participation(
-        account: account
-      )
-
-      batch_operation = create(
-        :phone_call_create_batch_operation,
-        account: account,
-        callout_participation_filter_params: { metadata: callout_participation.metadata }
-      )
-
-      set_authorization_header(access_token: access_token)
-      do_request(batch_operation_id: batch_operation.id)
-
-      assert_filtered!(callout_participation)
-    end
-  end
-
   post "/api/callouts/:callout_id/callout_participations" do
     example "Create a Callout Participation" do
       callout = create(:callout, account: account)

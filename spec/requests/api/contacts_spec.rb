@@ -47,47 +47,6 @@ RSpec.resource "Contacts" do
     end
   end
 
-  get "/api/batch_operations/:batch_operation_id/preview/contacts" do
-    example "Preview Contacts in a callout population" do
-      contact = create(:contact, account: account, metadata: { "foo" => "bar" })
-      _other_contact = create(:contact, account: account)
-
-      callout_population = create(
-        :callout_population,
-        account: account,
-        contact_filter_params: { metadata: contact.metadata }
-      )
-
-      set_authorization_header(access_token: access_token)
-      do_request(batch_operation_id: callout_population.id)
-
-      expect(response_status).to eq(200)
-      parsed_body = JSON.parse(response_body)
-      expect(parsed_body.size).to eq(1)
-      expect(parsed_body.first.fetch("id")).to eq(contact.id)
-    end
-
-    example "Preview Contacts in a phone call create batch operation", document: false do
-      callout_participation = create_callout_participation(
-        account: account, metadata: { "foo" => "bar" }
-      )
-      _other_callout_participation = create_callout_participation(account: account)
-      batch_operation = create(
-        :phone_call_create_batch_operation,
-        account: account,
-        callout_participation_filter_params: { metadata: callout_participation.metadata }
-      )
-
-      set_authorization_header(access_token: access_token)
-      do_request(batch_operation_id: batch_operation.id)
-
-      expect(response_status).to eq(200)
-      parsed_body = JSON.parse(response_body)
-      expect(parsed_body.size).to eq(1)
-      expect(parsed_body.first.fetch("id")).to eq(callout_participation.contact_id)
-    end
-  end
-
   get "/api/batch_operations/:batch_operation_id/contacts" do
     example "List Contacts populated by a callout population", document: false do
       callout_population = create(:callout_population, account: account)
@@ -125,6 +84,12 @@ RSpec.resource "Contacts" do
   end
 
   post "/api/contacts" do
+    parameter(
+      :msisdn,
+      "Phone number in [E.164](https://en.wikipedia.org/wiki/E.164) format",
+      required: true
+    )
+
     example "Create a Contact" do
       request_body = {
         msisdn: generate(:somali_msisdn),
@@ -204,7 +169,7 @@ RSpec.resource "Contacts" do
 
   post "/api/contact_data" do
     example "Create or update a Contact" do
-      explanation "Creates or updates a contact. If a contact is found with the MSISDN, it is updated, otherwise it is created."
+      explanation "Creates or updates a contact. If a contact is found with the `msisdn`, it is updated, otherwise it is created."
 
       request_body = {
         msisdn: generate(:somali_msisdn),
@@ -250,7 +215,7 @@ RSpec.resource "Contacts" do
       expect(Contact.find_by_id(contact.id)).to eq(nil)
     end
 
-    example "Delete a Contact with phone calls" do
+    example "Delete a Contact with phone calls", document: false do
       contact = create(:contact, account: account)
       _phone_call = create_phone_call(account: account, contact: contact)
 

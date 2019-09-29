@@ -302,13 +302,89 @@ RSpec.resource "Batch Operations" do
     end
   end
 
+  get "/api/batch_operations/:batch_operation_id/preview/contacts" do
+    example "Preview a Batch Operation" do
+      explanation "Previews a Batch Operation. For example, you can preview a `CalloutPopulation` batch operation for which contacts will participate in a callout."
+
+      contact = create(:contact, account: account, metadata: { "foo" => "bar" })
+      _other_contact = create(:contact, account: account)
+
+      callout_population = create(
+        :callout_population,
+        account: account,
+        contact_filter_params: { metadata: contact.metadata }
+      )
+
+      set_authorization_header(access_token: access_token)
+      do_request(batch_operation_id: callout_population.id)
+
+      expect(response_status).to eq(200)
+      parsed_body = JSON.parse(response_body)
+      expect(parsed_body.size).to eq(1)
+      expect(parsed_body.first.fetch("id")).to eq(contact.id)
+    end
+
+    example "Preview a phone call create batch operation", document: false do
+      callout_participation = create_callout_participation(
+        account: account, metadata: { "foo" => "bar" }
+      )
+      _other_callout_participation = create_callout_participation(account: account)
+      batch_operation = create(
+        :phone_call_create_batch_operation,
+        account: account,
+        callout_participation_filter_params: { metadata: callout_participation.metadata }
+      )
+
+      set_authorization_header(access_token: access_token)
+      do_request(batch_operation_id: batch_operation.id)
+
+      expect(response_status).to eq(200)
+      parsed_body = JSON.parse(response_body)
+      expect(parsed_body.size).to eq(1)
+      expect(parsed_body.first.fetch("id")).to eq(callout_participation.contact_id)
+    end
+  end
+
+  get "/api/batch_operations/:batch_operation_id/preview/callout_participations" do
+    example "Preview a phone call create batch operation", document: false do
+      callout_participation = create_callout_participation(
+        account: account,
+        metadata: {
+          "foo" => "bar"
+        }
+      )
+      _other_callout_participation = create_callout_participation(
+        account: account
+      )
+
+      batch_operation = create(
+        :phone_call_create_batch_operation,
+        account: account,
+        callout_participation_filter_params: { metadata: callout_participation.metadata }
+      )
+
+      set_authorization_header(access_token: access_token)
+      do_request(batch_operation_id: batch_operation.id)
+
+      expect(response_status).to eq(200)
+      parsed_body = JSON.parse(response_body)
+      expect(parsed_body.size).to eq(1)
+      expect(parsed_body.first.fetch("id")).to eq(callout_participation.id)
+    end
+  end
+
   let(:access_token) { create_access_token }
   let(:account) { access_token.resource_owner }
 
   def create_access_token(**options)
     create(
       :access_token,
-      permissions: %i[batch_operations_read batch_operations_write], **options
+      permissions: %i[
+        contacts_read
+        callout_participations_read
+        batch_operations_read
+        batch_operations_write
+      ], **options
     )
   end
 end

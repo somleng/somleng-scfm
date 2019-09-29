@@ -71,13 +71,9 @@ RSpec.resource "Accounts" do
   end
 
   patch "/api/accounts/:id" do
-    explanation <<~HEREDOC
-      See <a href="create-an-account">Create an Account"</a> for more parameters.
-    HEREDOC
-
     parameter(
       :metadata_merge_mode,
-      "One of: `merge` (default), `replace`, `deep_merge`. `merge` merges the new metadata with the existing metadata. `replace` replaces the existing metadata with the new metadata. `deep_merge` deep merges the existing metadata with the new metadata.",
+      "One of: `merge` (default), `replace` or `deep_merge`. `merge` merges the new metadata with the existing metadata. `replace` replaces the existing metadata with the new metadata. `deep_merge` deep merges the existing metadata with the new metadata.",
     )
 
     example "Update an Account" do

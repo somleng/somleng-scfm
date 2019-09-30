@@ -13,7 +13,7 @@ GIT
 
 GIT
   remote: https://github.com/doorkeeper-gem/doorkeeper.git
-  revision: 5502d9fc2d741032652a947948f42219fc17c5c9
+  revision: 84199b75de6f9a0ae3507c9a830be56761f4f167
   specs:
     doorkeeper (5.2.1)
       railties (>= 5)

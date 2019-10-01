@@ -20,19 +20,20 @@ RSpec.resource "Shared API Features" do
         Responses are paginated. The maxiumum number of items displayed for a single request is 25.
         This can be verified by the `Per-Page` response header. The actual number of items will appear in the `Total` header.
         If there are more than 25 items then you'll see a `Link` header with links to the
-        first, last, next and previous pages. The links are formatted according to [RFC-8288](https://tools.ietf.org/html/rfc8288)`
+        `first`, `last`, `next` and `previous` pages.
+        The links are formatted according to [RFC-8288](https://tools.ietf.org/html/rfc8288).
       HEREDOC
 
-      _matching_contact = create(:contact, account: account, metadata: { "foo" => "bar" })
-      filtered_contacts = create_list(:contact, 25, account: account, metadata: { "foo" => "bar" })
+      _matching_contact = create(:contact, account: account, metadata: { "gender" => "f" })
+      filtered_contacts = create_list(:contact, 25, account: account, metadata: { "gender" => "f" })
 
-      create(:contact, account: account, metadata: { "foo" => "bar" }, created_at: 2.days.ago)
+      create(:contact, account: account, metadata: { "gender" => "f" }, created_at: 2.days.ago)
       create(:contact)
 
       set_authorization_header(access_token: access_token)
       do_request(
         q: {
-          "metadata" => { "foo" => "bar" },
+          "metadata" => { "gender" => "f" },
           "created_at_after" => Date.yesterday
         },
         sort: "-id,created_at"
@@ -62,17 +63,23 @@ RSpec.resource "Shared API Features" do
     )
 
     example "Metadata" do
+      explanation <<~HEREDOC
+        Metadata is useful for storing additional,
+        structured information on an object.
+        As an example, you could store the contact's name and gender on the `Contact` object.
+      HEREDOC
+
       contact = create(
         :contact,
         account: account,
         metadata: {
-          "foo" => "bar"
+          "gender" => "f"
         }
       )
 
       request_body = {
         metadata: {
-          "bar" => "foo"
+          "name" => "Kate"
         },
         metadata_merge_mode: "replace"
       }

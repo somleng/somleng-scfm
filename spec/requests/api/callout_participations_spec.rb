@@ -1,208 +1,182 @@
 require "rails_helper"
 
-RSpec.describe "Callout Participations" do
-  it "can list all callout participations" do
-    no_phone_calls_callout_participation = create_callout_participation(
-      account: account,
-      metadata: {
-        "foo" => "bar"
-      }
-    )
-    having_phone_calls_callout_participation = create_callout_participation(account: account, metadata: { "foo" => "bar" })
-    create(:phone_call, callout_participation: having_phone_calls_callout_participation)
-    create(:callout_participation)
+RSpec.resource "Callout Participations" do
+  header("Content-Type", "application/json")
 
-    get(
-      api_callout_participations_path(q: { "metadata" => { "foo" => "bar" }, having_max_phone_calls_count: 1 }),
-      headers: build_authorization_headers(access_token: access_token)
-    )
+  get "/api/callout_participations" do
+    example "List all Callout Participations" do
+      no_phone_calls_callout_participation = create_callout_participation(
+        account: account,
+        metadata: {
+          "foo" => "bar"
+        }
+      )
+      having_phone_calls_callout_participation = create_callout_participation(account: account, metadata: { "foo" => "bar" })
+      create(:phone_call, callout_participation: having_phone_calls_callout_participation)
+      create(:callout_participation)
 
-    assert_filtered!(no_phone_calls_callout_participation)
+      set_authorization_header(access_token: access_token)
+      do_request(
+        q: {
+          "metadata" => { "foo" => "bar" },
+          having_max_phone_calls_count: 1
+        }
+      )
+
+      assert_filtered!(no_phone_calls_callout_participation)
+    end
   end
 
-  it "can list all callout participations for a callout" do
-    callout_participation = create_callout_participation(account: account)
-    _other_callout_participation = create_callout_participation(account: account)
+  get "/api/callouts/:callout_id/callout_participations" do
+    example "List all Callout Participations for a callout", document: false do
+      callout_participation = create_callout_participation(account: account)
+      _other_callout_participation = create_callout_participation(account: account)
 
-    get(
-      api_callout_callout_participations_path(callout_participation.callout),
-      headers: build_authorization_headers(access_token: access_token)
-    )
+      set_authorization_header(access_token: access_token)
+      do_request(callout_id: callout_participation.callout.id)
 
-    assert_filtered!(callout_participation)
+      assert_filtered!(callout_participation)
+    end
   end
 
-  it "can list all callout participations for a contact" do
-    callout_participation = create_callout_participation(account: account)
-    _other_callout_participation = create_callout_participation(account: account)
+  get "/api/contacts/:contact_id/callout_participations" do
+    example "List all Callout Participations for a contact", document: false do
+      callout_participation = create_callout_participation(account: account)
+      _other_callout_participation = create_callout_participation(account: account)
 
-    get(
-      api_contact_callout_participations_path(callout_participation.contact),
-      headers: build_authorization_headers(access_token: access_token)
-    )
+      set_authorization_header(access_token: access_token)
+      do_request(contact_id: callout_participation.contact.id)
 
-    assert_filtered!(callout_participation)
+      assert_filtered!(callout_participation)
+    end
   end
 
-  it "can list all callout participations for a callout population" do
-    batch_operation = create(:callout_population, account: account)
-    callout_participation = create_callout_participation(
-      account: account,
-      callout_population: batch_operation
-    )
-    _other_callout_participation = create_callout_participation(account: account)
+  get "/api/batch_operations/:batch_operation_id/callout_participations" do
+    example "List all Callout Participations for a callout population", document: false do
+      batch_operation = create(:callout_population, account: account)
+      callout_participation = create_callout_participation(
+        account: account,
+        callout_population: batch_operation
+      )
+      _other_callout_participation = create_callout_participation(account: account)
 
-    get(
-      api_batch_operation_callout_participations_path(batch_operation),
-      headers: build_authorization_headers(access_token: access_token)
-    )
+      set_authorization_header(access_token: access_token)
+      do_request(batch_operation_id: batch_operation.id)
 
-    assert_filtered!(callout_participation)
+      assert_filtered!(callout_participation)
+    end
+
+    example "List all Callout Participations for a phone call create batch operation", document: false do
+      batch_operation = create(:phone_call_create_batch_operation, account: account)
+      phone_call = create_phone_call(
+        account: account,
+        create_batch_operation: batch_operation
+      )
+      _other_phone_call = create_phone_call(account: account)
+
+      set_authorization_header(access_token: access_token)
+      do_request(batch_operation_id: batch_operation.id)
+
+      assert_filtered!(phone_call.callout_participation)
+    end
   end
 
-  it "can list all callout participations for a phone call create batch operation" do
-    batch_operation = create(:phone_call_create_batch_operation, account: account)
-    phone_call = create_phone_call(
-      account: account,
-      create_batch_operation: batch_operation
-    )
-    _other_phone_call = create_phone_call(account: account)
+  post "/api/callouts/:callout_id/callout_participations" do
+    example "Create a Callout Participation" do
+      callout = create(:callout, account: account)
+      contact = create(:contact, account: account)
+      request_body = build_request_body(contact_id: contact.id)
 
-    get(
-      api_batch_operation_callout_participations_path(batch_operation),
-      headers: build_authorization_headers(access_token: access_token)
-    )
+      set_authorization_header(access_token: access_token)
+      do_request(callout_id: callout.id, **request_body)
 
-    assert_filtered!(phone_call.callout_participation)
+      expect(response_status).to eq(201)
+      created_callout_participation = account.callout_participations.last
+      expect(
+        response_headers.fetch("Location")
+      ).to eq(api_callout_participation_path(created_callout_participation))
+      expect(created_callout_participation.msisdn).to include(request_body.fetch(:msisdn))
+      expect(created_callout_participation.callout).to eq(callout)
+      expect(created_callout_participation.contact).to eq(contact)
+      expect(created_callout_participation.metadata).to eq(request_body.fetch(:metadata))
+      expect(created_callout_participation.call_flow_logic).to eq(request_body.fetch(:call_flow_logic).to_s)
+    end
+
+    example "Create a Callout Participation with invalid data" do
+      callout = create(:callout, account: account)
+
+      set_authorization_header(access_token: access_token)
+      do_request(callout_id: callout.id)
+
+      expect(response_status).to eq(422)
+    end
   end
 
-  it "can preview callout participations for a phone call create batch operation" do
-    callout_participation = create_callout_participation(
-      account: account,
-      metadata: {
-        "foo" => "bar"
-      }
-    )
-    _other_callout_participation = create_callout_participation(
-      account: account
-    )
+  get "/api/callout_participations/:id" do
+    example "Retrieve a Callout Participation" do
+      callout_participation = create_callout_participation(account: account)
 
-    batch_operation = create(
-      :phone_call_create_batch_operation,
-      account: account,
-      callout_participation_filter_params: { metadata: callout_participation.metadata }
-    )
+      set_authorization_header(access_token: access_token)
+      do_request(id: callout_participation.id)
 
-    get(
-      api_batch_operation_preview_callout_participations_path(batch_operation),
-      headers: build_authorization_headers(access_token: access_token)
-    )
-
-    assert_filtered!(callout_participation)
+      expect(response_status).to eq(200)
+      parsed_response = JSON.parse(response_body)
+      expect(
+        account.callout_participations.find(parsed_response.fetch("id"))
+      ).to eq(callout_participation)
+    end
   end
 
-  it "can create a callout participation" do
-    callout = create(:callout, account: account)
-    contact = create(:contact, account: account)
+  patch "/api/callout_participations/:id" do
+    example "Update a Callout Participation" do
+      callout_participation = create_callout_participation(
+        account: account,
+        metadata: {
+          "foo" => "bar"
+        }
+      )
 
-    request_body = build_request_body(contact_id: contact.id)
+      contact = create(:contact, account: account)
+      request_body = build_request_body(
+        contact_id: contact.id,
+        metadata: {
+          "bar" => "foo"
+        },
+        metadata_merge_mode: "replace"
+      )
 
-    post(
-      api_callout_callout_participations_path(callout),
-      params: request_body,
-      headers: build_authorization_headers(access_token: access_token)
-    )
+      set_authorization_header(access_token: access_token)
+      do_request(id: callout_participation.id, **request_body)
 
-    expect(response.code).to eq("201")
-    created_callout_participation = account.callout_participations.last
-    expect(
-      response.headers.fetch("Location")
-    ).to eq(api_callout_participation_path(created_callout_participation))
-    expect(created_callout_participation.msisdn).to include(request_body.fetch(:msisdn))
-    expect(created_callout_participation.callout).to eq(callout)
-    expect(created_callout_participation.contact).to eq(contact)
-    expect(created_callout_participation.metadata).to eq(request_body.fetch(:metadata))
-    expect(created_callout_participation.call_flow_logic).to eq(request_body.fetch(:call_flow_logic).to_s)
+      expect(response_status).to eq(204)
+      callout_participation.reload
+      expect(callout_participation.contact).not_to eq(contact)
+      expect(callout_participation.msisdn).to include(request_body.fetch(:msisdn))
+      expect(callout_participation.metadata).to eq(request_body.fetch(:metadata))
+      expect(callout_participation.call_flow_logic).to eq(request_body.fetch(:call_flow_logic).to_s)
+    end
   end
 
-  it "does not create a callout participation without valid data" do
-    callout = create(:callout, account: account)
-    post(
-      api_callout_callout_participations_path(callout),
-      headers: build_authorization_headers(access_token: access_token)
-    )
+  delete "/api/callout_participations/:id" do
+    example "Delete a Callout Participation" do
+      callout_participation = create_callout_participation(account: account)
 
-    expect(response.code).to eq("422")
-  end
+      set_authorization_header(access_token: access_token)
+      do_request(id: callout_participation.id)
 
-  it "can fetch a callout participation" do
-    callout_participation = create_callout_participation(account: account)
+      expect(response_status).to eq(204)
+      expect(CalloutParticipation.find_by_id(callout_participation.id)).to eq(nil)
+    end
 
-    get(
-      api_callout_participation_path(callout_participation),
-      headers: build_authorization_headers(access_token: access_token)
-    )
+    example "Delete a Callout Participation with phone calls" do
+      callout_participation = create_callout_participation(account: account)
+      _phone_call = create_phone_call(account: account, callout_participation: callout_participation)
 
-    expect(response.code).to eq("200")
-    parsed_response = JSON.parse(response.body)
-    expect(
-      account.callout_participations.find(parsed_response.fetch("id"))
-    ).to eq(callout_participation)
-  end
+      set_authorization_header(access_token: access_token)
+      do_request(id: callout_participation.id)
 
-  it "can update a callout participation" do
-    callout_participation = create_callout_participation(
-      account: account,
-      metadata: {
-        "foo" => "bar"
-      }
-    )
-
-    contact = create(:contact, account: account)
-    request_body = build_request_body(
-      contact_id: contact.id,
-      metadata: {
-        "bar" => "foo"
-      },
-      metadata_merge_mode: "replace"
-    )
-
-    patch(
-      api_callout_participation_path(callout_participation),
-      params: request_body,
-      headers: build_authorization_headers(access_token: access_token)
-    )
-
-    expect(response.code).to eq("204")
-    callout_participation.reload
-    expect(callout_participation.contact).not_to eq(contact)
-    expect(callout_participation.msisdn).to include(request_body.fetch(:msisdn))
-    expect(callout_participation.metadata).to eq(request_body.fetch(:metadata))
-    expect(callout_participation.call_flow_logic).to eq(request_body.fetch(:call_flow_logic).to_s)
-  end
-
-  it "can delete a callout participation" do
-    callout_participation = create_callout_participation(account: account)
-
-    delete(
-      api_callout_participation_path(callout_participation),
-      headers: build_authorization_headers(access_token: access_token)
-    )
-
-    expect(response.code).to eq("204")
-    expect(CalloutParticipation.find_by_id(callout_participation.id)).to eq(nil)
-  end
-
-  it "cannot delete a callout participation with phone calls" do
-    callout_participation = create_callout_participation(account: account)
-    _phone_call = create_phone_call(account: account, callout_participation: callout_participation)
-
-    delete(
-      api_callout_participation_path(callout_participation),
-      headers: build_authorization_headers(access_token: access_token)
-    )
-
-    expect(response.code).to eq("422")
+      expect(response_status).to eq(422)
+    end
   end
 
   def build_request_body(options = {})
@@ -215,8 +189,8 @@ RSpec.describe "Callout Participations" do
   end
 
   def assert_filtered!(callout_participation)
-    expect(response.code).to eq("200")
-    parsed_body = JSON.parse(response.body)
+    expect(response_status).to eq(200)
+    parsed_body = JSON.parse(response_body)
     expect(parsed_body.size).to eq(1)
     expect(parsed_body.first.fetch("id")).to eq(callout_participation.id)
   end

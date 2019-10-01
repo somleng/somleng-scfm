@@ -1,6 +1,7 @@
 version: 2.1
 orbs:
   aws-cli: circleci/aws-cli@0.1.15
+  aws-s3: circleci/aws-s3@1.0.11
 executors:
   build_environment:
     docker:
@@ -26,6 +27,10 @@ executors:
           BUNDLE_RETRY: 3
           BUNDLE_PATH: vendor/bundle
 
+  deploy_documentation_environment:
+    docker:
+      - image: 'circleci/python:2.7'
+
 jobs:
   build_scfm:
     working_directory: ~/scfm
@@ -49,7 +54,99 @@ jobs:
 
       - run:
           name: Run Specs
-          command: bundle exec rspec
+          command: bundle exec rspec --format RspecApiDocumentation::ApiFormatter
+
+      - save_cache:
+          name: Cache Documentation
+          key: scfm-docs-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - doc/api
+
+      - store_artifacts:
+          name: Upload Test Coverage
+          path: coverage
+
+      - store_artifacts:
+          name: Upload Documentation
+          path: doc
+
+  build_documentation:
+    working_directory: ~/slate
+
+    executor:
+      name: deploy_environment
+
+    steps:
+      - checkout:
+          path: ~/scfm
+
+      - run:
+          name: Download Slate
+          command: |
+              git clone https://github.com/lord/slate.git .
+
+      - bundle_install:
+          cache_name: "slate-deps"
+          yarn_install: false
+
+      - restore_cache:
+          name: Restore Generated Documentation
+          keys:
+            - scfm-docs-{{ .Environment.CIRCLE_SHA1 }}
+
+      - run:
+          name: Prepare Slate Source
+          command: |
+              cp -R ~/scfm/doc/api/* ./source
+              cp -R ~/scfm/doc/slate/source/* ./source
+              cp ~/scfm/app/assets/images/scfm_logo.png ./source/logo.png
+              echo "@import 'overrides';" >> ./source/stylesheets/_variables.scss
+
+      - run:
+          name: Build Slate Documentation
+          command: |
+              bundle exec middleman build
+
+      - save_cache:
+          name: Store Documentation
+          key: slate-documentation-{{ .Environment.CIRCLE_SHA1 }}
+          paths:
+            - build
+
+      - store_artifacts:
+            name: Upload Documentation
+            path: build
+
+  deploy_documentation:
+    working_directory: ~/docs
+
+    executor:
+      name: deploy_documentation_environment
+
+    steps:
+      - restore_cache:
+          name: Restore Documentation
+          keys:
+            - slate-documentation-{{ .Environment.CIRCLE_SHA1 }}
+
+      - aws-cli/install
+      - aws-cli/configure
+      - run:
+          name: Assume Role
+          command: |
+              deploy_role=$(aws sts assume-role --role-arn "$AWS_DEPLOY_ROLE_ARN" --role-session-name "Deploy") && \
+              echo "export AWS_ACCESS_KEY_ID='$(echo $deploy_role | jq .Credentials.AccessKeyId | xargs)'" >> $BASH_ENV && \
+              echo "export AWS_SECRET_ACCESS_KEY='$(echo $deploy_role | jq .Credentials.SecretAccessKey | xargs)'" >> $BASH_ENV && \
+              echo "export AWS_SESSION_TOKEN='$(echo $deploy_role | jq .Credentials.SessionToken | xargs)'" >> $BASH_ENV
+
+      - aws-s3/sync:
+          from: ~/slate/build
+          to: 's3://docs.somleng.org/scfm'
+
+      - run:
+          name: "Invalidate CDN"
+          command: |
+            aws cloudfront create-invalidation --distribution-id $SOMLENG_DOCS_DISTRIBUTION_ID --paths /scfm/\*
 
   deploy_production:
     working_directory: ~/scfm
@@ -105,6 +202,9 @@ commands:
       yarn_cache_path:
         type: string
         default: "~/.cache/yarn"
+      yarn_install:
+        type: boolean
+        default: true
 
     steps:
       - upgrade_bundler
@@ -123,20 +223,23 @@ commands:
           paths:
             - << parameters.cache_path >>
 
-      - restore_cache:
-          keys:
-            - << parameters.cache_name >>-yarn-{{ checksum "yarn.lock" }}
-            - << parameters.cache_name >>-yarn-
+      - when:
+          condition: << parameters.yarn_install >>
+          steps:
+            - restore_cache:
+                keys:
+                  - << parameters.cache_name >>-yarn-{{ checksum "yarn.lock" }}
+                  - << parameters.cache_name >>-yarn-
 
-      - run:
-          name: Yarn Install
-          command: |
-              yarn install --cache-folder << parameters.yarn_cache_path >>
+            - run:
+                name: Yarn Install
+                command: |
+                    yarn install --cache-folder << parameters.yarn_cache_path >>
 
-      - save_cache:
-          key: << parameters.cache_name >>-yarn-{{ checksum "yarn.lock" }}
-          paths:
-            - << parameters.yarn_cache_path >>
+            - save_cache:
+                key: << parameters.cache_name >>-yarn-{{ checksum "yarn.lock" }}
+                paths:
+                  - << parameters.yarn_cache_path >>
 
   bundle_source:
     steps:
@@ -189,10 +292,22 @@ workflows:
     jobs:
       - build_scfm:
           context: Somleng
+      - build_documentation:
+          context: Somleng
+          requires:
+            - build_scfm
       - deploy_production:
           context: Somleng
           requires:
             - build_scfm
+          filters:
+            branches:
+              only: master
+      - deploy_documentation:
+          context: Somleng
+          requires:
+            - build_documentation
+            - deploy_production
           filters:
             branches:
               only: master

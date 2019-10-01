@@ -16,7 +16,7 @@ gem "coffee-rails"
 gem "devise"
 gem "devise-async"
 gem "devise_invitable"
-gem "doorkeeper", github: "doorkeeper-gem/doorkeeper"
+gem "doorkeeper"
 gem "down"
 gem "dry-validation"
 gem "faraday"
@@ -52,6 +52,8 @@ group :development, :test do
   gem "rubocop"
   gem "rubocop-rails"
   gem "rubocop-rspec"
+
+  gem "rspec_api_documentation"
 end
 
 group :development do

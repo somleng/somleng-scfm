@@ -153,21 +153,6 @@ RSpec.resource "Callouts" do
     end
   end
 
-  post "/api/callouts/:callout_id/batch_operations" do
-    example "Populate a Callout", document: false do
-      callout = create(:callout, account: account)
-      body = build_batch_operation_request_body(
-        type: "BatchOperation::CalloutPopulation"
-      )
-
-      set_authorization_header(access_token: access_token)
-      do_request(callout_id: callout.id, **body)
-
-      assert_batch_operation_created!(account: account, request_body: body)
-      expect(callout.reload.callout_populations.count).to eq(1)
-    end
-  end
-
   post "/api/callouts/:callout_id/callout_events" do
     parameter(
       :event,

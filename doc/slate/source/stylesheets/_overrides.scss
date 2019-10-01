@@ -2,14 +2,14 @@
 // COLORS
 ////////////////////
 
-$brand-color: rgb(100, 200, 175);
-$nav-bg-color: #f7f7f7;
+$brand-color: #06D19C;
+$nav-bg-color: #463AFF;
 
 /////////////////////
 // BACKGROUND COLORS
 ////////////////////
 
-$main-bg: #fff;
+$main-bg: #6C63FF;
 $nav-bg: $nav-bg-color;
 $nav-active-bg: $brand-color;
 $nav-subitem-bg: $nav-bg-color;
@@ -21,6 +21,6 @@ $nav-active-parent-bg: $nav-bg-color;
 // TEXT COLORS
 ////////////////////
 
-$nav-text: #3c3c3c;
-$nav-active-text: #fff;
-$nav-active-parent-text: #3c3c3c;
+$nav-text: #666;
+$nav-active-text: #6C63FF ;
+$nav-active-parent-text: #333C44;

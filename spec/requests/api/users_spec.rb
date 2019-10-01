@@ -136,12 +136,6 @@ RSpec.resource "Users" do
 
   post "/api/users/:user_id/user_events" do
     parameter(
-      :user_id,
-      "The `id` of the user",
-      required: true
-    )
-
-    parameter(
       :event,
       "Only `invite` is supported at this time",
       required: true

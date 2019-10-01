@@ -44,11 +44,6 @@ RSpec.resource "Batch Operations" do
     )
 
     parameter(
-      :metadata,
-      "Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format."
-    )
-
-    parameter(
       :callout_id,
       "The `id` of the callout. Only applicable if the type is `BatchOperation::CalloutPopulation`"
     )

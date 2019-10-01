@@ -10,7 +10,7 @@ RspecApiDocumentation.configure do |config|
   config.curl_headers_to_filter = ["Host", "Cookie", "Content-Type"]
 
   config.request_headers_to_include = []
-  config.response_headers_to_include = []
+  config.response_headers_to_include = ["Location", "Per-Page", "Total"]
   config.request_body_formatter = proc do |params|
     JSON.pretty_generate(params) if params.present?
   end

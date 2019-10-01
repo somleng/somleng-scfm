@@ -40,11 +40,6 @@ RSpec.resource "Accounts" do
   end
 
   post "/api/accounts" do
-    parameter(
-      :metadata,
-      "Set of key-value pairs that you can attach to an object. This can be useful for storing additional information about the object in a structured format."
-    )
-
     example "Create an Account" do
       set_authorization_header(access_token: access_token)
       do_request
@@ -67,11 +62,6 @@ RSpec.resource "Accounts" do
   end
 
   patch "/api/accounts/:id" do
-    parameter(
-      :metadata_merge_mode,
-      "One of: `merge` (default), `replace` or `deep_merge`. `merge` merges the new metadata with the existing metadata. `replace` replaces the existing metadata with the new metadata. `deep_merge` deep merges the existing metadata with the new metadata.",
-    )
-
     example "Update an Account" do
       other_account = create(:account, "metadata" => { "bar" => "baz" })
 

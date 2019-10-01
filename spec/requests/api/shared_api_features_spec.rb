@@ -14,9 +14,17 @@ RSpec.resource "Shared API Features" do
       "A comma separated list of sort columns. For example to sort by `id` in descending order, then by `created_at` in ascending order, specify `sort: -id,created_at`"
     )
 
-    example "Filtering and Sorting" do
+    example "Filtering, Sorting and Pagination" do
+      explanation <<~HEREDOC
+        All index requests can be filtered and sorted by using the `q` and `sort` parameters.
+        Responses are paginated. The maxiumum number of items displayed for a single request is 25.
+        This can be verified by the `Per-Page` response header. The actual number of items will appear in the `Total` header.
+        If there are more than 25 items then you'll see a `Link` header with links to the
+        first, last, next and previous pages. The links are formatted according to [RFC-8288](https://tools.ietf.org/html/rfc8288)`
+      HEREDOC
+
       _matching_contact = create(:contact, account: account, metadata: { "foo" => "bar" })
-      filtered_contact = create(:contact, account: account, metadata: { "foo" => "bar" })
+      filtered_contacts = create_list(:contact, 25, account: account, metadata: { "foo" => "bar" })
 
       create(:contact, account: account, metadata: { "foo" => "bar" }, created_at: 2.days.ago)
       create(:contact)
@@ -25,15 +33,20 @@ RSpec.resource "Shared API Features" do
       do_request(
         q: {
           "metadata" => { "foo" => "bar" },
-          "created_at_after" => 1.day.ago
+          "created_at_after" => Date.yesterday
         },
         sort: "-id,created_at"
       )
 
       expect(response_status).to eq(200)
       parsed_body = JSON.parse(response_body)
-      expect(parsed_body.size).to eq(2)
-      expect(parsed_body.first.fetch("id")).to eq(filtered_contact.id)
+      expect(parsed_body.size).to eq(25)
+      expect(response_headers).to include(
+        "Per-Page" => "25",
+        "Total" => "26"
+      )
+      expect(response_headers).to have_key("Link")
+      expect(parsed_body.first.fetch("id")).to eq(filtered_contacts.last.id)
     end
   end
 

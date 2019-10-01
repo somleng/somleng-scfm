@@ -5,7 +5,6 @@ RSpec.resource "Contacts" do
 
   get "/api/contacts" do
     example "List all Contacts" do
-      _matching_contact = create(:contact, account: account, metadata: { "foo" => "bar" })
       filtered_contact = create(:contact, account: account, metadata: { "foo" => "bar" })
 
       create(:contact, account: account)
@@ -15,13 +14,12 @@ RSpec.resource "Contacts" do
       do_request(
         q: {
           "metadata" => { "foo" => "bar" }
-        },
-        sort: "-id,created_at"
+        }
       )
 
       expect(response_status).to eq(200)
       parsed_body = JSON.parse(response_body)
-      expect(parsed_body.size).to eq(2)
+      expect(parsed_body.size).to eq(1)
       expect(parsed_body.first.fetch("id")).to eq(filtered_contact.id)
     end
   end

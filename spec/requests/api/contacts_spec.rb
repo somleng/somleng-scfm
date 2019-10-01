@@ -92,7 +92,8 @@ RSpec.resource "Contacts" do
       request_body = {
         msisdn: generate(:somali_msisdn),
         metadata: {
-          "foo" => "bar"
+          "gender" => "f",
+          "name" => "Kate"
         }
       }
 
@@ -172,7 +173,8 @@ RSpec.resource "Contacts" do
       request_body = {
         msisdn: generate(:somali_msisdn),
         metadata: {
-          "foo" => "bar"
+          "gender" => "f",
+          "name" => "Kate"
         }
       }
 

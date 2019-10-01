@@ -51,6 +51,21 @@ RSpec.resource "Callouts" do
   end
 
   post "/api/callouts" do
+    parameter(
+      :call_flow_logic,
+      "The name of the call flow logic to be run during the callout."
+    )
+
+    parameter(
+      :audio_url,
+      "The URL to an audio file to be played during the callout."
+    )
+
+    parameter(
+      :settings,
+      "Additionoal settings which are needed byt the call flow logic."
+    )
+
     example "Create a Callout" do
       request_body = {
         call_flow_logic: CallFlowLogic::HelloWorld.to_s,
@@ -59,8 +74,8 @@ RSpec.resource "Callouts" do
           "foo" => "bar"
         },
         settings: {
-          "rapidpro" => {
-            "flow_id" => "flow-id"
+          "external_service_1" => {
+            "foo" => "bar"
           }
         }
       }

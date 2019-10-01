@@ -21,7 +21,6 @@ module API
     def permitted_params
       params.permit(
         :call_flow_logic,
-        :audio_file,
         :audio_url,
         :metadata_merge_mode,
         metadata: {},

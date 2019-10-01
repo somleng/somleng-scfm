@@ -127,6 +127,19 @@ RSpec.resource "Remote Phone Call Events" do
     end
   end
 
+  def create_access_token(**options)
+    create(
+      :access_token,
+      permissions: %i[remote_phone_call_events_read remote_phone_call_events_write],
+      **options
+    )
+  end
+
+  let(:account) { create(:account) }
+  let(:access_token) { create_access_token(resource_owner: account) }
+end
+
+RSpec.describe "Remote Phone Call Events" do
   it "can create a remote phone call event for an inbound call" do
     account = create(:account, :with_twilio_provider)
 

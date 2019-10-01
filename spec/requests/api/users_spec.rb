@@ -1,126 +1,165 @@
 require "rails_helper"
 
-RSpec.describe "Users" do
-  it "can list all users" do
-    filtered_user = create(
-      :user,
-      account: account,
-      metadata: {
-        "foo" => "bar"
-      }
-    )
-    create(:user, account: account)
-    create(:user)
+RSpec.resource "Users" do
+  header("Content-Type", "application/json")
 
-    get(
-      api_users_path(q: { "metadata" => { "foo" => "bar" } }),
-      headers: build_authorization_headers(access_token: access_token)
-    )
+  get "/api/users" do
+    example "List all Users" do
+      filtered_user = create(
+        :user,
+        account: account,
+        metadata: {
+          "foo" => "bar"
+        }
+      )
+      create(:user, account: account)
+      create(:user)
 
-    expect(response.code).to eq("200")
-    parsed_body = JSON.parse(response.body)
-    expect(parsed_body.size).to eq(1)
-    expect(parsed_body.first.fetch("id")).to eq(filtered_user.id)
+      set_authorization_header(access_token: access_token)
+      do_request(
+        q: { "metadata" => { "foo" => "bar" } }
+      )
+
+      expect(response_status).to eq(200)
+      parsed_body = JSON.parse(response_body)
+      expect(parsed_body.size).to eq(1)
+      expect(parsed_body.first.fetch("id")).to eq(filtered_user.id)
+    end
   end
 
-  it "super admin can list all users under an account" do
-    super_admin_account = create(:account, :super_admin)
-    access_token = create_access_token(resource_owner: super_admin_account)
-    user_account = create(:account)
-    user = create(:user, account: user_account)
-    _other_user = create(:user, account: super_admin_account)
+  get "/api/accounts/:account_id/users" do
+    example "List all Users under an account", document: false do
+      super_admin_account = create(:account, :super_admin)
+      access_token = create_access_token(resource_owner: super_admin_account)
+      user_account = create(:account)
+      user = create(:user, account: user_account)
+      _other_user = create(:user, account: super_admin_account)
 
-    get(
-      api_account_users_path(user_account),
-      headers: build_authorization_headers(access_token: access_token)
-    )
+      set_authorization_header(access_token: access_token)
+      do_request(account_id: user_account.id)
 
-    expect(response.code).to eq("200")
-    parsed_body = JSON.parse(response.body)
-    expect(parsed_body.size).to eq(1)
-    expect(parsed_body.first.fetch("id")).to eq(user.id)
+      expect(response_status).to eq(200)
+      parsed_body = JSON.parse(response_body)
+      expect(parsed_body.size).to eq(1)
+      expect(parsed_body.first.fetch("id")).to eq(user.id)
+    end
   end
 
-  it "can create a user" do
-    request_body = build_request_body
-
-    post(
-      api_users_path,
-      params: request_body,
-      headers: build_authorization_headers(access_token: access_token)
+  post "/api/users" do
+    parameter(
+      :email,
+      "The email address of the user",
+      required: true
     )
 
-    expect(response.code).to eq("201")
-    created_user = User.last
-    expect(created_user.account).to eq(account)
-    expect(created_user.email).to eq(request_body.fetch(:email))
-    expect(created_user.metadata).to eq(request_body.fetch(:metadata))
+    parameter(
+      :password,
+      "The initial password of the user. The user can change their password when they log in.",
+      required: true
+    )
+
+    example "Create a User" do
+      request_body = build_request_body
+
+      set_authorization_header(access_token: access_token)
+      do_request(request_body)
+
+      expect(response_status).to eq(201)
+      created_user = User.last
+      expect(created_user.account).to eq(account)
+      expect(created_user.email).to eq(request_body.fetch(:email))
+      expect(created_user.metadata).to eq(request_body.fetch(:metadata))
+    end
+
+    example "Create a User as a super admin", document: false do
+      super_admin_account = create(:account, :super_admin)
+      access_token = create_access_token(resource_owner: super_admin_account)
+      user_account = create(:account)
+      request_body = build_request_body(account_id: user_account.id)
+
+      set_authorization_header(access_token: access_token)
+      do_request(request_body)
+
+      expect(response_status).to eq(201)
+      created_user = User.last
+      expect(created_user.account).to eq(user_account)
+    end
   end
 
-  it "super admin can create a user" do
-    super_admin_account = create(:account, :super_admin)
-    access_token = create_access_token(resource_owner: super_admin_account)
-    user_account = create(:account)
-    request_body = build_request_body(account_id: user_account.id)
+  get "/api/users/:id" do
+    example "Retrieve a User" do
+      user = create(:user, account: account)
 
-    post(
-      api_users_path,
-      params: request_body,
-      headers: build_authorization_headers(access_token: access_token)
-    )
+      set_authorization_header(access_token: access_token)
+      do_request(id: user.id)
 
-    expect(response.code).to eq("201")
-    created_user = User.last
-    expect(created_user.account).to eq(user_account)
+      expect(response_status).to eq(200)
+      parsed_response = JSON.parse(response_body)
+      expect(
+        account.users.find(parsed_response.fetch("id"))
+      ).to eq(user)
+    end
   end
 
-  it "can fetch a user" do
-    user = create(:user, account: account)
+  patch "/api/users/:id" do
+    example "Update a User" do
+      user = create(
+        :user,
+        account: account,
+        metadata: {
+          "foo" => "bar"
+        }
+      )
 
-    get(
-      api_user_path(user),
-      headers: build_authorization_headers(access_token: access_token)
-    )
+      request_body = { metadata: { "bar" => "foo" }, metadata_merge_mode: "replace" }
 
-    expect(response.code).to eq("200")
-    parsed_response = JSON.parse(response.body)
-    expect(
-      account.users.find(parsed_response.fetch("id"))
-    ).to eq(user)
+      set_authorization_header(access_token: access_token)
+      do_request(id: user.id, **request_body)
+
+      expect(response_status).to eq(204)
+      user.reload
+      expect(user.metadata).to eq(request_body.fetch(:metadata))
+    end
   end
 
-  it "can update a user" do
-    user = create(
-      :user,
-      account: account,
-      metadata: {
-        "foo" => "bar"
-      }
-    )
+  delete "/api/users/:id" do
+    example "Delete a User" do
+      user = create(:user, account: account)
 
-    request_body = { metadata: { "bar" => "foo" }, metadata_merge_mode: "replace" }
+      set_authorization_header(access_token: access_token)
+      do_request(id: user.id)
 
-    patch(
-      api_user_path(user),
-      params: request_body,
-      headers: build_authorization_headers(access_token: access_token)
-    )
-
-    expect(response.code).to eq("204")
-    user.reload
-    expect(user.metadata).to eq(request_body.fetch(:metadata))
+      expect(response_status).to eq(204)
+      expect(User.find_by_id(user.id)).to eq(nil)
+    end
   end
 
-  it "can delete a user" do
-    user = create(:user, account: account)
-
-    delete(
-      api_user_path(user),
-      headers: build_authorization_headers(access_token: access_token)
+  post "/api/users/:user_id/user_events" do
+    parameter(
+      :user_id,
+      "The `id` of the user",
+      required: true
     )
 
-    expect(response.code).to eq("204")
-    expect(User.find_by_id(user.id)).to eq(nil)
+    parameter(
+      :event,
+      "Only `invite` is supported at this time",
+      required: true
+    )
+
+    example "Create a User Event" do
+      account = create(:account)
+      access_token = create_access_token(resource_owner: account)
+      user = create(:user, account: account)
+
+      set_authorization_header(access_token: access_token)
+      do_request(user_id: user.id, event: "invite")
+
+      expect(response_status).to eq(201)
+      expect(response_headers.fetch("Location")).to eq(api_user_path(user))
+      user.reload
+      expect(user.invitation_sent_at).to be_present
+    end
   end
 
   def build_request_body(options = {})

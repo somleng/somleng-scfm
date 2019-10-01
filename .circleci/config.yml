@@ -310,4 +310,4 @@ workflows:
             - deploy_production
           filters:
             branches:
-              only: api_documentation
+              only: master

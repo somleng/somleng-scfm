@@ -307,7 +307,7 @@ workflows:
           context: Somleng
           requires:
             - build_documentation
-            - deploy_production
+            # - deploy_production
           filters:
             branches:
-              only: master
+              only: change_docs_deployment_directory

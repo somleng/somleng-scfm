@@ -141,12 +141,12 @@ jobs:
 
       - aws-s3/sync:
           from: ~/slate/build
-          to: 's3://docs.somleng.org/scfm'
+          to: 's3://www.somleng.org/docs/scfm'
 
       - run:
           name: "Invalidate CDN"
           command: |
-            aws cloudfront create-invalidation --distribution-id $SOMLENG_DOCS_DISTRIBUTION_ID --paths /scfm/\*
+            aws cloudfront create-invalidation --distribution-id $SOMLENG_WEBSITE_DISTRIBUTION_ID --paths /docs/scfm/\*
 
   deploy_production:
     working_directory: ~/scfm

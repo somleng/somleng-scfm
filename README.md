@@ -1,6 +1,6 @@
 # somleng-scfm
 
-[![Build Status](https://travis-ci.org/somleng/somleng-scfm.svg?branch=master)](https://travis-ci.org/somleng/somleng-scfm)
+[![CircleCI](https://circleci.com/gh/somleng/somleng-scfm.svg?style=svg)](https://circleci.com/gh/somleng/somleng-scfm)
 [![codecov](https://codecov.io/gh/somleng/somleng-scfm/branch/master/graph/badge.svg)](https://codecov.io/gh/somleng/somleng-scfm)
 [![Maintainability](https://api.codeclimate.com/v1/badges/6e5acaf5abd4edf17999/maintainability)](https://codeclimate.com/github/somleng/somleng-scfm/maintainability)
 

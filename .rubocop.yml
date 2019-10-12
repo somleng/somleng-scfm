@@ -17,3 +17,6 @@ MultipleExpectations:
 
 ExampleLength:
   Max: 10
+
+RSpec/DescribedClass:
+  Enabled: false

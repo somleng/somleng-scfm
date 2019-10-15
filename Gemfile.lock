@@ -320,10 +320,10 @@ GEM
     nio4r (2.5.2)
     nokogiri (1.10.4)
       mini_portile2 (~> 2.4.0)
-    octicons (9.1.1)
+    octicons (9.2.0)
       nokogiri (>= 1.6.3.1)
-    octicons_helper (9.1.1)
-      octicons (= 9.1.1)
+    octicons_helper (9.2.0)
+      octicons (= 9.2.0)
       rails
     okcomputer (1.17.4)
     orm_adapter (0.5.0)
@@ -369,8 +369,8 @@ GEM
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
-    rails-html-sanitizer (1.2.0)
-      loofah (~> 2.2, >= 2.2.2)
+    rails-html-sanitizer (1.3.0)
+      loofah (~> 2.3)
     rails-i18n (6.0.0)
       i18n (>= 0.7, < 2)
       railties (>= 6.0.0, < 7)
@@ -524,7 +524,7 @@ GEM
     wisper-rspec (1.1.0)
     xpath (3.2.0)
       nokogiri (~> 1.8)
-    zeitwerk (2.1.10)
+    zeitwerk (2.2.0)
 
 PLATFORMS
   ruby

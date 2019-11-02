@@ -46,6 +46,7 @@ en:
           CallFlowLogic::PlayMessage: Play Message
           CallFlowLogic::PlayMessageStartRapidproFlow: Play Message and Start RapidPro Flow
           CallFlowLogic::Simulation: Simulation
+          CallFlowLogic::EWSRegistration: EWS Registration
     required:
       mark: "*"
       text: required

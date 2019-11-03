@@ -48,7 +48,7 @@ module CallFlowLogic
     end
 
     def run!
-      transaction do
+      ApplicationRecord.transaction do
         super
         process_call
       end
@@ -90,18 +90,40 @@ module CallFlowLogic
       end
     end
 
+    def gather_commune
+      @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
+        response.gather(action_on_empty_result: true) do |gather|
+          gather.say(message: "Please select your commune by pressing the corresponding number on your keypad.")
+        end
+      end
+    end
+
     def province_gathered?
       return false if pressed_digits.zero?
 
       selected_province.present?
     end
 
+    def district_gathered?
+      return false if pressed_digits.zero?
+
+      selected_district.present?
+    end
+
     def selected_province
       Selector::LOCATIONS.keys[pressed_digits - 1]
     end
 
+    def selected_district
+      Selector::LOCATIONS.fetch(phone_call.metadata.fetch("province").to_sym).keys[pressed_digits - 1]
+    end
+
     def persist_province
       update_phone_call!(province: selected_province)
+    end
+
+    def persist_district
+      update_phone_call!(district: selected_district)
     end
 
     def update_phone_call!(data)

@@ -40,7 +40,7 @@ module BatchOperation
     validates :type, presence: true
     validates :parameters, json: true
 
-    before_validation :set_default_parameters
+    before_validation :set_default_parameters, on: :create
 
     include AASM
 

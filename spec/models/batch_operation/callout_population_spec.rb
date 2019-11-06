@@ -34,7 +34,7 @@ module BatchOperation
 
     describe "#parameters" do
       it "sets the parameters from the account settings" do
-        account = build_stubbed(
+        account = create(
           :account,
           settings: {
             "batch_operation_callout_population_parameters" => {
@@ -44,7 +44,8 @@ module BatchOperation
             }
           }
         )
-        batch_operation = BatchOperation::CalloutPopulation.new(
+        batch_operation = build(
+          :callout_population,
           account: account,
           parameters: {
             "contact_filter_params" => {
@@ -53,9 +54,9 @@ module BatchOperation
           }
         )
 
-        batch_operation.valid?
+        batch_operation.save!
 
-        expect(batch_operation.parameters).to eq(
+        expect(batch_operation.parameters).to include(
           "contact_filter_params" => {
             "metadata" => {
               "2019" => true,

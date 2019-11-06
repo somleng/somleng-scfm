@@ -262,7 +262,9 @@ To double check that the Ghostbusters have been deleted you can try to fetch the
 }
 ```
 
-Note that the response header is `404 Not Found`
+Note that the response header is `404 Not Found`.
+
+Note that after a call has been placed to a contact you won't be able to delete them any more.
 
 ## Managing Callouts
 

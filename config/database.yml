@@ -7,6 +7,7 @@ default: &default
   pool: <%= ENV.fetch("DB_POOL") { 5 } %>
   reaping_frequency: 10
   url: <%= ENV['DATABASE_URL'] %>
+  host: localhost
 
 development:
   <<: *default

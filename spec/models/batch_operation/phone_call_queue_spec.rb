@@ -3,7 +3,6 @@ require "rails_helper"
 RSpec.describe BatchOperation::PhoneCallQueue do
   let(:factory) { :phone_call_queue_batch_operation }
 
-  include_examples("batch_operation")
   include_examples("phone_call_operation_batch_operation")
   include_examples("phone_call_event_operation_batch_operation")
 

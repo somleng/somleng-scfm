@@ -1,5 +1,5 @@
 module BatchOperation
-  class CalloutPopulation < BatchOperation::Base
+  class CalloutPopulation < Base
     include CustomRoutesHelper["batch_operations"]
 
     belongs_to :callout
@@ -49,6 +49,10 @@ module BatchOperation
         callout: callout,
         callout_population: self
       )
+    end
+
+    def batch_operation_account_settings_param
+      "batch_operation_callout_population_parameters"
     end
   end
 end

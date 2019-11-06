@@ -90,6 +90,10 @@ FactoryBot.define do
       status { BatchOperation::Base::STATE_QUEUED }
     end
 
+    trait :running do
+      status { BatchOperation::Base::STATE_RUNNING }
+    end
+
     trait :finished do
       status { BatchOperation::Base::STATE_FINISHED }
     end

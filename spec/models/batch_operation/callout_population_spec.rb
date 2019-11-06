@@ -39,7 +39,7 @@ module BatchOperation
           settings: {
             "batch_operation_callout_population_parameters" => {
               "contact_filter_params" => {
-                "2019" => true
+                "metadata" => { "2019" => true }
               }
             }
           }
@@ -48,7 +48,7 @@ module BatchOperation
           account: account,
           parameters: {
             "contact_filter_params" => {
-              "female" => true
+              "metadata" => { "gender" => "female" }
             }
           }
         )
@@ -56,7 +56,12 @@ module BatchOperation
         batch_operation.valid?
 
         expect(batch_operation.parameters).to eq(
-          "contact_filter_params" => { "2019" => true, "female" => true }
+          "contact_filter_params" => {
+            "metadata" => {
+              "2019" => true,
+              "gender" => "female"
+            }
+          }
         )
       end
     end

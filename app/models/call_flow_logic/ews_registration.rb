@@ -40,10 +40,11 @@ module CallFlowLogic
         transitions from: :gathering_commune,
                     to: :playing_conclusion,
                     if: :commune_gathered?,
-                    after: %i[persist_commune persist_location]
+                    after: %i[persist_commune play_conclusion]
 
         transitions from: :playing_conclusion,
-                    to: :finished
+                    to: :finished,
+                    after: :hangup
       end
     end
 
@@ -71,6 +72,7 @@ module CallFlowLogic
     def play_introduction
       @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
         response.say(message: "Welcome to the early warning system registration 1294.")
+        response.redirect(current_url)
       end
     end
 
@@ -98,6 +100,17 @@ module CallFlowLogic
       end
     end
 
+    def play_conclusion
+      @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
+        response.say(message: "Thank you. You have successfully registered for the EWS System.", voice: "woman")
+        response.redirect(current_url)
+      end
+    end
+
+    def hangup
+      @voice_response = Twilio::TwiML::VoiceResponse.new(&:hangup)
+    end
+
     def province_gathered?
       return false if pressed_digits.zero?
 
@@ -110,6 +123,12 @@ module CallFlowLogic
       selected_district.present?
     end
 
+    def commune_gathered?
+      return false if pressed_digits.zero?
+
+      selected_commune.present?
+    end
+
     def selected_province
       Selector::LOCATIONS.keys[pressed_digits - 1]
     end
@@ -118,12 +137,22 @@ module CallFlowLogic
       Selector::LOCATIONS.fetch(phone_call.metadata.fetch("province").to_sym).keys[pressed_digits - 1]
     end
 
+    def selected_commune
+      province = phone_call.metadata.fetch("province").to_sym
+      district = phone_call.metadata.dig("district").to_sym
+      Selector::LOCATIONS.dig(province, district)[pressed_digits - 1]
+    end
+
     def persist_province
       update_phone_call!(province: selected_province)
     end
 
     def persist_district
       update_phone_call!(district: selected_district)
+    end
+
+    def persist_commune
+      update_phone_call!(commune: selected_commune)
     end
 
     def update_phone_call!(data)

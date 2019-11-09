@@ -40,7 +40,7 @@ module BatchOperation
     validates :type, presence: true
     validates :parameters, json: true
 
-    before_validation :set_default_parameters
+    before_validation :set_default_parameters, on: :create
 
     include AASM
 
@@ -119,12 +119,10 @@ module BatchOperation
     end
 
     def set_default_parameters
-      return if parameters.present?
-      return if batch_operation_account_settings_param.blank?
+      return if account.blank?
 
-      self.parameters = account.settings.fetch(
-        batch_operation_account_settings_param
-      ) { {} }
+      default_parameters = account.settings.fetch(batch_operation_account_settings_param, {})
+      self.parameters = default_parameters.deep_merge(parameters)
     end
 
     def batch_operation_account_settings_param; end

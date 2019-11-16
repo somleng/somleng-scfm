@@ -1,5 +1,30 @@
 module CallFlowLogic
   class EWSRegistration < Base
+    PROVINCE_MENU = [
+      "15", # Pursat
+      "01", # Banteay Meanchey
+      "06", # Kampong Thom
+      "07", # Kampot
+      "04", # Kampong Chhnang
+      "17", # Siem Reap
+      "02", # Battambang
+      "10", # Kratie,
+      "19", # Steung Treng
+      "13", # Preh Vihear
+      "22", # Oddar Meanchey
+      "23", # Kep
+      "24", # Pailin
+      "09", # Koh Kong
+      "18", # Preah Sihanouk
+      "03", # Kampong Cham
+      "25", # Tboung Khmum
+      "14", # Prey Veng
+      "16", # Ratanakkiri
+      "11", # Mondulkiri
+      "20", # Svay Rieng,
+      "05"  # Kampong Speu
+    ].freeze
+
     INITIAL_STATUS = :answered
 
     attr_reader :voice_response
@@ -40,7 +65,7 @@ module CallFlowLogic
         transitions from: :gathering_commune,
                     to: :playing_conclusion,
                     if: :commune_gathered?,
-                    after: %i[persist_commune play_conclusion]
+                    after: %i[persist_commune update_contact play_conclusion]
 
         transitions from: :playing_conclusion,
                     to: :finished,
@@ -71,7 +96,7 @@ module CallFlowLogic
 
     def play_introduction
       @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
-        response.say(message: "Welcome to the early warning system registration 1294.")
+        response.play(url: AudioURL.new(key: "ews_registration/introduction.wav").url)
         response.redirect(current_url)
       end
     end
@@ -79,7 +104,7 @@ module CallFlowLogic
     def gather_province
       @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
         response.gather(action_on_empty_result: true) do |gather|
-          gather.say(message: "Please select your province by pressing the corresponding number on your keypad.")
+          gather.play(url: AudioURL.new(key: "ews_registration/select_province.wav").url)
         end
       end
     end
@@ -87,7 +112,7 @@ module CallFlowLogic
     def gather_district
       @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
         response.gather(action_on_empty_result: true) do |gather|
-          gather.say(message: "Please select your district by pressing the corresponding number on your keypad.")
+          gather.play(url: AudioURL.new(key: "ews_registration/#{selected_province}.wav").url)
         end
       end
     end
@@ -95,14 +120,14 @@ module CallFlowLogic
     def gather_commune
       @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
         response.gather(action_on_empty_result: true) do |gather|
-          gather.say(message: "Please select your commune by pressing the corresponding number on your keypad.")
+          gather.play(url: AudioURL.new(key: "ews_registration/#{selected_district}.wav").url)
         end
       end
     end
 
     def play_conclusion
       @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
-        response.say(message: "Thank you. You have successfully registered for the EWS System.", voice: "woman")
+        response.play(url: AudioURL.new(key: "ews_registration/registration_successful.wav").url)
         response.redirect(current_url)
       end
     end
@@ -130,29 +155,43 @@ module CallFlowLogic
     end
 
     def selected_province
-      Selector::LOCATIONS.keys[pressed_digits - 1]
+      PROVINCE_MENU[pressed_digits - 1]
     end
 
     def selected_district
-      Selector::LOCATIONS.fetch(phone_call.metadata.fetch("province").to_sym).keys[pressed_digits - 1]
+      province_code = phone_call_metadata(:province_code)
+      district_code = pressed_digits.to_s.rjust(2, "0")
+      Pumi::District.find_by_id(province_code + district_code)&.id
     end
 
     def selected_commune
-      province = phone_call.metadata.fetch("province").to_sym
-      district = phone_call.metadata.dig("district").to_sym
-      Selector::LOCATIONS.dig(province, district)[pressed_digits - 1]
+      district_code = phone_call_metadata(:district_code)
+      commune_code = pressed_digits.to_s.rjust(2, "0")
+      Pumi::Commune.find_by_id(district_code + commune_code)&.id
     end
 
     def persist_province
-      update_phone_call!(province: selected_province)
+      update_phone_call!(province_code: selected_province)
     end
 
     def persist_district
-      update_phone_call!(district: selected_district)
+      update_phone_call!(district_code: selected_district)
     end
 
     def persist_commune
-      update_phone_call!(commune: selected_commune)
+      update_phone_call!(commune_code: selected_commune)
+    end
+
+    def update_contact
+      contact = phone_call.contact
+      commune_ids = contact.metadata.fetch("commune_ids", [])
+      commune_ids << selected_commune
+      contact.metadata = { "commune_ids" => commune_ids.uniq }
+      contact.save!
+    end
+
+    def phone_call_metadata(key)
+      phone_call.metadata.fetch(key.to_s)
     end
 
     def update_phone_call!(data)
@@ -173,49 +212,18 @@ module CallFlowLogic
       event.phone_call
     end
 
-    class Selector
-      LOCATIONS = {
-        pursat: {
-          bakan: %i[
-            boeng_bat_kandal
-            boeng_khnar
-            khnar_totueng
-            me_tuek
-            ou_ta_paong
-            rumlech
-            snam_preah
-            svay_doun_kaev
-            ta_lou
-            trapeang_chorng
-          ],
-          kandieng: [],
-          krakor: [],
-          phnum_kravan: [],
-          pursat_municipality: [],
-          veal_veang: []
-        },
-        banteay_meanchey: {},
-        kampong_thom: {},
-        kampot: {},
-        kampong_chhnang: {},
-        siem_reap: {},
-        battambang: {},
-        kratie: {},
-        steung_treng: {},
-        preah_vihear: {},
-        oddar_meanchey: {},
-        kep: {},
-        pailin: {},
-        koh_kong: {},
-        preah_sihanouk: {},
-        kampong_cham: {},
-        tboung_khmum: {},
-        prey_veng: {},
-        ratanakkiri: {},
-        mondulkiri: {},
-        svay_rieng: {},
-        kampong_speu: {}
-      }.freeze
+    class AudioURL
+      attr_reader :key, :region, :bucket
+
+      def initialize(options)
+        @key = options.fetch(:key)
+        @region = options.fetch(:region, Rails.configuration.app_settings.fetch(:aws_region))
+        @bucket = options.fetch(:bucket, Rails.configuration.app_settings.fetch(:audio_bucket))
+      end
+
+      def url
+        "https://s3.#{region}.amazonaws.com/#{bucket}/#{key}"
+      end
     end
   end
 end

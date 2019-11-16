@@ -12,6 +12,12 @@ GIT
     api-pagination (4.8.2)
 
 GIT
+  remote: https://github.com/dwilkie/pumi.git
+  revision: b07bc7c5a536c2e76dca77db88da81d6903732c4
+  specs:
+    pumi (0.1.0)
+
+GIT
   remote: https://github.com/krisleech/wisper.git
   revision: b29661a46b95801cb733918d11e8f8182a535697
   specs:
@@ -566,6 +572,7 @@ DEPENDENCIES
   phony_rails
   pry
   puma
+  pumi!
   rails (~> 6.0)
   rails-controller-testing
   record_tag_helper!

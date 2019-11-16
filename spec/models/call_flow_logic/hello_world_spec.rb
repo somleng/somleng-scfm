@@ -11,7 +11,7 @@ RSpec.describe CallFlowLogic::HelloWorld do
       response = Hash.from_xml(xml).fetch("Response")
       expect(response.keys.size).to eq(2)
       expect(response.fetch("Say")).to eq("Thanks for trying our documentation. Enjoy!")
-      expect(response.fetch("Play")).to eq("http://demo.twilio.com/docs/classic.mp3")
+      expect(response.fetch("Play")).to eq("https://demo.twilio.com/docs/classic.mp3")
     end
   end
 end

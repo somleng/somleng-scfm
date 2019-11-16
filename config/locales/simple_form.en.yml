@@ -42,11 +42,11 @@ en:
           twilio: Twilio
       defaults:
         call_flow_logic:
+          CallFlowLogic::EWSRegistration: Early Warning System Registration
           CallFlowLogic::HelloWorld: Hello World
           CallFlowLogic::PlayMessage: Play Message
           CallFlowLogic::PlayMessageStartRapidproFlow: Play Message and Start RapidPro Flow
           CallFlowLogic::Simulation: Simulation
-          CallFlowLogic::EWSRegistration: EWS Registration
     required:
       mark: "*"
       text: required

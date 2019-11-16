@@ -10,7 +10,7 @@ module CallFlowLogic
       "02", # Battambang
       "10", # Kratie,
       "19", # Steung Treng
-      "13", # Preh Vihear
+      "13", # Preah Vihear
       "22", # Oddar Meanchey
       "23", # Kep
       "24", # Pailin

@@ -21,8 +21,11 @@ module CallFlowLogic
       "14", # Prey Veng
       "16", # Ratanakkiri
       "11", # Mondulkiri
-      "20", # Svay Rieng,
-      "05"  # Kampong Speu
+      "20", # Svay Rieng
+      "05", # Kampong Speu
+      "21", # Takao
+      "08", # Kandal
+      "12"  # Phnom Penh
     ].freeze
 
     INITIAL_STATUS = :answered

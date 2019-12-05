@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_09_07_072735) do
+ActiveRecord::Schema.define(version: 2019_12_05_014545) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -177,6 +177,8 @@ ActiveRecord::Schema.define(version: 2019_09_07_072735) do
     t.datetime "updated_at", null: false
     t.integer "duration", default: 0, null: false
     t.integer "lock_version", default: 0, null: false
+    t.bigint "account_id", null: false
+    t.index ["account_id"], name: "index_phone_calls_on_account_id"
     t.index ["callout_participation_id", "status"], name: "index_phone_calls_on_callout_participation_id_and_status", unique: true, where: "((status)::text = 'created'::text)"
     t.index ["callout_participation_id"], name: "index_phone_calls_on_callout_participation_id"
     t.index ["contact_id"], name: "index_phone_calls_on_contact_id"
@@ -252,6 +254,7 @@ ActiveRecord::Schema.define(version: 2019_09_07_072735) do
   add_foreign_key "oauth_access_tokens", "accounts", column: "resource_owner_id"
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_applications", "accounts", column: "owner_id"
+  add_foreign_key "phone_calls", "accounts"
   add_foreign_key "phone_calls", "batch_operations", column: "create_batch_operation_id"
   add_foreign_key "phone_calls", "batch_operations", column: "queue_batch_operation_id"
   add_foreign_key "phone_calls", "batch_operations", column: "queue_remote_fetch_batch_operation_id"

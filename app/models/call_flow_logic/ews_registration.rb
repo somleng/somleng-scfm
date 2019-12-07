@@ -70,6 +70,11 @@ module CallFlowLogic
                     if: :commune_gathered?,
                     after: %i[persist_commune update_contact play_conclusion]
 
+        transitions from: %i[gathering_district gathering_commune],
+                    to: :gathering_province,
+                    if: :start_over?,
+                    after: %i[gather_province]
+
         transitions from: :playing_conclusion,
                     to: :finished,
                     after: :hangup
@@ -145,24 +150,26 @@ module CallFlowLogic
       @voice_response = Twilio::TwiML::VoiceResponse.new(&:hangup)
     end
 
-    def province_gathered?
-      return true if pressed_digits.nonzero? && selected_province.present?
+    def start_over?
+      dtmf_tones.to_s.first == "*"
+    end
 
-      gather_province
-      false
+    def province_gathered?
+      valid_selection?(-> { selected_province.present? }, otherwise: -> { gather_province })
     end
 
     def district_gathered?
-      return true if pressed_digits.nonzero? && selected_district.present?
-
-      gather_district
-      false
+      valid_selection?(-> { selected_district.present? }, otherwise: -> { gather_district })
     end
 
     def commune_gathered?
-      return true if pressed_digits.nonzero? && selected_commune.present?
+      valid_selection?(-> { selected_commune.present? }, otherwise: -> { gather_commune })
+    end
 
-      gather_commune
+    def valid_selection?(condition, otherwise:)
+      return true if pressed_digits.nonzero? && condition.call
+
+      otherwise.call
       false
     end
 

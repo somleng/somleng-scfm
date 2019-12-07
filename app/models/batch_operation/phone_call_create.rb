@@ -50,6 +50,7 @@ module BatchOperation
 
     def create_phone_call(callout_participation)
       PhoneCall.create(
+        account: callout_participation.callout.account,
         callout_participation: callout_participation,
         contact: callout_participation.contact,
         create_batch_operation: self,

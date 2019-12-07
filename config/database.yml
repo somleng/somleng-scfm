@@ -5,8 +5,8 @@ default: &default
   # For details on connection pooling, see rails configuration guide
   # http://guides.rubyonrails.org/configuring.html#database-pooling
   pool: <%= ENV.fetch("DB_POOL") { 5 } %>
-  reaping_frequency: 10
   url: <%= ENV['DATABASE_URL'] %>
+  reaping_frequency: 10
   host: localhost
 
 development:

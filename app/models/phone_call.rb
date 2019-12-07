@@ -31,6 +31,7 @@ class PhoneCall < ApplicationRecord
              optional: true
 
   belongs_to :contact, validate: true
+  belongs_to :account
   has_many   :remote_phone_call_events, dependent: :restrict_with_error
 
   include MetadataHelpers
@@ -47,9 +48,6 @@ class PhoneCall < ApplicationRecord
            to: :callout_participation,
            prefix: true,
            allow_nil: true
-
-  delegate :account,
-           to: :contact
 
   delegate :platform_provider,
            to: :account
@@ -168,6 +166,7 @@ class PhoneCall < ApplicationRecord
   def set_defaults
     self.msisdn  ||= callout_participation_msisdn
     self.contact ||= callout_participation_contact
+    self.account ||= contact&.account
     set_call_flow_logic
   end
 

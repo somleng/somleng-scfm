@@ -13,7 +13,7 @@ module FactoryHelpers
     callout_participation = options.delete(:callout_participation) || create_callout_participation(
       account: account
     )
-    create(:phone_call, *args, callout_participation: callout_participation, **options)
+    create(:phone_call, *args, account: account, callout_participation: callout_participation, **options)
   end
 
   def create_remote_phone_call_event(account:, **options)

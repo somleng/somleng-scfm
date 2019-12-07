@@ -15,8 +15,7 @@ FactoryBot.define do
       CallStatus: "completed",
       Direction: "inbound",
       AccountSid: SecureRandom.uuid,
-      ApiVersion: "2010-04-01",
-      Digits: "5"
+      ApiVersion: "2010-04-01"
     }
   end
 

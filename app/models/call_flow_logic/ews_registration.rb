@@ -146,21 +146,24 @@ module CallFlowLogic
     end
 
     def province_gathered?
-      return false if pressed_digits.zero?
+      return true if pressed_digits.nonzero? && selected_province.present?
 
-      selected_province.present?
+      gather_province
+      false
     end
 
     def district_gathered?
-      return false if pressed_digits.zero?
+      return true if pressed_digits.nonzero? && selected_district.present?
 
-      selected_district.present?
+      gather_district
+      false
     end
 
     def commune_gathered?
-      return false if pressed_digits.zero?
+      return true if pressed_digits.nonzero? && selected_commune.present?
 
-      selected_commune.present?
+      gather_commune
+      false
     end
 
     def selected_province

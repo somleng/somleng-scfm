@@ -12,13 +12,10 @@ RSpec.describe CallFlowLogic::EWSRegistration do
 
     response = parse_response(call_flow_logic.to_xml)
     expect(event.phone_call.metadata.fetch("status")).to eq("playing_introduction")
-    expect(response).to eq(
-      "Play" => "https://s3.ap-southeast-1.amazonaws.com/audio.somleng.org/ews_registration/introduction.wav",
-      "Redirect" => "https://scfm.somleng.org/api/remote_phone_call_events"
-    )
+    assert_play("introduction.wav", response)
   end
 
-  it "prompts for selecting the province" do
+  it "prompts for the province" do
     event = create_phone_call_event(phone_call_metadata: { status: :playing_introduction })
     call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event)
 
@@ -29,7 +26,21 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     expect(event.phone_call.metadata.fetch("status")).to eq("gathering_province")
   end
 
-  it "gathers the province and prompts for gathering the district" do
+  it "prompts for the province again if no input is received" do
+    event = create_phone_call_event(
+      phone_call_metadata: { status: :gathering_province }
+    )
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event)
+
+    call_flow_logic.run!
+
+    response = parse_response(call_flow_logic.to_xml)
+    assert_gather("select_province.wav", response)
+    expect(event.phone_call.metadata["province_code"]).to eq(nil)
+    expect(event.phone_call.metadata.fetch("status")).to eq("gathering_province")
+  end
+
+  it "saves the province then prompts for the district" do
     event = create_phone_call_event(
       phone_call_metadata: { status: :gathering_province },
       event_details: { Digits: "1" }
@@ -44,33 +55,19 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     expect(event.phone_call.metadata.fetch("status")).to eq("gathering_district")
   end
 
-  it "replays the province selection if no input is received" do
-    event = create_phone_call_event(
-      phone_call_metadata: { status: :gathering_province }
-    )
-    call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event)
-
-    call_flow_logic.run!
-
-    response = parse_response(call_flow_logic.to_xml)
-    assert_gather("select_province.wav", response)
-    expect(event.phone_call.metadata["province_code"]).to eq(nil)
-    expect(event.phone_call.metadata.fetch("status")).to eq("gathering_province")
-  end
-
-  it "gathers the district and prompts for gathering the commune" do
+  it "prompts for the district again if 0 is pressed" do
     event = create_phone_call_event(
       phone_call_metadata: { status: :gathering_district, province_code: "15" },
-      event_details: { Digits: "1" }
+      event_details: { Digits: "0" }
     )
     call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event)
 
     call_flow_logic.run!
 
     response = parse_response(call_flow_logic.to_xml)
-    assert_gather("1501.wav", response)
-    expect(event.phone_call.metadata.fetch("district_code")).to eq("1501")
-    expect(event.phone_call.metadata.fetch("status")).to eq("gathering_commune")
+    assert_gather("15.wav", response)
+    expect(event.phone_call.metadata["district_code"]).to eq(nil)
+    expect(event.phone_call.metadata.fetch("status")).to eq("gathering_district")
   end
 
   it "starts over if * is pressed" do
@@ -87,7 +84,37 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     assert_gather("select_province.wav", response)
   end
 
-  it "gathers the commune, updates the contact and plays a conclusion" do
+  it "saves the district then prompts for the commune" do
+    event = create_phone_call_event(
+      phone_call_metadata: { status: :gathering_district, province_code: "15" },
+      event_details: { Digits: "1" }
+    )
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event)
+
+    call_flow_logic.run!
+
+    response = parse_response(call_flow_logic.to_xml)
+    assert_gather("1501.wav", response)
+    expect(event.phone_call.metadata.fetch("district_code")).to eq("1501")
+    expect(event.phone_call.metadata.fetch("status")).to eq("gathering_commune")
+  end
+
+  it "prompts for the commune again if an invalid selection is received" do
+    event = create_phone_call_event(
+      phone_call_metadata: { status: :gathering_commune, province_code: "15", district_code: "1501" },
+      event_details: { Digits: "99" }
+    )
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event)
+
+    call_flow_logic.run!
+
+    response = parse_response(call_flow_logic.to_xml)
+    assert_gather("1501.wav", response)
+    expect(event.phone_call.metadata.fetch("district_code")).to eq("1501")
+    expect(event.phone_call.metadata.fetch("status")).to eq("gathering_commune")
+  end
+
+  it "saves the commune then updates the contact and plays a conclusion" do
     contact = create(
       :contact,
       metadata: {
@@ -120,10 +147,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
       "commune_ids" => %w[120101 150105],
       "name" => "John Doe"
     )
-    expect(response).to eq(
-      "Play" => "https://s3.ap-southeast-1.amazonaws.com/audio.somleng.org/ews_registration/registration_successful.wav",
-      "Redirect" => "https://scfm.somleng.org/api/remote_phone_call_events"
-    )
+    assert_play("registration_successful.wav", response)
   end
 
   it "hangs up the call" do
@@ -156,6 +180,13 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     expect(response.fetch("Gather")).to eq(
       "actionOnEmptyResult" => "true",
       "Play" => "https://s3.ap-southeast-1.amazonaws.com/audio.somleng.org/ews_registration/#{filename}"
+    )
+  end
+
+  def assert_play(filename, response)
+    expect(response).to eq(
+      "Play" => "https://s3.ap-southeast-1.amazonaws.com/audio.somleng.org/ews_registration/#{filename}",
+      "Redirect" => "https://scfm.somleng.org/api/remote_phone_call_events"
     )
   end
 end

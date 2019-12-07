@@ -117,13 +117,13 @@ module CallFlowLogic
 
     def gather_district
       @voice_response = gather do |response|
-        play(selected_province, response)
+        play(phone_call_metadata(:province_code), response)
       end
     end
 
     def gather_commune
       @voice_response = gather do |response|
-        play(selected_district, response)
+        play(phone_call_metadata(:district_code), response)
       end
     end
 
@@ -155,35 +155,43 @@ module CallFlowLogic
     end
 
     def province_gathered?
-      valid_selection?(-> { selected_province.present? }, otherwise: -> { gather_province })
+      return true if selected_province.present?
+
+      gather_province
+      false
     end
 
     def district_gathered?
-      valid_selection?(-> { selected_district.present? }, otherwise: -> { gather_district })
+      return true if selected_district.present?
+
+      gather_district
+      false
     end
 
     def commune_gathered?
-      valid_selection?(-> { selected_commune.present? }, otherwise: -> { gather_commune })
-    end
+      return true if selected_commune.present?
 
-    def valid_selection?(condition, otherwise:)
-      return true if pressed_digits.nonzero? && condition.call
-
-      otherwise.call
+      gather_commune
       false
     end
 
     def selected_province
+      return if pressed_digits.zero?
+
       PROVINCE_MENU[pressed_digits - 1]
     end
 
     def selected_district
+      return if pressed_digits.zero?
+
       province_code = phone_call_metadata(:province_code)
       district_code = pressed_digits.to_s.rjust(2, "0")
       Pumi::District.find_by_id(province_code + district_code)&.id
     end
 
     def selected_commune
+      return if pressed_digits.zero?
+
       district_code = phone_call_metadata(:district_code)
       commune_code = pressed_digits.to_s.rjust(2, "0")
       Pumi::Commune.find_by_id(district_code + commune_code)&.id
@@ -204,7 +212,7 @@ module CallFlowLogic
     def update_contact
       contact = phone_call.contact
       commune_ids = contact.metadata.fetch("commune_ids", [])
-      commune_ids << selected_commune
+      commune_ids << phone_call_metadata(:commune_code)
       contact.metadata = { "commune_ids" => commune_ids.uniq }
       contact.save!
     end

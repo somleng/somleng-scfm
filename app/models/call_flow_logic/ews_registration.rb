@@ -70,6 +70,11 @@ module CallFlowLogic
                     if: :commune_gathered?,
                     after: %i[persist_commune update_contact play_conclusion]
 
+        transitions from: %i[gathering_district gathering_commune],
+                    to: :gathering_province,
+                    if: :start_over?,
+                    after: %i[gather_province]
+
         transitions from: :playing_conclusion,
                     to: :finished,
                     after: :hangup
@@ -112,13 +117,13 @@ module CallFlowLogic
 
     def gather_district
       @voice_response = gather do |response|
-        play(selected_province, response)
+        play(phone_call_metadata(:province_code), response)
       end
     end
 
     def gather_commune
       @voice_response = gather do |response|
-        play(selected_district, response)
+        play(phone_call_metadata(:district_code), response)
       end
     end
 
@@ -145,38 +150,51 @@ module CallFlowLogic
       @voice_response = Twilio::TwiML::VoiceResponse.new(&:hangup)
     end
 
-    def province_gathered?
-      return false if pressed_digits.zero?
+    def start_over?
+      dtmf_tones.to_s.first == "*"
+    end
 
-      selected_province.present?
+    def province_gathered?
+      return true if selected_province.present?
+
+      gather_province
+      false
     end
 
     def district_gathered?
-      return false if pressed_digits.zero?
+      return true if selected_district.present?
 
-      selected_district.present?
+      gather_district
+      false
     end
 
     def commune_gathered?
-      return false if pressed_digits.zero?
+      return true if selected_commune.present?
 
-      selected_commune.present?
+      gather_commune
+      false
     end
 
     def selected_province
+      return if pressed_digits.zero?
+
       PROVINCE_MENU[pressed_digits - 1]
     end
 
     def selected_district
+      return if pressed_digits.zero?
+
       province_code = phone_call_metadata(:province_code)
-      district_code = pressed_digits.to_s.rjust(2, "0")
-      Pumi::District.find_by_id(province_code + district_code)&.id
+      districts = Pumi::District.where(province_id: province_code).sort_by(&:id)
+      districts[pressed_digits - 1]&.id
     end
 
     def selected_commune
+      return if pressed_digits.zero?
+
       district_code = phone_call_metadata(:district_code)
-      commune_code = pressed_digits.to_s.rjust(2, "0")
-      Pumi::Commune.find_by_id(district_code + commune_code)&.id
+      communes = Pumi::Commune.where(district_id: district_code).sort_by(&:id)
+      communes[pressed_digits - 1]&.id
     end
 
     def persist_province
@@ -194,7 +212,7 @@ module CallFlowLogic
     def update_contact
       contact = phone_call.contact
       commune_ids = contact.metadata.fetch("commune_ids", [])
-      commune_ids << selected_commune
+      commune_ids << phone_call_metadata(:commune_code)
       contact.metadata = { "commune_ids" => commune_ids.uniq }
       contact.save!
     end

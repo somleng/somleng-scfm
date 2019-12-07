@@ -185,16 +185,16 @@ module CallFlowLogic
       return if pressed_digits.zero?
 
       province_code = phone_call_metadata(:province_code)
-      district_code = pressed_digits.to_s.rjust(2, "0")
-      Pumi::District.find_by_id(province_code + district_code)&.id
+      districts = Pumi::District.where(province_id: province_code).sort_by(&:id)
+      districts[pressed_digits - 1]&.id
     end
 
     def selected_commune
       return if pressed_digits.zero?
 
       district_code = phone_call_metadata(:district_code)
-      commune_code = pressed_digits.to_s.rjust(2, "0")
-      Pumi::Commune.find_by_id(district_code + commune_code)&.id
+      communes = Pumi::Commune.where(district_id: district_code).sort_by(&:id)
+      communes[pressed_digits - 1]&.id
     end
 
     def persist_province

@@ -50,8 +50,8 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     call_flow_logic.run!
 
     response = parse_response(call_flow_logic.to_xml)
-    assert_gather("15.wav", response) # Pursat
-    expect(event.phone_call.metadata.fetch("province_code")).to eq("15")
+    assert_gather("15.wav", response)
+    expect(event.phone_call.metadata.fetch("province_code")).to eq("15") # Pursat
     expect(event.phone_call.metadata.fetch("status")).to eq("gathering_district")
   end
 
@@ -86,7 +86,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
 
   it "saves the district then prompts for the commune" do
     event = create_phone_call_event(
-      phone_call_metadata: { status: :gathering_district, province_code: "15" },
+      phone_call_metadata: { status: :gathering_district, province_code: "01" },
       event_details: { Digits: "1" }
     )
     call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event)
@@ -94,14 +94,16 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     call_flow_logic.run!
 
     response = parse_response(call_flow_logic.to_xml)
-    assert_gather("1501.wav", response)
-    expect(event.phone_call.metadata.fetch("district_code")).to eq("1501")
+    assert_gather("0102.wav", response)
+    expect(event.phone_call.metadata.fetch("district_code")).to eq("0102") # Mongkol Borei
     expect(event.phone_call.metadata.fetch("status")).to eq("gathering_commune")
   end
 
   it "prompts for the commune again if an invalid selection is received" do
     event = create_phone_call_event(
-      phone_call_metadata: { status: :gathering_commune, province_code: "15", district_code: "1501" },
+      phone_call_metadata: {
+        status: :gathering_commune, province_code: "15", district_code: "1501"
+      },
       event_details: { Digits: "99" }
     )
     call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event)
@@ -128,11 +130,11 @@ RSpec.describe CallFlowLogic::EWSRegistration do
       contact: contact,
       metadata: {
         status: :gathering_commune,
-        province_code: "15",
-        district_code: "1501"
+        province_code: "01",
+        district_code: "0105"
       }
     )
-    event = create_phone_call_event(phone_call: phone_call, event_details: { Digits: "5" })
+    event = create_phone_call_event(phone_call: phone_call, event_details: { Digits: "4" })
     call_flow_logic = CallFlowLogic::EWSRegistration.new(
       event: event,
       current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
@@ -141,10 +143,10 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     call_flow_logic.run!
 
     response = parse_response(call_flow_logic.to_xml)
-    expect(phone_call.metadata.fetch("commune_code")).to eq("150105")
+    expect(phone_call.metadata.fetch("commune_code")).to eq("010505") # Samraong
     expect(phone_call.metadata.fetch("status")).to eq("playing_conclusion")
     expect(contact.metadata).to eq(
-      "commune_ids" => %w[120101 150105],
+      "commune_ids" => %w[120101 010505],
       "name" => "John Doe"
     )
     assert_play("registration_successful.wav", response)

@@ -99,40 +99,46 @@ module CallFlowLogic
 
     def play_introduction
       @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
-        response.play(url: AudioURL.new(key: "ews_registration/introduction.wav").url)
+        play(:introduction, response)
         response.redirect(current_url)
       end
     end
 
     def gather_province
-      @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
-        response.gather(action_on_empty_result: true) do |gather|
-          gather.play(url: AudioURL.new(key: "ews_registration/select_province.wav").url)
-        end
+      @voice_response = gather do |response|
+        play(:select_province, response)
       end
     end
 
     def gather_district
-      @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
-        response.gather(action_on_empty_result: true) do |gather|
-          gather.play(url: AudioURL.new(key: "ews_registration/#{selected_province}.wav").url)
-        end
+      @voice_response = gather do |response|
+        play(selected_province, response)
       end
     end
 
     def gather_commune
-      @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
-        response.gather(action_on_empty_result: true) do |gather|
-          gather.play(url: AudioURL.new(key: "ews_registration/#{selected_district}.wav").url)
-        end
+      @voice_response = gather do |response|
+        play(selected_district, response)
       end
     end
 
     def play_conclusion
       @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
-        response.play(url: AudioURL.new(key: "ews_registration/registration_successful.wav").url)
+        play(:registration_successful, response)
         response.redirect(current_url)
       end
+    end
+
+    def gather(&_block)
+      Twilio::TwiML::VoiceResponse.new do |response|
+        response.gather(action_on_empty_result: true) do |gather|
+          yield(gather)
+        end
+      end
+    end
+
+    def play(filename, response)
+      response.play(url: AudioURL.new(key: "ews_registration/#{filename}.wav").url)
     end
 
     def hangup

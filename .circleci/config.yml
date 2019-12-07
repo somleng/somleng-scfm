@@ -302,7 +302,7 @@ workflows:
             - build_scfm
           filters:
             branches:
-              only: ews_callflow_improvements
+              only: master
       - deploy_documentation:
           context: Somleng
           requires:

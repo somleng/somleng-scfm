@@ -32,7 +32,7 @@ GIT
 
 GIT
   remote: https://github.com/rails/record_tag_helper.git
-  revision: 020b572da3eb7ab86b5ec3e9b5fddb873bd0bc83
+  revision: 339b930f4e9d0f935beac636bb65768167d079c6
   specs:
     record_tag_helper (1.0.1)
       actionview (>= 5)

@@ -48,7 +48,7 @@ GIT
 
 GIT
   remote: https://github.com/thoughtbot/shoulda-matchers.git
-  revision: 6d05f815b9d8a361ddb93b2b14f385402b2268f2
+  revision: 94b5b2a852e4a7c6004934d88e1fbf5896bcc90e
   specs:
     shoulda-matchers (4.1.2)
       activesupport (>= 4.2.0)
@@ -499,7 +499,7 @@ GEM
       faraday (~> 0.9)
       jwt (>= 1.5, <= 2.5)
       nokogiri (>= 1.6, < 2.0)
-    tzinfo (1.2.5)
+    tzinfo (1.2.6)
       thread_safe (~> 0.1)
     uglifier (4.2.0)
       execjs (>= 0.3.0, < 3)

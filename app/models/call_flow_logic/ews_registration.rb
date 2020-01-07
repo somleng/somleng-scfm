@@ -1,5 +1,6 @@
 module CallFlowLogic
   class EWSRegistration < Base
+    # http://db.ncdd.gov.kh/gazetteer/view/index.castle
     PROVINCE_MENU = [
       "15", # Pursat
       "01", # Banteay Meanchey
@@ -28,6 +29,15 @@ module CallFlowLogic
       "12"  # Phnom Penh
     ].freeze
 
+    # https://en.wikipedia.org/wiki/ISO_639-3
+    LANGUAGE_MENU = [
+      "khm", # Khmer (https://iso639-3.sil.org/code/khm, https://en.wikipedia.org/wiki/Khmer_language)
+      "cmo", # Central Mnong (https://iso639-3.sil.org/code/cmo, https://en.wikipedia.org/wiki/Mnong_language)
+      "jra", # Jarai (https://iso639-3.sil.org/code/jra, https://en.wikipedia.org/wiki/Jarai_language)
+      "tpu", # Tampuan (https://iso639-3.sil.org/code/tpu, https://en.wikipedia.org/wiki/Tampuan_language)
+      "krr"  # Krung (https://iso639-3.sil.org/code/krr, https://en.wikipedia.org/wiki/Brao_language)
+    ].freeze
+
     INITIAL_STATUS = :answered
 
     attr_reader :voice_response
@@ -37,6 +47,7 @@ module CallFlowLogic
     aasm(column: :status, whiny_transitions: false) do
       state INITIAL_STATUS, initial: true
       state :playing_introduction
+      state :gathering_language
       state :gathering_province
       state :gathering_district
       state :gathering_commune
@@ -52,8 +63,13 @@ module CallFlowLogic
                     after: :play_introduction
 
         transitions from: :playing_introduction,
+                    to: :gathering_language,
+                    after: :gather_language
+
+        transitions from: :gathering_language,
                     to: :gathering_province,
-                    after: :gather_province
+                    if: :language_gathered?,
+                    after: %i[persist_language gather_province]
 
         transitions from: :gathering_province,
                     to: :gathering_district,
@@ -109,6 +125,12 @@ module CallFlowLogic
       end
     end
 
+    def gather_language
+      @voice_response = gather do |response|
+        play(:select_language, response)
+      end
+    end
+
     def gather_province
       @voice_response = gather do |response|
         play(:select_province, response)
@@ -154,6 +176,13 @@ module CallFlowLogic
       dtmf_tones.to_s.first == "*"
     end
 
+    def language_gathered?
+      return true if selected_language.present?
+
+      gather_language
+      false
+    end
+
     def province_gathered?
       return true if selected_province.present?
 
@@ -173,6 +202,12 @@ module CallFlowLogic
 
       gather_commune
       false
+    end
+
+    def selected_language
+      return if pressed_digits.zero?
+
+      LANGUAGE_MENU[pressed_digits - 1]
     end
 
     def selected_province
@@ -195,6 +230,10 @@ module CallFlowLogic
       district_code = phone_call_metadata(:district_code)
       communes = Pumi::Commune.where(district_id: district_code).sort_by(&:id)
       communes[pressed_digits - 1]&.id
+    end
+
+    def persist_language
+      update_phone_call!(language: selected_language)
     end
 
     def persist_province

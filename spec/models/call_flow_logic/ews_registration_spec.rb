@@ -15,8 +15,25 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     assert_play("introduction.wav", response)
   end
 
-  it "prompts for the province" do
+  it "prompts for the language" do
     event = create_phone_call_event(phone_call_metadata: { status: :playing_introduction })
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(
+      event: event,
+      current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+    )
+
+    call_flow_logic.run!
+
+    response = parse_response(call_flow_logic.to_xml)
+    assert_gather("select_language.wav", response)
+    expect(event.phone_call.metadata.fetch("status")).to eq("gathering_language")
+  end
+
+  it "saves the language then prompts for the province" do
+    event = create_phone_call_event(
+      phone_call_metadata: { status: :gathering_language },
+      event_details: { Digits: "1" }
+    )
     call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event)
 
     call_flow_logic.run!
@@ -121,6 +138,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
       :contact,
       metadata: {
         name: "John Doe",
+        language: "krr",
         commune_ids: ["120101"]
       }
     )
@@ -130,6 +148,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
       contact: contact,
       metadata: {
         status: :gathering_commune,
+        language: "khm",
         province_code: "01",
         district_code: "0105"
       }
@@ -147,7 +166,8 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     expect(phone_call.metadata.fetch("status")).to eq("playing_conclusion")
     expect(contact.metadata).to eq(
       "commune_ids" => %w[120101 010505],
-      "name" => "John Doe"
+      "name" => "John Doe",
+      "language" => "khm"
     )
     assert_play("registration_successful.wav", response)
   end

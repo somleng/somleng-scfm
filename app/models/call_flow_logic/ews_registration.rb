@@ -1,41 +1,64 @@
 module CallFlowLogic
   class EWSRegistration < Base
-    # http://db.ncdd.gov.kh/gazetteer/view/index.castle
-    PROVINCE_MENU = [
-      "15", # Pursat
-      "01", # Banteay Meanchey
-      "06", # Kampong Thom
-      "07", # Kampot
-      "04", # Kampong Chhnang
-      "17", # Siem Reap
-      "02", # Battambang
-      "10", # Kratie,
-      "19", # Steung Treng
-      "13", # Preah Vihear
-      "22", # Oddar Meanchey
-      "23", # Kep
-      "24", # Pailin
-      "09", # Koh Kong
-      "18", # Preah Sihanouk
-      "03", # Kampong Cham
-      "25", # Tboung Khmum
-      "14", # Prey Veng
-      "16", # Ratanakkiri
-      "11", # Mondulkiri
-      "20", # Svay Rieng
-      "05", # Kampong Speu
-      "21", # Takao
-      "08", # Kandal
-      "12"  # Phnom Penh
-    ].freeze
+    Language = Struct.new(:code, :name, :links, keyword_init: true)
 
     # https://en.wikipedia.org/wiki/ISO_639-3
     LANGUAGE_MENU = [
-      "khm", # Khmer (https://iso639-3.sil.org/code/khm, https://en.wikipedia.org/wiki/Khmer_language)
-      "cmo", # Central Mnong (https://iso639-3.sil.org/code/cmo, https://en.wikipedia.org/wiki/Mnong_language)
-      "jra", # Jarai (https://iso639-3.sil.org/code/jra, https://en.wikipedia.org/wiki/Jarai_language)
-      "tpu", # Tampuan (https://iso639-3.sil.org/code/tpu, https://en.wikipedia.org/wiki/Tampuan_language)
-      "krr"  # Krung (https://iso639-3.sil.org/code/krr, https://en.wikipedia.org/wiki/Brao_language)
+      Language.new(
+        code: "khm", name: "Khmer",
+        links: ["https://iso639-3.sil.org/code/khm", "https://en.wikipedia.org/wiki/Khmer_language"]
+      ),
+      Language.new(
+        code: "cmo", name: "Central Mnong",
+        links: ["https://iso639-3.sil.org/code/cmo", "https://en.wikipedia.org/wiki/Mnong_language"]
+      ),
+      Language.new(
+        code: "jra", name: "Jarai",
+        links: ["https://iso639-3.sil.org/code/jra", "https://en.wikipedia.org/wiki/Jarai_language"]
+      ),
+      Language.new(
+        code: "tpu", name: "Tampuan",
+        links: ["https://iso639-3.sil.org/code/tpu", "https://en.wikipedia.org/wiki/Tampuan_language"]
+      ),
+      Language.new(
+        code: "krr", name: "Krung",
+        links: ["https://iso639-3.sil.org/code/krr", "https://en.wikipedia.org/wiki/Brao_language"]
+      )
+    ].freeze
+
+    Province = Struct.new(:code, :name, :available_languages, keyword_init: true) do
+      def initialize(options)
+        super(options.reverse_merge(available_languages: ["khm"]))
+      end
+    end
+
+    # http://db.ncdd.gov.kh/gazetteer/view/index.castle
+    PROVINCE_MENU = [
+      Province.new(code: "15", name: "Pursat"),
+      Province.new(code: "01", name: "Banteay Meanchey"),
+      Province.new(code: "06", name: "Kampong Thom"),
+      Province.new(code: "07", name: "Kampot"),
+      Province.new(code: "04", name: "Kampong Chhnang"),
+      Province.new(code: "17", name: "Siem Reap"),
+      Province.new(code: "02", name: "Battambang"),
+      Province.new(code: "10", name: "Kratie"),
+      Province.new(code: "19", name: "Steung Treng"),
+      Province.new(code: "13", name: "Preah Vihear"),
+      Province.new(code: "22", name: "Oddar Meanchey"),
+      Province.new(code: "23", name: "Kep"),
+      Province.new(code: "24", name: "Pailin"),
+      Province.new(code: "09", name: "Koh Kong"),
+      Province.new(code: "18", name: "Preah Sihanouk"),
+      Province.new(code: "03", name: "Kampong Cham"),
+      Province.new(code: "25", name: "Tboung Khmum"),
+      Province.new(code: "14", name: "Prey Veng"),
+      Province.new(code: "16", name: "Ratanakkiri", available_languages: %w[khm jra tpu krr]),
+      Province.new(code: "11", name: "Mondulkiri", available_languages: %w[khm cmo]),
+      Province.new(code: "20", name: "Svay Rieng"),
+      Province.new(code: "05", name: "Kampong Speu"),
+      Province.new(code: "21", name: "Takao"),
+      Province.new(code: "08", name: "Kandal"),
+      Province.new(code: "12", name: "Phnom Penh")
     ].freeze
 
     INITIAL_STATUS = :answered
@@ -86,10 +109,10 @@ module CallFlowLogic
                     if: :commune_gathered?,
                     after: %i[persist_commune update_contact play_conclusion]
 
-        transitions from: %i[gathering_district gathering_commune],
-                    to: :gathering_province,
+        transitions from: %i[gathering_province gathering_district gathering_commune],
+                    to: :gathering_language,
                     if: :start_over?,
-                    after: %i[gather_province]
+                    after: %i[gather_language]
 
         transitions from: :playing_conclusion,
                     to: :finished,
@@ -120,7 +143,7 @@ module CallFlowLogic
 
     def play_introduction
       @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
-        play(:introduction, response)
+        play(:introduction, response, language_code: "khm")
         response.redirect(current_url)
       end
     end
@@ -133,25 +156,37 @@ module CallFlowLogic
 
     def gather_province
       @voice_response = gather do |response|
-        play(:select_province, response)
+        play(
+          :select_province,
+          response,
+          language_code: phone_call_metadata(:language_code)
+        )
       end
     end
 
     def gather_district
       @voice_response = gather do |response|
-        play(phone_call_metadata(:province_code), response)
+        play(
+          phone_call_metadata(:province_code),
+          response,
+          language_code: phone_call_metadata(:language_code)
+        )
       end
     end
 
     def gather_commune
       @voice_response = gather do |response|
-        play(phone_call_metadata(:district_code), response)
+        play(
+          phone_call_metadata(:district_code),
+          response,
+          language_code: phone_call_metadata(:language_code)
+        )
       end
     end
 
     def play_conclusion
       @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
-        play(:registration_successful, response)
+        play(:registration_successful, response, language_code: "khm")
         response.redirect(current_url)
       end
     end
@@ -164,8 +199,9 @@ module CallFlowLogic
       end
     end
 
-    def play(filename, response)
-      response.play(url: AudioURL.new(key: "ews_registration/#{filename}.wav").url)
+    def play(filename, response, language_code: nil)
+      key = ["ews_registration/#{filename}", language_code].compact.join("-")
+      response.play(url: AudioURL.new(key: "#{key}.wav").url)
     end
 
     def hangup
@@ -213,7 +249,11 @@ module CallFlowLogic
     def selected_province
       return if pressed_digits.zero?
 
-      PROVINCE_MENU[pressed_digits - 1]
+      province = PROVINCE_MENU[pressed_digits - 1]
+      return if province.blank?
+      return if province.available_languages.exclude?(phone_call_metadata(:language_code))
+
+      province
     end
 
     def selected_district
@@ -221,7 +261,7 @@ module CallFlowLogic
 
       province_code = phone_call_metadata(:province_code)
       districts = Pumi::District.where(province_id: province_code).sort_by(&:id)
-      districts[pressed_digits - 1]&.id
+      districts[pressed_digits - 1]
     end
 
     def selected_commune
@@ -229,30 +269,34 @@ module CallFlowLogic
 
       district_code = phone_call_metadata(:district_code)
       communes = Pumi::Commune.where(district_id: district_code).sort_by(&:id)
-      communes[pressed_digits - 1]&.id
+      communes[pressed_digits - 1]
     end
 
     def persist_language
-      update_phone_call!(language: selected_language)
+      update_phone_call!(language_code: selected_language.code)
     end
 
     def persist_province
-      update_phone_call!(province_code: selected_province)
+      update_phone_call!(province_code: selected_province.code)
     end
 
     def persist_district
-      update_phone_call!(district_code: selected_district)
+      update_phone_call!(district_code: selected_district.id)
     end
 
     def persist_commune
-      update_phone_call!(commune_code: selected_commune)
+      update_phone_call!(commune_code: selected_commune.id)
     end
 
     def update_contact
       contact = phone_call.contact
       commune_ids = contact.metadata.fetch("commune_ids", [])
       commune_ids << phone_call_metadata(:commune_code)
-      contact.metadata = { "commune_ids" => commune_ids.uniq }
+      contact.metadata = {
+        "commune_ids" => commune_ids.uniq,
+        "language_code" => phone_call_metadata(:language_code),
+        "latest_commune_id" => phone_call_metadata(:commune_code)
+      }
       contact.save!
     end
 

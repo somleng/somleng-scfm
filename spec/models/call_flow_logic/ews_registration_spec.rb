@@ -222,7 +222,9 @@ RSpec.describe CallFlowLogic::EWSRegistration do
       "commune_ids" => %w[120101 010505],
       "name" => "John Doe",
       "language_code" => "krr",
-      "latest_commune_id" => "010505"
+      "latest_commune_id" => "010505",
+      "latest_address_km" => "ឃុំសំរោង ស្រុកអូរជ្រៅ ខេត្តបន្ទាយមានជ័យ",
+      "latest_address_en" => "Samraong Commune, Ou Chrov District, Banteay Meanchey Province"
     )
     assert_play("registration_successful-khm.wav", response)
   end

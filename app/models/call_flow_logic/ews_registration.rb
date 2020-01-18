@@ -253,7 +253,7 @@ module CallFlowLogic
       return if province.blank?
       return if province.available_languages.exclude?(phone_call_metadata(:language_code))
 
-      province
+      Pumi::Province.find_by_id(province.code)
     end
 
     def selected_district
@@ -273,29 +273,43 @@ module CallFlowLogic
     end
 
     def persist_language
-      update_phone_call!(language_code: selected_language.code)
+      update_phone_call!(
+        language_code: selected_language.code
+      )
     end
 
     def persist_province
-      update_phone_call!(province_code: selected_province.code)
+      update_phone_call!(
+        province_code: selected_province.id,
+        province_name_en: selected_province.name_en
+      )
     end
 
     def persist_district
-      update_phone_call!(district_code: selected_district.id)
+      update_phone_call!(
+        district_code: selected_district.id,
+        district_name_en: selected_district.name_en
+      )
     end
 
     def persist_commune
-      update_phone_call!(commune_code: selected_commune.id)
+      update_phone_call!(
+        commune_code: selected_commune.id,
+        commune_name_en: selected_commune.name_en
+      )
     end
 
     def update_contact
       contact = phone_call.contact
+      commune = Pumi::Commune.find_by_id(phone_call_metadata(:commune_code))
       commune_ids = contact.metadata.fetch("commune_ids", [])
-      commune_ids << phone_call_metadata(:commune_code)
+      commune_ids << commune.id
       contact.metadata = {
         "commune_ids" => commune_ids.uniq,
         "language_code" => phone_call_metadata(:language_code),
-        "latest_commune_id" => phone_call_metadata(:commune_code)
+        "latest_commune_id" => commune.id,
+        "latest_address_km" => commune.address_km,
+        "latest_address_en" => commune.address_en
       }
       contact.save!
     end

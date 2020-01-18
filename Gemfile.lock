@@ -13,7 +13,7 @@ GIT
 
 GIT
   remote: https://github.com/dwilkie/pumi.git
-  revision: 1b33482c06e5ebe049161dadacd4b24a825f793f
+  revision: c4d97cc7cd521daa3537000fb64b8e0a459fe006
   specs:
     pumi (0.1.0)
 

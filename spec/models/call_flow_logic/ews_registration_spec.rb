@@ -187,7 +187,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     expect(event.phone_call.metadata.fetch("status")).to eq("gathering_commune")
   end
 
-  it "saves the commune, updates the contact and plays a conclusion in Khmer" do
+  it "saves the commune, updates the contact and plays a conclusion" do
     contact = create(
       :contact,
       metadata: {
@@ -226,7 +226,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
       "latest_address_km" => "ឃុំសំរោង ស្រុកអូរជ្រៅ ខេត្តបន្ទាយមានជ័យ",
       "latest_address_en" => "Samraong Commune, Ou Chrov District, Banteay Meanchey Province"
     )
-    assert_play("registration_successful-khm.wav", response)
+    assert_play("registration_successful-krr.wav", response)
   end
 
   it "hangs up the call" do

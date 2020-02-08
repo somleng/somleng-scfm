@@ -186,7 +186,7 @@ module CallFlowLogic
 
     def play_conclusion
       @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
-        play(:registration_successful, response, language_code: "khm")
+        play(:registration_successful, response, language_code: phone_call_metadata(:language_code))
         response.redirect(current_url)
       end
     end

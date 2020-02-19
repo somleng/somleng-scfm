@@ -45,8 +45,7 @@ RSpec.describe PhoneCall do
         status: PhoneCall::STATE_CREATED
       )
 
-      expect(phone_call).to be_invalid
-      expect(phone_call.errors[:callout_participation_id]).to be_present
+      expect { phone_call.save }.to raise_error(ActiveRecord::RecordNotUnique)
     end
 
     it "allows multiple phone calls for the one callout participation" do

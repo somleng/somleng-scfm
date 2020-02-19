@@ -39,7 +39,6 @@ class PhoneCall < ApplicationRecord
   include MsisdnHelpers
   include HasCallFlowLogic
 
-  validates :callout_participation_id, uniqueness: { scope: :status }, if: :created?
   delegate :call_flow_logic, to: :callout_participation, prefix: true, allow_nil: true
   delegate :call_flow_logic, to: :contact, prefix: true, allow_nil: true
 

@@ -1,8 +1,9 @@
 GIT
   remote: https://github.com/aasm/aasm.git
-  revision: f7231d1c319aa90fdd5079b6c153a873637c2166
+  revision: ce1905fc985be81dca32de6d2a331cf5fa9013f7
   specs:
     aasm (5.0.6)
+      after_commit_action (~> 1.0)
       concurrent-ruby (~> 1.0)
 
 GIT
@@ -113,6 +114,9 @@ GEM
       zeitwerk (~> 2.2)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
+    after_commit_action (1.1.0)
+      activerecord (>= 3.0.0)
+      activesupport (>= 3.0.0)
     ast (2.4.0)
     autoprefixer-rails (9.7.3)
       execjs
@@ -167,7 +171,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
-    concurrent-ruby (1.1.5)
+    concurrent-ruby (1.1.6)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     crass (1.0.6)

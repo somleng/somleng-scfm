@@ -1,8 +1,8 @@
 GIT
   remote: https://github.com/aasm/aasm.git
-  revision: f7231d1c319aa90fdd5079b6c153a873637c2166
+  revision: 59ebeca066486958e96fbc62c10474292d61b55e
   specs:
-    aasm (5.0.6)
+    aasm (5.0.7)
       concurrent-ruby (~> 1.0)
 
 GIT
@@ -167,7 +167,7 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.12.2)
-    concurrent-ruby (1.1.5)
+    concurrent-ruby (1.1.6)
     crack (0.4.3)
       safe_yaml (~> 1.0.0)
     crass (1.0.6)

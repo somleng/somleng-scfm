@@ -131,7 +131,7 @@ RSpec.describe "Callouts", :aggregate_failures do
       account: user.account,
       call_flow_logic: CallFlowLogic::HelloWorld,
       created_by: user,
-      audio_file: "test.mp3",
+      audio_file: file_fixture("test.mp3"),
       audio_url: "https://example.com/audio.mp3",
       metadata: { "location" => { "country" => "Cambodia" } },
       settings: { "rapidpro" => { "flow_id" => "flow-id" } }

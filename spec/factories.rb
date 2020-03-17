@@ -45,7 +45,7 @@ FactoryBot.define do
     after(:build) do |callout, evaluator|
       if evaluator.audio_file.present?
         callout.audio_file = Rack::Test::UploadedFile.new(
-          ActiveSupport::TestCase.fixture_path + "/files/#{evaluator.audio_file}",
+          evaluator.audio_file,
           "audio/mp3"
         )
       end

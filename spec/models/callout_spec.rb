@@ -15,14 +15,14 @@ RSpec.describe Callout do
 
     context "#audio_file" do
       it "validates the content type" do
-        callout = build(:callout, audio_file: "image.jpg")
+        callout = build(:callout, audio_file: file_fixture("image.jpg"))
 
         expect(callout).not_to be_valid
         expect(callout.errors[:audio_file]).to be_present
       end
 
       it "validates the file size" do
-        callout = build(:callout, audio_file: "big_file.mp3")
+        callout = build(:callout, audio_file: file_fixture("big_file.mp3"))
 
         expect(callout).not_to be_valid
         expect(callout.errors[:audio_file]).to be_present
@@ -30,7 +30,7 @@ RSpec.describe Callout do
 
       it "allows small audio files" do
         account = create(:account)
-        callout = build(:callout, account: account, audio_file: "test.mp3")
+        callout = build(:callout, account: account, audio_file: file_fixture("test.mp3"))
         expect(callout).to be_valid
       end
 
@@ -57,7 +57,7 @@ RSpec.describe Callout do
     end
 
     it "tracks changes when updating the audio file" do
-      callout = build(:callout, audio_file: "test.mp3")
+      callout = build(:callout, audio_file: file_fixture("test.mp3"))
       original_blob = callout.audio_file.blob
       callout.audio_file = fixture_file_upload("files/big_file.mp3", "audio/mp3")
 
@@ -66,7 +66,7 @@ RSpec.describe Callout do
     end
 
     it "tracks changes when not updating the audio file" do
-      callout = create(:callout, audio_file: "test.mp3")
+      callout = create(:callout, audio_file: file_fixture("test.mp3"))
       callout = Callout.find(callout.id)
 
       expect(callout.audio_file_blob_changed?).to eq(false)

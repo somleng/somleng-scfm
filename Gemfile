@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gem "rails", "~> 6.0"
+gem "rails", "6.0.2.1"
 
 gem "aasm", github: "aasm/aasm"
 gem "active_elastic_job", github: "samnang/active-elastic-job", branch: "upgrade_to_aws_sdk_3"
@@ -50,11 +50,10 @@ group :development, :test do
   gem "i18n-tasks"
   gem "pry"
   gem "rspec-rails", ">= 4.0.0.beta2"
+  gem "rspec_api_documentation", github: "samnang/rspec_api_documentation"
   gem "rubocop"
   gem "rubocop-rails"
   gem "rubocop-rspec"
-
-  gem "rspec_api_documentation"
 end
 
 group :development do

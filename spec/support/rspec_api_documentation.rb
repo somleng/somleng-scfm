@@ -16,4 +16,13 @@ RspecApiDocumentation.configure do |config|
   end
   config.keep_source_order = false
   config.disable_dsl_status!
+
+  # https://github.com/zipmark/rspec_api_documentation/pull/458
+  config.response_body_formatter = proc do |content_type, response_body|
+    if content_type =~ %r{application/.*json}
+      JSON.pretty_generate(JSON.parse(response_body))
+    else
+      response_body
+    end
+  end
 end

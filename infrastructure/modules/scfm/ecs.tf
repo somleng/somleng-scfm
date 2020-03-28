@@ -28,6 +28,8 @@ data "template_file" "appserver_container_definitions" {
     database_host = var.db_host
     database_port = var.db_port
     db_pool = var.db_pool
+    uploads_bucket = aws_s3_bucket.uploads.id
+    audio_bucket = aws_s3_bucket.audio.id
   }
 }
 
@@ -105,6 +107,8 @@ data "template_file" "worker_container_definitions" {
     database_host = var.db_host
     database_port = var.db_port
     db_pool = var.db_pool
+    uploads_bucket = aws_s3_bucket.uploads.id
+    audio_bucket = aws_s3_bucket.audio.id
   }
 }
 

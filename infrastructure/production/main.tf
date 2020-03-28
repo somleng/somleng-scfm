@@ -15,6 +15,8 @@ module "scfm" {
   container_instance_subnets = data.terraform_remote_state.core_infrastructure.outputs.vpc.private_subnets
   vpc_id = data.terraform_remote_state.core_infrastructure.outputs.vpc.vpc_id
   logs_bucket = data.terraform_remote_state.core_infrastructure.outputs.logs_bucket.id
+  uploads_bucket = "uploads.somleng.org"
+  audio_bucket = "audio.somleng.org"
 
   db_username = data.terraform_remote_state.core_infrastructure.outputs.db.this_db_instance_username
   db_password_parameter_arn = data.terraform_remote_state.core_infrastructure.outputs.db_master_password_parameter.arn

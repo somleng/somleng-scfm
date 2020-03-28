@@ -12,6 +12,8 @@ variable "container_instance_subnets" {}
 variable "vpc_id" {}
 variable "logs_bucket" {}
 variable "codedeploy_role" {}
+variable "uploads_bucket" {}
+variable "audio_bucket" {}
 
 variable "webserver_container_name" {
   default = "nginx"

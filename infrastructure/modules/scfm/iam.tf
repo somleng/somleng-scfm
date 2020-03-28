@@ -28,6 +28,28 @@ resource "aws_iam_policy" "ecs_task_policy" {
     {
       "Effect": "Allow",
       "Action": [
+        "s3:ListBucket"
+      ],
+      "Resource": [
+        "${aws_s3_bucket.uploads.arn}",
+        "${aws_s3_bucket.audio.arn}"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:DeleteObject",
+        "s3:GetObject"
+      ],
+      "Resource": [
+        "${aws_s3_bucket.uploads.arn}/*",
+        "${aws_s3_bucket.audio.arn}/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
         "sqs:ChangeMessageVisibility",
         "sqs:ChangeMessageVisibilityBatch",
         "sqs:DeleteMessage",

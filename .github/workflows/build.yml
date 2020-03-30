@@ -87,7 +87,7 @@ jobs:
       - name: Prepare Documentation Source
         run: |
           cp -R doc/slate/source/* doc/api
-          cp app/assets/images/logos/bongloy_documentation_logo.png doc/api/logo.png
+          cp app/assets/images/scfm_logo.png doc/api/logo.png
 
       - name: Upload Documentation Source
         uses: actions/upload-artifact@v1

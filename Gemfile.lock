@@ -190,7 +190,7 @@ GEM
     devise-async (1.0.0)
       activejob (>= 5.0)
       devise (>= 4.0)
-    devise_invitable (2.0.1)
+    devise_invitable (2.0.2)
       actionmailer (>= 5.0)
       devise (>= 4.6)
     diff-lcs (1.3)

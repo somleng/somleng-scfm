@@ -22,6 +22,31 @@ RSpec.resource "Contacts" do
       expect(parsed_body.size).to eq(1)
       expect(parsed_body.first.fetch("id")).to eq(filtered_contact.id)
     end
+
+    example "Filter contacts", document: false do
+      filtered_contact = create(
+        :contact,
+        account: account,
+        metadata: { "commune_ids" => ["120101", "120102"] }
+      )
+
+      create(:contact, account: account)
+
+      set_authorization_header(access_token: access_token)
+
+      do_request(
+        q: {
+          "metadata" => {
+            "commune_ids" => ["120101"]
+          }
+        }
+      )
+
+      expect(response_status).to eq(200)
+      parsed_body = JSON.parse(response_body)
+      expect(parsed_body.size).to eq(1)
+      expect(parsed_body.first.fetch("id")).to eq(filtered_contact.id)
+    end
   end
 
   get "/api/callouts/:callout_id/contacts" do

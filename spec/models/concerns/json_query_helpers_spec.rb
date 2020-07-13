@@ -29,7 +29,17 @@ RSpec.describe JSONQueryHelpers do
       baz_record = create_record_with_json("foo": "baz")
       _not_match_record = create_record_with_json("foo": "not_match")
 
-      results = model.json_has_value("foo", %w[bar baz], json_column)
+      results = model.json_has_value("foo.in", %w[bar baz], json_column)
+
+      expect(results).to match_array([bar_record, baz_record])
+    end
+
+    it "matches any values" do
+      bar_record = create_record_with_json("foo": ["bar", "foobar"])
+      baz_record = create_record_with_json("foo": ["baz"])
+      _not_match_record = create_record_with_json("foo": ["not_match"])
+
+      results = model.json_has_value("foo.any", %w[bar baz], json_column)
 
       expect(results).to match_array([bar_record, baz_record])
     end

@@ -122,6 +122,8 @@ GEM
       zeitwerk (~> 2.2)
     addressable (2.7.0)
       public_suffix (>= 2.0.2, < 5.0)
+    after_commit_everywhere (0.1.5)
+      activerecord (>= 4.2)
     ast (2.4.1)
     autoprefixer-rails (9.7.6)
       execjs
@@ -549,6 +551,7 @@ PLATFORMS
 DEPENDENCIES
   aasm!
   active_elastic_job!
+  after_commit_everywhere
   api-pagination!
   aws-sdk-s3
   bitmask_attributes!

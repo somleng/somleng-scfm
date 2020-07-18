@@ -6,7 +6,7 @@ resource "tls_private_key" "console" {
 resource "local_file" "console_key_pair" {
   sensitive_content = tls_private_key.console.private_key_pem
   filename = pathexpand("~/.ssh/${var.app_identifier}-console")
-  file_permission = "400"
+  file_permission = "600"
 }
 
 resource "aws_key_pair" "console" {
@@ -76,17 +76,20 @@ resource "aws_ecs_service" "console" {
 }
 
 resource "aws_launch_configuration" "console" {
-  name                 = "${var.app_identifier}-console"
   image_id                    = jsondecode(data.aws_ssm_parameter.console.value).image_id
   instance_type               = "t3.small"
   iam_instance_profile        = aws_iam_instance_profile.console.name
   security_groups             = [aws_security_group.worker.id, var.db_security_group]
   user_data                   = data.template_file.console_user_data.rendered
   key_name = aws_key_pair.console.key_name
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "aws_autoscaling_group" "console" {
-  name                 = aws_launch_configuration.console.name
+  name                 = "${var.app_identifier}-console"
   launch_configuration = aws_launch_configuration.console.name
   vpc_zone_identifier  = var.container_instance_subnets
   max_size             = 1
@@ -96,8 +99,12 @@ resource "aws_autoscaling_group" "console" {
 
   tag {
     key                 = "Name"
-    value               = aws_launch_configuration.console.name
+    value               = "${var.app_identifier}-console"
     propagate_at_launch = true
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 }
 

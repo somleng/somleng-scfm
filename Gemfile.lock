@@ -57,7 +57,7 @@ GIT
 
 GIT
   remote: https://github.com/thoughtbot/shoulda-matchers.git
-  revision: f50f70e9c8679b4e3625f445478743df875616c9
+  revision: 4d4a9855d64a8d7176e3f6c44ee714f46d843fc5
   specs:
     shoulda-matchers (4.3.0)
       activesupport (>= 4.2.0)
@@ -167,7 +167,7 @@ GEM
       xpath (~> 3.2)
     childprocess (3.0.0)
     cocoon (1.2.14)
-    codecov (0.2.0)
+    codecov (0.2.2)
       colorize
       json
       simplecov
@@ -202,7 +202,7 @@ GEM
       railties (>= 5)
     down (5.1.1)
       addressable (~> 2.5)
-    dry-configurable (0.11.5)
+    dry-configurable (0.11.6)
       concurrent-ruby (~> 1.0)
       dry-core (~> 0.4, >= 0.4.7)
       dry-equalizer (~> 0.2)
@@ -218,7 +218,7 @@ GEM
       concurrent-ruby (~> 1.0)
       dry-core (~> 0.2)
       dry-equalizer (~> 0.2)
-    dry-schema (1.5.1)
+    dry-schema (1.5.2)
       concurrent-ruby (~> 1.0)
       dry-configurable (~> 0.8, >= 0.8.3)
       dry-core (~> 0.4)
@@ -233,7 +233,7 @@ GEM
       dry-equalizer (~> 0.3)
       dry-inflector (~> 0.1, >= 0.1.2)
       dry-logic (~> 1.0, >= 1.0.2)
-    dry-validation (1.5.1)
+    dry-validation (1.5.2)
       concurrent-ruby (~> 1.0)
       dry-container (~> 0.7, >= 0.7.1)
       dry-core (~> 0.4)
@@ -430,7 +430,7 @@ GEM
       rspec-mocks (~> 3.9)
       rspec-support (~> 3.9)
     rspec-support (3.9.3)
-    rubocop (0.87.1)
+    rubocop (0.88.0)
       parallel (~> 1.10)
       parser (>= 2.7.1.1)
       rainbow (>= 2.2.2, < 4.0)

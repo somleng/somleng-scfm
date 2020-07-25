@@ -550,7 +550,6 @@ DEPENDENCIES
   rubocop-rails
   rubocop-rspec
   sassc-rails
-  selenium-webdriver
   sentry-raven
   shoryuken
   shoulda-matchers!

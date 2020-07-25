@@ -65,7 +65,6 @@ group :test do
   gem "email_spec"
   gem "factory_bot_rails"
   gem "rails-controller-testing"
-  gem "selenium-webdriver"
   gem "shoulda-matchers", github: "thoughtbot/shoulda-matchers"
   gem "simplecov", require: false
   gem "webdrivers"

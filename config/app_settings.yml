@@ -18,11 +18,10 @@ production: &production
 
 development: &development
   <<: *production
-  default_url_host: "localhost:3000"
+  default_url_host: "http://localhost:3000"
   audio_bucket: "audio.somleng.org"
-  smtp_address: "127.0.0.1"
-  smtp_port: "1025"
   aws_region: "ap-southeast-1"
 
 test:
   <<: *development
+  default_url_host: https://scfm.somleng.org

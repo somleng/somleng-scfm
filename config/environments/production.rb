@@ -59,12 +59,10 @@ Rails.application.configure do
   # Use a real queuing backend for Active Job (and separate queues per environment)
   # config.active_job.queue_adapter     = :resque
   # config.active_job.queue_name_prefix = "somleng_scfm_#{Rails.env}"
-  config.active_job.queue_adapter = :active_elastic_job
+  config.active_job.queue_adapter = :shoryuken
   config.action_mailer.perform_caching = false
 
-  require Rails.root.join("app/jobs/application_job")
-  config.action_mailer.deliver_later_queue_name = ApplicationJob.default_queue_name
-  config.active_storage.queue = ApplicationJob.default_queue_name
+  config.active_storage.queue = config.active_job.default_queue_name
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
@@ -101,6 +99,7 @@ Rails.application.configure do
   }
 
   config.action_mailer.delivery_method = :smtp
+  config.action_mailer.deliver_later_queue_name = config.active_job.default_queue_name
 
   config.action_mailer.smtp_settings = {
     address: Rails.configuration.app_settings.fetch(:smtp_address),

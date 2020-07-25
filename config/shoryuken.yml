@@ -1,0 +1,3 @@
+queues:
+  - [<%= ENV.fetch("AWS_SQS_SCHEDULER_QUEUE_NAME", "scheduler") %>, 1]
+  - [<%= ENV.fetch("AWS_SQS_DEFAULT_QUEUE_NAME", "default") %>, 10]

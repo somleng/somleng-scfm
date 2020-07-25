@@ -23,6 +23,10 @@ module SomlengScfm
     # the framework and any gems in your application.
 
     config.app_settings = config_for(:app_settings)
+    config.active_job.default_queue_name = config.app_settings.fetch(:aws_sqs_default_queue_name)
+    config.action_controller.asset_host = config.app_settings.fetch(:default_url_host)
+    config.action_mailer.asset_host = config.action_controller.asset_host
+    Rails.application.routes.default_url_options[:host] = config.app_settings.fetch(:default_url_host)
 
     config.middleware.use(
       Rack::SomlengWebhookAuthentication,

@@ -4,7 +4,6 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 gem "rails", "6.0.2.1"
 
 gem "aasm", github: "aasm/aasm"
-gem "active_elastic_job", github: "samnang/active-elastic-job", branch: "upgrade_to_aws_sdk_3"
 gem "after_commit_everywhere"
 gem "api-pagination", github: "davidcelis/api-pagination"
 gem "aws-sdk-s3", require: false
@@ -33,6 +32,7 @@ gem "record_tag_helper", github: "rails/record_tag_helper"
 gem "responders"
 gem "sassc-rails"
 gem "sentry-raven"
+gem "shoryuken"
 gem "simple_form"
 gem "strip_attributes"
 gem "turbolinks", "~> 5"

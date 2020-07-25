@@ -38,15 +38,6 @@ GIT
       actionview (>= 5)
 
 GIT
-  remote: https://github.com/samnang/active-elastic-job.git
-  revision: db55463b46e9ea0a66c33d5e81d602fda9289243
-  branch: upgrade_to_aws_sdk_3
-  specs:
-    active_elastic_job (2.0.1)
-      aws-sdk-sqs (~> 1)
-      rails (>= 4.2)
-
-GIT
   remote: https://github.com/samnang/rspec_api_documentation.git
   revision: 7b4cef73b82fb6477c48887c9af55775a3f0cb1e
   specs:
@@ -138,9 +129,6 @@ GEM
     aws-sdk-s3 (1.74.0)
       aws-sdk-core (~> 3, >= 3.102.1)
       aws-sdk-kms (~> 1)
-      aws-sigv4 (~> 1.1)
-    aws-sdk-sqs (1.24.0)
-      aws-sdk-core (~> 3, >= 3.71.0)
       aws-sigv4 (~> 1.1)
     aws-sigv4 (1.2.1)
       aws-eventstream (~> 1, >= 1.0.2)
@@ -442,6 +430,10 @@ GEM
     sentry-raven (3.0.0)
       faraday (>= 1.0)
     sexp_processor (4.14.1)
+    shoryuken (5.0.4)
+      aws-sdk-core (>= 2)
+      concurrent-ruby
+      thor
     simple_form (5.0.2)
       actionpack (>= 5.0)
       activemodel (>= 5.0)
@@ -513,7 +505,6 @@ PLATFORMS
 
 DEPENDENCIES
   aasm!
-  active_elastic_job!
   after_commit_everywhere
   api-pagination!
   aws-sdk-s3
@@ -557,6 +548,7 @@ DEPENDENCIES
   sassc-rails
   selenium-webdriver
   sentry-raven
+  shoryuken
   shoulda-matchers!
   simple_form
   simplecov

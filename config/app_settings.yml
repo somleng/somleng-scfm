@@ -7,23 +7,17 @@ default: &default
 
 production: &production
   <<: *default
-  default_queue_url: <%= ENV["DEFAULT_QUEUE_URL"] %>
   default_url_host: <%= ENV["DEFAULT_URL_HOST"] %>
   aws_region: <%= ENV["AWS_REGION"] %>
   uploads_bucket: <%= ENV["UPLOADS_BUCKET"] %>
   audio_bucket: <%= ENV["AUDIO_BUCKET"] %>
-  smtp_port: "587"
   smtp_username: <%= ENV["SMTP_USERNAME"] %>
   smtp_password: <%= ENV["SMTP_PASSWORD"] %>
-  smtp_domain: "somleng.org"
-  smtp_enable_starttls_auto: true
-  smtp_authentication_method: "login"
   smtp_address: "email-smtp.us-east-1.amazonaws.com"
   sentry_dsn: "<%= Rails.application.credentials.sentry_dsn %>"
 
 development: &development
   <<: *production
-  default_queue_url: "https://example.com/path/to/queue_name"
   default_url_host: "localhost:3000"
   audio_bucket: "audio.somleng.org"
   smtp_address: "127.0.0.1"

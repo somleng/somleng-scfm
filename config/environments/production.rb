@@ -102,12 +102,13 @@ Rails.application.configure do
   config.action_mailer.deliver_later_queue_name = config.active_job.default_queue_name
 
   config.action_mailer.smtp_settings = {
+    enable_starttls_auto: true,
+    port: 587,
+    authentication: :login,
+    domain: "somleng.org",
     address: Rails.configuration.app_settings.fetch(:smtp_address),
-    port: Rails.configuration.app_settings.fetch(:smtp_port).to_i,
     user_name: Rails.configuration.app_settings.fetch(:smtp_username),
-    password: Rails.configuration.app_settings.fetch(:smtp_password),
-    authentication: Rails.configuration.app_settings.fetch(:smtp_authentication_method).to_sym,
-    enable_starttls_auto:  Rails.configuration.app_settings.fetch(:smtp_enable_starttls_auto)
+    password: Rails.configuration.app_settings.fetch(:smtp_password)
   }
 
   config.time_zone = Rails.configuration.app_settings.fetch(:time_zone)

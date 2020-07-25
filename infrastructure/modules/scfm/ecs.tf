@@ -30,6 +30,8 @@ data "template_file" "appserver_container_definitions" {
     db_pool = var.db_pool
     uploads_bucket = aws_s3_bucket.uploads.id
     audio_bucket = aws_s3_bucket.audio.id
+    smtp_username = data.aws_ssm_parameter.smtp_username.value
+    smtp_password_parameter_arn = data.aws_ssm_parameter.smtp_password.arn
   }
 }
 
@@ -109,6 +111,8 @@ data "template_file" "worker_container_definitions" {
     db_pool = var.db_pool
     uploads_bucket = aws_s3_bucket.uploads.id
     audio_bucket = aws_s3_bucket.audio.id
+    smtp_username = data.aws_ssm_parameter.smtp_username.value
+    smtp_password_parameter_arn = data.aws_ssm_parameter.smtp_password.arn
   }
 }
 

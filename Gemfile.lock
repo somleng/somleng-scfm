@@ -166,13 +166,6 @@ GEM
       json
       simplecov
     coderay (1.1.2)
-    coffee-rails (5.0.0)
-      coffee-script (>= 2.2.0)
-      railties (>= 5.2.0)
-    coffee-script (2.4.1)
-      coffee-script-source
-      execjs
-    coffee-script-source (1.12.2)
     colorize (0.8.1)
     concurrent-ruby (1.1.6)
     crack (0.4.3)
@@ -240,7 +233,6 @@ GEM
       mail (~> 2.7)
     erubi (1.9.0)
     erubis (2.7.0)
-    execjs (2.7.0)
     factory_bot (6.1.0)
       activesupport (>= 5.0.0)
     factory_bot_rails (6.1.0)
@@ -327,11 +319,6 @@ GEM
     nio4r (2.5.2)
     nokogiri (1.10.10)
       mini_portile2 (~> 2.4.0)
-    octicons (10.0.0)
-      nokogiri (>= 1.6.3.1)
-    octicons_helper (10.0.0)
-      octicons (= 10.0.0)
-      rails
     okcomputer (1.18.2)
     orm_adapter (0.5.0)
     parallel (1.19.2)
@@ -536,7 +523,6 @@ DEPENDENCIES
   capybara
   cocoon
   codecov
-  coffee-rails
   devise
   devise-async
   devise_invitable
@@ -552,7 +538,6 @@ DEPENDENCIES
   jbuilder (~> 2.5)
   kaminari
   listen (>= 3.0.5, < 3.2)
-  octicons_helper
   okcomputer
   pg
   phony

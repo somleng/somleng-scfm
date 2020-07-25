@@ -2,9 +2,17 @@
   "name": "somleng-simple-cfm",
   "private": true,
   "dependencies": {
-    "@rails/webpacker": "^4.0.7"
+    "@fortawesome/fontawesome-free": "^5.14.0",
+    "@popperjs/core": "^2.4.4",
+    "@rails/activestorage": "^6.0.3-2",
+    "@rails/ujs": "^6.0.3-2",
+    "@rails/webpacker": "5.1.1",
+    "bootstrap": "^4.5.0",
+    "jquery": "^3.5.1",
+    "popper.js": "^1.16.1",
+    "turbolinks": "^5.2.0"
   },
   "devDependencies": {
-    "webpack-dev-server": "^3.8.0"
+    "webpack-dev-server": "^3.11.0"
   }
 }

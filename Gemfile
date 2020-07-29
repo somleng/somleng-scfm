@@ -36,9 +36,9 @@ gem "sentry-raven"
 gem "shoryuken"
 gem "simple_form"
 gem "strip_attributes"
-gem "tzinfo-data"
 gem "turbolinks", "~> 5"
 gem "twilio-ruby"
+gem "tzinfo-data"
 gem "webpacker"
 gem "wisper", github: "krisleech/wisper"
 
@@ -62,12 +62,12 @@ end
 
 group :test do
   gem "capybara"
-  gem "codecov", require: false
   gem "email_spec"
   gem "factory_bot_rails"
   gem "rails-controller-testing"
   gem "shoulda-matchers", github: "thoughtbot/shoulda-matchers"
   gem "simplecov", require: false
+  gem "simplecov-lcov", require: false
   gem "webdrivers"
   gem "webmock"
   gem "wisper-rspec"

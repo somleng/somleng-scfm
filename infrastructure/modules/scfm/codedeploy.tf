@@ -3,7 +3,7 @@ resource "aws_codedeploy_app" "this" {
   name             = var.app_identifier
 }
 
-resource "aws_codedeploy_deployment_group" "this" {
+  resource "aws_codedeploy_deployment_group" "this" {
   app_name               = aws_codedeploy_app.this.name
   deployment_config_name = "CodeDeployDefault.ECSAllAtOnce"
   deployment_group_name  = var.app_identifier

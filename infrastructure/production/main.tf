@@ -1,7 +1,7 @@
 module "scfm" {
   source = "../modules/scfm"
 
-  ecs_cluster = data.terraform_remote_state.core.outputs.ecs_cluster
+  ecs_cluster = data.terraform_remote_state.core_infrastructure.outputs.ecs_cluster
   codedeploy_role = data.terraform_remote_state.core_infrastructure.outputs.codedeploy_role
   app_identifier = "scfm"
   app_environment = "production"

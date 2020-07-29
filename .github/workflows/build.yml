@@ -267,7 +267,7 @@ jobs:
         if: github.ref == matrix.app_env.branch
         run: |
           aws ecs register-task-definition --cli-input-json file://${{ steps.render-worker-task-def.outputs.task-definition }}
-          ./bin/ecs_run_task --cluster scfm --started-by db_migrate_ci --service ${{ matrix.app_env.identifier }}-worker --command "bundle exec rails db:migrate"
+          ./bin/ecs_run_task --cluster somleng --started-by db_migrate_ci --service ${{ matrix.app_env.identifier }}-worker --command "bundle exec rails db:migrate"
 
       - name: Deploy App Server
         if: github.ref == matrix.app_env.branch
@@ -275,7 +275,7 @@ jobs:
         with:
           task-definition: ${{ steps.render-appserver-task-def.outputs.task-definition }}
           service: ${{ matrix.app_env.identifier }}-appserver
-          cluster: scfm
+          cluster: somleng
           wait-for-service-stability: true
           codedeploy-appspec: deploy/appspec.yaml
           codedeploy-application: ${{ matrix.app_env.identifier }}
@@ -287,5 +287,5 @@ jobs:
         with:
           task-definition: ${{ steps.render-worker-task-def.outputs.task-definition }}
           service: ${{ matrix.app_env.identifier }}-worker
-          cluster: scfm
+          cluster: somleng
           wait-for-service-stability: true

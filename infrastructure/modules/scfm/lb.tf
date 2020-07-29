@@ -16,13 +16,14 @@ resource "aws_lb_target_group" "this" {
 }
 
 resource "aws_lb_listener_rule" "this" {
-  priority = 10
+  count = 1
+  priority = 10 + count.index
 
   listener_arn = var.listener_arn
 
   action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.this[0].id
+    target_group_arn = aws_lb_target_group.this[count.index].id
   }
 
   condition {

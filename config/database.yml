@@ -8,11 +8,11 @@ default: &default
 
 development: &development
   <<: *default
-  database: bongloy_cms_development
+  database: somleng_scfm_development
 
 test:
   <<: *default
-  database: bongloy_cms_test
+  database: somleng_scfm_test
 
 production: &production
   <<: *default

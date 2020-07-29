@@ -31,4 +31,6 @@ resource "aws_lb_listener_rule" "this" {
       values = ["scfm2.somleng.org"]
     }
   }
+
+  ignore_changes = [action]
 }

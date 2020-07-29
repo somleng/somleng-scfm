@@ -4,13 +4,13 @@ default: &default
   secret_key_base: "<%= Rails.application.credentials.secret_key_base %>"
   aws_sqs_default_queue_name: <%= ENV.fetch("AWS_SQS_DEFAULT_QUEUE_NAME", "default") %>
   aws_sqs_scheduler_queue_name: <%= ENV.fetch("AWS_SQS_SCHEDULER_QUEUE_NAME", "scheduler") %>
+  aws_region: <%= ENV.fetch("AWS_DEFAULT_REGION", "ap-southeast-1") %>
+  uploads_bucket: <%= ENV.fetch("UPLOADS_BUCKET", "uploads.somleng.org") %>
+  audio_bucket: <%= ENV.fetch("AUDIO_BUCKET", "audio.somleng.org") %>
 
 production: &production
   <<: *default
   default_url_host: <%= ENV["DEFAULT_URL_HOST"] %>
-  aws_region: <%= ENV["AWS_REGION"] %>
-  uploads_bucket: <%= ENV["UPLOADS_BUCKET"] %>
-  audio_bucket: <%= ENV["AUDIO_BUCKET"] %>
   smtp_username: <%= ENV["SMTP_USERNAME"] %>
   smtp_password: <%= ENV["SMTP_PASSWORD"] %>
   smtp_address: "email-smtp.us-east-1.amazonaws.com"
@@ -19,8 +19,6 @@ production: &production
 development: &development
   <<: *production
   default_url_host: "http://localhost:3000"
-  audio_bucket: "audio.somleng.org"
-  aws_region: "ap-southeast-1"
 
 test:
   <<: *development

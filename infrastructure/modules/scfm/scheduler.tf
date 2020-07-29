@@ -35,3 +35,21 @@ resource "aws_iam_role_policy" "app_scheduler" {
 }
 DOC
 }
+
+resource "aws_cloudwatch_event_rule" "scheduler" {
+  name                = "${var.app_identifier}-SchedulerJob"
+  schedule_expression = var.scheduler_schedule
+  role_arn = aws_iam_role.app_scheduler.arn
+}
+
+resource "aws_cloudwatch_event_target" "ecs_scheduled_task" {
+  target_id = aws_cloudwatch_event_rule.scheduler.name
+  arn       = aws_sqs_queue.scheduler.arn
+  rule      = aws_cloudwatch_event_rule.scheduler.name
+
+  input = <<DOC
+{
+  "job_class": "SchedulerJob"
+}
+DOC
+}

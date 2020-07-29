@@ -85,3 +85,7 @@ variable "ecs_as_cpu_low_threshold_per" {
 variable "ecs_as_cpu_high_threshold_per" {
   default = "80"
 }
+
+variable "scheduler_schedule" {
+  default = "cron(* * * * ? *)"
+}

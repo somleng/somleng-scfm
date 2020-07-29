@@ -6,14 +6,14 @@ variable "nginx_image" {}
 variable "memory" {}
 variable "cpu" {}
 variable "aws_region" {}
-variable "load_balancer_subnets" {}
-variable "load_balancer_ssl_certificate_arn" {}
 variable "container_instance_subnets" {}
 variable "vpc_id" {}
 variable "logs_bucket" {}
 variable "codedeploy_role" {}
 variable "uploads_bucket" {}
 variable "audio_bucket" {}
+variable "load_balancer_arn" {}
+variable "listener_arn" {}
 
 variable "webserver_container_name" {
   default = "nginx"
@@ -30,18 +30,6 @@ variable "network_mode" {
 }
 variable "launch_type" {
   default = "FARGATE"
-}
-
-variable "load_balancer_type" {
-  default = "application"
-}
-
-variable "load_balancer_protocol" {
-  default = "HTTPS"
-}
-
-variable "load_balancer_port" {
-  default = "443"
 }
 
 variable "db_host" {

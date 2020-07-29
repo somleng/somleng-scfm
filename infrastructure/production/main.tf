@@ -10,8 +10,8 @@ module "scfm" {
   memory = 512
   cpu = 256
   aws_region = var.aws_region
-  load_balancer_ssl_certificate_arn = data.terraform_remote_state.core_infrastructure.outputs.acm_certificate.arn
-  load_balancer_subnets = data.terraform_remote_state.core_infrastructure.outputs.vpc.public_subnets
+  load_balancer_arn = data.terraform_remote_state.core_infrastructure.outputs.application_load_balancer.arn
+  listener_arn = data.terraform_remote_state.core_infrastructure.outputs.https_listener.arn
   container_instance_subnets = data.terraform_remote_state.core_infrastructure.outputs.vpc.private_subnets
   vpc_id = data.terraform_remote_state.core_infrastructure.outputs.vpc.vpc_id
   logs_bucket = data.terraform_remote_state.core_infrastructure.outputs.logs_bucket.id

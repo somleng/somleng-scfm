@@ -21,7 +21,7 @@ resource "aws_codedeploy_deployment_group" "this" {
 
     terminate_blue_instances_on_deployment_success {
       action                           = "TERMINATE"
-      termination_wait_time_in_minutes = 5
+      termination_wait_time_in_minutes = 1
     }
   }
 
@@ -38,7 +38,7 @@ resource "aws_codedeploy_deployment_group" "this" {
   load_balancer_info {
     target_group_pair_info {
       prod_traffic_route {
-        listener_arns = [aws_lb_listener.this.arn]
+        listener_arns = [var.listener_arn]
       }
 
       target_group {

@@ -45,10 +45,20 @@ Rails.application.configure do
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path =~ /health_checks/ } } }
 
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
   config.log_level = :debug
+  config.lograge.enabled = true
+  config.lograge.base_controller_class = ["ActionController::API", "ActionController::Base"]
+  config.lograge.ignore_actions = ["OkComputer::OkComputerController#show"]
+  config.lograge.custom_options = lambda do |event|
+    exceptions = %w(controller action format id)
+    {
+      params: event.payload[:params].except(*exceptions)
+    }
+  end
 
   # Prepend all log lines with the following tags.
   config.log_tags = [:request_id]

@@ -1,17 +1,16 @@
-class SchedulerJob < ApplicationJob
-  def perform
-    Account.find_each do |account|
-      queue_batch_operation!(account, type: BatchOperation::PhoneCallCreate)
-      queue_batch_operation!(account, type: BatchOperation::PhoneCallQueue)
-      queue_batch_operation!(account, type: BatchOperation::PhoneCallQueueRemoteFetch)
-    end
-  end
+class SchedulerJob
+  include Shoryuken::Worker
 
-  private
+  shoryuken_options(
+    queue: Rails.configuration.app_settings.fetch(:aws_sqs_scheduler_queue_name),
+    auto_delete: true,
+    body_parser: :json
+  )
 
-  def queue_batch_operation!(account, type:)
-    batch_operation = type.new(account: account)
-    batch_operation.subscribe(BatchOperationObserver.new)
-    batch_operation.queue! if batch_operation.save
+  def perform(_sqs_message, params)
+    job_class = params.fetch("job_class")
+    Shoryuken.logger.info("Performing #{job_class}")
+
+    job_class.constantize.perform_now
   end
 end

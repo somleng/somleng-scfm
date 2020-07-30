@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe SchedulerJob do
+RSpec.describe ScheduledJob do
   describe "#perform" do
     it "queues batch operations" do
       account = create(

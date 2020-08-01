@@ -30,24 +30,6 @@ RSpec.describe PhoneCall do
   describe "validations" do
     it { is_expected.to validate_presence_of(:msisdn) }
 
-    it "prevents duplicate phone calls from being created" do
-      account = create(:account)
-      callout_participation = create_callout_participation(account: account)
-      _existing_created_phone_call = create_phone_call(
-        account: account,
-        callout_participation: callout_participation,
-        status: PhoneCall::STATE_CREATED
-      )
-
-      phone_call = build(
-        :phone_call,
-        callout_participation: callout_participation,
-        status: PhoneCall::STATE_CREATED
-      )
-
-      expect { phone_call.save }.to raise_error(ActiveRecord::RecordNotUnique)
-    end
-
     it "allows multiple phone calls for the one callout participation" do
       account = create(:account)
       callout_participation = create_callout_participation(account: account)

@@ -55,54 +55,23 @@ module BatchOperation
     include_examples("phone_call_operation_batch_operation")
 
     describe "#run!" do
-      it "creates phone calls in a random order" do
-        batch_operation = nil
-        callout_participations = []
-        applied_callout_participations = []
+      it "creates phone calls" do
+        account = create(:account)
+        callout_participation = create_callout_participation(account: account)
+        batch_operation = create(:phone_call_create_batch_operation, account: account)
 
-        100.times do
-          batch_operation = create(:phone_call_create_batch_operation)
-          callout_participations = create_callout_participations(account: batch_operation.account)
+        2.times { batch_operation.run! }
 
-          batch_operation.run!
-
-          applied_callout_participations = batch_operation.phone_calls.order(
-            :created_at
-          ).map(&:callout_participation)
-
-          break unless applied_callout_participations == callout_participations
-        end
-
-        expect(applied_callout_participations).to match_array(callout_participations)
-        expect(applied_callout_participations).not_to eq(callout_participations)
-        expect(batch_operation.phone_calls.size).to eq(callout_participations.size)
-        created_phone_call = batch_operation.reload.phone_calls.first!
-        expect(created_phone_call.remote_request_params).to eq(batch_operation.remote_request_params)
+        expect(batch_operation.phone_calls.size).to eq(1)
+        expect(batch_operation.phone_calls.first).to have_attributes(
+          callout_participation: callout_participation,
+          contact: callout_participation.contact,
+          account: account
+        )
       end
     end
 
     describe "#callout_participations_preview" do
-      it "selects callout participations in a random order" do
-        batch_operation = create(:phone_call_create_batch_operation)
-        callout_participations = create_callout_participations(account: batch_operation.account)
-
-        results = []
-        100.times do
-          results = batch_operation.callout_participations_preview
-          break results unless results == callout_participations
-        end
-
-        expect(results).to match_array(callout_participations)
-        expect(results).not_to eq(callout_participations)
-      end
-    end
-
-    def create_callout_participations(account:)
-      results = []
-      2.times do
-        results << create_callout_participation(account: account)
-      end
-      results
     end
   end
 end

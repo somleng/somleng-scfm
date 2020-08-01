@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_05_014545) do
+ActiveRecord::Schema.define(version: 2020_08_01_015658) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -179,7 +179,6 @@ ActiveRecord::Schema.define(version: 2019_12_05_014545) do
     t.integer "lock_version", default: 0, null: false
     t.bigint "account_id", null: false
     t.index ["account_id"], name: "index_phone_calls_on_account_id"
-    t.index ["callout_participation_id", "status"], name: "index_phone_calls_on_callout_participation_id_and_status", unique: true, where: "((status)::text = 'created'::text)"
     t.index ["callout_participation_id"], name: "index_phone_calls_on_callout_participation_id"
     t.index ["contact_id"], name: "index_phone_calls_on_contact_id"
     t.index ["create_batch_operation_id"], name: "index_phone_calls_on_create_batch_operation_id"

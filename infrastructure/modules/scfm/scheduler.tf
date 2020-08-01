@@ -49,7 +49,7 @@ resource "aws_cloudwatch_event_target" "ecs_scheduled_task" {
 
   input = <<DOC
 {
-  "job_class": "SchedulerJob"
+  "job_class": "ScheduledJob"
 }
 DOC
 }

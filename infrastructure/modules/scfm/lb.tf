@@ -32,5 +32,7 @@ resource "aws_lb_listener_rule" "this" {
     }
   }
 
-  ignore_changes = [action]
+  lifecycle {
+    ignore_changes = [action]
+  }
 }

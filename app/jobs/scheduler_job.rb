@@ -11,6 +11,6 @@ class SchedulerJob
     job_class = params.fetch("job_class")
     Shoryuken.logger.info("Performing #{job_class}")
 
-    job_class.constantize.perform_now
+    job_class.constantize.perform_later
   end
 end

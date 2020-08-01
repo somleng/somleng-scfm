@@ -73,6 +73,7 @@ class PhoneCall < ApplicationRecord
     state :not_answered
     state :canceled
     state :completed
+    state :expired
 
     event :queue, after_commit: :publish_queued do
       transitions(
@@ -123,6 +124,14 @@ class PhoneCall < ApplicationRecord
 
   def self.in_last_hours(hours, timestamp_column = :created_at)
     where(arel_table[timestamp_column].gt(hours.hours.ago))
+  end
+
+  def self.expire!
+    to_expire.update_all(status: :expired)
+  end
+
+  def self.to_expire
+    in_progress.or(remotely_queued).where(arel_table[:remotely_queued_at].lt(24.hours.ago))
   end
 
   def inbound?

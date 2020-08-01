@@ -14,7 +14,7 @@ RSpec.describe ScheduledJob do
       )
       _callout_participation = create_callout_participation(account: account)
       stub_request(:post, "https://api.twilio.com/2010-04-01/Accounts/#{account.twilio_account_sid}/Calls.json")
-      scheduler_job = ScheduledJob.new
+      scheduler_job = described_class.new
 
       perform_enqueued_jobs { scheduler_job.perform }
 

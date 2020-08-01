@@ -5,6 +5,8 @@ class ScheduledJob < ApplicationJob
       queue_batch_operation!(account, type: BatchOperation::PhoneCallQueue)
       queue_batch_operation!(account, type: BatchOperation::PhoneCallQueueRemoteFetch)
     end
+
+    PhoneCall.expire!
   end
 
   private

@@ -171,7 +171,7 @@ jobs:
         run: aws s3 sync --acl public-read --delete build s3://www.somleng.org/docs/scfm
 
       - name: Invalidate Cache
-        run: aws cloudfront create-invalidation --distribution-id E3QGY4AV4XLVSQ --paths /docs/scfm/\*
+        run: aws cloudfront create-invalidation --distribution-id E3962XCJFZ0KB1 --paths /docs/scfm/\*
 
   deploy:
     name: Deploy

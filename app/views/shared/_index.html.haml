@@ -5,7 +5,7 @@
   - if content_for?(:resources_filter)
     #filters.dropdown.show
       = link_to("#", class: "btn btn-info dropdown-toggle", role: :button, id: :filter_menu_link, data: {toggle: :dropdown}, :"aria-haspopup" => true, :"aria-expanded" => false) do
-        = fa_icon(:filter)
+        %i.fas.fa-filter
       .dropdown-menu{:"aria-labelledby" => :filter_menu_link}
         = yield(:resources_filter)
   = yield(:resources_table)

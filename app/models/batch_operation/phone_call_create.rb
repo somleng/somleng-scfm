@@ -24,6 +24,8 @@ module BatchOperation
     def run!
       # Using find_each here will override the random order
       callout_participations_preview.each do |callout_participation|
+        next if callout_participation.phone_calls.created.exists?
+
         create_phone_call(callout_participation)
       end
     end
@@ -49,7 +51,7 @@ module BatchOperation
     end
 
     def create_phone_call(callout_participation)
-      PhoneCall.create(
+      PhoneCall.create!(
         account: callout_participation.callout.account,
         callout_participation: callout_participation,
         contact: callout_participation.contact,

@@ -13,9 +13,10 @@
             - if column.to_s == sort_params.order_column.to_s
               %span.sortable-icons
                 - if sort_params.order_direction == SortParams::ORDER_ASCENDING
-                  = fa_icon :"sort-up"
+                  %i.fas.fa-sort-up
                 - else
-                  = fa_icon :"sort-down"
+                  %i.fas.fa-sort-down
+
   %tbody
     - if local_assigns[:partial]
       = render(partial: partial, collection: resources)

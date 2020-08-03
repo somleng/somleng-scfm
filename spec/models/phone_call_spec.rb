@@ -30,24 +30,6 @@ RSpec.describe PhoneCall do
   describe "validations" do
     it { is_expected.to validate_presence_of(:msisdn) }
 
-    it "prevents duplicate phone calls from being created" do
-      account = create(:account)
-      callout_participation = create_callout_participation(account: account)
-      _existing_created_phone_call = create_phone_call(
-        account: account,
-        callout_participation: callout_participation,
-        status: PhoneCall::STATE_CREATED
-      )
-
-      phone_call = build(
-        :phone_call,
-        callout_participation: callout_participation,
-        status: PhoneCall::STATE_CREATED
-      )
-
-      expect { phone_call.save }.to raise_error(ActiveRecord::RecordNotUnique)
-    end
-
     it "allows multiple phone calls for the one callout participation" do
       account = create(:account)
       callout_participation = create_callout_participation(account: account)
@@ -235,72 +217,36 @@ RSpec.describe PhoneCall do
     it { expect(subject.remote_queue_response).to eq({}) }
   end
 
-  describe "scopes" do
-    def assert_scope!
-      expect(results).to match_array(asserted_results)
+  describe ".expire!" do
+    it "expires phone calls with unknown state" do
+      create(:phone_call, :created)
+      create(:phone_call, :remotely_queued, remotely_queued_at: 23.hours.ago)
+      create(:phone_call, :in_progress, remotely_queued_at: 23.hours.ago)
+      create(:phone_call, :completed, remotely_queued_at: 24.hours.ago)
+      create(:phone_call, :in_progress, remotely_queued_at: 23.hours.ago)
+
+      old_remotely_queued_call = create(
+        :phone_call, :remotely_queued, remotely_queued_at: 24.hours.ago
+      )
+      old_in_progress_call = create(:phone_call, :in_progress, remotely_queued_at: 24.hours.ago)
+
+      PhoneCall.expire!
+
+      expect(PhoneCall.expired).to match_array([old_remotely_queued_call, old_in_progress_call])
     end
+  end
 
-    describe ".in_last_hours(hours, timestamp_column = :created_at)" do
-      let(:remotely_queued_at) { nil }
-      let(:created_at) { nil }
+  describe ".in_last_hours" do
+    it "returns recent phone calls" do
+      create(:phone_call, :created, created_at: 1.hour.ago)
+      create(:phone_call, :remotely_queued, created_at: 1.hour.ago, remotely_queued_at: 1.hour.ago)
+      created_phone_call = create(:phone_call, :created, created_at: 59.minutes.ago)
+      queued_phone_call = create(
+        :phone_call, :remotely_queued, created_at: 1.hour.ago, remotely_queued_at: 59.minutes.ago
+      )
 
-      def create_phone_call(*args)
-        options = args.extract_options!
-        create(factory, *args, factory_attributes.merge(options))
-      end
-
-      def factory_attributes
-        {
-          created_at: created_at
-        }
-      end
-
-      let(:phone_call) { create_phone_call }
-      let(:queued_phone_call) { create_phone_call(remotely_queued_at: remotely_queued_at) }
-
-      let(:hours) { 1 }
-      let(:timestamp_column) { nil }
-      let(:args) { [hours, timestamp_column].compact }
-      let(:results) { described_class.in_last_hours(*args) }
-
-      def setup_scenario
-        queued_phone_call
-        phone_call
-      end
-
-      context "by default" do
-        context "was created at more than specified hours ago" do
-          let(:created_at) { hours.hours.ago }
-          let(:asserted_results) { [] }
-
-          it { assert_scope! }
-        end
-
-        context "was recently created" do
-          let(:asserted_results) { [phone_call, queued_phone_call] }
-
-          it { assert_scope! }
-        end
-      end
-
-      context "passing timestamp_column = :remotely_queued_at" do
-        let(:timestamp_column) { :remotely_queued_at }
-
-        let(:asserted_results) { [queued_phone_call] }
-
-        context "was recently queued" do
-          let(:remotely_queued_at) { Time.now }
-
-          it { assert_scope! }
-        end
-
-        context "was queued at more than specified hours ago" do
-          let(:remotely_queued_at) { hours.hours.ago }
-          let(:asserted_results) { [] }
-
-          it { assert_scope! }
-        end
-      end
+      expect(PhoneCall.in_last_hours(1)).to match_array([created_phone_call])
+      expect(PhoneCall.in_last_hours(1, :remotely_queued_at)).to match_array([queued_phone_call])
     end
   end
 end

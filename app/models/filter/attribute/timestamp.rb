@@ -30,7 +30,7 @@ module Filter
         Hash[
           filter_query_mappings.map do |k, v|
             filter_value = params[filter_param_key(k)]
-            [v, parse_filter_value(filter_value) && filter_value]
+            [v, parse_filter_value(filter_value)]
           end
         ].compact
       end
@@ -49,7 +49,11 @@ module Filter
       end
 
       def parse_filter_value(raw_value)
-        Time.parse(raw_value) if raw_value.present?
+        return if raw_value.blank?
+
+        time = raw_value.is_a?(Time) ? raw_value : Time.parse(raw_value)
+        date = raw_value.is_a?(Date) ? raw_value : Date.parse(raw_value)
+        time == date.to_time ? date : time
       rescue StandardError
         nil
       end

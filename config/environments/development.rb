@@ -67,8 +67,8 @@ Rails.application.configure do
   # use mailcatcher
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address: Rails.configuration.app_settings.fetch(:smtp_address),
-    port: Rails.configuration.app_settings.fetch(:smtp_port).to_i
+    address: "127.0.0.1",
+    port: 1025
   }
 
   config.time_zone = Rails.configuration.app_settings.fetch(:time_zone)

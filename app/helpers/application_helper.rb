@@ -31,7 +31,7 @@ module ApplicationHelper
     class_names << "active" if link_path == request.path || controller.include?(controller_name)
 
     link_to(link_path, class: class_names.join(" ")) do
-      fa_icon(icon, text: link_text)
+      [tag.i(class: "fas fa-#{icon}"), link_text].join(" ").html_safe
     end
   end
 end

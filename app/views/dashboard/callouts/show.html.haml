@@ -68,5 +68,6 @@
           = translate(:"titles.callouts.summary")
         %small
           = link_to do
-            = fa_icon(:refresh, text: translate(:"titles.actions.refresh"))
+            = tag.i(class: "fas fa-sync-alt")
+            = translate(:"titles.actions.refresh")
       = render("summary")

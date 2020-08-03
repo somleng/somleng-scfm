@@ -45,10 +45,20 @@ Rails.application.configure do
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   config.force_ssl = true
+  config.ssl_options = { redirect: { exclude: ->(request) { request.path =~ /health_checks/ } } }
 
   # Use the lowest log level to ensure availability of diagnostic information
   # when problems arise.
   config.log_level = :debug
+  config.lograge.enabled = true
+  config.lograge.base_controller_class = ["ActionController::API", "ActionController::Base"]
+  config.lograge.ignore_actions = ["OkComputer::OkComputerController#show"]
+  config.lograge.custom_options = lambda do |event|
+    exceptions = %w(controller action format id)
+    {
+      params: event.payload[:params].except(*exceptions)
+    }
+  end
 
   # Prepend all log lines with the following tags.
   config.log_tags = [:request_id]
@@ -59,12 +69,10 @@ Rails.application.configure do
   # Use a real queuing backend for Active Job (and separate queues per environment)
   # config.active_job.queue_adapter     = :resque
   # config.active_job.queue_name_prefix = "somleng_scfm_#{Rails.env}"
-  config.active_job.queue_adapter = :active_elastic_job
+  config.active_job.queue_adapter = :shoryuken
   config.action_mailer.perform_caching = false
 
-  require Rails.root.join("app/jobs/application_job")
-  config.action_mailer.deliver_later_queue_name = ApplicationJob.default_queue_name
-  config.active_storage.queue = ApplicationJob.default_queue_name
+  config.active_storage.queue = config.active_job.default_queue_name
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
@@ -101,14 +109,16 @@ Rails.application.configure do
   }
 
   config.action_mailer.delivery_method = :smtp
+  config.action_mailer.deliver_later_queue_name = config.active_job.default_queue_name
 
   config.action_mailer.smtp_settings = {
+    enable_starttls_auto: true,
+    port: 587,
+    authentication: :login,
+    domain: "somleng.org",
     address: Rails.configuration.app_settings.fetch(:smtp_address),
-    port: Rails.configuration.app_settings.fetch(:smtp_port).to_i,
     user_name: Rails.configuration.app_settings.fetch(:smtp_username),
-    password: Rails.configuration.app_settings.fetch(:smtp_password),
-    authentication: Rails.configuration.app_settings.fetch(:smtp_authentication_method).to_sym,
-    enable_starttls_auto:  Rails.configuration.app_settings.fetch(:smtp_enable_starttls_auto)
+    password: Rails.configuration.app_settings.fetch(:smtp_password)
   }
 
   config.time_zone = Rails.configuration.app_settings.fetch(:time_zone)

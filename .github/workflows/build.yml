@@ -168,11 +168,7 @@ jobs:
           path: build
 
       - name: Deploy API Documentation
-        uses: jakejarvis/s3-sync-action@master
-        env:
-          AWS_S3_BUCKET: www.somleng.org
-          SOURCE_DIR: build
-          DEST_DIR: docs/scfm
+        run: aws s3 sync --acl public-read --delete build s3://www.somleng.org/docs/scfm
 
       - name: Invalidate Cache
         run: aws cloudfront create-invalidation --distribution-id E3QGY4AV4XLVSQ --paths /docs/scfm/\*

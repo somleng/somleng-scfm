@@ -182,7 +182,7 @@ jobs:
     strategy:
       matrix:
         app_env:
-          - { identifier: 'scfm', name: 'production', branch: 'refs/heads/add_infrastructure' }
+          - { identifier: 'scfm', name: 'production', branch: 'refs/heads/master' }
 
     steps:
       - name: Checkout

@@ -28,7 +28,7 @@ resource "aws_lb_listener_rule" "this" {
 
   condition {
     host_header {
-      values = ["scfm2.somleng.org"]
+      values = ["scfm.somleng.org"]
     }
   }
 

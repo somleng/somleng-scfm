@@ -49,6 +49,7 @@ group :development, :test do
   gem "rspec_api_documentation", github: "samnang/rspec_api_documentation"
   gem "rspec-rails", ">= 4.0.0.beta2"
   gem "rubocop"
+  gem "rubocop-performance"
   gem "rubocop-rails"
   gem "rubocop-rspec"
 end

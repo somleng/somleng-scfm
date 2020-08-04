@@ -25,5 +25,5 @@
           = Contact.human_attribute_name(:created_at)
         %dd.col-sm-7.col-md-6
           %code
-            = resource.created_at
+            = local_time(resource.created_at)
       = render("shared/key_value_attributes", attribute: :metadata)

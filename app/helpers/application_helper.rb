@@ -34,4 +34,10 @@ module ApplicationHelper
       [tag.i(class: "fas fa-#{icon}"), link_text].join(" ").html_safe
     end
   end
+
+  def local_time(time)
+    return if time.blank?
+
+    tag.time(time.utc.iso8601, data: { behavior: "local-time" })
+  end
 end

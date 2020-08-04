@@ -4,4 +4,4 @@
   %td
     = link_to(remote_phone_call_event.phone_call_id, dashboard_phone_call_path(remote_phone_call_event.phone_call_id))
   %td
-    = remote_phone_call_event.created_at
+    = local_time(remote_phone_call_event.created_at)

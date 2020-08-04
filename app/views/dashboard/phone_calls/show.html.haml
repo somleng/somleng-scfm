@@ -96,12 +96,12 @@
         %dt.col-sm-5.col-md-4.text-md-right
           = PhoneCall.human_attribute_name(:remotely_queued_at)
         %dd.col-sm-7.col-md-6
-          = resource.remotely_queued_at
+          = local_time(resource.remotely_queued_at)
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
           = PhoneCall.human_attribute_name(:created_at)
         %dd.col-sm-7.col-md-6
-          = resource.created_at
+          = local_time(resource.created_at)
       = render("shared/key_value_attributes", attribute: :remote_request_params)
       = render("shared/key_value_attributes", attribute: :remote_response)
       = render("shared/key_value_attributes", attribute: :remote_queue_response)

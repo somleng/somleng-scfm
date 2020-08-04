@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gem "rails", "6.0.2.1"
+gem "rails", "~> 6.0"
 
 gem "aasm", github: "aasm/aasm"
 gem "after_commit_everywhere"
@@ -49,6 +49,7 @@ group :development, :test do
   gem "rspec_api_documentation", github: "samnang/rspec_api_documentation"
   gem "rspec-rails", ">= 4.0.0.beta2"
   gem "rubocop"
+  gem "rubocop-performance"
   gem "rubocop-rails"
   gem "rubocop-rspec"
 end

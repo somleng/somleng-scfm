@@ -1,4 +1,7 @@
-require: rubocop-rspec
+require:
+  - rubocop-performance
+  - rubocop-rspec
+  - rubocop-rails
 
 Style/FrozenStringLiteralComment:
   Enabled: false
@@ -8,15 +11,51 @@ Style/StringLiterals:
 
 Layout/LineLength:
   Max: 100
+  Exclude:
+    - app/views/**/*.html.haml
 
 Style/Documentation:
   Enabled: false
 
-MultipleExpectations:
+Style/ClassAndModuleChildren:
   Enabled: false
 
-ExampleLength:
-  Max: 10
+Metrics/BlockLength:
+  Enabled: true
+  Exclude:
+    - "**/spec/**/*.rb"
+
+Style/BlockDelimiters:
+  Enabled: true
+  Exclude:
+    - "**/spec/**/*.rb"
+
+Style/NumericLiterals:
+  Enabled: false
+
+Style/FormatStringToken:
+  Enabled: false
+
+Rails/HasManyOrHasOneDependent:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Max: 30
+
+RSpec/DescribeClass:
+  Enabled: true
+  Exclude:
+    - "**/spec/system/**/*.rb"
+    - "**/spec/requests/**/*.rb"
+    - "**/spec/views/**/*.rb"
 
 RSpec/DescribedClass:
   Enabled: false
+
+Rails/SkipsModelValidations:
+  Enabled: true
+  Exclude:
+    - db/migrate/**/*.rb

@@ -4,8 +4,8 @@
   %td
     = user.email
   %td
-    = user.invitation_accepted_at
+    = local_time(user.invitation_accepted_at)
   %td
-    = user.last_sign_in_at
+    = local_time(user.last_sign_in_at)
   %td
-    = user.created_at
+    = local_time(user.created_at)

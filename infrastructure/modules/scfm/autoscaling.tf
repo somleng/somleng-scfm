@@ -4,7 +4,7 @@ resource "aws_cloudwatch_metric_alarm" "appserver_cpu_utilization_high" {
   evaluation_periods  = "1"
   metric_name         = "CPUUtilization"
   namespace           = "AWS/ECS"
-  period              = "60"
+  period              = "300"
   statistic           = "Average"
   threshold           = var.ecs_as_cpu_high_threshold_per
 
@@ -22,7 +22,7 @@ resource "aws_cloudwatch_metric_alarm" "appserver_cpu_utilization_low" {
   evaluation_periods  = "1"
   metric_name         = "CPUUtilization"
   namespace           = "AWS/ECS"
-  period              = "60"
+  period              = "300"
   statistic           = "Average"
   threshold           = var.ecs_as_cpu_low_threshold_per
 
@@ -38,7 +38,7 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_high" {
   alarm_name          = "${var.app_identifier}-queue-size-alarm-high"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
-  threshold           = 1
+  threshold           = 100
 
   metric_query {
     id = "e1"
@@ -82,9 +82,9 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_high" {
 
 resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_low" {
   alarm_name          = "${var.app_identifier}-queue-size-alarm-low"
-  comparison_operator = "LessThanOrEqualToThreshold"
+  comparison_operator = "LessThanThreshold"
   evaluation_periods  = 1
-  threshold           = 0
+  threshold           = 100
 
   metric_query {
     id = "e1"

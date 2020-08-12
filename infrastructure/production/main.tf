@@ -23,5 +23,5 @@ module "scfm" {
   db_host = data.terraform_remote_state.core_infrastructure.outputs.db.this_rds_cluster_endpoint
   db_port = data.terraform_remote_state.core_infrastructure.outputs.db.this_rds_cluster_port
   db_security_group = data.terraform_remote_state.core_infrastructure.outputs.db_security_group.id
-  ecs_worker_autoscale_min_instances = 0
+  ecs_worker_autoscale_min_instances = 1
 }

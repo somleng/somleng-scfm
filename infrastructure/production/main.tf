@@ -14,7 +14,6 @@ module "scfm" {
   listener_arn = data.terraform_remote_state.core_infrastructure.outputs.https_listener.arn
   container_instance_subnets = data.terraform_remote_state.core_infrastructure.outputs.vpc.private_subnets
   vpc_id = data.terraform_remote_state.core_infrastructure.outputs.vpc.vpc_id
-  logs_bucket = data.terraform_remote_state.core_infrastructure.outputs.logs_bucket.id
   uploads_bucket = "uploads.somleng.org"
   audio_bucket = "audio.somleng.org"
 

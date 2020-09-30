@@ -441,7 +441,7 @@ GEM
       aws-sdk-core (>= 2)
       concurrent-ruby
       thor
-    simple_form (5.0.2)
+    simple_form (5.0.3)
       actionpack (>= 5.0)
       activemodel (>= 5.0)
     simplecov (0.19.0)

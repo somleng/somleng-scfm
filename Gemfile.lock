@@ -13,9 +13,9 @@ GIT
 
 GIT
   remote: https://github.com/dwilkie/pumi.git
-  revision: 7f3423fed9fc5a0575d7bb27bfdd52ad8dfadc14
+  revision: e8ff9597a28feea0696397e415bf0b701c299962
   specs:
-    pumi (0.6.0)
+    pumi (0.7.0)
 
 GIT
   remote: https://github.com/krisleech/wisper.git

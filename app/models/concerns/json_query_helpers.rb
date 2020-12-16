@@ -20,6 +20,7 @@ module JSONQueryHelpers
       # From: https://www.postgresql.org/docs/current/static/functions-json.html
       # '{"a":[1,2,3],"b":[4,5,6]}'::json#>>'{a,2}' => 3
       # Note that the column is already jsonb so no need to cast
+      value = value.is_a?(Array) ? value.map(&:to_s) : value.to_s
       where(sql, key: "{#{key}}", value: value)
     end
 

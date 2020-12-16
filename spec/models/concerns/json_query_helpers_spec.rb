@@ -17,21 +17,25 @@ RSpec.describe JSONQueryHelpers do
 
     it "matches single value" do
       bar_record = create_record_with_json("foo": "bar")
+      numeric_record = create_record_with_json("foo": 123)
       _baz_record = create_record_with_json("foo": "baz")
 
       results = model.json_has_value("foo", "bar", json_column)
-
       expect(results).to match_array([bar_record])
+
+      results = model.json_has_value("foo", 123, json_column)
+      expect(results).to match_array([numeric_record])
     end
 
     it "matches multiple values" do
       bar_record = create_record_with_json("foo": "bar")
       baz_record = create_record_with_json("foo": "baz")
+      numeric_record = create_record_with_json("foo": 123)
       _not_match_record = create_record_with_json("foo": "not_match")
 
-      results = model.json_has_value("foo.in", %w[bar baz], json_column)
+      results = model.json_has_value("foo.in", %w[bar 123 baz], json_column)
 
-      expect(results).to match_array([bar_record, baz_record])
+      expect(results).to match_array([bar_record, baz_record, numeric_record])
     end
 
     it "matches any values" do

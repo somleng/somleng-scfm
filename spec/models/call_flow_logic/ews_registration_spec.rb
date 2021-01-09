@@ -4,6 +4,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
   it "plays an introduction in Khmer" do
     event = create_phone_call_event(phone_call_metadata: { status: nil })
     call_flow_logic = CallFlowLogic::EWSRegistration.new(
+      phone_call: event.phone_call,
       event: event,
       current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
     )
@@ -18,6 +19,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
   it "prompts for the language" do
     event = create_phone_call_event(phone_call_metadata: { status: :playing_introduction })
     call_flow_logic = CallFlowLogic::EWSRegistration.new(
+      phone_call: event.phone_call,
       event: event,
       current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
     )
@@ -33,7 +35,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     event = create_phone_call_event(
       phone_call_metadata: { status: :gathering_language }
     )
-    call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event)
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event, phone_call: event.phone_call)
 
     call_flow_logic.run!
 
@@ -48,7 +50,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
       phone_call_metadata: { status: :gathering_language },
       event_details: { Digits: "2" }
     )
-    call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event)
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(phone_call: event.phone_call, event: event)
 
     call_flow_logic.run!
 
@@ -65,7 +67,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
         language_code: "khm"
       }
     )
-    call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event)
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(phone_call: event.phone_call, event: event)
 
     call_flow_logic.run!
 
@@ -83,7 +85,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
       },
       event_details: { Digits: "1" } # Pursat
     )
-    call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event)
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(phone_call: event.phone_call, event: event)
 
     call_flow_logic.run!
 
@@ -101,7 +103,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
       },
       event_details: { Digits: "1" }
     )
-    call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event)
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(phone_call: event.phone_call, event: event)
 
     call_flow_logic.run!
 
@@ -120,7 +122,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
       },
       event_details: { Digits: "0" }
     )
-    call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event)
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(phone_call: event.phone_call, event: event)
 
     call_flow_logic.run!
 
@@ -139,7 +141,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
       },
       event_details: { Digits: "*" }
     )
-    call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event)
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(phone_call: event.phone_call, event: event)
 
     call_flow_logic.run!
 
@@ -157,7 +159,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
       },
       event_details: { Digits: "1" }
     )
-    call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event)
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(phone_call: event.phone_call, event: event)
 
     call_flow_logic.run!
 
@@ -177,7 +179,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
       },
       event_details: { Digits: "99" }
     )
-    call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event)
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(phone_call: event.phone_call, event: event)
 
     call_flow_logic.run!
 
@@ -209,6 +211,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     )
     event = create_phone_call_event(phone_call: phone_call, event_details: { Digits: "4" })
     call_flow_logic = CallFlowLogic::EWSRegistration.new(
+      phone_call: phone_call,
       event: event,
       current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
     )
@@ -233,7 +236,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     event = create_phone_call_event(
       phone_call_metadata: { status: :playing_conclusion }
     )
-    call_flow_logic = CallFlowLogic::EWSRegistration.new(event: event)
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(phone_call: event.phone_call, event: event)
 
     call_flow_logic.run!
 

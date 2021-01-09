@@ -332,10 +332,6 @@ module CallFlowLogic
       dtmf_tones.to_i
     end
 
-    def phone_call
-      event.phone_call
-    end
-
     class AudioURL
       attr_reader :key, :region, :bucket
 

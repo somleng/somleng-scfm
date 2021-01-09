@@ -46,7 +46,7 @@ class HandlePhoneCallEvent < ApplicationWorkflow
 
   def resolve_call_flow_logic(event)
     event.call_flow_logic.constantize.new(
-      event: event, current_url: url
+      event: event, current_url: url, phone_call: event.phone_call
     )
   end
 

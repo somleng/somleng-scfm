@@ -264,7 +264,7 @@ GEM
       rails-i18n
       rainbow (>= 2.2.2, < 4.0)
       terminal-table (>= 1.5.1)
-    jbuilder (2.11.0)
+    jbuilder (2.11.1)
       activesupport (>= 5.0.0)
     jmespath (1.4.0)
     jwt (2.2.2)

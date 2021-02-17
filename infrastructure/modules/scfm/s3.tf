@@ -1,7 +1,6 @@
 resource "aws_s3_bucket" "uploads" {
   bucket = var.uploads_bucket
   acl    = "private"
-  region = var.aws_region
 
   cors_rule {
     allowed_headers = ["*"]
@@ -14,7 +13,6 @@ resource "aws_s3_bucket" "uploads" {
 resource "aws_s3_bucket" "audio" {
   bucket = var.audio_bucket
   acl    = "public-read"
-  region = var.aws_region
 }
 
 resource "aws_s3_bucket_policy" "audio" {

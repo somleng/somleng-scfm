@@ -443,7 +443,7 @@ GEM
     sentry-raven (3.0.4)
       faraday (>= 1.0)
     sexp_processor (4.15.0)
-    shoryuken (5.1.1)
+    shoryuken (5.2.0)
       aws-sdk-core (>= 2)
       concurrent-ruby
       thor

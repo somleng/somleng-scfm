@@ -8,6 +8,7 @@ variable "cpu" {}
 variable "aws_region" {}
 variable "container_instance_subnets" {}
 variable "vpc_id" {}
+variable "vpc_cidr_block" {}
 variable "logs_bucket" {}
 variable "codedeploy_role" {}
 variable "uploads_bucket" {}
@@ -32,21 +33,14 @@ variable "launch_type" {
   default = "FARGATE"
 }
 
-variable "db_host" {
-}
-
-variable "db_port" {
-}
-
 variable "db_pool" {
   default = 48
 }
 
-variable "db_security_group" {
+variable "database_subnets" {}
+variable "db_username" {
+  default = "somleng"
 }
-
-variable "db_username" {}
-variable "db_password_parameter_arn" {}
 variable "enable_dashboard" {
   default = false
 }

@@ -1,7 +1,3 @@
-locals {
-  database_name = replace(var.app_identifier, "-", "_")
-}
-
 data "template_file" "appserver_container_definitions" {
   template = file("${path.module}/templates/appserver_container_definitions.json.tpl")
 
@@ -22,11 +18,11 @@ data "template_file" "appserver_container_definitions" {
     logs_group_region = var.aws_region
     app_environment = var.app_environment
     rails_master_key_parameter_arn = aws_ssm_parameter.rails_master_key.arn
-    database_password_parameter_arn = var.db_password_parameter_arn
-    database_name = local.database_name
-    database_username = var.db_username
-    database_host = var.db_host
-    database_port = var.db_port
+    database_password_parameter_arn = aws_ssm_parameter.db_master_password.arn
+    database_name = module.db.this_rds_cluster_database_name
+    database_username = module.db.this_rds_cluster_master_username
+    database_host = module.db.this_rds_cluster_endpoint
+    database_port = module.db.this_rds_cluster_port
     db_pool = var.db_pool
     uploads_bucket = aws_s3_bucket.uploads.id
     audio_bucket = aws_s3_bucket.audio.id
@@ -74,7 +70,7 @@ resource "aws_ecs_service" "appserver" {
   }
   network_configuration {
     subnets = var.container_instance_subnets
-    security_groups = [aws_security_group.appserver.id, var.db_security_group]
+    security_groups = [aws_security_group.appserver.id, aws_security_group.db.id]
   }
 
   load_balancer {
@@ -103,11 +99,11 @@ data "template_file" "worker_container_definitions" {
     logs_group_region = var.aws_region
     app_environment = var.app_environment
     rails_master_key_parameter_arn = aws_ssm_parameter.rails_master_key.arn
-    database_password_parameter_arn = var.db_password_parameter_arn
-    database_name = local.database_name
-    database_username = var.db_username
-    database_host = var.db_host
-    database_port = var.db_port
+    database_password_parameter_arn = aws_ssm_parameter.db_master_password.arn
+    database_name = module.db.this_rds_cluster_database_name
+    database_username = module.db.this_rds_cluster_master_username
+    database_host = module.db.this_rds_cluster_endpoint
+    database_port = module.db.this_rds_cluster_port
     db_pool = var.db_pool
     uploads_bucket = aws_s3_bucket.uploads.id
     audio_bucket = aws_s3_bucket.audio.id
@@ -153,7 +149,7 @@ resource "aws_ecs_service" "worker" {
 
   network_configuration {
     subnets = var.container_instance_subnets
-    security_groups = [aws_security_group.worker.id, var.db_security_group]
+    security_groups = [aws_security_group.worker.id, aws_security_group.db.id]
   }
 
   lifecycle {

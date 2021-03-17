@@ -71,7 +71,7 @@ resource "aws_ecs_service" "console" {
 
   network_configuration {
     subnets = var.container_instance_subnets
-    security_groups = [aws_security_group.worker.id, var.db_security_group]
+    security_groups = [aws_security_group.worker.id, aws_security_group.db.id]
   }
 }
 
@@ -79,7 +79,7 @@ resource "aws_launch_configuration" "console" {
   image_id                    = jsondecode(data.aws_ssm_parameter.console.value).image_id
   instance_type               = "t3.small"
   iam_instance_profile        = aws_iam_instance_profile.console.name
-  security_groups             = [aws_security_group.worker.id, var.db_security_group]
+  security_groups             = [aws_security_group.worker.id, aws_security_group.db.id]
   user_data                   = data.template_file.console_user_data.rendered
   key_name = aws_key_pair.console.key_name
 

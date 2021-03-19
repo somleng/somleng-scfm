@@ -16,7 +16,7 @@ RSpec.describe CalloutSummary do
   end
 
   describe "#participations_still_to_be_called" do
-    it "returns the number of callout participations still to be called" do
+    xit "returns the number of callout participations still to be called" do
       account = account_with_settings(
         "callout_filter_params" => { "status" => "running" },
         "callout_participation_filter_params" => { "no_phone_calls_or_last_attempt" => "failed" }

@@ -17,8 +17,6 @@ module Dashboard
         callout
       elsif contact_id
         contact
-      elsif batch_operation_id
-        batch_operation
       end
     end
 
@@ -44,16 +42,6 @@ module Dashboard
 
     def contact
       @contact ||= current_account.contacts.find(contact_id)
-    end
-
-    def batch_operation_id
-      params[:batch_operation_id]
-    end
-
-    def batch_operation
-      @batch_operation ||= current_account.batch_operations.applies_on_phone_calls.find(
-        batch_operation_id
-      )
     end
 
     def filter_class

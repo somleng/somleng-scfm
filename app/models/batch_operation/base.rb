@@ -1,35 +1,13 @@
 module BatchOperation
   class Base < ApplicationRecord
     include CustomRoutesHelper["batch_operations"]
-
-    self.table_name = :batch_operations
+    include AASM
 
     PERMITTED_API_TYPES = [
-      "BatchOperation::CalloutPopulation",
-      "BatchOperation::PhoneCallCreate",
-      "BatchOperation::PhoneCallQueue",
-      "BatchOperation::PhoneCallQueueRemoteFetch"
+      "BatchOperation::CalloutPopulation"
     ].freeze
 
-    PREVIEW_CONTACTS_TYPES = [
-      "BatchOperation::CalloutPopulation",
-      "BatchOperation::PhoneCallCreate"
-    ].freeze
-
-    PREVIEW_CALLOUT_PARTICIPATIONS_TYPES = [
-      "BatchOperation::PhoneCallCreate"
-    ].freeze
-
-    PREVIEW_PHONE_CALLS_TYPES = [
-      "BatchOperation::PhoneCallQueue",
-      "BatchOperation::PhoneCallQueueRemoteFetch"
-    ].freeze
-
-    APPLIES_ON_PHONE_CALLS_TYPES = [
-      "BatchOperation::PhoneCallCreate",
-      "BatchOperation::PhoneCallQueue",
-      "BatchOperation::PhoneCallQueueRemoteFetch"
-    ].freeze
+    self.table_name = :batch_operations
 
     include CustomStoreReaders
     include MetadataHelpers
@@ -42,26 +20,8 @@ module BatchOperation
 
     before_validation :set_default_parameters, on: :create
 
-    include AASM
-
     def self.from_type_param(type)
-      PERMITTED_API_TYPES.include?(type) ? type.constantize : self
-    end
-
-    def self.can_preview_contacts
-      where(type: PREVIEW_CONTACTS_TYPES)
-    end
-
-    def self.can_preview_callout_participations
-      where(type: PREVIEW_CALLOUT_PARTICIPATIONS_TYPES)
-    end
-
-    def self.can_preview_phone_calls
-      where(type: PREVIEW_PHONE_CALLS_TYPES)
-    end
-
-    def self.applies_on_phone_calls
-      where(type: APPLIES_ON_PHONE_CALLS_TYPES)
+      PERMITTED_API_TYPES.include?(type) ? type.constantize : where(type: PERMITTED_API_TYPES)
     end
 
     aasm column: :status, skip_validation_on_save: true do
@@ -97,10 +57,6 @@ module BatchOperation
           to: :queued
         )
       end
-    end
-
-    def applies_on_phone_calls?
-      APPLIES_ON_PHONE_CALLS_TYPES.include?(self.class.to_s)
     end
 
     def serializable_hash(options = nil)

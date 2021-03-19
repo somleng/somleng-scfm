@@ -89,6 +89,14 @@ class Account < ApplicationRecord
     access_tokens.with_permissions(:batch_operations_write).last
   end
 
+  def phone_call_queue_limit
+    settings.fetch("phone_call_queue_limit")
+  end
+
+  def from_phone_number
+    settings.fetch("from_phone_number")
+  end
+
   private
 
   def set_call_flow_logic

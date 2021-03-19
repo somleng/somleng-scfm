@@ -117,16 +117,6 @@ RSpec.describe "Callout Populations" do
       )
     end
 
-    within("#related_links") do
-      expect(page).to have_link_to_action(
-        :index,
-        key: :callout_participations,
-        href: dashboard_batch_operation_callout_participations_path(
-          callout_population
-        )
-      )
-    end
-
     within("#resource") do
       expect(page).to have_content(callout_population.id)
 
@@ -143,21 +133,6 @@ RSpec.describe "Callout Populations" do
       expect(page).to have_content("location:country")
       expect(page).to have_content("Cambodia")
     end
-  end
-
-  it "can preview a callout population" do
-    user = create(:user)
-    female_contact = create_contact(user.account, "gender" => "f")
-    male_contact = create_contact(user.account, "gender" => "m")
-    callout_population = create_callout_population(
-      user.account, "gender": "f"
-    )
-
-    sign_in(user)
-    visit dashboard_batch_operation_preview_contacts_path(callout_population)
-
-    expect(page).to have_content_tag_for(female_contact)
-    expect(page).not_to have_content_tag_for(male_contact)
   end
 
   it "can delete a callout population" do

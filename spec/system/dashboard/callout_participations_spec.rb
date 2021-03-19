@@ -57,31 +57,6 @@ RSpec.describe "Callout Participations" do
     end
   end
 
-  it "can list all the callout participations for a callout population" do
-    user = create(:user)
-    callout_population = create(:callout_population, account: user.account)
-    callout_participation = create_callout_participation(
-      account: user.account,
-      callout: callout_population.callout,
-      callout_population: callout_population
-    )
-
-    other_callout_participation = create_callout_participation(
-      account: user.account,
-      callout: callout_population.callout
-    )
-
-    sign_in(user)
-    visit(dashboard_batch_operation_callout_participations_path(callout_population))
-
-    expect(page).to have_title("Callout Participations")
-
-    within("#resources") do
-      expect(page).to have_content_tag_for(callout_participation)
-      expect(page).not_to have_content_tag_for(other_callout_participation)
-    end
-  end
-
   it "can list all the callout participations for a contact" do
     user = create(:user)
     callout_participation = create_callout_participation(account: user.account)

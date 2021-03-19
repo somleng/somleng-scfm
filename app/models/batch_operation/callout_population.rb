@@ -11,20 +11,18 @@ module BatchOperation
     has_many :contacts, through: :callout_participations
 
     store_accessor :parameters,
-                   :contact_filter_params
+                   :contact_filter_params,
+                   :remote_request_params
 
+    hash_store_reader :remote_request_params
     hash_store_reader :contact_filter_params
 
     accepts_nested_key_value_fields_for :contact_filter_metadata
 
     def run!
-      contacts_preview.find_each do |contact|
+      contacts_scope.find_each do |contact|
         create_callout_participation(contact)
       end
-    end
-
-    def contacts_preview
-      preview.contacts(scope: account.contacts)
     end
 
     def contact_filter_metadata
@@ -39,16 +37,24 @@ module BatchOperation
 
     private
 
-    def preview
-      @preview ||= Preview::CalloutPopulation.new(previewable: self)
+    def contacts_scope
+      Filter::Resource::Contact.new(
+        { association_chain: account.contacts },
+        contact_filter_params.with_indifferent_access
+      ).resources
     end
 
     def create_callout_participation(contact)
-      CalloutParticipation.create(
+      CalloutParticipation.create_or_find_by!(
         contact: contact,
-        callout: callout,
-        callout_population: self
-      )
+        callout: callout
+      ) do |callout_participation|
+        callout_participation.callout_population = self
+        callout_participation.phone_calls.build(
+          account: callout.account,
+          contact: contact,
+        )
+      end
     end
 
     def batch_operation_account_settings_param

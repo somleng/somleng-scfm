@@ -1,7 +1,5 @@
 module API
   class CalloutParticipationsController < API::BaseController
-    include BatchOperationResource
-
     private
 
     def build_resource_association_chain
@@ -13,8 +11,6 @@ module API
         callout.callout_participations
       elsif params[:contact_id]
         contact.callout_participations
-      elsif params[:batch_operation_id]
-        batch_operation.callout_participations
       else
         association_chain
       end
@@ -34,10 +30,6 @@ module API
 
     def contact
       @contact ||= current_account.contacts.find(params[:contact_id])
-    end
-
-    def batch_operation_scope
-      current_account.batch_operations.can_preview_contacts
     end
 
     def permitted_create_params

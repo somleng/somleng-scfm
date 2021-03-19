@@ -1,6 +1,6 @@
 require "rails_helper"
 
-RSpec.describe "Callouts", :aggregate_failures do
+RSpec.xdescribe "Callouts", :aggregate_failures do
   it "can list callouts" do
     user          = create(:user)
     callout       = create(
@@ -38,7 +38,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     end
   end
 
-  it "can create a callout" do
+  xit "can create a callout" do
     user = create(:user)
 
     sign_in(user)
@@ -67,7 +67,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(new_callout.settings).to eq("rapidpro" => { "flow_id" => "flow-id" })
   end
 
-  it "can create a callout attaching an audio file" do
+  xit "can create a callout attaching an audio file" do
     user = create(:user)
 
     sign_in(user)

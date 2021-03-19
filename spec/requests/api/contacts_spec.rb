@@ -45,42 +45,6 @@ RSpec.resource "Contacts" do
     end
   end
 
-  get "/api/batch_operations/:batch_operation_id/contacts" do
-    example "List Contacts populated by a callout population", document: false do
-      callout_population = create(:callout_population, account: account)
-      callout_participation = create_callout_participation(
-        account: account,
-        callout_population: callout_population
-      )
-      _other_callout_participation = create_callout_participation(account: account)
-
-      set_authorization_header(access_token: access_token)
-      do_request(batch_operation_id: callout_population.id)
-
-      expect(response_status).to eq(200)
-      parsed_body = JSON.parse(response_body)
-      expect(parsed_body.size).to eq(1)
-      expect(parsed_body.first.fetch("id")).to eq(callout_participation.contact_id)
-    end
-
-    example "List Contacts to be called by a phone call create batch operation", document: false do
-      batch_operation = create(:phone_call_create_batch_operation, account: account)
-      phone_call = create_phone_call(
-        account: account,
-        create_batch_operation: batch_operation
-      )
-      _other_contact = create(:contact, account: account)
-
-      set_authorization_header(access_token: access_token)
-      do_request(batch_operation_id: batch_operation.id)
-
-      expect(response_status).to eq(200)
-      parsed_body = JSON.parse(response_body)
-      expect(parsed_body.size).to eq(1)
-      expect(parsed_body.first.fetch("id")).to eq(phone_call.contact_id)
-    end
-  end
-
   post "/api/contacts" do
     parameter(
       :msisdn,

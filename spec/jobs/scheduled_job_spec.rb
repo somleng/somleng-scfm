@@ -2,15 +2,10 @@ require "rails_helper"
 
 RSpec.describe ScheduledJob do
   describe "#perform" do
-    it "queues batch operations" do
+    xit "queues batch operations" do
       account = create(
         :account,
-        :with_twilio_provider,
-        settings: {
-          "batch_operation_phone_call_create_parameters" => {
-            "remote_request_params" => generate(:twilio_request_params)
-          }
-        }
+        :with_twilio_provider
       )
       _callout_participation = create_callout_participation(account: account)
       stub_request(:post, "https://api.twilio.com/2010-04-01/Accounts/#{account.twilio_account_sid}/Calls.json")

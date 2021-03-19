@@ -1,10 +1,17 @@
 class QueueRemoteCallJob < ApplicationJob
-  attr_accessor :phone_call_id
+  include Rails.application.routes.url_helpers
 
-  def perform(phone_call_id)
-    self.phone_call_id = phone_call_id
+  attr_accessor :phone_call
+
+  def perform(phone_call)
     begin
-      response = queue_remote_call!
+      somleng_client = Somleng::Client.new(provider: phone_call.platform_provider)
+      response = somleng_client.api.account.calls.create(
+        to: phone_call.msisdn,
+        from: phone_call.account.from_phone_number,
+        url: api_remote_phone_call_events_url(protocol: :https),
+        status_callback: api_remote_phone_call_events_url(protocol: :https)
+      )
       phone_call.remote_queue_response = response.instance_variable_get(:@properties).compact
       phone_call.remote_status = response.status
       phone_call.remote_call_id = response.sid
@@ -14,24 +21,5 @@ class QueueRemoteCallJob < ApplicationJob
     end
 
     phone_call.queue_remote!
-  end
-
-  private
-
-  def phone_call
-    @phone_call ||= PhoneCall.find(phone_call_id)
-  end
-
-  def queue_remote_call!
-    somleng_client.api.account.calls.create(remote_request_params)
-  end
-
-  def remote_request_params
-    call_flow_logic = phone_call.call_flow_logic.constantize.new(phone_call: phone_call)
-    call_flow_logic.remote_request_params.symbolize_keys
-  end
-
-  def somleng_client
-    @somleng_client ||= Somleng::Client.new(provider: phone_call.platform_provider)
   end
 end

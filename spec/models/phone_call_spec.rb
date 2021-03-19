@@ -6,17 +6,6 @@ RSpec.describe PhoneCall do
   include_examples "has_metadata"
   include_examples "has_call_flow_logic"
 
-  describe "associations" do
-    subject { build_stubbed(:phone_call, :inbound) }
-
-    it { is_expected.to belong_to(:callout_participation).optional }
-    it { is_expected.to belong_to(:contact).validate(true) }
-    it { is_expected.to belong_to(:create_batch_operation).optional }
-    it { is_expected.to belong_to(:queue_batch_operation).optional }
-    it { is_expected.to belong_to(:queue_remote_fetch_batch_operation).optional }
-    it { is_expected.to have_many(:remote_phone_call_events).dependent(:restrict_with_error) }
-  end
-
   describe "locking" do
     it "prevents stale phone calls from being updated" do
       phone_call1 = create(:phone_call)

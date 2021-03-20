@@ -1,5 +1,5 @@
 resource "aws_cloudwatch_metric_alarm" "appserver_cpu_utilization_high" {
-  alarm_name          = "${var.app_identifier}-CPU-Utilization-High"
+  alarm_name          = "${var.app_identifier}-appserver-CPU-Utilization-High"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = "1"
   metric_name         = "CPUUtilization"
@@ -17,7 +17,7 @@ resource "aws_cloudwatch_metric_alarm" "appserver_cpu_utilization_high" {
 }
 
 resource "aws_cloudwatch_metric_alarm" "appserver_cpu_utilization_low" {
-  alarm_name          = "${var.app_identifier}-CPU-Utilization-Low"
+  alarm_name          = "${var.app_identifier}-appserver-CPU-Utilization-Low"
   comparison_operator = "LessThanThreshold"
   evaluation_periods  = "1"
   metric_name         = "CPUUtilization"
@@ -38,7 +38,7 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_high" {
   alarm_name          = "${var.app_identifier}-queue-size-alarm-high"
   comparison_operator = "GreaterThanOrEqualToThreshold"
   evaluation_periods  = 1
-  threshold           = 1
+  threshold           = 1000
 
   metric_query {
     id = "e1"
@@ -54,7 +54,7 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_high" {
     metric {
       namespace           = "AWS/SQS"
       metric_name         = "ApproximateNumberOfMessagesVisible"
-      period              = 60 # Wait this number of seconds before triggering the alarm (smallest available)
+      period              = 300 # Wait this number of seconds before triggering the alarm (smallest available)
       stat           = "Sum"
       dimensions = {
         QueueName = aws_sqs_queue.this.name
@@ -69,7 +69,7 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_high" {
     metric {
       namespace           = "AWS/SQS"
       metric_name         = "ApproximateNumberOfMessagesVisible"
-      period              = 60 # Wait this number of seconds before triggering the alarm (smallest available)
+      period              = 300 # Wait this number of seconds before triggering the alarm (smallest available)
       stat           = "Sum"
       dimensions = {
         QueueName = aws_sqs_queue.scheduler.name
@@ -84,7 +84,7 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_low" {
   alarm_name          = "${var.app_identifier}-queue-size-alarm-low"
   comparison_operator = "LessThanOrEqualToThreshold"
   evaluation_periods  = 1
-  threshold           = 0
+  threshold           = 500
 
   metric_query {
     id = "e1"
@@ -188,7 +188,7 @@ resource "aws_appautoscaling_policy" "worker_down" {
 
   step_scaling_policy_configuration {
     adjustment_type         = "ChangeInCapacity"
-    cooldown                = 0 # Turn off cooldown
+    cooldown                = 300
     metric_aggregation_type = "Average"
 
     step_adjustment {

@@ -3,7 +3,7 @@ en:
   helpers:
     page_entries_info:
       more_pages:
-        display_entries: Displaying %{entry_name} <b>%{first}&nbsp;-&nbsp;%{last}</b> of <b>%{total}</b> in total
+        display_entries: Displaying %{entry_name} <b>%{first}&nbsp;-&nbsp;%{last}</b>
       one_page:
         display_entries:
           one: Displaying <b>1</b> %{entry_name}

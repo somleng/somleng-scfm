@@ -177,7 +177,7 @@ class PhoneCall < ApplicationRecord
   end
 
   def mark_callout_participation_answered!
-    return true unless inbound?
+    return true if callout_participation.blank?
 
     callout_participation.update!(answered: true)
   end

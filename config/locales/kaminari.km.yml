@@ -3,7 +3,7 @@ km:
   helpers:
     page_entries_info:
       more_pages:
-        display_entries: កំពុងបង្ហាញ %{entry_name} <b>%{first}&nbsp;-&nbsp;%{last}</b> ក្នុងចំនួនសរុប <b>%{total}</b>
+        display_entries: កំពុងបង្ហាញ %{entry_name} <b>%{first}&nbsp;-&nbsp;%{last}</b>
       one_page:
         display_entries:
           one: កំពុងបង្ហាញ %{entry_name} មានចំនួន <b>1</b>

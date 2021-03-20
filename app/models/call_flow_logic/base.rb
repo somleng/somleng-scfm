@@ -2,6 +2,8 @@ module CallFlowLogic
   class Base
     attr_accessor :options
 
+    RETRY_CALL_STATUSES = %w[not_answered busy failed].freeze
+
     def self.registered
       @registered ||= descendants.reject(&:abstract_class?).map(&:to_s)
     end
@@ -23,20 +25,29 @@ module CallFlowLogic
     end
 
     def run!
-      event.phone_call.complete!
+      phone_call.complete!
+      retry_call
     rescue ActiveRecord::StaleObjectError
       event.phone_call.reload
       retry
     end
 
-    def remote_request_params
-      phone_call.remote_request_params.merge("to" => phone_call.msisdn)
-    end
-
     private
 
+    def retry_call
+      return unless phone_call.status.in?(RETRY_CALL_STATUSES)
+      return if callout_participation.blank?
+      return if callout_participation.phone_calls_count >= phone_call.account.max_phone_calls_for_callout_participation
+
+      RetryPhoneCallJob.set(wait: 15.minutes).perform_later(phone_call)
+    end
+
     def phone_call
-      options.fetch(:phone_call)
+      event.phone_call
+    end
+
+    def callout_participation
+      phone_call.callout_participation
     end
   end
 end

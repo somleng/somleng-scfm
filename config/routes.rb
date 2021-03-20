@@ -23,12 +23,6 @@ Rails.application.routes.draw do
 
     resources :batch_operations, only: %i[index show destroy] do
       resources :batch_operation_events, only: :create
-      resources :callout_participations, only: :index
-      resources :phone_calls, only: :index
-
-      namespace :preview, module: "batch_operation_preview" do
-        resources :contacts, only: :index
-      end
     end
 
     resources :contacts do
@@ -50,8 +44,7 @@ Rails.application.routes.draw do
       resources :phone_calls, only: :index
     end
 
-    resources :phone_calls, only: %i[index show destroy] do
-      resources :phone_call_events, only: :create
+    resources :phone_calls, only: %i[index show] do
       resources :remote_phone_call_events, only: :index
     end
 
@@ -100,24 +93,14 @@ Rails.application.routes.draw do
 
     resources :batch_operations, except: %i[new edit] do
       resources :batch_operation_events, only: :create
-      resources :callout_participations, only: :index
-      resources :contacts, only: :index
-      resources :phone_calls, only: :index
-
-      namespace :preview, module: "batch_operation_preview" do
-        resources :callout_participations, only: :index
-        resources :contacts, only: :index
-        resources :phone_calls, only: :index
-      end
     end
 
     resources :callout_participations, except: %i[new edit create] do
-      resources :phone_calls, only: %i[index create]
+      resources :phone_calls, only: %i[index]
       resources :remote_phone_call_events, only: :index
     end
 
-    resources :phone_calls, except: %i[new edit create] do
-      resources :phone_call_events, only: :create
+    resources :phone_calls, only: %i[index show] do
       resources :remote_phone_call_events, only: :index
     end
   end

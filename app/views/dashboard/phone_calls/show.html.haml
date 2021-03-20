@@ -1,10 +1,3 @@
-- content_for(:page_actions) do
-  - if resource.may_queue?
-    = link_to(translate(:"titles.phone_calls.queue"), dashboard_phone_call_phone_call_events_path(resource, event: :queue),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
-  - if resource.may_queue_remote_fetch?
-    = link_to(translate(:"titles.phone_calls.queue_remote_fetch"), dashboard_phone_call_phone_call_events_path(resource, event: :queue_remote_fetch),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
-  = link_to(translate(:"titles.actions.delete"), dashboard_phone_call_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
-
 - content_for(:related_links) do
   = related_link_to t(:"titles.remote_phone_call_events.index"), dashboard_phone_call_remote_phone_call_events_path(resource)
 
@@ -55,24 +48,6 @@
             = link_to(resource.callout_id, dashboard_callout_path(resource.callout_id))
       %dl.row
         %dt.col-sm-5.col-md-4.text-md-right
-          = PhoneCall.human_attribute_name(:create_batch_operation)
-        - if resource.create_batch_operation_id
-          %dd.col-sm-7.col-md-6
-            = link_to(resource.create_batch_operation_id, dashboard_batch_operation_path(resource.create_batch_operation_id))
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = PhoneCall.human_attribute_name(:queue_batch_operation)
-        - if resource.queue_batch_operation_id
-          %dd.col-sm-7.col-md-6
-            = link_to(resource.queue_batch_operation_id, dashboard_batch_operation_path(resource.queue_batch_operation_id))
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = PhoneCall.human_attribute_name(:queue_remote_fetch_batch_operation)
-        - if resource.queue_remote_fetch_batch_operation
-          %dd.col-sm-7.col-md-6
-            = link_to(resource.queue_remote_fetch_batch_operation_id, dashboard_batch_operation_path(resource.queue_remote_fetch_batch_operation_id))
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
           = PhoneCall.human_attribute_name(:call_flow_logic)
         %dd.col-sm-7.col-md-6
           %code
@@ -102,7 +77,6 @@
           = PhoneCall.human_attribute_name(:created_at)
         %dd.col-sm-7.col-md-6
           = local_time(resource.created_at)
-      = render("shared/key_value_attributes", attribute: :remote_request_params)
       = render("shared/key_value_attributes", attribute: :remote_response)
       = render("shared/key_value_attributes", attribute: :remote_queue_response)
       = render("shared/key_value_attributes", attribute: :metadata)

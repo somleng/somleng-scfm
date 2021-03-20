@@ -16,11 +16,11 @@ module BatchOperation
       it "returns the correct batch operation" do
         expect(
           BatchOperation::Base.from_type_param(nil)
-        ).to eq(BatchOperation::Base)
+        ).to eq([])
 
         expect(
           BatchOperation::Base.from_type_param("foo")
-        ).to eq(BatchOperation::Base)
+        ).to eq([])
 
         expect(
           BatchOperation::Base.from_type_param(

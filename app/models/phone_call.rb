@@ -10,32 +10,19 @@ class PhoneCall < ApplicationRecord
     not_answered: "no-answer"
   }.freeze
 
+  UNKNOWN_STATUSES = %i[remotely_queued in_progress].freeze
+
   # https://www.twilio.com/docs/api/voice/call#resource-properties
   TWILIO_DIRECTIONS = {
     inbound: "inbound"
   }.freeze
 
-  belongs_to :create_batch_operation,
-             class_name: "BatchOperation::PhoneCallCreate",
-             optional: true
-
-  belongs_to :queue_batch_operation,
-             class_name: "BatchOperation::PhoneCallQueue",
-             optional: true
-
-  belongs_to :queue_remote_fetch_batch_operation,
-             class_name: "BatchOperation::PhoneCallQueueRemoteFetch",
-             optional: true
-
-  belongs_to :callout_participation,
-             optional: true
-
+  belongs_to :callout_participation, optional: true, counter_cache: true
   belongs_to :contact, validate: true
   belongs_to :account
   has_many   :remote_phone_call_events, dependent: :restrict_with_error
 
   include MetadataHelpers
-  include Wisper::Publisher
   include MsisdnHelpers
   include HasCallFlowLogic
 
@@ -56,7 +43,6 @@ class PhoneCall < ApplicationRecord
   before_validation :set_defaults, on: :create
   before_destroy    :validate_destroy
 
-  accepts_nested_key_value_fields_for :remote_request_params
   accepts_nested_key_value_fields_for :remote_response
   accepts_nested_key_value_fields_for :remote_queue_response
 
@@ -75,7 +61,7 @@ class PhoneCall < ApplicationRecord
     state :completed
     state :expired
 
-    event :queue, after_commit: :publish_queued do
+    event :queue do
       transitions(
         from: :created,
         to: :queued
@@ -118,6 +104,7 @@ class PhoneCall < ApplicationRecord
 
       transitions from: %i[created remotely_queued in_progress],
                   to: :completed,
+                  after: :mark_callout_participation_answered!,
                   if: :remote_status_completed?
     end
   end
@@ -131,7 +118,11 @@ class PhoneCall < ApplicationRecord
   end
 
   def self.to_expire
-    in_progress.or(remotely_queued).where(arel_table[:remotely_queued_at].lt(24.hours.ago))
+    with_unknown_status.where(arel_table[:remotely_queued_at].lt(24.hours.ago))
+  end
+
+  def self.with_unknown_status
+    where(status: UNKNOWN_STATUSES).where(arel_table[:remotely_queued_at].lt(10.minutes.ago))
   end
 
   def inbound?
@@ -185,7 +176,9 @@ class PhoneCall < ApplicationRecord
     throw(:abort)
   end
 
-  def publish_queued
-    broadcast(:phone_call_queued, self)
+  def mark_callout_participation_answered!
+    return true if callout_participation.blank?
+
+    callout_participation.update!(answered: true)
   end
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_08_01_015658) do
+ActiveRecord::Schema.define(version: 2021_03_18_081710) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -76,6 +76,8 @@ ActiveRecord::Schema.define(version: 2020_08_01_015658) do
     t.jsonb "metadata", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "answered", default: false, null: false
+    t.integer "phone_calls_count", default: 0, null: false
     t.index ["callout_id", "contact_id"], name: "index_callout_participations_on_callout_id_and_contact_id", unique: true
     t.index ["callout_id", "msisdn"], name: "index_callout_participations_on_callout_id_and_msisdn", unique: true
     t.index ["callout_id"], name: "index_callout_participations_on_callout_id"
@@ -95,6 +97,7 @@ ActiveRecord::Schema.define(version: 2020_08_01_015658) do
     t.bigint "created_by_id"
     t.index ["account_id"], name: "index_callouts_on_account_id"
     t.index ["created_by_id"], name: "index_callouts_on_created_by_id"
+    t.index ["status"], name: "index_callouts_on_status"
   end
 
   create_table "contacts", force: :cascade do |t|
@@ -105,6 +108,8 @@ ActiveRecord::Schema.define(version: 2020_08_01_015658) do
     t.bigint "account_id", null: false
     t.index ["account_id", "msisdn"], name: "index_contacts_on_account_id_and_msisdn", unique: true
     t.index ["account_id"], name: "index_contacts_on_account_id"
+    t.index ["created_at"], name: "index_contacts_on_created_at"
+    t.index ["updated_at"], name: "index_contacts_on_updated_at"
   end
 
   create_table "oauth_access_grants", force: :cascade do |t|
@@ -158,9 +163,6 @@ ActiveRecord::Schema.define(version: 2020_08_01_015658) do
   create_table "phone_calls", force: :cascade do |t|
     t.bigint "callout_participation_id"
     t.bigint "contact_id", null: false
-    t.bigint "create_batch_operation_id"
-    t.bigint "queue_batch_operation_id"
-    t.bigint "queue_remote_fetch_batch_operation_id"
     t.string "status", null: false
     t.string "msisdn", null: false
     t.string "remote_call_id"
@@ -169,7 +171,6 @@ ActiveRecord::Schema.define(version: 2020_08_01_015658) do
     t.text "remote_error_message"
     t.jsonb "metadata", default: {}, null: false
     t.jsonb "remote_response", default: {}, null: false
-    t.jsonb "remote_request_params", default: {}, null: false
     t.jsonb "remote_queue_response", default: {}, null: false
     t.string "call_flow_logic", null: false
     t.datetime "remotely_queued_at"
@@ -181,10 +182,11 @@ ActiveRecord::Schema.define(version: 2020_08_01_015658) do
     t.index ["account_id"], name: "index_phone_calls_on_account_id"
     t.index ["callout_participation_id"], name: "index_phone_calls_on_callout_participation_id"
     t.index ["contact_id"], name: "index_phone_calls_on_contact_id"
-    t.index ["create_batch_operation_id"], name: "index_phone_calls_on_create_batch_operation_id"
-    t.index ["queue_batch_operation_id"], name: "index_phone_calls_on_queue_batch_operation_id"
-    t.index ["queue_remote_fetch_batch_operation_id"], name: "index_phone_calls_on_queue_remote_fetch_batch_operation_id"
+    t.index ["created_at"], name: "index_phone_calls_on_created_at"
+    t.index ["msisdn"], name: "index_phone_calls_on_msisdn"
     t.index ["remote_call_id"], name: "index_phone_calls_on_remote_call_id", unique: true
+    t.index ["remotely_queued_at"], name: "index_phone_calls_on_remotely_queued_at"
+    t.index ["status"], name: "index_phone_calls_on_status"
   end
 
   create_table "remote_phone_call_events", force: :cascade do |t|
@@ -254,9 +256,6 @@ ActiveRecord::Schema.define(version: 2020_08_01_015658) do
   add_foreign_key "oauth_access_tokens", "oauth_applications", column: "application_id"
   add_foreign_key "oauth_applications", "accounts", column: "owner_id"
   add_foreign_key "phone_calls", "accounts"
-  add_foreign_key "phone_calls", "batch_operations", column: "create_batch_operation_id"
-  add_foreign_key "phone_calls", "batch_operations", column: "queue_batch_operation_id"
-  add_foreign_key "phone_calls", "batch_operations", column: "queue_remote_fetch_batch_operation_id"
   add_foreign_key "phone_calls", "callout_participations"
   add_foreign_key "phone_calls", "contacts"
   add_foreign_key "remote_phone_call_events", "phone_calls"

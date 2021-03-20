@@ -3,18 +3,18 @@ require "rails_helper"
 RSpec.describe QueueRemoteCallJob do
   describe "#perform" do
     it "queues the call remotely" do
-      account = create(:account, :with_twilio_provider)
+      account = create(
+        :account,
+        :with_twilio_provider,
+        settings: {
+          from_phone_number: "1234"
+        }
+      )
       phone_call = create(
         :phone_call,
         :queued,
         account: account,
-        msisdn: "855715100860",
-        remote_request_params: {
-          "from" => "1234",
-          "to" => "dummy",
-          "url" => "http://demo.twilio.com/docs/voice.xml",
-          "method" => "GET"
-        }
+        msisdn: "855715100860"
       )
       stub_twilio_request(
         response: {
@@ -26,7 +26,7 @@ RSpec.describe QueueRemoteCallJob do
         }
       )
 
-      QueueRemoteCallJob.new.perform(phone_call.id)
+      QueueRemoteCallJob.new.perform(phone_call)
 
       expect(WebMock).to have_requested(
         :post,
@@ -35,8 +35,8 @@ RSpec.describe QueueRemoteCallJob do
         body: {
           "From" => "1234",
           "To" => "+855715100860",
-          "Url" => "http://demo.twilio.com/docs/voice.xml",
-          "Method" => "GET"
+          "Url" => "https://scfm.somleng.org/api/remote_phone_call_events",
+          "StatusCallback" => "https://scfm.somleng.org/api/remote_phone_call_events"
         }
       )
 
@@ -53,7 +53,7 @@ RSpec.describe QueueRemoteCallJob do
       phone_call = create(:phone_call, :queued, account: account)
       stub_twilio_request(response: { status: 422 })
 
-      QueueRemoteCallJob.new.perform(phone_call.id)
+      QueueRemoteCallJob.new.perform(phone_call)
 
       expect(phone_call.reload).to have_attributes(
         remote_error_message: be_present,

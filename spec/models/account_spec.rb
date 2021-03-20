@@ -19,21 +19,40 @@ RSpec.describe Account do
 
   describe "validations" do
     it { expect(build(:account)).to be_valid }
-    it { is_expected.to validate_inclusion_of(:platform_provider_name).in_array(%w[twilio somleng]) }
-    it { expect(create(:account, :with_twilio_provider)).to validate_uniqueness_of(:twilio_account_sid).case_insensitive.allow_nil }
-    it { expect(create(:account, :with_somleng_provider)).to validate_uniqueness_of(:somleng_account_sid).case_insensitive.allow_nil }
+
+    it {
+      expect(subject).to validate_inclusion_of(:platform_provider_name).in_array(%w[twilio somleng])
+    }
+
+    it {
+      expect(
+        create(:account, :with_twilio_provider)
+      ).to validate_uniqueness_of(:twilio_account_sid).case_insensitive.allow_nil
+    }
+
+    it {
+      expect(
+        create(:account, :with_somleng_provider)
+      ).to validate_uniqueness_of(:somleng_account_sid).case_insensitive.allow_nil
+    }
   end
 
   it { is_expected.to strip_attribute(:twilio_account_sid) }
   it { is_expected.to strip_attribute(:somleng_account_sid) }
 
-  it "sets the default settings and permissions" do
-    account = build(:account)
+  it "sets the defaults" do
+    account = Account.new
 
     account.save!
 
     expect(account.permissions).to be_empty
-    expect(account.settings).to eq({})
+    expect(account.settings).to eq(
+      {
+        "from_phone_number" => "1234",
+        "phone_call_queue_limit" => 200,
+        "max_phone_calls_for_callout_participation" => 3
+      }
+    )
   end
 
   describe "#write_batch_operation_access_token" do
@@ -53,15 +72,15 @@ RSpec.describe Account do
     it "returns the account" do
       twilio_account = create(:account, twilio_account_sid: generate(:twilio_account_sid))
       expect(
-        described_class.find_by_platform_account_sid(twilio_account.twilio_account_sid)
+        Account.find_by_platform_account_sid(twilio_account.twilio_account_sid)
       ).to eq(twilio_account)
 
       somleng_account = create(:account, somleng_account_sid: generate(:somleng_account_sid))
       expect(
-        described_class.find_by_platform_account_sid(somleng_account.somleng_account_sid)
+        Account.find_by_platform_account_sid(somleng_account.somleng_account_sid)
       ).to eq(somleng_account)
 
-      expect(described_class.find_by_platform_account_sid(SecureRandom.uuid)).to eq(nil)
+      expect(Account.find_by_platform_account_sid(SecureRandom.uuid)).to eq(nil)
     end
   end
 end

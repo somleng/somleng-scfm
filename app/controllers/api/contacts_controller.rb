@@ -1,14 +1,12 @@
 module API
-  class ContactsController < FilteredContactsController
+  class ContactsController < API::BaseController
     include ValidateSchemaController
     self.request_schema = ContactRequestSchema
 
     private
 
     def find_resources_association_chain
-      if params[:batch_operation_id]
-        batch_operation.contacts
-      elsif params[:callout_id]
+      if params[:callout_id]
         callout.contacts
       else
         association_chain
@@ -25,6 +23,10 @@ module API
 
     def callout
       @callout ||= current_account.callouts.find(params[:callout_id])
+    end
+
+    def filter_class
+      Filter::Resource::Contact
     end
   end
 end

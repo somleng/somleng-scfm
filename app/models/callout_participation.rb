@@ -32,50 +32,8 @@ class CalloutParticipation < ApplicationRecord
                     :set_call_flow_logic,
                     on: :create
 
-  before_validation
-
-  def self.no_phone_calls_or_last_attempt(status)
-    where(
-      id: no_phone_calls
-    ).or(
-      where(
-        id: last_phone_call_attempt(status)
-      )
-    )
-  end
-
-  def self.having_max_phone_calls_count(count)
-    callout_participation_ids = left_outer_joins(:phone_calls).
-                                  group(:id, :"phone_calls.callout_participation_id").
-                                  having("COUNT(phone_calls.callout_participation_id) < ?", count).
-                                  select(:id)
-
-    where(id: callout_participation_ids)
-  end
-
-  def self.no_phone_calls
-    left_outer_joins(:phone_calls).where(phone_calls: { id: nil })
-  end
-
-  def self.has_phone_calls
-    joins(:phone_calls)
-  end
-
-  def self.last_phone_call_attempt(status)
-    # Adapted from:
-    # https://stackoverflow.com/questions/2111384/sql-join-selecting-the-last-records-in-a-one-to-many-relationship
-
-    # Explanation:
-    # given a row phone_call, there should be no row future_phone_calls with
-    # the same callout_participation and a later timestamp.
-    # When we find that to be true,
-    # then phone_call is the most recent phone_call for that callout_participation.
-
-    joins(:phone_calls).joins(
-      "LEFT OUTER JOIN \"phone_calls\" \"future_phone_calls\" ON (\"future_phone_calls\".\"callout_participation_id\" = \"callout_participations\".\"id\" AND \"phone_calls\".\"created_at\" < \"future_phone_calls\".\"created_at\")"
-    ).where(
-      future_phone_calls: { id: nil }
-    ).where(phone_calls: { status: [status] })
+  def self.still_trying(max_phone_calls)
+    where(answered: false).where(arel_table[:phone_calls_count].lt(max_phone_calls))
   end
 
   private

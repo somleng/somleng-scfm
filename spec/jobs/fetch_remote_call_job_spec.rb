@@ -9,7 +9,7 @@ RSpec.describe FetchRemoteCallJob do
         response: { body: { "status" => "in-progress" }.to_json }
       )
 
-      FetchRemoteCallJob.new.perform(phone_call.id)
+      FetchRemoteCallJob.new.perform(phone_call)
 
       phone_call.reload
       expect(WebMock).to have_requested(
@@ -28,21 +28,12 @@ RSpec.describe FetchRemoteCallJob do
         response: { body: { "status" => "completed", "duration" => "87" }.to_json }
       )
 
-      FetchRemoteCallJob.new.perform(phone_call.id)
+      FetchRemoteCallJob.new.perform(phone_call)
 
       phone_call.reload
       expect(phone_call.remote_response).to be_present
       expect(phone_call.duration).to eq(87)
       expect(phone_call).to be_completed
-    end
-
-    it "returns if there is no remote call id" do
-      account = create(:account)
-      phone_call = create_phone_call(:created, account: account)
-
-      FetchRemoteCallJob.new.perform(phone_call.id)
-
-      expect(phone_call).to be_created
     end
 
     def stub_twilio_request(response:)

@@ -17,27 +17,70 @@ RSpec.describe CallFlowLogic::Base do
 
   describe "#run!" do
     it "tries to complete the phone call" do
-      event = create_event
+      phone_call, event = create_phone_call_with_event(status: :remotely_queued, remote_status: "in-progress")
       call_flow_logic = described_class.new(event: event)
 
       call_flow_logic.run!
 
-      expect(event.phone_call.reload).to be_in_progress
+      expect(phone_call.reload.status).to eq("in_progress")
+    end
+
+    it "retries outbound calls" do
+      travel_to(Time.current) do
+        account = create(:account, settings: { max_phone_calls_for_callout_participation: 3 })
+        callout_participation = create_callout_participation(account: account)
+        phone_call, event = create_phone_call_with_event(
+          callout_participation: callout_participation,
+          status: :remotely_queued,
+          remote_status: "failed"
+        )
+        call_flow_logic = described_class.new(event: event)
+
+        call_flow_logic.run!
+
+        expect(RetryPhoneCallJob).to have_been_enqueued.at(15.minutes.from_now).with(phone_call)
+
+        perform_enqueued_jobs
+
+        expect(callout_participation.phone_calls.count).to eq(2)
+        expect(callout_participation.phone_calls.last.status).to eq("created")
+      end
+    end
+
+    it "does not retry calls if maximum number of calls is reached" do
+      account = create(:account, settings: { max_phone_calls_for_callout_participation: 1 })
+      callout_participation = create_callout_participation(account: account)
+      _, event = create_phone_call_with_event(
+        callout_participation: callout_participation,
+        status: "remotely_queued",
+        remote_status: "failed"
+      )
+      call_flow_logic = described_class.new(event: event)
+
+      call_flow_logic.run!
+
+      expect(RetryPhoneCallJob).not_to have_been_enqueued
     end
 
     it "retries ActiveRecord::StaleObjectError" do
-      event = create_event
+      phone_call, event = create_phone_call_with_event(status: :remotely_queued, remote_status: "in-progress")
       call_flow_logic = described_class.new(event: event)
-      PhoneCall.find(event.phone_call.id).touch
+      PhoneCall.find(phone_call.id).touch
 
       call_flow_logic.run!
 
-      expect(event.phone_call.reload).to be_in_progress
+      expect(phone_call.reload.status).to eq("in_progress")
     end
   end
 
-  def create_event
-    phone_call = create(:phone_call, :created, remote_status: "in-progress")
-    create(:remote_phone_call_event, phone_call: phone_call)
+  def create_phone_call_with_event(status: :in_progress, remote_status: "in-progress", **phone_call_attributes)
+    phone_call = create(
+      :phone_call,
+      status: status,
+      remote_status: remote_status,
+      **phone_call_attributes
+    )
+    event = create(:remote_phone_call_event, phone_call: phone_call)
+    [phone_call, event]
   end
 end

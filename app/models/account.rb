@@ -55,6 +55,7 @@ class Account < ApplicationRecord
             allow_nil: true
 
   before_validation :set_call_flow_logic, on: :create
+  before_create :set_default_settings
 
   strip_attributes
 
@@ -63,9 +64,9 @@ class Account < ApplicationRecord
   end
 
   def self.find_by_platform_account_sid(account_sid)
-    where(
+    find_by(
       twilio_account_sid?(account_sid) ? :twilio_account_sid : :somleng_account_sid => account_sid
-    ).first
+    )
   end
 
   def platform_auth_token(account_sid)
@@ -89,15 +90,31 @@ class Account < ApplicationRecord
     access_tokens.with_permissions(:batch_operations_write).last
   end
 
+  def phone_call_queue_limit
+    settings.fetch("phone_call_queue_limit")
+  end
+
+  def from_phone_number
+    settings.fetch("from_phone_number")
+  end
+
+  def max_phone_calls_for_callout_participation
+    settings.fetch("max_phone_calls_for_callout_participation")
+  end
+
   private
 
-  def set_call_flow_logic
-    return if call_flow_logic.present?
+  def set_default_settings
+    settings["from_phone_number"] ||= "1234"
+    settings["phone_call_queue_limit"] ||= 200
+    settings["max_phone_calls_for_callout_participation"] ||= 3
+  end
 
-    self.call_flow_logic = DEFAULT_CALL_FLOW_LOGIC
+  def set_call_flow_logic
+    self.call_flow_logic ||= DEFAULT_CALL_FLOW_LOGIC
   end
 
   def platform_configuration(key)
-    read_attribute("#{platform_provider_name}_#{key}")
+    self["#{platform_provider_name}_#{key}"]
   end
 end

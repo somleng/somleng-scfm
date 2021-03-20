@@ -102,20 +102,6 @@ FactoryBot.define do
         callout_population.callout ||= build(:callout, account: callout_population.account)
       end
     end
-
-    factory :batch_operation_phone_call_operation, class: BatchOperation::PhoneCallOperation do
-      skip_validate_preview_presence { true }
-
-      factory :phone_call_create_batch_operation, class: BatchOperation::PhoneCallCreate do
-        remote_request_params { generate(:twilio_request_params) }
-      end
-
-      factory :phone_call_queue_batch_operation, class: BatchOperation::PhoneCallQueue do
-      end
-
-      factory :phone_call_queue_remote_fetch_batch_operation, class: BatchOperation::PhoneCallQueueRemoteFetch do
-      end
-    end
   end
 
   factory :callout_participation do
@@ -128,12 +114,10 @@ FactoryBot.define do
 
     trait :outbound do
       callout_participation
-      remote_request_params { generate(:twilio_request_params) }
     end
 
     trait :inbound do
       callout_participation { nil }
-      remote_request_params { {} }
       msisdn { generate(:somali_msisdn) }
       remote_direction { PhoneCall::TWILIO_DIRECTIONS[:inbound] }
     end

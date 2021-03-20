@@ -9,7 +9,7 @@ RSpec.describe PhoneCall do
   describe "locking" do
     it "prevents stale phone calls from being updated" do
       phone_call1 = create(:phone_call)
-      phone_call2 = described_class.find(phone_call1.id)
+      phone_call2 = PhoneCall.find(phone_call1.id)
       phone_call1.touch
 
       expect { phone_call2.touch }.to raise_error(ActiveRecord::StaleObjectError)
@@ -58,7 +58,7 @@ RSpec.describe PhoneCall do
 
     phone_call.destroy
 
-    expect(described_class.find_by_id(phone_call.id)).to eq(nil)
+    expect(PhoneCall.find_by(id: phone_call.id)).to eq(nil)
   end
 
   it "does not allow a queued call to be destroyed" do
@@ -66,7 +66,7 @@ RSpec.describe PhoneCall do
 
     phone_call.destroy
 
-    expect(described_class.find_by_id(phone_call.id)).to be_present
+    expect(PhoneCall.find_by(id: phone_call.id)).to be_present
     expect(phone_call.errors[:base].first).to eq(
       I18n.t!(
         "activerecord.errors.models.phone_call.attributes.base.restrict_destroy_status",
@@ -80,7 +80,7 @@ RSpec.describe PhoneCall do
       it "transitions to queued" do
         phone_call = create(:phone_call, :created)
 
-        expect { phone_call.queue! }.to broadcast(:phone_call_queued)
+        phone_call.queue!
 
         expect(phone_call).to be_queued
       end
@@ -196,10 +196,6 @@ RSpec.describe PhoneCall do
 
   describe "#remote_response" do
     it { expect(subject.remote_response).to eq({}) }
-  end
-
-  describe "#remote_request_params" do
-    it { expect(subject.remote_request_params).to eq({}) }
   end
 
   describe "#remote_queue_response" do

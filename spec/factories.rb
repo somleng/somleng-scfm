@@ -172,10 +172,6 @@ FactoryBot.define do
   end
 
   factory :account do
-    settings {
-      { from_phone_number: "1234", phone_call_queue_limit: 200 }
-    }
-
     trait :with_default_provider do
       with_twilio_provider
     end

@@ -44,8 +44,7 @@ Rails.application.routes.draw do
       resources :phone_calls, only: :index
     end
 
-    resources :phone_calls, only: %i[index show destroy] do
-      resources :phone_call_events, only: :create
+    resources :phone_calls, only: %i[index show] do
       resources :remote_phone_call_events, only: :index
     end
 

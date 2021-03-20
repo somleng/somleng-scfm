@@ -6,6 +6,6 @@ module HasCallFlowLogic
   end
 
   def call_flow_logic=(value)
-    write_attribute(:call_flow_logic, value.presence)
+    self[:call_flow_logic] = value.presence
   end
 end

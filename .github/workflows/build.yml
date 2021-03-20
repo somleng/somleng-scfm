@@ -106,17 +106,17 @@ jobs:
     if: github.ref == 'refs/heads/master'
 
     steps:
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '2.6'
-          bundler-cache: true
-
       - name: Checkout Slate
         uses: actions/checkout@v2
         with:
           ref: main
           repository: slatedocs/slate
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '2.6'
+          bundler-cache: true
 
       - name: Download Documentation Source
         uses: actions/download-artifact@v1

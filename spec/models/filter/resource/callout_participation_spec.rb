@@ -42,52 +42,6 @@ RSpec.describe Filter::Resource::CalloutParticipation do
 
       expect(filter.resources).to match_array([callout_participation])
     end
-
-    it "filters by has_phone_calls: true" do
-      _non_matching_callout_participation = create(:callout_participation)
-      callout_participation = create(:callout_participation)
-      create(:phone_call, callout_participation: callout_participation)
-
-      filter = build_filter(has_phone_calls: "true")
-
-      expect(filter.resources).to match_array([callout_participation])
-    end
-
-    it "filters by has_phone_calls: false" do
-      non_matching_callout_participation = create(:callout_participation)
-      callout_participation = create(:callout_participation)
-      create(:phone_call, callout_participation: non_matching_callout_participation)
-
-      filter = build_filter(has_phone_calls: "false")
-
-      expect(filter.resources).to match_array([callout_participation])
-    end
-
-    it "filters by last_phone_call_attempt" do
-      _non_matching_callout_participation = create(:callout_participation)
-      callout_participation = create(:callout_participation)
-      create(:phone_call, :failed, callout_participation: callout_participation)
-
-      filter = build_filter(last_phone_call_attempt: " failed,  errored  ")
-
-      expect(filter.resources).to match_array([callout_participation])
-    end
-
-    it "filters by no_phone_calls_or_last_attempt" do
-      callout_participation_with_failed_call = create(:callout_participation)
-      create(:phone_call, :failed, callout_participation: callout_participation_with_failed_call)
-      callout_participation = create(:callout_participation)
-
-      filter = build_filter(no_phone_calls_or_last_attempt: "errored")
-
-      expect(filter.resources).to match_array([callout_participation])
-
-      filter = build_filter(no_phone_calls_or_last_attempt: "failed")
-
-      expect(filter.resources).to match_array(
-        [callout_participation, callout_participation_with_failed_call]
-      )
-    end
   end
 
   def build_filter(filter_params = {})

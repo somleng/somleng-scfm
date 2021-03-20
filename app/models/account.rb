@@ -98,11 +98,16 @@ class Account < ApplicationRecord
     settings.fetch("from_phone_number")
   end
 
+  def max_phone_calls_for_callout_participation
+    settings.fetch("max_phone_calls_for_callout_participation")
+  end
+
   private
 
   def set_default_settings
     settings["from_phone_number"] ||= "1234"
     settings["phone_call_queue_limit"] ||= 200
+    settings["max_phone_calls_for_callout_participation"] ||= 3
   end
 
   def set_call_flow_logic

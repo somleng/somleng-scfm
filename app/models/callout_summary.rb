@@ -12,7 +12,7 @@ class CalloutSummary
   end
 
   def participations_still_to_be_called
-    callout_participations_preview.callout_participations(scope: callout_participations).count
+    callout_participations.still_trying(callout.account.max_phone_calls_for_callout_participation).count
   end
 
   def completed_calls
@@ -36,14 +36,6 @@ class CalloutSummary
   end
 
   private
-
-  def callout_participations_preview
-    @callout_participations_preview ||= Preview::PhoneCallCreate.new(
-      previewable: Filter::Params::CalloutParticipation.new(
-        account: callout.account, callout_filter_params: {}
-      )
-    )
-  end
 
   def callout_participations
     callout.callout_participations

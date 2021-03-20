@@ -10,12 +10,14 @@ class PhoneCall < ApplicationRecord
     not_answered: "no-answer"
   }.freeze
 
+  UNKNOWN_STATUSES = %i[remotely_queued in_progress].freeze
+
   # https://www.twilio.com/docs/api/voice/call#resource-properties
   TWILIO_DIRECTIONS = {
     inbound: "inbound"
   }.freeze
 
-  belongs_to :callout_participation, optional: true
+  belongs_to :callout_participation, optional: true, counter_cache: true
   belongs_to :contact, validate: true
   belongs_to :account
   has_many   :remote_phone_call_events, dependent: :restrict_with_error
@@ -116,7 +118,11 @@ class PhoneCall < ApplicationRecord
   end
 
   def self.to_expire
-    in_progress.or(remotely_queued).where(arel_table[:remotely_queued_at].lt(24.hours.ago))
+    with_unknown_status.where(arel_table[:remotely_queued_at].lt(24.hours.ago))
+  end
+
+  def self.with_unknown_status
+    where(status: UNKNOWN_STATUSES).where(arel_table[:remotely_queued_at].lt(10.minutes.ago))
   end
 
   def inbound?

@@ -5,25 +5,23 @@ RSpec.resource "Callout Participations" do
 
   get "/api/callout_participations" do
     example "List all Callout Participations" do
-      no_phone_calls_callout_participation = create_callout_participation(
+      filtered_callout_participation = create_callout_participation(
         account: account,
         metadata: {
           "foo" => "bar"
         }
       )
-      having_phone_calls_callout_participation = create_callout_participation(account: account, metadata: { "foo" => "bar" })
-      create(:phone_call, callout_participation: having_phone_calls_callout_participation)
+      create_callout_participation(account: account, metadata: { "bar" => "foo" })
       create(:callout_participation)
 
       set_authorization_header(access_token: access_token)
       do_request(
         q: {
-          "metadata" => { "foo" => "bar" },
-          having_max_phone_calls_count: 1
+          "metadata" => { "foo" => "bar" }
         }
       )
 
-      assert_filtered!(no_phone_calls_callout_participation)
+      assert_filtered!(filtered_callout_participation)
     end
   end
 

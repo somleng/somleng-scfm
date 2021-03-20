@@ -6,7 +6,7 @@ class ScheduledJob < ApplicationJob
       queue_phone_calls(account)
     end
 
-    fetch_remote_phone_calls
+    fetch_unknown_call_statuses
 
     PhoneCall.expire!
   end
@@ -25,9 +25,8 @@ class ScheduledJob < ApplicationJob
     end
   end
 
-  def fetch_remote_phone_calls
-    phone_calls = PhoneCall.where(status: UNKNOWN_PHONE_CALL_STATUSES).where("created_at < ?", 10.minutes.ago)
-    phone_calls.find_each do |phone_call|
+  def fetch_unknown_call_statuses
+    PhoneCall.with_unknown_status.find_each do |phone_call|
       FetchRemoteCallJob.perform_later(phone_call)
     end
   end

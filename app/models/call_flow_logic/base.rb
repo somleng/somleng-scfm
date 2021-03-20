@@ -2,7 +2,6 @@ module CallFlowLogic
   class Base
     attr_accessor :options
 
-    MAX_PHONE_CALLS_COUNT = 3
     RETRY_CALL_STATUSES = %i[not_answered busy failed].freeze
 
     def self.registered
@@ -28,10 +27,10 @@ module CallFlowLogic
     def run!
       phone_call.complete!
       return if phone_call.inbound?
-      return if callout_participation.phone_calls_count >= MAX_PHONE_CALLS_COUNT
+      return if callout_participation.phone_calls_count >= phone_call.account.max_phone_calls_for_callout_participation
       return unless phone_call.status.in?(RETRY_CALL_STATUSES)
 
-      RetryPhoneCallJob.set(wait: 15.minutes).perform_later
+      RetryPhoneCallJob.set(wait: 15.minutes).perform_later(phone_call)
     rescue ActiveRecord::StaleObjectError
       event.phone_call.reload
       retry

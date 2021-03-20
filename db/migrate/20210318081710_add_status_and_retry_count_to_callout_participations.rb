@@ -36,7 +36,8 @@ class AddStatusAndRetryCountToCalloutParticipations < ActiveRecord::Migration[6.
         Account.update_all(
           settings: {
             from_phone_number: "1294",
-            phone_call_queue_limit: 200
+            phone_call_queue_limit: 200,
+            max_phone_calls_for_callout_participation: 3
           }
         )
       end

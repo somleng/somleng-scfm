@@ -2,7 +2,7 @@ module CallFlowLogic
   class Base
     attr_accessor :options
 
-    RETRY_CALL_STATUSES = %w[not_answered busy failed].freeze
+    RETRY_CALL_STATUSES = %w[not_answered busy failed canceled].freeze
 
     def self.registered
       @registered ||= descendants.reject(&:abstract_class?).map(&:to_s)

@@ -50,26 +50,6 @@ RSpec.describe ScheduledJob do
     expect(FetchRemoteCallJob).to have_been_enqueued.with(phone_call_with_unknown_status)
   end
 
-  it "expires old calls with unknown call statuses" do
-    account = create(:account)
-
-    old_phone_call_with_unknown_status = create_phone_call(
-      account: account,
-      status: :in_progress,
-      remotely_queued_at: 24.hours.ago
-    )
-    phone_call_with_unknown_status = create_phone_call(
-      account: account,
-      status: :in_progress,
-      remotely_queued_at: 10.minutes.ago
-    )
-
-    ScheduledJob.perform_now
-
-    expect(old_phone_call_with_unknown_status.reload.status).to eq("expired")
-    expect(phone_call_with_unknown_status.reload.status).to eq("in_progress")
-  end
-
   def create_phone_call(account:, callout_status: :running, **attributes)
     callout_participation = create_callout_participation(
       account: account, callout: create(:callout, status: callout_status)

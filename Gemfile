@@ -6,6 +6,7 @@ gem "rails", "~> 6.0"
 gem "aasm", github: "aasm/aasm"
 gem "after_commit_everywhere"
 gem "api-pagination", github: "davidcelis/api-pagination"
+gem "aws-sdk-rails"
 gem "aws-sdk-s3", require: false
 gem "aws-sdk-sqs"
 gem "bitmask_attributes", github: "numerex/bitmask_attributes"

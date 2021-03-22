@@ -11,9 +11,6 @@ default: &default
 production: &production
   <<: *default
   default_url_host: "https://scfm.somleng.org"
-  smtp_username: <%= ENV["SMTP_USERNAME"] %>
-  smtp_password: <%= ENV["SMTP_PASSWORD"] %>
-  smtp_address: "email-smtp.us-east-1.amazonaws.com"
   sentry_dsn: "<%= Rails.application.credentials.sentry_dsn %>"
 
 development: &development

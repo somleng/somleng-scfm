@@ -71,6 +71,11 @@ resource "aws_iam_policy" "ecs_task_policy" {
         "sqs:ListQueues"
       ],
       "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action":"ses:SendRawEmail",
+      "Resource":"*"
     }
   ]
 }
@@ -115,7 +120,6 @@ resource "aws_iam_policy" "task_execution_custom_policy" {
       ],
       "Resource": [
         "${aws_ssm_parameter.rails_master_key.arn}",
-        "${data.aws_ssm_parameter.smtp_password.arn}",
         "${aws_ssm_parameter.db_master_password.arn}"
       ]
     }

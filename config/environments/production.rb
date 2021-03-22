@@ -108,8 +108,6 @@ Rails.application.configure do
     protocol: "https"
   }
 
-  Aws::Rails.add_action_mailer_delivery_method(:ses, region: "us-east-1")
-
   config.action_mailer.delivery_method = :ses
   config.action_mailer.deliver_later_queue_name = config.active_job.default_queue_name
 

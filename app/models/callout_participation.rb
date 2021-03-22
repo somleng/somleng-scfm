@@ -16,14 +16,7 @@ class CalloutParticipation < ApplicationRecord
   has_many :phone_calls,
            dependent: :restrict_with_error
 
-  has_many :remote_phone_call_events,
-           through: :phone_calls
-
-  validates :contact_id,
-            uniqueness: { scope: :callout_id }
-
-  validates :msisdn,
-            uniqueness: { scope: :callout_id }
+  has_many :remote_phone_call_events, through: :phone_calls
 
   delegate :call_flow_logic, to: :callout, prefix: true, allow_nil: true
   delegate :msisdn, to: :contact, prefix: true, allow_nil: true

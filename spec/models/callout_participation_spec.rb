@@ -16,7 +16,6 @@ RSpec.describe CalloutParticipation do
     it { is_expected.to allow_value(generate(:somali_msisdn)).for(:msisdn) }
     it { is_expected.not_to allow_value("252123456").for(:msisdn) }
     it { is_expected.to allow_value("+252 66-(2)-345-678").for(:msisdn) }
-    it { expect(create(:callout_participation)).to validate_uniqueness_of(:contact_id).scoped_to(:callout_id) }
   end
 
   it "sets defaults" do

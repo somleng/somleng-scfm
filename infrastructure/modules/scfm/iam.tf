@@ -71,6 +71,11 @@ resource "aws_iam_policy" "ecs_task_policy" {
         "sqs:ListQueues"
       ],
       "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action":"ses:SendRawEmail",
+      "Resource":"*"
     }
   ]
 }

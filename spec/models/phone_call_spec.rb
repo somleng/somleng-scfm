@@ -175,6 +175,15 @@ RSpec.describe PhoneCall do
 
         expect(phone_call).to be_canceled
       end
+
+      it "transitions to expired" do
+        phone_call = create(:phone_call, :remotely_queued, remotely_queued_at: 1.hour.ago)
+        phone_call.remote_status = "queued"
+
+        phone_call.complete!
+
+        expect(phone_call.status).to eq("expired")
+      end
     end
   end
 
@@ -200,38 +209,5 @@ RSpec.describe PhoneCall do
 
   describe "#remote_queue_response" do
     it { expect(subject.remote_queue_response).to eq({}) }
-  end
-
-  describe ".expire!" do
-    it "expires phone calls with unknown state" do
-      create(:phone_call, :created)
-      create(:phone_call, :remotely_queued, remotely_queued_at: 23.hours.ago)
-      create(:phone_call, :in_progress, remotely_queued_at: 23.hours.ago)
-      create(:phone_call, :completed, remotely_queued_at: 24.hours.ago)
-      create(:phone_call, :in_progress, remotely_queued_at: 23.hours.ago)
-
-      old_remotely_queued_call = create(
-        :phone_call, :remotely_queued, remotely_queued_at: 24.hours.ago
-      )
-      old_in_progress_call = create(:phone_call, :in_progress, remotely_queued_at: 24.hours.ago)
-
-      PhoneCall.expire!
-
-      expect(PhoneCall.expired).to match_array([old_remotely_queued_call, old_in_progress_call])
-    end
-  end
-
-  describe ".in_last_hours" do
-    it "returns recent phone calls" do
-      create(:phone_call, :created, created_at: 1.hour.ago)
-      create(:phone_call, :remotely_queued, created_at: 1.hour.ago, remotely_queued_at: 1.hour.ago)
-      created_phone_call = create(:phone_call, :created, created_at: 59.minutes.ago)
-      queued_phone_call = create(
-        :phone_call, :remotely_queued, created_at: 1.hour.ago, remotely_queued_at: 59.minutes.ago
-      )
-
-      expect(PhoneCall.in_last_hours(1)).to match_array([created_phone_call])
-      expect(PhoneCall.in_last_hours(1, :remotely_queued_at)).to match_array([queued_phone_call])
-    end
   end
 end

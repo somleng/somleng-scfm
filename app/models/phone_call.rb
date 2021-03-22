@@ -103,22 +103,14 @@ class PhoneCall < ApplicationRecord
                   if: :remote_status_canceled?
 
       transitions from: %i[created remotely_queued in_progress],
+                  to: :expired,
+                  if: :remote_call_expired?
+
+      transitions from: %i[created remotely_queued in_progress],
                   to: :completed,
                   after: :mark_callout_participation_answered!,
                   if: :remote_status_completed?
     end
-  end
-
-  def self.in_last_hours(hours, timestamp_column = :created_at)
-    where(arel_table[timestamp_column].gt(hours.hours.ago))
-  end
-
-  def self.expire!
-    to_expire.update_all(status: :expired)
-  end
-
-  def self.to_expire
-    with_unknown_status.where(arel_table[:remotely_queued_at].lt(24.hours.ago))
   end
 
   def self.with_unknown_status
@@ -137,6 +129,10 @@ class PhoneCall < ApplicationRecord
     return if call_flow_logic.present?
 
     self.call_flow_logic = callout_participation_call_flow_logic || contact_call_flow_logic
+  end
+
+  def remote_call_expired?
+    remote_status == "queued" && remotely_queued_at < 1.hour.ago
   end
 
   private

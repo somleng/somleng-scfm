@@ -7,8 +7,6 @@ class ScheduledJob < ApplicationJob
     end
 
     fetch_unknown_call_statuses
-
-    PhoneCall.expire!
   end
 
   private

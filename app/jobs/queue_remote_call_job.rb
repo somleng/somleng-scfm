@@ -4,6 +4,8 @@ class QueueRemoteCallJob < ApplicationJob
   attr_accessor :phone_call
 
   def perform(phone_call)
+    return if phone_call.remote_call_id.present?
+
     begin
       somleng_client = Somleng::Client.new(provider: phone_call.platform_provider)
       response = somleng_client.api.account.calls.create(

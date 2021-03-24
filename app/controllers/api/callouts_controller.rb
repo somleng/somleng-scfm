@@ -31,9 +31,5 @@ module API
     def contact
       @contact ||= current_account.contacts.find(params[:contact_id])
     end
-
-    def prepare_resource_for_create
-      resource.subscribe(CalloutObserver.new)
-    end
   end
 end

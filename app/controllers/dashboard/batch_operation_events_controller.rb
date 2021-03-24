@@ -2,10 +2,6 @@ module Dashboard
   class BatchOperationEventsController < Dashboard::EventsController
     private
 
-    def prepare_resource_for_create
-      batch_operation.subscribe(BatchOperationObserver.new)
-    end
-
     def parent_resource
       batch_operation
     end

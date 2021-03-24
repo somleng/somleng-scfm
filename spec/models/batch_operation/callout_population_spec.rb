@@ -12,6 +12,8 @@ module BatchOperation
       it "populates the callout" do
         callout_population = create(:callout_population)
         contact = create(:contact, account: callout_population.account)
+        already_participating_contact = create(:contact, account: callout_population.account)
+        create(:callout_participation, contact: already_participating_contact, callout: callout_population.callout)
         _other_contact = create(:contact)
 
         callout_population.run!

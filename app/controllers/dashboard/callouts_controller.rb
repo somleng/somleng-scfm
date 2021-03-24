@@ -29,7 +29,6 @@ module Dashboard
     end
 
     def prepare_resource_for_create
-      resource.subscribe(CalloutObserver.new)
       resource.created_by ||= current_user
     end
 

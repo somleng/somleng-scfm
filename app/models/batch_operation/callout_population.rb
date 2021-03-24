@@ -41,7 +41,7 @@ module BatchOperation
       Filter::Resource::Contact.new(
         { association_chain: account.contacts },
         contact_filter_params.with_indifferent_access
-      ).resources
+      ).resources.where.not(id: CalloutParticipation.select(:contact_id).where(callout: callout))
     end
 
     def create_callout_participation(contact)

@@ -43,10 +43,6 @@ RSpec.describe Callout do
     end
   end
 
-  context "saving" do
-    it { expect { create(:callout) }.to broadcast(:callout_committed) }
-  end
-
   describe "audio_file=" do
     it "tracks changes when attaching a new audio file" do
       callout = described_class.new

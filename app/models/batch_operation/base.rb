@@ -11,7 +11,6 @@ module BatchOperation
 
     include CustomStoreReaders
     include MetadataHelpers
-    include Wisper::Publisher
 
     belongs_to :account
 
@@ -30,16 +29,13 @@ module BatchOperation
       state :running
       state :finished
 
-      event :queue, after_commit: :publish_queued do
-        transitions(
-          from: :preview,
-          to: :queued
-        )
+      event :queue, after_commit: :run_later do
+        transitions(from: :preview, to: :queued)
       end
 
       event :start do
         transitions(
-          from: :queued,
+          from: %i[queued running],
           to: :running
         )
       end
@@ -51,11 +47,8 @@ module BatchOperation
         )
       end
 
-      event :requeue, after_commit: :publish_queued do
-        transitions(
-          from: :finished,
-          to: :queued
-        )
+      event :requeue, after_commit: :run_later do
+        transitions(to: :queued)
       end
     end
 
@@ -70,8 +63,8 @@ module BatchOperation
 
     private
 
-    def publish_queued
-      broadcast(:batch_operation_queued, self)
+    def run_later
+      RunBatchOperationJob.perform_later(self)
     end
 
     def set_default_parameters

@@ -2,14 +2,6 @@ module API
   class BatchOperationEventsController < API::ResourceEventsController
     private
 
-    def prepare_resource_for_create
-      subscribe_listeners
-    end
-
-    def subscribe_listeners
-      batch_operation.subscribe(BatchOperationObserver.new)
-    end
-
     def parent_resource
       batch_operation
     end

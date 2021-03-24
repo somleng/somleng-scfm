@@ -50,6 +50,20 @@ RSpec.describe ScheduledJob do
     expect(FetchRemoteCallJob).to have_been_enqueued.with(phone_call_with_unknown_status)
   end
 
+  it "requeues callout populations" do
+    callout_population = create(:callout_population, status: :running)
+    long_running_callout_population = create(:callout_population, status: :running, created_at: 15.minutes.ago)
+    finished_callout_population = create(:callout_population, status: :finished)
+
+    ScheduledJob.perform_now
+
+    expect(callout_population.reload.status).to eq("running")
+    expect(long_running_callout_population.reload.status).to eq("queued")
+    expect(finished_callout_population.reload.status).to eq("finished")
+    expect(RunBatchOperationJob).to have_been_enqueued.exactly(:once)
+    expect(RunBatchOperationJob).to have_been_enqueued.with(long_running_callout_population)
+  end
+
   def create_phone_call(account:, callout_status: :running, **attributes)
     callout_participation = create_callout_participation(
       account: account, callout: create(:callout, status: callout_status)

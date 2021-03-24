@@ -1,9 +1,7 @@
 class AudioFileProcessorJob < ApplicationJob
   require "aws-sdk-s3"
 
-  def perform(callout_id)
-    callout = Callout.find(callout_id)
-
+  def perform(callout)
     bucket_object_name = [
       generate_object_uuid,
       callout.audio_file.filename.sanitized

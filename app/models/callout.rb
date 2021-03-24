@@ -20,7 +20,6 @@ class Callout < ApplicationRecord
 
   include MetadataHelpers
   include HasCallFlowLogic
-  include Wisper::Publisher
   include AASM
   prepend ActiveStorageDirty
 
@@ -69,7 +68,7 @@ class Callout < ApplicationRecord
            allow_nil: true
 
   before_validation :set_call_flow_logic, on: :create
-  after_commit      :publish_committed
+  after_commit      :process_audio_file
 
   aasm column: :status, whiny_transitions: false do
     state :initialized, initial: true
@@ -114,7 +113,10 @@ class Callout < ApplicationRecord
     self.call_flow_logic = account_call_flow_logic
   end
 
-  def publish_committed
-    broadcast(:callout_committed, self)
+  def process_audio_file
+    return unless audio_file.attached?
+    return unless audio_file_blob_changed?
+
+    AudioFileProcessorJob.perform_later(self)
   end
 end

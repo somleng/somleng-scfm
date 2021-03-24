@@ -18,12 +18,6 @@ GIT
     pumi (0.8.0)
 
 GIT
-  remote: https://github.com/krisleech/wisper.git
-  revision: 7cff5bca86cf0afa14cde20832bf4f0de6a52188
-  specs:
-    wisper (2.0.1)
-
-GIT
   remote: https://github.com/numerex/bitmask_attributes.git
   revision: 0bb0d9993aa6cb3114daa0c118c2bc70a032847c
   specs:
@@ -605,7 +599,6 @@ DEPENDENCIES
   webdrivers
   webmock
   webpacker
-  wisper!
   wisper-rspec
 
 BUNDLED WITH

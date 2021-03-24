@@ -53,10 +53,6 @@ module BatchOperation
         expect(
           create(:batch_operation, :finished)
         ).to transition_from(:finished).to(:queued).on_event(:requeue)
-
-        expect {
-          create(:batch_operation, :finished).requeue!
-        }.to broadcast(:batch_operation_queued)
       end
     end
   end

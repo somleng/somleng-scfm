@@ -43,7 +43,6 @@ gem "turbolinks", "~> 5"
 gem "twilio-ruby"
 gem "tzinfo-data"
 gem "webpacker"
-gem "wisper", github: "krisleech/wisper"
 
 group :development, :test do
   gem "i18n-tasks"

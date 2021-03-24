@@ -31,7 +31,7 @@ class ScheduledJob < ApplicationJob
   end
 
   def retry_callout_populations
-    callout_populations = BatchOperation::CalloutPopulation.running.where("created_at < ?", 15.minutes.ago)
+    callout_populations = BatchOperation::CalloutPopulation.running.where("updated_at < ?", 15.minutes.ago)
     callout_populations.find_each(&:requeue!)
   end
 end

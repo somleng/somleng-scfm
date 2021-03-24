@@ -52,7 +52,7 @@ RSpec.describe ScheduledJob do
 
   it "requeues callout populations" do
     callout_population = create(:callout_population, status: :running)
-    long_running_callout_population = create(:callout_population, status: :running, created_at: 15.minutes.ago)
+    long_running_callout_population = create(:callout_population, status: :running, updated_at: 15.minutes.ago)
     finished_callout_population = create(:callout_population, status: :finished)
 
     ScheduledJob.perform_now

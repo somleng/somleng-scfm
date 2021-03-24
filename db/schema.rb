@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_24_042906) do
+ActiveRecord::Schema.define(version: 2021_03_24_051125) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -67,6 +67,7 @@ ActiveRecord::Schema.define(version: 2021_03_24_042906) do
     t.index ["callout_id"], name: "index_batch_operations_on_callout_id"
     t.index ["created_at"], name: "index_batch_operations_on_created_at"
     t.index ["status"], name: "index_batch_operations_on_status"
+    t.index ["updated_at"], name: "index_batch_operations_on_updated_at"
   end
 
   create_table "callout_participations", force: :cascade do |t|

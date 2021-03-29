@@ -21,5 +21,4 @@ Shoryuken.configure_server do |config|
   # https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-short-and-long-polling.html
   # https://github.com/phstc/shoryuken/wiki/Long-Polling
   config.sqs_client_receive_message_opts = { wait_time_seconds: 20 }
-  config.sqs_client_receive_message_opts[:scheduler] = config.sqs_client_receive_message_opts
 end

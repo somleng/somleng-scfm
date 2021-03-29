@@ -1,4 +1,4 @@
-delay: 10
+delay: 15
 queues:
   - <%= ENV.fetch("AWS_SQS_DEFAULT_QUEUE_NAME", "default") %>
 

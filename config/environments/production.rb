@@ -69,7 +69,8 @@ Rails.application.configure do
   # Use a real queuing backend for Active Job (and separate queues per environment)
   # config.active_job.queue_adapter     = :resque
   # config.active_job.queue_name_prefix = "somleng_scfm_#{Rails.env}"
-  config.active_job.queue_adapter = :shoryuken
+  config.active_job.queue_adapter = ActiveJob::QueueAdapters::ShoryukenConcurrentSendAdapter.new
+
   config.action_mailer.perform_caching = false
 
   config.active_storage.queue = config.active_job.default_queue_name

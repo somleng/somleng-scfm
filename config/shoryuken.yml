@@ -1,3 +1,10 @@
+delay: 10
 queues:
-  - [<%= ENV.fetch("AWS_SQS_SCHEDULER_QUEUE_NAME", "scheduler") %>, 1]
-  - [<%= ENV.fetch("AWS_SQS_DEFAULT_QUEUE_NAME", "default") %>, 10]
+  - <%= ENV.fetch("AWS_SQS_DEFAULT_QUEUE_NAME", "default") %>
+
+groups:
+  scheduler:
+    concurrency: 5
+    delay: 30
+    queues:
+      - <%= ENV.fetch("AWS_SQS_SCHEDULER_QUEUE_NAME", "scheduler") %>

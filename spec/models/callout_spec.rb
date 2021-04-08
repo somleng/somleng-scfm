@@ -46,7 +46,7 @@ RSpec.describe Callout do
   describe "audio_file=" do
     it "tracks changes when attaching a new audio file" do
       callout = described_class.new
-      callout.audio_file = fixture_file_upload("files/test.mp3", "audio/mp3")
+      callout.audio_file = fixture_file_upload("test.mp3", "audio/mp3")
 
       expect(callout.audio_file_blob_changed?).to eq(true)
       expect(callout.audio_file_blob_was).to eq(nil)
@@ -55,7 +55,7 @@ RSpec.describe Callout do
     it "tracks changes when updating the audio file" do
       callout = build(:callout, audio_file: file_fixture("test.mp3"))
       original_blob = callout.audio_file.blob
-      callout.audio_file = fixture_file_upload("files/big_file.mp3", "audio/mp3")
+      callout.audio_file = fixture_file_upload("big_file.mp3", "audio/mp3")
 
       expect(callout.audio_file_blob_changed?).to eq(true)
       expect(callout.audio_file_blob_was).to eq(original_blob)

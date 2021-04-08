@@ -1,6 +1,19 @@
 require_relative "boot"
 
-require "rails/all"
+require "rails"
+# Pick the frameworks you want:
+require "active_record/railtie"
+require "active_storage/engine"
+require "action_controller/railtie"
+require "action_view/railtie"
+require "action_mailer/railtie"
+require "active_job/railtie"
+require "sprockets/railtie"
+# require "action_cable/engine"
+# require "action_mailbox/engine"
+# require "action_text/engine"
+# require "rails/test_unit/railtie"
+
 require_relative "../app/middleware/rack/somleng_webhook_authentication"
 
 # Require the gems listed in Gemfile, including any gems
@@ -13,7 +26,7 @@ module SomlengScfm
     config.app_generators.scaffold_controller :responders_controller
 
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.0
+    config.load_defaults 6.1
 
     config.eager_load_paths << Rails.root.join("lib")
 

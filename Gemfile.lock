@@ -12,12 +12,6 @@ GIT
     api-pagination (4.8.2)
 
 GIT
-  remote: https://github.com/dwilkie/pumi.git
-  revision: fe376706b8e85d1670b8e39e219aa9bee1a3cd29
-  specs:
-    pumi (0.8.0)
-
-GIT
   remote: https://github.com/numerex/bitmask_attributes.git
   revision: 0bb0d9993aa6cb3114daa0c118c2bc70a032847c
   specs:
@@ -32,20 +26,13 @@ GIT
       actionview (>= 5)
 
 GIT
-  remote: https://github.com/samnang/rspec_api_documentation.git
-  revision: 7b4cef73b82fb6477c48887c9af55775a3f0cb1e
+  remote: https://github.com/zipmark/rspec_api_documentation.git
+  revision: d3892cc7388460a98476734963face5a7a2ac158
   specs:
     rspec_api_documentation (6.1.0)
       activesupport (>= 3.0.0)
       mustache (~> 1.0, >= 0.99.4)
       rspec (~> 3.0)
-
-GIT
-  remote: https://github.com/thoughtbot/shoulda-matchers.git
-  revision: 178df4970cd80d63b5e800bdf5d3a37bb43506ea
-  specs:
-    shoulda-matchers (4.5.1)
-      activesupport (>= 4.2.0)
 
 GEM
   remote: https://rubygems.org/
@@ -343,6 +330,7 @@ GEM
     public_suffix (4.0.6)
     puma (5.2.1)
       nio4r (~> 2.0)
+    pumi (0.8.0)
     racc (1.5.2)
     rack (2.2.3)
     rack-proxy (0.6.5)
@@ -461,6 +449,8 @@ GEM
       aws-sdk-core (>= 2)
       concurrent-ruby
       thor
+    shoulda-matchers (4.5.1)
+      activesupport (>= 4.2.0)
     simple_form (5.1.0)
       actionpack (>= 5.2)
       activemodel (>= 5.2)
@@ -570,12 +560,12 @@ DEPENDENCIES
   phony_rails
   pry
   puma
-  pumi!
+  pumi
   rails (~> 6.1.0)
   rails-controller-testing
   record_tag_helper!
   responders
-  rspec-rails (>= 4.0.0.beta2)
+  rspec-rails
   rspec_api_documentation!
   rubocop
   rubocop-performance
@@ -584,7 +574,7 @@ DEPENDENCIES
   sassc-rails
   sentry-raven
   shoryuken
-  shoulda-matchers!
+  shoulda-matchers
   simple_form
   simplecov
   simplecov-lcov

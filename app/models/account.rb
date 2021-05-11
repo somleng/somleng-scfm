@@ -91,7 +91,7 @@ class Account < ApplicationRecord
   end
 
   def phone_call_queue_limit
-    settings.fetch("phone_call_queue_limit")
+    settings.fetch("phone_call_queue_limit").to_i
   end
 
   def from_phone_number
@@ -99,7 +99,7 @@ class Account < ApplicationRecord
   end
 
   def max_phone_calls_for_callout_participation
-    settings.fetch("max_phone_calls_for_callout_participation")
+    settings.fetch("max_phone_calls_for_callout_participation").to_i
   end
 
   private

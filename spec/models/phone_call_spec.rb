@@ -122,6 +122,15 @@ RSpec.describe PhoneCall do
         expect(phone_call).to be_completed
       end
 
+      it "transitions to completed from expired" do
+        phone_call = create(:phone_call, :expired)
+        phone_call.remote_status = "completed"
+
+        phone_call.complete!
+
+        expect(phone_call).to be_completed
+      end
+
       it "transitions to failed" do
         phone_call = create(:phone_call, :in_progress)
         phone_call.remote_status = "failed"

@@ -5,8 +5,6 @@ FactoryBot.define do
     Hash[Twilio::REST::Client.new.api.account.calls.method(:create).parameters.map { |param| [param[1].to_s, param[1].to_s] }]
   end
 
-  sequence(:remote_call_id) { |_n| SecureRandom.uuid }
-
   sequence :twilio_remote_call_event_details do
     {
       CallSid: SecureRandom.uuid,
@@ -111,6 +109,7 @@ FactoryBot.define do
 
   factory :phone_call do
     outbound
+    remote_call_id { SecureRandom.uuid }
 
     trait :outbound do
       callout_participation
@@ -122,30 +121,11 @@ FactoryBot.define do
       remote_direction { PhoneCall::TWILIO_DIRECTIONS[:inbound] }
     end
 
-    trait :created do
-      status { PhoneCall::STATE_CREATED }
-    end
-
-    trait :completed do
-      status { PhoneCall::STATE_COMPLETED }
-    end
-
-    trait :failed do
-      status { PhoneCall::STATE_FAILED }
-    end
-
-    trait :in_progress do
-      status { PhoneCall::STATE_IN_PROGRESS }
-      remote_call_id
-    end
-
-    trait :remotely_queued do
-      status { PhoneCall::STATE_REMOTELY_QUEUED }
-      remote_call_id
-    end
+    traits_for_enum :status, [:created, :completed, :failed, :in_progress, :expired, :in_progress, :remotely_queued]
 
     trait :queued do
-      status { PhoneCall::STATE_QUEUED }
+      status { :queued }
+      remote_call_id { nil }
     end
   end
 

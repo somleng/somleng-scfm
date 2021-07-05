@@ -82,23 +82,23 @@ class PhoneCall < ApplicationRecord
     end
 
     event :complete do
-      transitions from: %i[created remotely_queued],
+      transitions from: %i[created remotely_queued expired],
                   to: :in_progress,
                   if: :remote_status_in_progress?
 
-      transitions from: %i[created remotely_queued in_progress],
+      transitions from: %i[created remotely_queued in_progress expired],
                   to: :busy,
                   if: :remote_status_busy?
 
-      transitions from: %i[created remotely_queued in_progress],
+      transitions from: %i[created remotely_queued in_progress expired],
                   to: :failed,
                   if: :remote_status_failed?
 
-      transitions from: %i[created remotely_queued in_progress],
+      transitions from: %i[created remotely_queued in_progress expired],
                   to: :not_answered,
                   if: :remote_status_not_answered?
 
-      transitions from: %i[created remotely_queued in_progress],
+      transitions from: %i[created remotely_queued in_progress expired],
                   to: :canceled,
                   if: :remote_status_canceled?
 
@@ -106,7 +106,7 @@ class PhoneCall < ApplicationRecord
                   to: :expired,
                   if: :remote_call_expired?
 
-      transitions from: %i[created remotely_queued in_progress],
+      transitions from: %i[created remotely_queued in_progress expired],
                   to: :completed,
                   after: :mark_callout_participation_answered!,
                   if: :remote_status_completed?

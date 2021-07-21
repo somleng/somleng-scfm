@@ -1,4 +1,6 @@
 class FetchRemoteCallJob < ApplicationJob
+  queue_as Rails.configuration.app_settings.fetch(:aws_sqs_low_priority_queue_name)
+
   def perform(phone_call)
     response = Somleng::Client.new(
       provider: phone_call.platform_provider

@@ -43,7 +43,7 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_high" {
   metric_query {
     id = "e1"
     return_data = true
-    expression = "m1 + m2"
+    expression = "m1 + m2 + m3 + m4"
     label = "Number of Messages"
   }
 
@@ -57,7 +57,7 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_high" {
       period              = 300 # Wait this number of seconds before triggering the alarm (smallest available)
       stat           = "Sum"
       dimensions = {
-        QueueName = aws_sqs_queue.this.name
+        QueueName = aws_sqs_queue.default.name
       }
     }
   }
@@ -73,6 +73,36 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_high" {
       stat           = "Sum"
       dimensions = {
         QueueName = aws_sqs_queue.scheduler.name
+      }
+    }
+  }
+
+  metric_query {
+    id = "m3"
+    return_data = false
+    label = "Number of Queue Messages"
+    metric {
+      namespace           = "AWS/SQS"
+      metric_name         = "ApproximateNumberOfMessagesVisible"
+      period              = 300 # Wait this number of seconds before triggering the alarm (smallest available)
+      stat           = "Sum"
+      dimensions = {
+        QueueName = aws_sqs_queue.high_priority.name
+      }
+    }
+  }
+
+  metric_query {
+    id = "m4"
+    return_data = false
+    label = "Number of Queue Messages"
+    metric {
+      namespace           = "AWS/SQS"
+      metric_name         = "ApproximateNumberOfMessagesVisible"
+      period              = 300 # Wait this number of seconds before triggering the alarm (smallest available)
+      stat           = "Sum"
+      dimensions = {
+        QueueName = aws_sqs_queue.low_priority.name
       }
     }
   }
@@ -89,7 +119,7 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_low" {
   metric_query {
     id = "e1"
     return_data = true
-    expression = "m1 + m2"
+    expression = "m1 + m2 + m3 + m4"
     label = "Number of Messages"
   }
 
@@ -103,7 +133,7 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_low" {
       period              = 300
       stat           = "Sum"
       dimensions = {
-        QueueName = aws_sqs_queue.this.name
+        QueueName = aws_sqs_queue.default.name
       }
     }
   }
@@ -119,6 +149,36 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_low" {
       stat           = "Sum"
       dimensions = {
         QueueName = aws_sqs_queue.scheduler.name
+      }
+    }
+  }
+
+  metric_query {
+    id = "m3"
+    return_data = false
+    label = "Number of Queue Messages"
+    metric {
+      namespace           = "AWS/SQS"
+      metric_name         = "ApproximateNumberOfMessagesVisible"
+      period              = 300
+      stat           = "Sum"
+      dimensions = {
+        QueueName = aws_sqs_queue.high_priority.name
+      }
+    }
+  }
+
+  metric_query {
+    id = "m4"
+    return_data = false
+    label = "Number of Queue Messages"
+    metric {
+      namespace           = "AWS/SQS"
+      metric_name         = "ApproximateNumberOfMessagesVisible"
+      period              = 300
+      stat           = "Sum"
+      dimensions = {
+        QueueName = aws_sqs_queue.low_priority.name
       }
     }
   }

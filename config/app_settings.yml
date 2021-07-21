@@ -2,7 +2,9 @@ default: &default
   time_zone: "UTC"
   mailer_sender: "support@somleng.org"
   secret_key_base: "<%= Rails.application.credentials.secret_key_base %>"
+  aws_sqs_high_priority_queue_name: <%= ENV.fetch("AWS_SQS_HIGH_PRIORITY_QUEUE_NAME", "high-priority") %>
   aws_sqs_default_queue_name: <%= ENV.fetch("AWS_SQS_DEFAULT_QUEUE_NAME", "default") %>
+  aws_sqs_low_priority_queue_name: <%= ENV.fetch("AWS_SQS_LOW_PRIORITY_QUEUE_NAME", "low-priority") %>
   aws_sqs_scheduler_queue_name: <%= ENV.fetch("AWS_SQS_SCHEDULER_QUEUE_NAME", "scheduler") %>
   aws_region: <%= ENV.fetch("AWS_DEFAULT_REGION", "ap-southeast-1") %>
   uploads_bucket: <%= ENV.fetch("UPLOADS_BUCKET", "uploads.somleng.org") %>

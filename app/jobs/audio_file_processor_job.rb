@@ -1,6 +1,8 @@
 class AudioFileProcessorJob < ApplicationJob
   require "aws-sdk-s3"
 
+  queue_as Rails.configuration.app_settings.fetch(:aws_sqs_high_priority_queue_name)
+
   def perform(callout)
     bucket_object_name = [
       generate_object_uuid,

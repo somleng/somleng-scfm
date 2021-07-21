@@ -1,4 +1,6 @@
 class ScheduledJob < ApplicationJob
+  queue_as Rails.configuration.app_settings.fetch(:aws_sqs_high_priority_queue_name)
+
   UNKNOWN_PHONE_CALL_STATUSES = %i[remotely_queued in_progress].freeze
 
   def perform

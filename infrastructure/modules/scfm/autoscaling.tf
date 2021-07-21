@@ -50,7 +50,7 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_high" {
   metric_query {
     id = "m1"
     return_data = false
-    label = "Number of Queue Messages"
+    label = "Number of default priority messages"
     metric {
       namespace           = "AWS/SQS"
       metric_name         = "ApproximateNumberOfMessagesVisible"
@@ -65,7 +65,7 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_high" {
   metric_query {
     id = "m2"
     return_data = false
-    label = "Number of Scheduler Messages"
+    label = "Number of scheduler messages"
     metric {
       namespace           = "AWS/SQS"
       metric_name         = "ApproximateNumberOfMessagesVisible"
@@ -80,7 +80,7 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_high" {
   metric_query {
     id = "m3"
     return_data = false
-    label = "Number of Queue Messages"
+    label = "Number of high priority messages"
     metric {
       namespace           = "AWS/SQS"
       metric_name         = "ApproximateNumberOfMessagesVisible"
@@ -95,7 +95,7 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_high" {
   metric_query {
     id = "m4"
     return_data = false
-    label = "Number of Queue Messages"
+    label = "Number of low priority messages"
     metric {
       namespace           = "AWS/SQS"
       metric_name         = "ApproximateNumberOfMessagesVisible"
@@ -126,7 +126,7 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_low" {
   metric_query {
     id = "m1"
     return_data = false
-    label = "Number of Queue Messages"
+    label = "Number of default priority messages"
     metric {
       namespace           = "AWS/SQS"
       metric_name         = "ApproximateNumberOfMessagesVisible"
@@ -141,7 +141,7 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_low" {
   metric_query {
     id = "m2"
     return_data = false
-    label = "Number of Scheduler Messages"
+    label = "Number of scheduler messages"
     metric {
       namespace           = "AWS/SQS"
       metric_name         = "ApproximateNumberOfMessagesVisible"
@@ -156,7 +156,7 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_low" {
   metric_query {
     id = "m3"
     return_data = false
-    label = "Number of Queue Messages"
+    label = "Number of high priority messages"
     metric {
       namespace           = "AWS/SQS"
       metric_name         = "ApproximateNumberOfMessagesVisible"
@@ -171,7 +171,7 @@ resource "aws_cloudwatch_metric_alarm" "worker_queue_size_alarm_low" {
   metric_query {
     id = "m4"
     return_data = false
-    label = "Number of Queue Messages"
+    label = "Number of low priority messages"
     metric {
       namespace           = "AWS/SQS"
       metric_name         = "ApproximateNumberOfMessagesVisible"

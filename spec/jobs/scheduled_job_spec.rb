@@ -30,10 +30,10 @@ RSpec.describe ScheduledJob do
     expect(QueueRemoteCallJob).to have_been_enqueued.with(created_phone_call_from_running_callout)
   end
 
-  it "fetches unknown call statuses" do
+  it "fetches in progress call statuses" do
     account = create(:account)
 
-    phone_call_with_unknown_status = create_phone_call(
+    phone_call_with_in_progress_status = create_phone_call(
       account: account,
       status: :in_progress,
       remotely_queued_at: 10.minutes.ago
@@ -43,11 +43,18 @@ RSpec.describe ScheduledJob do
       status: :in_progress,
       remotely_queued_at: Time.current
     )
+    _in_progress_phone_call = create_phone_call(
+      account: account,
+      status: :in_progress,
+      remotely_queued_at: 10.minutes.ago,
+      remote_status_fetch_queued_at: Time.current
+    )
 
     ScheduledJob.perform_now
 
     expect(FetchRemoteCallJob).to have_been_enqueued.exactly(:once)
-    expect(FetchRemoteCallJob).to have_been_enqueued.with(phone_call_with_unknown_status)
+    expect(FetchRemoteCallJob).to have_been_enqueued.with(phone_call_with_in_progress_status)
+    expect(phone_call_with_in_progress_status.reload.remote_status_fetch_queued_at).to be_present
   end
 
   it "requeues callout populations" do

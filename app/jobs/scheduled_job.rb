@@ -1,8 +1,6 @@
 class ScheduledJob < ApplicationJob
   queue_as Rails.configuration.app_settings.fetch(:aws_sqs_high_priority_queue_name)
 
-  UNKNOWN_PHONE_CALL_STATUSES = %i[remotely_queued in_progress].freeze
-
   def perform
     Account.find_each do |account|
       queue_phone_calls(account)
@@ -27,8 +25,9 @@ class ScheduledJob < ApplicationJob
   end
 
   def fetch_unknown_call_statuses
-    PhoneCall.with_unknown_status.find_each do |phone_call|
+    PhoneCall.to_fetch_remote_status.find_each do |phone_call|
       FetchRemoteCallJob.perform_later(phone_call)
+      phone_call.touch(:remote_status_fetch_queued_at)
     end
   end
 

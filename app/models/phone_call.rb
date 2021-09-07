@@ -10,7 +10,7 @@ class PhoneCall < ApplicationRecord
     not_answered: "no-answer"
   }.freeze
 
-  UNKNOWN_STATUSES = %i[remotely_queued in_progress].freeze
+  IN_PROGRESS_STATUSES = %i[remotely_queued in_progress].freeze
 
   # https://www.twilio.com/docs/api/voice/call#resource-properties
   TWILIO_DIRECTIONS = {
@@ -113,8 +113,12 @@ class PhoneCall < ApplicationRecord
     end
   end
 
-  def self.with_unknown_status
-    where(status: UNKNOWN_STATUSES).where(arel_table[:remotely_queued_at].lt(10.minutes.ago))
+  def self.to_fetch_remote_status
+    where(
+      status: IN_PROGRESS_STATUSES
+    ).where(
+      remote_status_fetch_queued_at: nil
+    ).where(arel_table[:remotely_queued_at].lt(10.minutes.ago))
   end
 
   def inbound?

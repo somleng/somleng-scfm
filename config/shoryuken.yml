@@ -1,6 +1,5 @@
 delay: 15
 concurrency: 25
-polling_strategy: StrictPriority
 queues:
   - [<%= ENV.fetch("AWS_SQS_HIGH_PRIORITY_QUEUE_NAME", "high-priority") %>]
   - [<%= ENV.fetch("AWS_SQS_DEFAULT_QUEUE_NAME", "default-priority") %>]

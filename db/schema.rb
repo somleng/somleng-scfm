@@ -196,6 +196,7 @@ ActiveRecord::Schema.define(version: 2021_09_07_151059) do
     t.index ["created_at"], name: "index_phone_calls_on_created_at"
     t.index ["msisdn"], name: "index_phone_calls_on_msisdn"
     t.index ["remote_call_id"], name: "index_phone_calls_on_remote_call_id", unique: true
+    t.index ["remote_status_fetch_queued_at"], name: "index_phone_calls_on_remote_status_fetch_queued_at"
     t.index ["remotely_queued_at"], name: "index_phone_calls_on_remotely_queued_at"
     t.index ["status"], name: "index_phone_calls_on_status"
   end

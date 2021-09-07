@@ -16,9 +16,15 @@ RSpec.describe FetchRemoteCallJob do
         :get,
         "https://api.twilio.com/2010-04-01/Accounts/#{account.twilio_account_sid}/Calls/#{phone_call.remote_call_id}.json"
       )
-      expect(phone_call.remote_response).to be_present
-      expect(phone_call.remote_status).to eq("in-progress")
-      expect(phone_call).to be_in_progress
+
+      expect(phone_call).to have_attributes(
+        remote_response: {
+          "status" => "in-progress"
+        },
+        remote_status: "in-progress",
+        status: "in_progress",
+        remote_status_fetch_queued_at: nil
+      )
     end
 
     it "completes a call" do
@@ -31,9 +37,24 @@ RSpec.describe FetchRemoteCallJob do
       FetchRemoteCallJob.new.perform(phone_call)
 
       phone_call.reload
-      expect(phone_call.remote_response).to be_present
-      expect(phone_call.duration).to eq(87)
-      expect(phone_call).to be_completed
+
+      expect(phone_call).to have_attributes(
+        remote_response: {
+          "status" => "completed",
+          "duration" => "87"
+        },
+        duration: 87,
+        status: "completed"
+      )
+    end
+
+    it "returns if the phone call is already finished" do
+      account = create(:account, :with_twilio_provider)
+      phone_call = create(:phone_call, :completed, account: account)
+
+      FetchRemoteCallJob.new.perform(phone_call)
+
+      expect(WebMock).not_to have_requested(:get, %r{https://api.twilio.com})
     end
 
     def stub_twilio_request(response:)

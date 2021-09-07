@@ -22,5 +22,5 @@ module "scfm" {
   database_subnets = data.terraform_remote_state.core_infrastructure.outputs.vpc.database_subnets
 
   ecs_worker_autoscale_min_instances = 1
-  ecs_worker_autoscale_max_instances = 2
+  ecs_worker_autoscale_max_instances = 4
 }

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_04_08_081636) do
+ActiveRecord::Schema.define(version: 2021_09_07_151059) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -189,12 +189,14 @@ ActiveRecord::Schema.define(version: 2021_04_08_081636) do
     t.integer "duration", default: 0, null: false
     t.integer "lock_version", default: 0, null: false
     t.bigint "account_id", null: false
+    t.datetime "remote_status_fetch_queued_at"
     t.index ["account_id"], name: "index_phone_calls_on_account_id"
     t.index ["callout_participation_id"], name: "index_phone_calls_on_callout_participation_id"
     t.index ["contact_id"], name: "index_phone_calls_on_contact_id"
     t.index ["created_at"], name: "index_phone_calls_on_created_at"
     t.index ["msisdn"], name: "index_phone_calls_on_msisdn"
     t.index ["remote_call_id"], name: "index_phone_calls_on_remote_call_id", unique: true
+    t.index ["remote_status_fetch_queued_at"], name: "index_phone_calls_on_remote_status_fetch_queued_at"
     t.index ["remotely_queued_at"], name: "index_phone_calls_on_remotely_queued_at"
     t.index ["status"], name: "index_phone_calls_on_status"
   end

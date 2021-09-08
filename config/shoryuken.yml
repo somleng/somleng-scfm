@@ -10,7 +10,7 @@ groups:
     queues:
       - <%= ENV.fetch("AWS_SQS_DEFAULT_QUEUE_NAME", "default-priority") %>
   low_priority:
-    concurrency: 30
+    concurrency: 25
     delay: 30
     queues:
       - <%= ENV.fetch("AWS_SQS_LOW_PRIORITY_QUEUE_NAME", "low-priority") %>

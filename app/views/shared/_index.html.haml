@@ -1,6 +1,3 @@
-#page_entries_info.col-12
-  %h6
-    = page_entries_info(resources)
 .col-12{class: ("resources-filter" if content_for?(:resources_filter))}
   - if content_for?(:resources_filter)
     #filters.dropdown.show
@@ -10,4 +7,4 @@
         = yield(:resources_filter)
   = yield(:resources_table)
 .col-12
-  = paginate(resources)
+  = render("shared/pagination", resources: resources)

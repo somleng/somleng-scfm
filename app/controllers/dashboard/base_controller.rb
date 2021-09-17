@@ -36,7 +36,7 @@ module Dashboard
     end
 
     def find_resources
-      @resources = super.page(params[:page])
+      @resources = super.page(params[:page]).without_count
     end
 
     def respond_with_destroyed_resource

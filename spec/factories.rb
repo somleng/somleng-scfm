@@ -113,6 +113,7 @@ FactoryBot.define do
 
     trait :outbound do
       callout_participation
+      callout { callout_participation&.callout }
     end
 
     trait :inbound do

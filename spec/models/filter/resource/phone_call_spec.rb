@@ -56,6 +56,22 @@ RSpec.describe Filter::Resource::PhoneCall do
       expect(results).to match_array([phone_call])
     end
 
+    it "filters by callout_id" do
+      callout = create(:callout)
+      callout_participation = create(:callout_participation, callout: callout)
+      phone_call = create(
+        :phone_call,
+        callout: callout,
+        callout_participation: callout_participation
+      )
+      create(:phone_call)
+      filter = build_filter(callout_id: callout.id)
+
+      results = filter.resources
+
+      expect(results).to match_array([phone_call])
+    end
+
     it "filters by callout_participation_id" do
       callout_participation = create(:callout_participation)
       phone_call = create(:phone_call, callout_participation: callout_participation)

@@ -44,6 +44,7 @@ module Filter
 
       def filter_params
         params.slice(
+          :callout_id,
           :callout_participation_id,
           :contact_id,
           :status,

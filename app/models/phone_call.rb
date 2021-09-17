@@ -20,6 +20,7 @@ class PhoneCall < ApplicationRecord
   belongs_to :callout_participation, optional: true, counter_cache: true
   belongs_to :contact, validate: true
   belongs_to :account
+  belongs_to :callout, optional: true
   has_many   :remote_phone_call_events, dependent: :restrict_with_error
 
   include MetadataHelpers
@@ -37,8 +38,6 @@ class PhoneCall < ApplicationRecord
 
   delegate :platform_provider,
            to: :account
-
-  delegate :callout, :callout_id, to: :callout_participation, allow_nil: true
 
   before_validation :set_defaults, on: :create
   before_destroy    :validate_destroy

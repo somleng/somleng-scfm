@@ -14,7 +14,7 @@ class ScheduledJob < ApplicationJob
 
   def queue_phone_calls(account)
     phone_calls = account.phone_calls
-                         .created.joins(callout_participation: :callout)
+                         .created.joins(:callout)
                          .merge(Callout.running)
                          .limit(account.phone_call_queue_limit)
 

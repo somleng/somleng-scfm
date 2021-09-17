@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_07_151059) do
+ActiveRecord::Schema.define(version: 2021_09_17_013401) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -190,7 +190,9 @@ ActiveRecord::Schema.define(version: 2021_09_07_151059) do
     t.integer "lock_version", default: 0, null: false
     t.bigint "account_id", null: false
     t.datetime "remote_status_fetch_queued_at"
+    t.bigint "callout_id"
     t.index ["account_id"], name: "index_phone_calls_on_account_id"
+    t.index ["callout_id"], name: "index_phone_calls_on_callout_id"
     t.index ["callout_participation_id"], name: "index_phone_calls_on_callout_participation_id"
     t.index ["contact_id"], name: "index_phone_calls_on_contact_id"
     t.index ["created_at"], name: "index_phone_calls_on_created_at"
@@ -270,6 +272,7 @@ ActiveRecord::Schema.define(version: 2021_09_07_151059) do
   add_foreign_key "oauth_applications", "accounts", column: "owner_id"
   add_foreign_key "phone_calls", "accounts"
   add_foreign_key "phone_calls", "callout_participations"
+  add_foreign_key "phone_calls", "callouts"
   add_foreign_key "phone_calls", "contacts"
   add_foreign_key "remote_phone_call_events", "phone_calls"
   add_foreign_key "users", "accounts"

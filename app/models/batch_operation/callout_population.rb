@@ -52,6 +52,7 @@ module BatchOperation
         callout_participation.callout_population = self
         callout_participation.phone_calls.build(
           account: callout.account,
+          callout: callout,
           contact: contact
         )
       end

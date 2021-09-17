@@ -59,7 +59,11 @@ RSpec.describe Filter::Resource::PhoneCall do
     it "filters by callout_id" do
       callout = create(:callout)
       callout_participation = create(:callout_participation, callout: callout)
-      phone_call = create(:phone_call, callout: callout, callout_participation: callout_participation)
+      phone_call = create(
+        :phone_call,
+        callout: callout,
+        callout_participation: callout_participation
+      )
       create(:phone_call)
       filter = build_filter(callout_id: callout.id)
 

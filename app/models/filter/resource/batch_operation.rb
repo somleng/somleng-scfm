@@ -12,6 +12,10 @@ module Filter
           { json_attribute: :parameters }.merge(options), params
         )
       end
+
+      def filter_params
+        params.slice(:callout_id, :status)
+      end
     end
   end
 end

@@ -5,12 +5,12 @@ RSpec.resource "Batch Operations" do
 
   get "/api/batch_operations" do
     example "List all Batch Operations" do
-      filtered_batch_operation = create(
-        :batch_operation,
+      callout = create(:callout, account: account)
+
+      callout_population = create(
+        :callout_population,
         account: account,
-        metadata: {
-          "foo" => "bar"
-        }
+        callout: callout
       )
       create(:batch_operation, account: account)
       create(:batch_operation)
@@ -18,16 +18,14 @@ RSpec.resource "Batch Operations" do
       set_authorization_header(access_token: access_token)
       do_request(
         q: {
-          "metadata" => {
-            "foo" => "bar"
-          }
+          callout_id: callout.id
         }
       )
 
       expect(response_status).to eq(200)
       parsed_body = JSON.parse(response_body)
       expect(parsed_body.size).to eq(1)
-      expect(parsed_body.first.fetch("id")).to eq(filtered_batch_operation.id)
+      expect(parsed_body.dig(0, "id")).to eq(callout_population.id)
     end
   end
 

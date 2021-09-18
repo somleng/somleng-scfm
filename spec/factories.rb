@@ -2,7 +2,11 @@ FactoryBot.define do
   sequence :somali_msisdn, 252_662_345_678, &:to_s
 
   sequence :twilio_request_params do
-    Hash[Twilio::REST::Client.new.api.account.calls.method(:create).parameters.map { |param| [param[1].to_s, param[1].to_s] }]
+    params = Twilio::REST::Client.new.api.account.calls.method(:create).parameters.map do |param|
+      [param[1].to_s, param[1].to_s]
+    end
+
+    Hash[params]
   end
 
   sequence :twilio_remote_call_event_details do
@@ -77,25 +81,13 @@ FactoryBot.define do
     msisdn { generate(:somali_msisdn) }
   end
 
-  factory :batch_operation_base, class: BatchOperation::Base do
+  factory :batch_operation_base, class: "BatchOperation::Base" do
     account
 
-    trait :preview do
-    end
+    traits_for_enum :status, %i[preview queued running finished]
 
-    trait :queued do
-      status { BatchOperation::Base::STATE_QUEUED }
-    end
-
-    trait :running do
-      status { BatchOperation::Base::STATE_RUNNING }
-    end
-
-    trait :finished do
-      status { BatchOperation::Base::STATE_FINISHED }
-    end
-
-    factory :callout_population, aliases: [:batch_operation], class: BatchOperation::CalloutPopulation do
+    factory :callout_population, aliases: [:batch_operation],
+                                 class: "BatchOperation::CalloutPopulation" do
       after(:build) do |callout_population|
         callout_population.callout ||= build(:callout, account: callout_population.account)
       end
@@ -122,7 +114,15 @@ FactoryBot.define do
       remote_direction { PhoneCall::TWILIO_DIRECTIONS[:inbound] }
     end
 
-    traits_for_enum :status, [:created, :completed, :failed, :in_progress, :expired, :in_progress, :remotely_queued]
+    traits_for_enum :status, %i[
+      created
+      completed
+      failed
+      in_progress
+      expired
+      in_progress
+      remotely_queued
+    ]
 
     trait :queued do
       status { :queued }

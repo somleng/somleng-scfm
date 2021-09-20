@@ -12,7 +12,8 @@ class RetryPhoneCallJob < ApplicationJob
     PhoneCall.create!(
       account: phone_call.account,
       callout_participation: callout_participation,
-      contact: phone_call.contact
+      contact: phone_call.contact,
+      callout: phone_call.callout
     )
   end
 end

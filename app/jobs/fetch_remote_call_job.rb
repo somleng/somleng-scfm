@@ -11,7 +11,7 @@ class FetchRemoteCallJob < ApplicationJob
     attributes = {
       remote_response: response.instance_variable_get(:@properties).compact,
       remote_status: response.status,
-      duration: response.duration,
+      duration: response.duration
     }.compact
 
     phone_call.update!(remote_status_fetch_queued_at: nil, **attributes)

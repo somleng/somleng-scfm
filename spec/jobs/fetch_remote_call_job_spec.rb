@@ -4,7 +4,12 @@ RSpec.describe FetchRemoteCallJob do
   describe "#perform" do
     it "updates the remote status of the call" do
       account = create(:account, :with_twilio_provider)
-      phone_call = create(:phone_call, :in_progress, account: account)
+      phone_call = create(
+        :phone_call,
+        :in_progress,
+        account: account,
+        remote_status_fetch_queued_at: Time.current
+      )
       stub_twilio_request(
         response: { body: { "status" => "in-progress" }.to_json }
       )

@@ -12,10 +12,9 @@ class FetchRemoteCallJob < ApplicationJob
       remote_response: response.instance_variable_get(:@properties).compact,
       remote_status: response.status,
       duration: response.duration,
-      remote_status_fetch_queued_at: nil
     }.compact
 
-    phone_call.update!(attributes)
+    phone_call.update!(remote_status_fetch_queued_at: nil, **attributes)
 
     event = RemotePhoneCallEvent.new(phone_call: phone_call)
     phone_call.call_flow_logic.constantize.new(event: event).run!

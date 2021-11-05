@@ -13,8 +13,12 @@ variable "logs_bucket" {}
 variable "codedeploy_role" {}
 variable "uploads_bucket" {}
 variable "audio_bucket" {}
-variable "load_balancer_arn" {}
+variable "load_balancer" {}
 variable "listener_arn" {}
+variable "subdomain" {}
+variable "cdn_subdomain" {}
+variable "route53_zone" {}
+variable "cdn_certificate" {}
 
 variable "webserver_container_name" {
   default = "nginx"
@@ -70,4 +74,7 @@ variable "ecs_as_cpu_high_threshold_per" {
 
 variable "scheduler_schedule" {
   default = "cron(* * * * ? *)"
+}
+variable "sqs_visibility_timeout_seconds" {
+  default = 1800
 }

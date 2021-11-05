@@ -1,6 +1,7 @@
 default: &default
   time_zone: "UTC"
   mailer_sender: "support@somleng.org"
+  asset_url_host: "https://cdn-scfm.somleng.org"
   secret_key_base: "<%= Rails.application.credentials.secret_key_base %>"
   aws_sqs_high_priority_queue_name: <%= ENV.fetch("AWS_SQS_HIGH_PRIORITY_QUEUE_NAME", "high-priority") %>
   aws_sqs_default_queue_name: <%= ENV.fetch("AWS_SQS_DEFAULT_QUEUE_NAME", "default") %>

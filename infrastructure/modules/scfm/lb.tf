@@ -28,7 +28,7 @@ resource "aws_lb_listener_rule" "this" {
 
   condition {
     host_header {
-      values = ["scfm.somleng.org"]
+      values = [aws_route53_record.app.fqdn]
     }
   }
 

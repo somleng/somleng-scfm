@@ -24,16 +24,33 @@ RSpec.resource "Shared API Features" do
         The links are formatted according to [RFC-8288](https://tools.ietf.org/html/rfc8288).
       HEREDOC
 
-      _matching_contact = create(:contact, account: account, metadata: { "gender" => "f" })
-      filtered_contacts = create_list(:contact, 25, account: account, metadata: { "gender" => "f" })
+      filtered_contacts = create_list(
+        :contact,
+        26,
+        account: account,
+        metadata: {
+          "gender" => "f",
+          "date_of_birth" => "2022-01-15"
+        }
+      )
 
-      create(:contact, account: account, metadata: { "gender" => "f" }, created_at: 2.days.ago)
-      create(:contact)
+      create(
+        :contact,
+        account: account,
+        metadata: {
+          "gender" => "f"
+        },
+        created_at: 2.days.ago
+      )
 
       set_authorization_header(access_token: access_token)
       do_request(
         q: {
-          "metadata" => { "gender" => "f" },
+          "metadata" => {
+            "gender" => "f",
+            "date_of_birth.date.gt" => "2022-01-01",
+            "date_of_birth.date.lt" => "2022-02-01"
+          },
           "created_at_after" => Date.yesterday
         },
         sort: "-id,created_at"

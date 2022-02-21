@@ -1,18 +1,33 @@
 module JSONQueryHelpers
   extend ActiveSupport::Concern
 
+  OPERATORS = {
+    "in" => "in",
+    "any" => "any",
+    "lt" => "<",
+    "lteq" => "<=",
+    "gt" => ">",
+    "gteq" => ">="
+  }.freeze
+
+  FIELD_TYPES = %w[numeric date].freeze
+
   class_methods do
     def json_has_value(keys, value, json_column_name)
       # Adapted from:
       # https://stackoverflow.com/questions/33432421/sqlite-json1-example-for-json-extract-set
       # http://guides.rubyonrails.org/active_record_postgresql.html#json
 
-      key, operator = [keys].flatten.join(",").split(".", 2)
+      key, field_type, operator = parse_keys(keys)
       json_column = "\"#{table_name}\".\"#{json_column_name}\""
-      sql = case
-            when operator == "in" then "#{json_column} #>> :key IN (:value)"
-            when operator == "any" then "(#{json_column} #>> :key)::JSONB ?| array[:value]"
-            when value.nil? then "#{json_column} #>> :key IS NULL"
+
+      sql = if operator == "in" then "#{json_column} #>> :key IN (:value)"
+            elsif operator == "any" then "(#{json_column} #>> :key)::JSONB ?| array[:value]"
+            elsif value.nil? then "#{json_column} #>> :key IS NULL"
+            elsif operator.in?(%w[lt lteq gt gteq])
+              field_type ||= "numeric"
+              operator = OPERATORS.fetch(operator)
+              "(#{json_column}#>>:key)::#{field_type} #{operator} :value::#{field_type}"
             else
               "#{json_column} #>> :key = :value"
             end
@@ -41,6 +56,18 @@ module JSONQueryHelpers
       return { keys => hash } unless hash.is_a?(Hash)
 
       hash.inject({}) { |h, v| h.merge! flatten_hash(v[-1], keys + [v[0]]) }
+    end
+
+    def parse_keys(keys)
+      key = [keys].flatten.join(",")
+      key_parts = key.split(".")
+
+      operator = key_parts.pop if key_parts.last.in?(OPERATORS.keys)
+      field_type = key_parts.pop if key_parts.last.in?(FIELD_TYPES)
+
+      key = key_parts.join(".")
+
+      [key, field_type, operator]
     end
   end
 end

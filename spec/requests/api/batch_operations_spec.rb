@@ -38,7 +38,13 @@ RSpec.resource "Batch Operations" do
 
     parameter(
       :parameters,
-      "Parameters for the batch operation. `limit`, specifies a limit to the number of operations that will occur in the batch operation. `skip_validate_preview_presence` turns off validation for creating batch operations which would not effect any resources"
+      <<~HEREDOC
+        Parameters for the batch operation.
+        `limit`, specifies a limit to the number of operations that will occur in the batch operation.
+        `skip_validate_preview_presence` turns off validation for creating batch operations which would not effect any resources.
+        `contact_filter_params` filter the contacts by the specified params.
+      HEREDOC
+
     )
 
     parameter(
@@ -60,7 +66,9 @@ RSpec.resource "Batch Operations" do
           "skip_validate_preview_presence" => "1",
           "contact_filter_params" => {
             "metadata" => {
-              "gender" => "f"
+              "gender" => "f",
+              "date_of_birth.date.gteq" => "2022-01-01",
+              "date_of_birth.date.lt" => "2022-02-01"
             }
           }
         }

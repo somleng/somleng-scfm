@@ -107,8 +107,6 @@ RSpec.resource "Batch Operations" do
       do_request(body)
 
       expect(response_status).to eq(422)
-      parsed_body = JSON.parse(response_body)
-      expect(parsed_body.dig("errors", "parameters.contact_filter_params")).to eq(["is invalid"])
     end
   end
 

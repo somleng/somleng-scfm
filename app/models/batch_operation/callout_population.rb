@@ -19,6 +19,8 @@ module BatchOperation
 
     accepts_nested_key_value_fields_for :contact_filter_metadata
 
+    validates :contact_filter_params, contact_filter_params: true
+
     def run!
       contacts_scope.find_each do |contact|
         create_callout_participation(contact)

@@ -1,8 +1,5 @@
 module API
   class BatchOperationsController < API::BaseController
-    include ValidateSchemaController
-    self.request_schema = CalloutPopulationRequestSchema
-
     respond_to :json
 
     private
@@ -34,7 +31,7 @@ module API
     end
 
     def permitted_params
-      params.permit(:metadata_merge_mode, :type, metadata: {}, parameters: {})
+      params.permit(:metadata_merge_mode, metadata: {}, parameters: {})
     end
 
     def show_location(resource)

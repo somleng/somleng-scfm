@@ -263,7 +263,7 @@ RSpec.resource "Batch Operations" do
       metadata: {
         "foo" => "bar"
       }.merge(metadata),
-      parameters: parameters,
+      parameters: parameters
     }.merge(options)
   end
 

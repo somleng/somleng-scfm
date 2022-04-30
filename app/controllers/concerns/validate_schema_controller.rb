@@ -7,6 +7,10 @@ module ValidateSchemaController
 
   private
 
+  def build_resource_from_params
+    @resource = build_resource_association_chain.new
+  end
+
   def create_resource
     @resource = validate_schema do |permitted_params|
       build_resource_association_chain.create!(permitted_params)
@@ -37,7 +41,7 @@ module ValidateSchemaController
 
   def build_errors(schema)
     schema.errors.each do |message|
-      resource.errors.add(message.path.first, message.text)
+      resource.errors.add(message.path.join("."), message.text)
     end
 
     resource

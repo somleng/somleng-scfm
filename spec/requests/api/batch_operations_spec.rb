@@ -40,16 +40,13 @@ RSpec.resource "Batch Operations" do
       :parameters,
       <<~HEREDOC
         Parameters for the batch operation.
-        `limit`, specifies a limit to the number of operations that will occur in the batch operation.
-        `skip_validate_preview_presence` turns off validation for creating batch operations which would not effect any resources.
         `contact_filter_params` filter the contacts by the specified params.
       HEREDOC
-
     )
 
     parameter(
       :callout_id,
-      "The `id` of the callout. Only applicable if the type is `BatchOperation::CalloutPopulation`"
+      "The `id` of the callout."
     )
 
     example "Populate a Callout" do
@@ -63,7 +60,6 @@ RSpec.resource "Batch Operations" do
         type: "BatchOperation::CalloutPopulation",
         callout_id: callout.id,
         parameters: {
-          "skip_validate_preview_presence" => "1",
           "contact_filter_params" => {
             "metadata" => {
               "gender" => "f",
@@ -81,9 +77,30 @@ RSpec.resource "Batch Operations" do
       expect(callout.reload.callout_populations.count).to eq(1)
     end
 
-    example "Create a Batch Operation with an invalid type", document: false do
+    example "Create a batch operation with an invalid type", document: false do
       body = build_batch_operation_request_body(
         type: "Contact"
+      )
+
+      set_authorization_header(access_token: access_token)
+      do_request(body)
+
+      expect(response_status).to eq(422)
+    end
+
+    example "Create a batch operation with an invalid query", document: false do
+      callout = create(:callout, account: account)
+
+      body = build_batch_operation_request_body(
+        type: "BatchOperation::CalloutPopulation",
+        callout_id: callout.id,
+        parameters: {
+          "contact_filter_params" => {
+            "metadata" => {
+              "date_of_birth.data.gteq" => "2022-01-01"
+            }
+          }
+        }
       )
 
       set_authorization_header(access_token: access_token)
@@ -120,7 +137,9 @@ RSpec.resource "Batch Operations" do
         },
         metadata_merge_mode: "replace",
         parameters: {
-          "foo" => "bar"
+          "contact_filter_params" => {
+            "metadata" => { "foo" => "bar" }
+          }
         }
       )
 
@@ -244,9 +263,7 @@ RSpec.resource "Batch Operations" do
       metadata: {
         "foo" => "bar"
       }.merge(metadata),
-      parameters: {
-        "skip_validate_preview_presence" => "1"
-      }.merge(parameters)
+      parameters: parameters
     }.merge(options)
   end
 

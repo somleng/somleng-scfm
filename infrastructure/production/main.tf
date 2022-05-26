@@ -21,6 +21,7 @@ module "scfm" {
   logs_bucket = data.terraform_remote_state.core_infrastructure.outputs.logs_bucket.id
   uploads_bucket = "uploads.somleng.org"
   audio_bucket = "audio.somleng.org"
+  db_name = "scfm"
 
   vpc_cidr_block = data.terraform_remote_state.core_infrastructure.outputs.vpc.vpc_cidr_block
   database_subnets = data.terraform_remote_state.core_infrastructure.outputs.vpc.database_subnets

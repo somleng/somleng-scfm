@@ -45,6 +45,7 @@ variable "database_subnets" {}
 variable "db_username" {
   default = "somleng"
 }
+variable "db_name" {}
 variable "enable_dashboard" {
   default = false
 }

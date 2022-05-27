@@ -13,11 +13,9 @@ class ScheduledJob < ApplicationJob
   private
 
   def queue_phone_calls(account)
-    phone_calls = PhoneCall.created
-                           .where(callout_id: account.callouts.running.select(:id))
-                           .limit(account.phone_call_queue_limit)
+    phone_calls = PhoneCall.created.where(callout_id: account.callouts.running.select(:id))
 
-    phone_calls.find_each do |phone_call|
+    phone_calls.limit(account.phone_call_queue_limit).each do |phone_call|
       phone_call.queue!
       QueueRemoteCallJob.perform_later(phone_call)
     end

@@ -91,7 +91,7 @@ class Account < ApplicationRecord
   end
 
   def phone_call_queue_limit
-    settings.fetch("phone_call_queue_limit").to_i
+    [settings.fetch("phone_call_queue_limit").to_i, 1000].max
   end
 
   def from_phone_number

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_09_17_013401) do
+ActiveRecord::Schema.define(version: 2022_05_27_074238) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -192,6 +192,7 @@ ActiveRecord::Schema.define(version: 2021_09_17_013401) do
     t.datetime "remote_status_fetch_queued_at"
     t.bigint "callout_id"
     t.index ["account_id"], name: "index_phone_calls_on_account_id"
+    t.index ["callout_id", "status"], name: "index_phone_calls_on_callout_id_and_status"
     t.index ["callout_id"], name: "index_phone_calls_on_callout_id"
     t.index ["callout_participation_id"], name: "index_phone_calls_on_callout_participation_id"
     t.index ["contact_id"], name: "index_phone_calls_on_contact_id"

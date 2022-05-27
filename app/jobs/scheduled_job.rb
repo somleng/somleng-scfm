@@ -13,10 +13,9 @@ class ScheduledJob < ApplicationJob
   private
 
   def queue_phone_calls(account)
-    phone_calls = account.phone_calls
-                         .created.joins(:callout)
-                         .merge(Callout.running)
-                         .limit(account.phone_call_queue_limit)
+    phone_calls = PhoneCall.created
+                           .where(callout_id: account.callouts.running.select(:id))
+                           .limit(account.phone_call_queue_limit)
 
     phone_calls.find_each do |phone_call|
       phone_call.queue!

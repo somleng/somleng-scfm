@@ -44,9 +44,9 @@ km:
         call_flow_logic:
           CallFlowLogic::EWSRegistration: Early Warning System Registration
           CallFlowLogic::HelloWorld: Hello World
+          CallFlowLogic::MamaInfoRegistration: Mama Info Registration
           CallFlowLogic::PlayMessage: Play Message
           CallFlowLogic::PlayMessageStartRapidproFlow: Play Message and Start RapidPro Flow
-          CallFlowLogic::Simulation: Simulation
     required:
       mark: "*"
       text: required

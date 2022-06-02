@@ -16,4 +16,5 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.acronym "REST"
   inflect.acronym "API"
   inflect.acronym "EWS"
+  inflect.acronym "URL"
 end

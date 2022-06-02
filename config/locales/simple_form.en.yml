@@ -43,8 +43,8 @@ en:
       defaults:
         call_flow_logic:
           CallFlowLogic::EWSRegistration: Early Warning System Registration
-          CallFlowLogic::MamaInfoRegistration: Mama Info Registration
           CallFlowLogic::HelloWorld: Hello World
+          CallFlowLogic::MamaInfoRegistration: Mama Info Registration
           CallFlowLogic::PlayMessage: Play Message
           CallFlowLogic::PlayMessageStartRapidproFlow: Play Message and Start RapidPro Flow
     required:

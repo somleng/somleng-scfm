@@ -1,6 +1,7 @@
 module CallFlowLogic
   class MamaInfoRegistration < Base
     # Call Flow
+    #
     # Play introduction
     # Press 1 if pregnant, 2 if had your baby, 3 to listen again.
     # -> 1
@@ -15,6 +16,60 @@ module CallFlowLogic
     #       Your baby was born in March 2022. Press 1 if correct, 2 if incorrect?
     #       -> 1
     #         Finished
+    #
+    # # Sound Files
+    #
+    # Format: "title-language_code"
+    #
+    # ## introduction-loz.mp3
+    #
+    # Hello! This is the registration portal of Mama Info service implemented by the
+    # organization People in Need and supported by the Ministry of Health of Zambia.
+    # Now, please pay attention to the instructions
+    #
+    # ## gather_mothers_status-loz.mp3
+    #
+    # If you are pregnant, please press 1.
+    # If you have had your baby, please press 2.
+    # If you want to listen to the instructions again, please press 3.
+    #
+    # ## gather_pregnancy_status-loz.mp3
+    #
+    # How many months pregnant are you? Enter the number of months on your keypad.
+    #
+    # ## confirm_pregnancy_status-loz.mp3
+    #
+    # Your baby is due in
+    #
+    # ## %{month}.mp3
+    #
+    # January -> December
+    #
+    # ## %{year}.mp3
+    #
+    # e.g. 2022
+    #
+    # ## gather_age-loz.mp3
+    #
+    # How many months old is your baby? Enter the number of months on your keypad.
+    #
+    # ## confirm_age-loz.mp3
+    #
+    # Your baby was born in
+    #
+    # ## registration_successful-loz.mp3
+    #
+    # Your registration to Mama Info service was successful.
+    # You can now expect receiving voice recorded messages focused on good practices
+    # in the fields of nutrition, health on regular basis. Thank you for your interest.
+    #
+    # ## confirm_input-loz.mp3
+    #
+    # Press 1 if correct. Press 2 if incorrect.
+    #
+    # ## invalid_response-loz.mp3
+    #
+    # We don’t quite understand your input, please try again.
 
     INITIAL_STATUS = :answered
     LANGUAGE_CODE = "loz".freeze # https://en.wikipedia.org/wiki/Lozi_language
@@ -23,7 +78,7 @@ module CallFlowLogic
     LISTEN_AGAIN_RESPONSE = 3
     CONFIRM_INPUT_RESPONSE = 1
     REGATHER_INPUT_RESPONSE = 2
-    PREGNANCY_TERM = 9.months
+    PREGNANCY_TERM = 9.months.freeze
 
     include AASM
 
@@ -130,13 +185,6 @@ module CallFlowLogic
       end
     end
 
-    def regather_invalid_input(&block)
-      @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
-        play(:invalid_response, response)
-        response.gather(action_on_empty_result: true, &block)
-      end
-    end
-
     def gather_pregnancy_status
       @voice_response = gather do |response|
         play(:gather_pregnancy_status, response)
@@ -161,6 +209,13 @@ module CallFlowLogic
       end
     end
 
+    def play_registration_successful
+      @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
+        play(:registration_successful, response)
+        response.redirect(current_url)
+      end
+    end
+
     def confirm_date_of_birth(&_block)
       unconfirmed_date_of_birth = metadata(:unconfirmed_date_of_birth).to_date
 
@@ -172,10 +227,10 @@ module CallFlowLogic
       end
     end
 
-    def play_registration_successful
+    def regather_invalid_input(&block)
       @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
-        play(:registration_successful, response)
-        response.redirect(current_url)
+        play(:invalid_response, response)
+        response.gather(action_on_empty_result: true, &block)
       end
     end
 
@@ -248,7 +303,7 @@ module CallFlowLogic
     end
 
     def valid_input?(range)
-      range.to_a.include?(pressed_digits)
+      range.member?(pressed_digits)
     end
 
     def persist_unconfirmed_expected_date_of_birth

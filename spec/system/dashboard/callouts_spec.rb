@@ -46,7 +46,7 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     expect(page).to have_title("New Callout")
 
-    fill_in("Audio url", with: "https://www.example.com/sample.mp3")
+    fill_in("Audio URL", with: "https://www.example.com/sample.mp3")
     choose("Hello World")
     fill_in_key_value_for(:metadata, with: { key: "location:country", value: "kh" })
     fill_in_key_value_for(:settings, with: { key: "rapidpro:flow_id", value: "flow-id" })
@@ -177,7 +177,7 @@ RSpec.describe "Callouts", :aggregate_failures do
       expect(page).to have_content("Initialized")
       expect(page).to have_content("Created at")
       expect(page).to have_content("Audio file")
-      expect(page).to have_content("Audio url")
+      expect(page).to have_content("Audio URL")
       expect(page).to have_content("Call flow")
       expect(page).to have_content("Hello World")
       expect(page).to have_content("Metadata")

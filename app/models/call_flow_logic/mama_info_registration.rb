@@ -217,7 +217,7 @@ module CallFlowLogic
     end
 
     def confirm_date_of_birth(&_block)
-      unconfirmed_date_of_birth = metadata(:unconfirmed_date_of_birth).to_date
+      unconfirmed_date_of_birth = metadata(phone_call, :unconfirmed_date_of_birth).to_date
 
       @voice_response = gather do |response|
         yield(response)
@@ -308,19 +308,18 @@ module CallFlowLogic
 
     def persist_unconfirmed_expected_date_of_birth
       estimated_date_of_birth = (PREGNANCY_TERM - pressed_digits.months).from_now.beginning_of_month
-      update_phone_call!(unconfirmed_date_of_birth: estimated_date_of_birth.to_date)
+      update_metadata!(phone_call, unconfirmed_date_of_birth: estimated_date_of_birth.to_date)
     end
 
     def persist_unconfirmed_date_of_birth
       estimated_date_of_birth = pressed_digits.months.ago.beginning_of_month
-      update_phone_call!(unconfirmed_date_of_birth: estimated_date_of_birth.to_date)
+      update_metadata!(phone_call, unconfirmed_date_of_birth: estimated_date_of_birth.to_date)
     end
 
     def persist_date_of_birth
-      date_of_birth = metadata(:unconfirmed_date_of_birth)
-      phone_call.contact.metadata["date_of_birth"] = date_of_birth
-      phone_call.save!
-      update_phone_call!(date_of_birth: date_of_birth)
+      date_of_birth = metadata(phone_call, :unconfirmed_date_of_birth)
+      update_metadata!(phone_call, date_of_birth: date_of_birth)
+      update_metadata!(phone_call.contact, date_of_birth: date_of_birth)
     end
 
     def play(filename, response)
@@ -340,13 +339,11 @@ module CallFlowLogic
     end
 
     def persist_status
-      update_phone_call!(status: aasm.to_state)
+      update_metadata!(phone_call, status: aasm.to_state)
     end
 
-    def update_phone_call!(data)
-      phone_call.update!(
-        metadata: phone_call.metadata.deep_merge(data)
-      )
+    def update_metadata!(object, data)
+      object.update!(metadata: object.metadata.deep_merge(data))
     end
 
     def dtmf_tones
@@ -357,8 +354,8 @@ module CallFlowLogic
       dtmf_tones.to_i
     end
 
-    def metadata(key)
-      phone_call.metadata.fetch(key.to_s)
+    def metadata(object, key)
+      object.metadata.fetch(key.to_s)
     end
   end
 end

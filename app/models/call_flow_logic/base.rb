@@ -3,7 +3,7 @@ module CallFlowLogic
     attr_accessor :options
 
     RETRY_CALL_STATUSES = %w[not_answered busy failed].freeze
-    ALWAYS_RETRY_CALL_STATUSES = %w[canceled expired].freeze
+    ALWAYS_RETRY_CALL_STATUSES = %w[canceled expired errored].freeze
 
     def self.registered
       @registered ||= descendants.reject(&:abstract_class?).map(&:to_s)

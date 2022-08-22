@@ -64,7 +64,8 @@ RSpec.resource "Batch Operations" do
             "metadata" => {
               "gender" => "f",
               "date_of_birth.date.gteq" => "2022-01-01",
-              "date_of_birth.date.lt" => "2022-02-01"
+              "date_of_birth.date.lt" => "2022-02-01",
+              "deregistered_at.exists" => false
             }
           }
         }

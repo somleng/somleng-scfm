@@ -7,7 +7,8 @@ module JSONQueryHelpers
     "lt" => "<",
     "lteq" => "<=",
     "gt" => ">",
-    "gteq" => ">="
+    "gteq" => ">=",
+    "exists" => "exists"
   }.freeze
 
   FIELD_TYPES = %w[numeric date].freeze
@@ -28,6 +29,19 @@ module JSONQueryHelpers
               field_type ||= "numeric"
               operator = OPERATORS.fetch(operator)
               "(#{json_column}#>>:key)::#{field_type} #{operator} :value::#{field_type}"
+            elsif operator == "exists"
+              keys = key.split(",")
+              key_field = keys.pop
+              parent_keys = keys.map { |k| sanitize_sql([" -> ?", k]) }.join
+
+              sql = sanitize_sql(
+                [
+                  "#{json_column}#{parent_keys} ? :key_field",
+                  key_field: key_field
+                ]
+              )
+
+              return ActiveModel::Type::Boolean.new.cast(value) ? where(sql) : where.not(sql)
             else
               "#{json_column} #>> :key = :value"
             end

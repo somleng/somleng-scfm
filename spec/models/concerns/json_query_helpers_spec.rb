@@ -68,6 +68,62 @@ RSpec.describe JSONQueryHelpers do
     expect(results).to match_array([record])
   end
 
+  it "matches keys" do
+    record = create_record_with_json(
+      "deregistered_at" => Time.current
+    )
+    create_record_with_json
+
+    results = Contact.json_has_values(
+      {
+        "deregistered_at.exists" => true
+      },
+      :metadata
+    )
+
+    expect(results).to match_array([record])
+  end
+
+  it "matches nested keys" do
+    record = create_record_with_json(
+      details: {
+        "deregistered_at" => Time.current
+      }
+    )
+    create_record_with_json(details: {})
+
+    results = Contact.json_has_values(
+      {
+        details: {
+          "deregistered_at.exists" => true
+        }
+      },
+      :metadata
+    )
+
+    expect(results).to match_array([record])
+  end
+
+  it "matches against not nested keys" do
+    create_record_with_json(
+      details: {
+        "deregistered_at" => Time.current
+      }
+    )
+    record = create_record_with_json(details: {})
+
+    results = Contact.json_has_values(
+      {
+        details: {
+          "deregistered_at.exists" => false
+        }
+      },
+      :metadata
+    )
+
+    expect(results).to match_array([record])
+  end
+
   def create_record_with_json(attributes = {})
     create(:contact, metadata: attributes)
   end

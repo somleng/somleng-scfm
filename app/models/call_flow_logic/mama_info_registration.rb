@@ -17,6 +17,17 @@ module CallFlowLogic
     #       -> 1
     #         Finished
     #
+    # Already registered
+    # Play introduction
+    # Your already registered.
+    # Your baby was born in March 2022. Press 1 to update your details or 2 to deregister.
+    # Your baby is due in February 2023. Press 1 to update your details or 2 to deregister.
+    # -> 1
+    #  How many months pregnant?
+    # -> 2
+    #  You are now deregistered.
+    #  Finished
+    #
     # # Sound Files
     #
     # Format: "title-language_code"
@@ -26,6 +37,18 @@ module CallFlowLogic
     # Hello! This is the registration portal of Mama Info service implemented by the
     # organization People in Need and supported by the Ministry of Health of Zambia.
     # Now, please pay attention to the instructions
+    #
+    # ## already_registered-loz.mp3
+    #
+    # Hello. You are already registered.
+    #
+    # gather_update_details_or_deregister-loz.mp3
+    #
+    # Press 1 to update your details or 2 to deregister.
+    #
+    # deregistration_successful-loz.mp3
+    #
+    # You are now deregistered.
     #
     # ## gather_mothers_status-loz.mp3
     #
@@ -89,6 +112,11 @@ module CallFlowLogic
       state :playing_introduction
       state :gathering_mothers_status
 
+      state :playing_already_registered
+      state :playing_registered_date_of_birth
+      state :gathering_update_details_or_deregister
+      state :playing_deregistered
+
       state :gathering_pregnancy_status
       state :confirming_pregnancy_status
 
@@ -106,6 +134,35 @@ module CallFlowLogic
                     to: :playing_introduction,
                     after: :play_introduction
 
+        # Already registered flow
+        transitions from: :playing_introduction,
+                    to: :playing_already_registered,
+                    if: :registered?,
+                    after: :play_already_registered
+
+        transitions from: :playing_already_registered,
+                    to: :playing_registered_date_of_birth,
+                    after: :play_registered_date_of_birth
+
+        transitions from: :playing_registered_date_of_birth,
+                    to: :gathering_update_details_or_deregister,
+                    after: :gather_update_details_or_deregister
+
+        transitions from: :gathering_update_details_or_deregister,
+                    to: :gathering_mothers_status,
+                    after: :gather_mothers_status,
+                    if: :update_details?
+
+        transitions from: :gathering_update_details_or_deregister,
+                    to: :playing_deregistered,
+                    after: %i[play_deregistration_successful persist_deregistered],
+                    if: :deregister?
+
+        transitions from: :playing_deregistered,
+                    to: :finished,
+                    after: :hangup
+
+        # Unregistered flow
         transitions from: :playing_introduction,
                     to: :gathering_mothers_status,
                     after: :gather_mothers_status
@@ -179,6 +236,19 @@ module CallFlowLogic
       end
     end
 
+    def play_already_registered
+      @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
+        play(:already_registered, response)
+        response.redirect(current_url)
+      end
+    end
+
+    def gather_update_details_or_deregister
+      @voice_response = gather do |response|
+        play(:gather_update_details_or_deregister, response)
+      end
+    end
+
     def gather_mothers_status
       @voice_response = gather do |response|
         play(:gather_mothers_status, response)
@@ -216,6 +286,24 @@ module CallFlowLogic
       end
     end
 
+    def play_registered_date_of_birth
+      date_of_birth = Date.parse(metadata(phone_call.contact, :date_of_birth))
+
+      @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
+        play(date_of_birth.past? ? :confirm_age : :confirm_pregnancy_status, response)
+        play(date_of_birth.strftime("%B").downcase, response)
+        play(date_of_birth.year, response)
+        response.redirect(current_url)
+      end
+    end
+
+    def play_deregistration_successful
+      @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
+        play(:deregistration_successful, response)
+        response.redirect(current_url)
+      end
+    end
+
     def confirm_date_of_birth(&_block)
       unconfirmed_date_of_birth = metadata(phone_call, :unconfirmed_date_of_birth).to_date
 
@@ -244,6 +332,26 @@ module CallFlowLogic
 
     def child_born?
       validate_mothers_response?(CHILD_BORN_RESPONSE)
+    end
+
+    def registered?
+      phone_call.contact.metadata["date_of_birth"].present?
+    end
+
+    def update_details?
+      return true if pressed_digits == 1
+      return false if pressed_digits == 2
+
+      regather_invalid_input { |gather| play(:gather_update_details_or_deregister, gather) }
+      false
+    end
+
+    def deregister?
+      return true if pressed_digits == 2
+      return false if pressed_digits == 1
+
+      regather_invalid_input { |gather| play(:gather_update_details_or_deregister, gather) }
+      false
     end
 
     def valid_pregnancy_status?
@@ -320,6 +428,12 @@ module CallFlowLogic
       date_of_birth = metadata(phone_call, :unconfirmed_date_of_birth)
       update_metadata!(phone_call, date_of_birth: date_of_birth)
       update_metadata!(phone_call.contact, date_of_birth: date_of_birth)
+      phone_call.contact.metadata.delete("deregistered_at")
+      phone_call.contact.save!
+    end
+
+    def persist_deregistered
+      update_metadata!(phone_call.contact, deregistered_at: Time.current)
     end
 
     def play(filename, response)

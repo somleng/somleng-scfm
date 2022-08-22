@@ -17,6 +17,153 @@ module CallFlowLogic
       assert_play(audio_url(:introduction), response)
     end
 
+    # Already registered flow
+
+    it "handles users who are already registered" do
+      contact = create(:contact, metadata: { date_of_birth: "2023-01-01" })
+      phone_call = create(:phone_call, contact: contact, metadata: { status: :playing_introduction })
+      event = create_phone_call_event(phone_call: phone_call)
+      call_flow_logic = CallFlowLogic::MamaInfoRegistration.new(
+        phone_call: phone_call,
+        event: event,
+        current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+      )
+
+      call_flow_logic.run!
+
+      response = parse_response(call_flow_logic.to_xml)
+      expect(phone_call.metadata.fetch("status")).to eq("playing_already_registered")
+      assert_play(audio_url(:already_registered), response)
+    end
+
+    it "plays the registered date of birth (future)" do
+      travel_to(Time.zone.local(2022, 6, 1)) do
+        contact = create(:contact, metadata: { date_of_birth: "2023-01-01" })
+        phone_call = create(:phone_call, contact: contact, metadata: { status: :playing_already_registered })
+        event = create_phone_call_event(phone_call: phone_call)
+        call_flow_logic = CallFlowLogic::MamaInfoRegistration.new(
+          phone_call: phone_call,
+          event: event,
+          current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+        )
+
+        call_flow_logic.run!
+
+        response = parse_response(call_flow_logic.to_xml)
+        expect(phone_call.metadata.fetch("status")).to eq("playing_registered_date_of_birth")
+        expect(response.fetch("Play")).to eq(
+          [
+            audio_url(:confirm_pregnancy_status),
+            audio_url(:january),
+            audio_url("2023")
+          ]
+        )
+      end
+    end
+
+    it "plays the registered date of birth (past)" do
+      travel_to(Time.zone.local(2022, 6, 1)) do
+        contact = create(:contact, metadata: { date_of_birth: "2022-01-01" })
+        phone_call = create(:phone_call, contact: contact, metadata: { status: :playing_already_registered })
+        event = create_phone_call_event(phone_call: phone_call)
+        call_flow_logic = CallFlowLogic::MamaInfoRegistration.new(
+          phone_call: phone_call,
+          event: event,
+          current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+        )
+
+        call_flow_logic.run!
+
+        response = parse_response(call_flow_logic.to_xml)
+        expect(phone_call.metadata.fetch("status")).to eq("playing_registered_date_of_birth")
+        expect(response.fetch("Play")).to eq(
+          [
+            audio_url(:confirm_age),
+            audio_url(:january),
+            audio_url("2022")
+          ]
+        )
+      end
+    end
+
+    it "gathers whether to update details or deregister" do
+      contact = create(:contact, metadata: { date_of_birth: "2022-01-01" })
+      phone_call = create(:phone_call, contact: contact, metadata: { status: :playing_registered_date_of_birth })
+      event = create_phone_call_event(phone_call: phone_call)
+      call_flow_logic = CallFlowLogic::MamaInfoRegistration.new(
+        phone_call: phone_call,
+        event: event,
+        current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+      )
+
+      call_flow_logic.run!
+
+      response = parse_response(call_flow_logic.to_xml)
+      expect(phone_call.metadata.fetch("status")).to eq("gathering_update_details_or_deregister")
+      assert_gather(audio_url(:gather_update_details_or_deregister), response)
+    end
+
+    it "updates the details" do
+      contact = create(:contact, metadata: { date_of_birth: "2022-01-01" })
+      phone_call = create(:phone_call, contact: contact, metadata: { status: :gathering_update_details_or_deregister })
+      event = create_phone_call_event(
+        phone_call: phone_call,
+        event_details: { Digits: "1" }
+      )
+      call_flow_logic = CallFlowLogic::MamaInfoRegistration.new(
+        phone_call: phone_call,
+        event: event,
+        current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+      )
+
+      call_flow_logic.run!
+
+      response = parse_response(call_flow_logic.to_xml)
+      expect(phone_call.metadata.fetch("status")).to eq("gathering_mothers_status")
+      assert_gather(audio_url(:gather_mothers_status), response)
+    end
+
+    it "deregisters the user" do
+      contact = create(:contact, metadata: { date_of_birth: "2022-01-01" })
+      phone_call = create(:phone_call, contact: contact, metadata: { status: :gathering_update_details_or_deregister })
+      event = create_phone_call_event(
+        phone_call: phone_call,
+        event_details: { Digits: "2" }
+      )
+      call_flow_logic = CallFlowLogic::MamaInfoRegistration.new(
+        phone_call: phone_call,
+        event: event,
+        current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+      )
+
+      call_flow_logic.run!
+
+      response = parse_response(call_flow_logic.to_xml)
+      expect(phone_call.metadata.fetch("status")).to eq("playing_deregistered")
+      expect(contact.metadata.fetch("deregistered_at")).to be_present
+      assert_play(audio_url(:deregistration_successful), response)
+    end
+
+    it "handles invalid inputs" do
+      contact = create(:contact, metadata: { date_of_birth: "2022-01-01" })
+      phone_call = create(:phone_call, contact: contact, metadata: { status: :gathering_update_details_or_deregister })
+      event = create_phone_call_event(
+        phone_call: phone_call,
+        event_details: { Digits: "3" }
+      )
+      call_flow_logic = CallFlowLogic::MamaInfoRegistration.new(
+        phone_call: phone_call,
+        event: event,
+        current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+      )
+
+      call_flow_logic.run!
+
+      response = parse_response(call_flow_logic.to_xml)
+      expect(phone_call.metadata.fetch("status")).to eq("gathering_update_details_or_deregister")
+      assert_regather_invalid_response(audio_url(:gather_update_details_or_deregister), response)
+    end
+
     it "gathers the mother's status" do
       phone_call = create(:phone_call, metadata: { status: :playing_introduction })
       event = create_phone_call_event(phone_call: phone_call)
@@ -276,8 +423,12 @@ module CallFlowLogic
     end
 
     it "handles valid age confirmation inputs" do
+      contact = create(:contact, metadata: { deregistered_at: Time.current })
+
       phone_call = create(
         :phone_call,
+        :inbound,
+        contact: contact,
         metadata: {
           status: :confirming_age,
           unconfirmed_date_of_birth: "2023-01-01"
@@ -300,6 +451,7 @@ module CallFlowLogic
       expect(phone_call.metadata.fetch("date_of_birth")).to eq("2023-01-01")
       expect(phone_call.metadata.fetch("status")).to eq("playing_registration_successful")
       expect(phone_call.contact.metadata.fetch("date_of_birth")).to eq("2023-01-01")
+      expect(phone_call.contact.metadata.key?("deregistered_at")).to eq(false)
     end
 
     it "handles invalid age confirmation inputs" do

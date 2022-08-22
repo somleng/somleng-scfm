@@ -434,6 +434,8 @@ module CallFlowLogic
 
     def persist_deregistered
       update_metadata!(phone_call.contact, deregistered_at: Time.current)
+      phone_call.contact.metadata.delete("date_of_birth")
+      phone_call.contact.save!
     end
 
     def play(filename, response)

@@ -141,6 +141,7 @@ module CallFlowLogic
       response = parse_response(call_flow_logic.to_xml)
       expect(phone_call.metadata.fetch("status")).to eq("playing_deregistered")
       expect(contact.metadata.fetch("deregistered_at")).to be_present
+      expect(contact.metadata.key?("date_of_birth")).to eq(false)
       assert_play(audio_url(:deregistration_successful), response)
     end
 

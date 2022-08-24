@@ -15,7 +15,7 @@ module API
     end
 
     def association_chain
-      current_account.phone_calls.all
+      current_account.phone_calls
     end
 
     def filter_class

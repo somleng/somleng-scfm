@@ -2,7 +2,7 @@ class Contact < ApplicationRecord
   include MsisdnHelpers
   include MetadataHelpers
 
-  belongs_to :account
+  belongs_to :account, counter_cache: true
 
   has_many :callout_participations,
            dependent: :restrict_with_error

@@ -50,3 +50,5 @@ module SomlengScfm
     end
   end
 end
+
+require "api_pagination_with_preloaded_total_count"

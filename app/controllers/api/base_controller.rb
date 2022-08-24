@@ -29,7 +29,12 @@ module API
     end
 
     def paginated_resources
-      paginate(resources)
+      if filter_params.present?
+        paginate(resources)
+      else
+        total_count = find_resources_association_chain.size
+        paginate(resources, paginate_array_options: { total_count: total_count })
+      end
     end
 
     # Authorization

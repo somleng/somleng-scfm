@@ -19,7 +19,7 @@ class PhoneCall < ApplicationRecord
 
   belongs_to :callout_participation, optional: true, counter_cache: true
   belongs_to :contact, validate: true
-  belongs_to :account
+  belongs_to :account, counter_cache: true
   belongs_to :callout, optional: true
   has_many   :remote_phone_call_events, dependent: :restrict_with_error
 

@@ -313,7 +313,7 @@ GEM
     msgpack (1.5.2)
     mustache (1.1.1)
     nio4r (2.5.8)
-    nokogiri (1.13.6)
+    nokogiri (1.13.9)
       mini_portile2 (~> 2.8.0)
       racc (~> 1.4)
     okcomputer (1.18.4)

@@ -186,7 +186,7 @@ jobs:
             ${{ runner.os }}-${{ env.APP_IDENTIFIER }}-
 
       - name: Build and push to AWS ECR `${{ env.APP_IDENTIFIER }}`
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: .
           push: true
@@ -197,7 +197,7 @@ jobs:
             ${{ env.APP_ECR_REPOSITORY_URI }}:${{ env.IMAGE_TAG  }}
 
       - name: Build and push to AWS ECR `nginx`
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v4
         with:
           context: "docker/nginx"
           push: true

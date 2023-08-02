@@ -13,6 +13,7 @@ gem "bitmask_attributes", github: "numerex/bitmask_attributes"
 gem "bootsnap", require: false
 gem "breadcrumbs_on_rails"
 gem "cocoon"
+gem "cssbundling-rails"
 gem "devise"
 gem "devise-async"
 gem "devise_invitable"
@@ -23,6 +24,7 @@ gem "faraday"
 gem "file_validators"
 gem "haml-rails"
 gem "jbuilder", "~> 2.5"
+gem "jsbundling-rails"
 gem "kaminari"
 gem "lograge"
 gem "okcomputer"
@@ -43,7 +45,6 @@ gem "strip_attributes"
 gem "turbolinks", "~> 5"
 gem "twilio-ruby"
 gem "tzinfo-data"
-gem "webpacker"
 
 group :development, :test do
   gem "i18n-tasks"
@@ -54,6 +55,10 @@ group :development, :test do
   gem "rubocop-performance"
   gem "rubocop-rails"
   gem "rubocop-rspec"
+end
+
+group :development do
+  gem "foreman", require: false
 end
 
 group :test do

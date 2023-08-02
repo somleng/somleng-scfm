@@ -49,3 +49,5 @@ terraform.tfstate.d/
 .terraform
 terraform.tfstate
 terraform.tfstate.*
+/app/assets/builds/*
+!/app/assets/builds/.keep

@@ -3,7 +3,7 @@ module SystemSpecHelpers
     type ||= :button
     key ||= :actions
     namespace ||= :titles
-    public_send("click_#{type}", I18n.translate!(:"#{namespace}.#{key}.#{action}", interpolations))
+    public_send("click_#{type}", I18n.translate!(:"#{namespace}.#{key}.#{action}", **interpolations))
   end
 
   def fill_in_key_values_for(attribute, with:)
@@ -40,7 +40,7 @@ module SystemSpecHelpers
     key ||= :actions
     have_link(
       I18n.translate!(:"titles.#{key}.#{action}"),
-      { href: href }.compact
+      **{ href: href }.compact
     )
   end
 

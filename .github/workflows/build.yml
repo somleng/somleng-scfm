@@ -31,43 +31,21 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '2.7'
           bundler-cache: true
 
       - name: Setup Node
         uses: actions/setup-node@v3
         with:
-          node-version: '14.x'
-
-      - name: Get yarn cache directory
-        id: get-yarn-cache-dir
-        run: echo "::set-output name=dir::$(yarn cache dir)"
-
-      - name: Cache yarn dependencies
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.get-yarn-cache-dir.outputs.dir }}
-          key: ${{ runner.os }}-yarn-scfm-${{ hashFiles('yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-scfm-
-
-      - name: Install node dependencies
-        run: |
-          yarn install
+          node-version-file: ".tool-versions"
+          cache: 'yarn'
 
       - name: Setup DB
         run: bundle exec rails db:create db:schema:load
 
       - name: Run Specs
         run: |
+          bundle exec rails spec:prepare
           bundle exec rspec --format RspecApiDocumentation::ApiFormatter
-
-      - name: Run codacy-coverage-reporter
-        uses: codacy/codacy-coverage-reporter-action@v1
-        with:
-          api-token: ${{ secrets.CODACY_API_TOKEN }}
-          coverage-reports: coverage/lcov/*
-          language: Ruby
 
       - name: Prepare Documentation Source
         if: github.ref == 'refs/heads/master'

@@ -56,21 +56,15 @@ group :development, :test do
   gem "rubocop-rspec"
 end
 
-group :development do
-  gem "spring"
-  gem "spring-commands-rspec"
-  gem "web-console", ">= 3.3.0"
-end
-
 group :test do
   gem "capybara"
   gem "email_spec"
   gem "factory_bot_rails"
   gem "rails-controller-testing"
+  gem "selenium-webdriver"
   gem "shoulda-matchers"
   gem "simplecov", require: false
   gem "simplecov-lcov", require: false
-  gem "webdrivers"
   gem "webmock"
   gem "wisper-rspec"
 end

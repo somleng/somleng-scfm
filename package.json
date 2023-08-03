@@ -4,6 +4,7 @@
   "dependencies": {
     "@coreui/coreui": "^4.3.0",
     "@fortawesome/fontawesome-free": "^6.4.2",
+    "@hotwired/turbo-rails": "^7.3.0",
     "@nathanvda/cocoon": "^1.2.14",
     "@popperjs/core": "^2.11.8",
     "@rails/activestorage": "^6.0.3-2",
@@ -13,7 +14,7 @@
     "bootstrap": "^5.3.1",
     "bootstrap-icons": "^1.10.5",
     "esbuild": "^0.18.17",
-    "moment": "^2.27.0",
+    "moment": "^2.29.4",
     "nodemon": "^3.0.1",
     "popper.js": "^1.16.1",
     "postcss": "^8.4.27",

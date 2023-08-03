@@ -41,7 +41,6 @@ gem "shoryuken"
 gem "simple_form"
 gem "skylight"
 gem "strip_attributes"
-gem "turbolinks", "~> 5"
 gem "twilio-ruby"
 gem "tzinfo-data"
 

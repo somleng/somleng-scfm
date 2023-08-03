@@ -1,9 +1,9 @@
 %body
   %header.header.header-sticky.mb-4
     .container-fluid
-      %button.header-toggler.px-md-0.me-md-3{"data-action" => "sidebar#toggle", type: "button"}
+      %button.header-toggler.px-md-0.me-md-3{data: { action: "sidebar#toggle" }, type: "button"}
         %i.fa-solid.fa-bars
-      = link_to dashboard_root_path, class: "header-brand d-lg-none header-brand-sm-up-center" do
+      = link_to(dashboard_root_path, class: "header-brand d-lg-none header-brand-sm-up-center") do
         = t(:"titles.app_name")
       %ul.header-nav.mr-auto
       %ul.header-nav
@@ -11,8 +11,8 @@
           %a.nav-link{"aria-expanded" => "false", "aria-haspopup" => "true", "data-bs-toggle" => "dropdown", href: "#", role: "button"}
             %i.fa-solid.fa-language.mfe-2
           .dropdown-menu.dropdown-menu-right.pt-0
-            = link_to("🇬🇧 English", dashboard_locale_path(current_user, user: { locale: "en" }), method: :patch, class: "dropdown-item")
-            = link_to("🇰🇭 ខែ្មរ", dashboard_locale_path(current_user, user: { locale: "km" }) , method: :patch, class: "dropdown-item")
+            = button_to("🇬🇧 English", dashboard_locale_path(user: { locale: "en" }), class: "dropdown-item", method: :patch, form: { data: { turbo: false }})
+            = button_to("🇰🇭 ខែ្មរ", dashboard_locale_path(user: { locale: "km" }), class: "dropdown-item", method: :patch, form: { data: { turbo: false }})
         %li.nav-item.dropdown
           %a.nav-link{"aria-expanded" => "false", "aria-haspopup" => "true", "data-bs-toggle" => "dropdown", href: "#", role: "button"}
             %i.fa-solid.fa-gear.mfe-2

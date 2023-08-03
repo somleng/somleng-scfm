@@ -1,15 +1,17 @@
 // Entry point for the build script in your package.json
+
+import "@hotwired/turbo-rails"
 import '@fortawesome/fontawesome-free/js/all'
 import * as bootstrap from "bootstrap"
 import * as coreui from '@coreui/coreui';
 require("@rails/activestorage").start()
+import moment from "moment";
 
 import jquery from 'jquery'
 window.jQuery = jquery
 window.$ = jquery
 
 require("@nathanvda/cocoon")
-
 
 document.addEventListener("turbo:load", function() {
     [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]')).map(function (element) {

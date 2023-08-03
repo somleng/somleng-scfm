@@ -2,7 +2,6 @@
 
 ![Build](https://github.com/somleng/somleng-scfm/workflows/Build/badge.svg)
 [![View performance data on Skylight](https://badges.skylight.io/status/YxPzpqwXsqPx.svg)](https://oss.skylight.io/app/applications/YxPzpqwXsqPx)
-[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/29407e68260442a9a84fa44222ea6364)](https://www.codacy.com/gh/somleng/somleng-scfm/dashboard?utm_source=github.com&utm_medium=referral&utm_content=somleng/somleng-scfm&utm_campaign=Badge_Coverage)
 
 Somleng Simple Call Flow Manager (Somleng SCFM) (part of [The Somleng Project](https://github.com/somleng/somleng-project)) is an Open Source Contact Management System and Call Flow manager. It can manage both inbound and outbound calls through [Somleng](https://github.com/somleng/somleng) or [Twilio](https://www.twilio.com/).
 
@@ -11,8 +10,8 @@ Somleng SCFM is best used via the [REST API](https://www.somleng.org/docs/scfm).
 This repository includes the following core features:
 
 * [REST API](https://www.somleng.org/docs/scfm)
-* Dashboard
 * [Terraform infrastructure as code](https://github.com/somleng/somleng-scfm/tree/develop/infrastructure) for deployment to AWS
+* Dashboard
 
 ## Concepts
 
@@ -37,11 +36,7 @@ Somleng SCFM can be run independent of Somleng, so it's not a requirement to hav
 
 The [infrastructure directory](https://github.com/somleng/somleng-scfm/tree/develop/infrastructure) contains [Terraform](https://www.terraform.io/) configuration files in order to deploy Somleng SCFM to AWS.
 
-:warning: The current infrastructure of Somleng SCFM is rapidly changing as we continue to improve and experiment with new features. We often make breaking changes to the current infrastructure which usually requires some manual migration. We don't recommend that you try to deploy and run your own Somleng stack for production purposes at this stage.
-
 The infrastructure in this repository depends on some shared core infrastructure. This core infrastructure can be found in [The Somleng Project](https://github.com/somleng/somleng-project/tree/master/infrastructure) repository.
-
-The current infrastructure deploys Somleng SCFM to AWS behind an Application Load Balancer (ALB) to Elastic Container Service (ECS). There are two main tasks, a webserver task and a worker task. The webserver task has an [NGINX container](https://github.com/somleng/somleng-scfm/blob/develop/docker/nginx/Dockerfile) which runs as a reverse proxy to the main [Rails webserver container](https://github.com/somleng/somleng-scfm/blob/develop/Dockerfile). The worker task runs as a separate ECS service.
 
 ## License
 

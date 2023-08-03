@@ -8,7 +8,7 @@
     = link_to "Contact", "#", class: "p-2 text-dark"
     = link_to_if(user_signed_in?, "Dashboard", dashboard_root_path, class: "p-2 text-dark") do
       = link_to "Sign In", new_user_session_path, class: "p-2 text-dark"
-= render 'shared/flash_messages'
+= render("shared/alerts")
 .pricing-header.px-3.py-3.pt-md-5.pb-md-4.mx-auto.text-center
   %h1.display-4 Simple Call Flow Manager For Somleng
   %p.lead Somleng Simple Call Flow Manager (Somleng SCFM) manages both inbound and outbound calls through Somleng and/or Twilio. Use it to create dynamic, customized and powerful call flows.

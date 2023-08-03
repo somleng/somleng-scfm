@@ -23,15 +23,15 @@ module ApplicationHelper
     link_to(title, url, options)
   end
 
-  def nav_link(link_text, link_path, options)
-    controller  = options.fetch(:controller) { "" }
-    icon        = options.fetch(:icon) { nil }
-    class_names = ["nav-link"]
-
-    class_names << "active" if link_path == request.path || controller.include?(controller_name)
-
-    link_to(link_path, class: class_names.join(" ")) do
-      [tag.i(class: "fas fa-#{icon}"), link_text].join(" ").html_safe
+  def sidebar_nav(text, path, icon_class:, link_options: {})
+    content_tag(:li, class: "nav-item") do
+      sidebar_nav_class = "nav-link"
+      sidebar_nav_class += " c-active" if request.path == path
+      link_to(path, class: sidebar_nav_class, **link_options) do
+        content = "".html_safe
+        content += content_tag(:i, nil, class: "nav-icon #{icon_class}")
+        content + " " + text
+      end
     end
   end
 

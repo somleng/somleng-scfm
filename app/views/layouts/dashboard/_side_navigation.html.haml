@@ -14,6 +14,6 @@
         %i.nav-icon.fa-solid.fa-laptop-code
         Developers
       %ul.nav-group-items
+        = sidebar_nav(translate(:"titles.accounts.edit"), edit_dashboard_account_path, icon_class: "fa-solid fa-cog")
         = sidebar_nav(translate(:"titles.access_tokens.index"), dashboard_access_tokens_path, icon_class: "fa-solid fa-code")
         = sidebar_nav(translate(:"titles.batch_operations.index"), dashboard_batch_operations_path, icon_class: "fa-solid fa-layer-group")
-

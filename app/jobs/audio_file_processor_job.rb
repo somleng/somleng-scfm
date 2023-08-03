@@ -13,11 +13,10 @@ class AudioFileProcessorJob < ApplicationJob
       audio_bucket
     ).object(bucket_object_name)
 
-    audio_file = Down.download(callout.audio_file.url)
+    audio_file = URI(callout.audio_file.url).open
     bucket_object.put(body: audio_file)
 
-    callout.audio_url = bucket_object.public_url
-    callout.save!
+    callout.update!(audio_url: bucket_object.public_url)
   end
 
   private

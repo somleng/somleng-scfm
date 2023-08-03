@@ -196,8 +196,6 @@ GEM
     docile (1.4.0)
     doorkeeper (5.6.6)
       railties (>= 5)
-    down (5.4.1)
-      addressable (~> 2.8)
     dry-configurable (1.1.0)
       dry-core (~> 1.0, < 2)
       zeitwerk (~> 2.6)
@@ -551,7 +549,6 @@ DEPENDENCIES
   devise-async
   devise_invitable
   doorkeeper
-  down
   dry-validation
   email_spec
   factory_bot_rails

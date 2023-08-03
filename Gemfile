@@ -1,7 +1,7 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gem "rails", "~> 6.1.0"
+gem "rails", "~> 7.0.0"
 
 gem "aasm", github: "aasm/aasm"
 gem "after_commit_everywhere"
@@ -71,5 +71,4 @@ group :test do
   gem "simplecov", require: false
   gem "simplecov-lcov", require: false
   gem "webmock"
-  gem "wisper-rspec"
 end

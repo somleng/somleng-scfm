@@ -26,7 +26,7 @@ module SomlengScfm
     config.app_generators.scaffold_controller :responders_controller
 
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 6.1
+    config.load_defaults 7.0
 
     config.eager_load_paths << Rails.root.join("lib")
 
@@ -37,7 +37,8 @@ module SomlengScfm
 
     config.app_settings = config_for(:app_settings)
     config.active_job.default_queue_name = config.app_settings.fetch(:aws_sqs_default_queue_name)
-    Rails.application.routes.default_url_options[:host] = config.app_settings.fetch(:default_url_host)
+    Rails.application.routes.default_url_options[:host] =
+      config.app_settings.fetch(:default_url_host)
 
     config.middleware.use(
       Rack::SomlengWebhookAuthentication,

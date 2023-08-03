@@ -1,4 +1,4 @@
-require_relative 'application_seeder'
+require_relative "application_seeder"
 
 seeder = ApplicationSeeder.new
 seeder.seed!

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      Somleng -
+      <% if content_for?(:page_title) %>
+        <%= yield(:page_title) %>
+      <% else %>
+        SCFM
+      <% end %>
+    </title>
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    <%= favicon_link_tag %>
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+  </head>
+
+  <body class="c-app mt-5">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-6">
+          <%= image_tag "scfm_logo.png", class: "img-fluid mx-auto px-5 my-3 d-block w-50" %>
+
+          <div class="card-group">
+            <div class="card p-4">
+              <div class="card-body">
+                <%= render "shared/alerts" %>
+                <%= yield(:flash) if content_for?(:flash) %>
+
+                <%= yield %>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

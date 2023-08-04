@@ -29,7 +29,6 @@ km:
     batch_operations:
       index: Batch Operations
       queue: ចាប់ផ្ដើម
-      requeue: ចាប់ផ្ដើមឡើងវិញ
       show: Batch Operation %{id}
     callout_participations:
       index: សមាជិកចូលរួមក្នុងសេចក្ដីប្រកាស

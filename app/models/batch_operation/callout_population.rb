@@ -59,7 +59,9 @@ module BatchOperation
     end
 
     def create_phone_calls
-      phone_calls = callout_participations.find_each.map do |callout_participation|
+      phone_calls = callout_participations.includes(:phone_calls).find_each.map do |callout_participation|
+        next if callout_participation.phone_calls.any?
+
         {
           account_id: callout.account_id,
           callout_id:,

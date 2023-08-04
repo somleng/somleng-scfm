@@ -297,7 +297,7 @@ Right now our callout isn't very interesting. Let's change that by populating ou
 
 ### Create a Callout Population
 
-In order to populate a callout we create what's called callout population. This will allow us to preview the contacts that will be called before actually queuing the population process. A callout population is a type of batch operation. A batch operation can be one of a few different types and can be previewed queued, and requeued for processing (more on this later).
+In order to populate a callout we create what's called callout population. This will allow us to preview the contacts that will be called before actually queuing the population process. A callout population is a type of batch operation. A batch operation can be one of a few different types and can be previewed and queued for processing (more on this later).
 
 Let's go ahead and create a batch operation for populating the callout. Take notice of the url in the command below `/api/callouts/1/batch_operations`. Here `1` is the id of the callout created in the previous step. We are creating a batch operation of type `BatchOperation::CalloutPopulation` on the the callout with the id `1`.
 

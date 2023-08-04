@@ -5,17 +5,17 @@ RSpec.describe ScheduledJob do
     account = create(:account)
 
     created_phone_call_from_running_callout = create_phone_call(
-      account: account,
+      account:,
       status: :created,
       callout_status: :running
     )
     created_phone_call_from_stopped_callout = create_phone_call(
-      account: account,
+      account:,
       status: :created,
       callout_status: :stopped
     )
     queued_phone_call = create_phone_call(
-      account: account,
+      account:,
       status: :queued,
       callout_status: :running
     )
@@ -34,17 +34,17 @@ RSpec.describe ScheduledJob do
     account = create(:account)
 
     phone_call_with_in_progress_status = create_phone_call(
-      account: account,
+      account:,
       status: :in_progress,
       remotely_queued_at: 10.minutes.ago
     )
     _in_progress_phone_call = create_phone_call(
-      account: account,
+      account:,
       status: :in_progress,
       remotely_queued_at: Time.current
     )
     _in_progress_phone_call = create_phone_call(
-      account: account,
+      account:,
       status: :in_progress,
       remotely_queued_at: 10.minutes.ago,
       remote_status_fetch_queued_at: Time.current
@@ -57,26 +57,13 @@ RSpec.describe ScheduledJob do
     expect(phone_call_with_in_progress_status.reload.remote_status_fetch_queued_at).to be_present
   end
 
-  it "requeues callout populations" do
-    callout_population = create(:callout_population, status: :running)
-    long_running_callout_population = create(:callout_population, status: :running, updated_at: 15.minutes.ago)
-    finished_callout_population = create(:callout_population, status: :finished)
-
-    ScheduledJob.perform_now
-
-    expect(callout_population.reload.status).to eq("running")
-    expect(long_running_callout_population.reload.status).to eq("queued")
-    expect(finished_callout_population.reload.status).to eq("finished")
-    expect(RunBatchOperationJob).to have_been_enqueued.exactly(:once)
-    expect(RunBatchOperationJob).to have_been_enqueued.with(long_running_callout_population)
-  end
-
   def create_phone_call(account:, callout_status: :running, **attributes)
-    callout = create(:callout, account: account, status: callout_status)
+    callout = create(:callout, account:, status: callout_status)
     callout_participation = create_callout_participation(
-      account: account, callout: callout
+      account:, callout:
     )
 
-    create(:phone_call, account: account, callout: callout, callout_participation: callout_participation, **attributes)
+    create(:phone_call, account:, callout:,
+                        callout_participation:, **attributes)
   end
 end

@@ -7,7 +7,6 @@ class ScheduledJob < ApplicationJob
     end
 
     fetch_unknown_call_statuses
-    retry_callout_populations
   end
 
   private
@@ -26,10 +25,5 @@ class ScheduledJob < ApplicationJob
       FetchRemoteCallJob.perform_later(phone_call)
       phone_call.touch(:remote_status_fetch_queued_at)
     end
-  end
-
-  def retry_callout_populations
-    callout_populations = BatchOperation::CalloutPopulation.running.where("updated_at < ?", 15.minutes.ago)
-    callout_populations.find_each(&:requeue!)
   end
 end

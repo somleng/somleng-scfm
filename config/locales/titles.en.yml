@@ -29,7 +29,6 @@ en:
     batch_operations:
       index: Batch Operations
       queue: Start
-      requeue: Restart
       show: Batch Operation %{id}
     callout_participations:
       index: Callout Participations

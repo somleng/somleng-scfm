@@ -46,10 +46,6 @@ module BatchOperation
           to: :finished
         )
       end
-
-      event :requeue, after_commit: :run_later do
-        transitions(to: :queued)
-      end
     end
 
     def serializable_hash(options = nil)

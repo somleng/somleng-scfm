@@ -1,8 +1,6 @@
 - content_for(:page_actions) do
   - if resource.may_queue?
     = link_to(translate(:"titles.batch_operations.queue"), dashboard_batch_operation_batch_operation_events_path(resource, event: :queue), method: :post, class: 'btn btn-outline-success', data: { confirm: translate(:"titles.actions.data_confirm") })
-  - if resource.may_requeue?
-    = link_to(translate(:"titles.batch_operations.requeue"), dashboard_batch_operation_batch_operation_events_path(resource, event: :requeue), method: :post, class: 'btn btn-outline-warning', data: { confirm: translate(:"titles.actions.data_confirm") })
   - if resource.is_a?(BatchOperation::CalloutPopulation)
     = link_to(translate(:"titles.actions.edit"), edit_dashboard_batch_operation_callout_population_path(resource), class: 'btn btn-outline-primary')
   - url = resource.is_a?(BatchOperation::CalloutPopulation) && resource.callout ? dashboard_callout_batch_operation_path(resource.callout, resource) : dashboard_batch_operation_path(resource)

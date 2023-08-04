@@ -39,7 +39,10 @@ module BatchOperation
         callout = create(:callout)
         callout_population = create(:callout_population, callout:)
         contact = create(:contact, account: callout_population.account)
-        create(:callout_participation, contact:, callout:, callout_population:)
+        callout_participation = create(
+          :callout_participation, contact:, callout:, callout_population:
+        )
+        create(:phone_call, :completed, callout_participation:)
 
         callout_population.run!
         callout_population.run!

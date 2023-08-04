@@ -31,7 +31,7 @@ module BatchOperation
           callout: callout_population.callout,
           call_flow_logic: callout_participation.call_flow_logic,
           account: callout_population.account,
-          status: :created
+          status: "created"
         )
       end
 

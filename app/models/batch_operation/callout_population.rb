@@ -4,9 +4,7 @@ module BatchOperation
 
     belongs_to :callout
 
-    has_many :callout_participations,
-             foreign_key: :callout_population_id,
-             dependent: :restrict_with_error
+    has_many :callout_participations, dependent: :restrict_with_error
 
     has_many :contacts, through: :callout_participations
 
@@ -22,8 +20,9 @@ module BatchOperation
     validates :contact_filter_params, contact_filter_params: true
 
     def run!
-      contacts_scope.find_each do |contact|
-        create_callout_participation(contact)
+      transaction do
+        create_callout_participations
+        create_phone_calls
       end
     end
 
@@ -43,21 +42,35 @@ module BatchOperation
       Filter::Resource::Contact.new(
         { association_chain: account.contacts },
         contact_filter_params.with_indifferent_access
-      ).resources.where.not(id: CalloutParticipation.select(:contact_id).where(callout: callout))
+      ).resources.where.not(id: CalloutParticipation.select(:contact_id).where(callout:))
     end
 
-    def create_callout_participation(contact)
-      CalloutParticipation.create_or_find_by!(
-        contact: contact,
-        callout: callout
-      ) do |callout_participation|
-        callout_participation.callout_population = self
-        callout_participation.phone_calls.build(
-          account: callout.account,
-          callout: callout,
-          contact: contact
-        )
+    def create_callout_participations
+      callout_participations = contacts_scope.find_each.map do |contact|
+        {
+          contact_id: contact.id,
+          callout_id: callout.id,
+          callout_population_id: id,
+          msisdn: contact.msisdn,
+          call_flow_logic: callout.call_flow_logic
+        }
       end
+      CalloutParticipation.upsert_all(callout_participations)
+    end
+
+    def create_phone_calls
+      phone_calls = callout_participations.find_each.map do |callout_participation|
+        {
+          account_id: callout.account_id,
+          callout_id:,
+          contact_id: callout_participation.contact_id,
+          call_flow_logic: callout_participation.call_flow_logic,
+          callout_participation_id: callout_participation.id,
+          msisdn: callout_participation.msisdn,
+          status: :created
+        }
+      end
+      PhoneCall.upsert_all(phone_calls)
     end
 
     def batch_operation_account_settings_param

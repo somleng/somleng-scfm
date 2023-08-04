@@ -13,12 +13,26 @@ module BatchOperation
         callout_population = create(:callout_population)
         contact = create(:contact, account: callout_population.account)
         already_participating_contact = create(:contact, account: callout_population.account)
-        create(:callout_participation, contact: already_participating_contact, callout: callout_population.callout)
+        create(:callout_participation, contact: already_participating_contact,
+                                       callout: callout_population.callout)
         _other_contact = create(:contact)
 
         callout_population.run!
 
-        expect(callout_population.reload.contacts).to match_array([contact])
+        expect(callout_population.callout_participations.count).to eq(1)
+        callout_participation = callout_population.callout_participations.first
+        expect(callout_participation.contact).to eq(contact)
+        expect(callout_participation.phone_calls.count).to eq(1)
+        phone_call = callout_participation.phone_calls.first
+        expect(phone_call).to have_attributes(
+          contact:,
+          msisdn: contact.msisdn,
+          callout_participation:,
+          callout: callout_population.callout,
+          call_flow_logic: callout_participation.call_flow_logic,
+          account: callout_population.account,
+          status: "created"
+        )
       end
     end
 
@@ -48,7 +62,7 @@ module BatchOperation
         )
         batch_operation = build(
           :callout_population,
-          account: account,
+          account:,
           parameters: {
             "contact_filter_params" => {
               "metadata" => { "gender" => "female" }

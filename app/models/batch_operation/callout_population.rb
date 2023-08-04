@@ -55,7 +55,7 @@ module BatchOperation
           call_flow_logic: callout.call_flow_logic
         }
       end
-      CalloutParticipation.upsert_all(callout_participations)
+      CalloutParticipation.upsert_all(callout_participations) if callout_participations.any?
     end
 
     def create_phone_calls
@@ -70,7 +70,7 @@ module BatchOperation
           status: :created
         }
       end
-      PhoneCall.upsert_all(phone_calls)
+      PhoneCall.upsert_all(phone_calls, unique_by: :callout_participation_id) if phone_calls.any?
     end
 
     def batch_operation_account_settings_param

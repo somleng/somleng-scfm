@@ -31,8 +31,22 @@ module BatchOperation
           callout: callout_population.callout,
           call_flow_logic: callout_participation.call_flow_logic,
           account: callout_population.account,
-          status: "created"
+          status: :created
         )
+      end
+
+      it "handles multiple runs" do
+        callout = create(:callout)
+        callout_population = create(:callout_population, callout:)
+        contact = create(:contact, account: callout_population.account)
+        create(:callout_participation, contact:, callout:, callout_population:)
+
+        callout_population.run!
+        callout_population.run!
+
+        expect(callout_population.callout_participations.count).to eq(1)
+        callout_participation = callout_population.callout_participations.first
+        expect(callout_participation.phone_calls.count).to eq(1)
       end
     end
 

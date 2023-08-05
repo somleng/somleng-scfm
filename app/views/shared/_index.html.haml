@@ -1,10 +1,13 @@
-.col-12{class: ("resources-filter" if content_for?(:resources_filter))}
-  - if content_for?(:resources_filter)
-    #filters.dropdown.show
-      = link_to("#", class: "btn btn-info dropdown-toggle", role: :button, id: :filter_menu_link, data: {toggle: :dropdown}, :"aria-haspopup" => true, :"aria-expanded" => false) do
-        %i.fas.fa-filter
-      .dropdown-menu{:"aria-labelledby" => :filter_menu_link}
-        = yield(:resources_filter)
-  = yield(:resources_table)
-.col-12
-  = render("shared/pagination", resources: resources)
+= page_title(title: title)
+
+.card-body
+  .col-12{class: ("resources-filter" if content_for?(:resources_filter))}
+    - if content_for?(:resources_filter)
+      #filters.dropdown.show
+        = link_to("#", class: "btn btn-info dropdown-toggle", role: :button, id: :filter_menu_link, data: {toggle: :dropdown}, :"aria-haspopup" => true, :"aria-expanded" => false) do
+          %i.fas.fa-filter
+        .dropdown-menu{:"aria-labelledby" => :filter_menu_link}
+          = yield(:resources_filter)
+    = yield(:resources_table)
+  .col-12
+    = render("shared/pagination", resources: resources)

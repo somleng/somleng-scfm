@@ -10,7 +10,7 @@ Rails.application.routes.draw do
   end
 
   devise_for :users,
-             controllers: { invitations: "dashboard/user_invitations" },
+             controllers: { invitations: "users/invitations" },
              skip: :registrations
 
   root "home#index"

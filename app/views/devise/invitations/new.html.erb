@@ -1,0 +1,13 @@
+<%= page_title(title: "Invite User") %>
+
+<div class="card-body">
+  <%= simple_form_for(resource, as: resource_name, url: invitation_path(resource_name), html: { method: :post, data: { turbo: false } }) do |f| %>
+    <div class="row">
+      <div class="col">
+        <%= f.input :email %>
+      </div>
+    </div>
+
+    <%= f.button :submit, t("devise.invitations.new.submit_button") %>
+  <% end %>
+</div>

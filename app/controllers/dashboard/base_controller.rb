@@ -4,6 +4,8 @@ module Dashboard
   class BaseController < ::BaseController
     include Breadcrumbs
 
+    layout "dashboard"
+
     KEY_VALUE_FIELD_ATTRIBUTES = %i[key value].freeze
 
     METADATA_FIELDS_ATTRIBUTES = {

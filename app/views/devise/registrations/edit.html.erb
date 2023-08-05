@@ -1,0 +1,17 @@
+<%= page_title(title: translate(:"titles.user_registrations.edit")) %>
+
+<div class="card-body">
+  <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :patch, data: { turbo: false } }) do |f| %>
+    <%= f.input :current_password, required: true, input_html: { autocomplete: "current-password" } %>
+    <%= f.input :password, required: true, input_html: { autocomplete: "new-password" } %>
+    <%= f.input :password_confirmation, required: true, input_html: { autocomplete: "new-password" } %>
+
+    <div class="row">
+      <div class="col">
+        <%= f.button :submit, translate(:"titles.user_registrations.update") %>
+        <%= link_to "Cancel", :back, class: "btn btn-secondary" %>
+      </div>
+    </div>
+  <% end %>
+</div>
+

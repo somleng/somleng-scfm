@@ -1,7 +1,12 @@
 Rails.application.routes.draw do
   devise_scope :user do
-    get "users/edit", to: "devise/registrations#edit", as: "edit_user_registration"
-    patch "users", to: "devise/registrations#update", as: "user_registration"
+    resource(
+      :registration,
+      only: %i[edit update],
+      controller: "users/registrations",
+      as: :user_registration,
+      path: "users"
+    )
   end
 
   devise_for :users,

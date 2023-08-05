@@ -495,6 +495,8 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
+    stimulus-rails (1.2.1)
+      railties (>= 6.0.0)
     strip_attributes (1.13.0)
       activemodel (>= 3.0, < 8.0)
     temple (0.10.2)
@@ -503,6 +505,10 @@ GEM
     thor (1.2.2)
     tilt (2.2.0)
     timeout (0.4.0)
+    turbo-rails (1.4.0)
+      actionpack (>= 6.0.0)
+      activejob (>= 6.0.0)
+      railties (>= 6.0.0)
     twilio-ruby (6.3.1)
       faraday (>= 0.9, < 3.0)
       jwt (>= 1.5, < 3.0)
@@ -585,7 +591,9 @@ DEPENDENCIES
   simplecov
   simplecov-lcov
   skylight
+  stimulus-rails
   strip_attributes
+  turbo-rails
   twilio-ruby
   tzinfo-data
   webmock

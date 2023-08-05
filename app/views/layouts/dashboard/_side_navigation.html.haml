@@ -1,7 +1,8 @@
 #sidebar.sidebar.sidebar-fixed{"data-sidebar-target" => "sidebar"}
   .sidebar-brand
     = link_to dashboard_root_path do
-      foobar
+      = image_tag("scfm_logo.png", class: "sidebar-brand-full", height: 46)
+
   %ul.sidebar-nav{data: {simplebar: nil }}
     = sidebar_nav(translate(:"titles.callouts.index"), dashboard_callouts_path, icon_class: "fa-solid fa-bullhorn")
     = sidebar_nav(translate(:"titles.callout_participations.index"), dashboard_callout_participations_path, icon_class: "fa-solid fa-list-ol")

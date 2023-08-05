@@ -3,6 +3,9 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
 gem "rails", "~> 7.0.0"
 
+gem "stimulus-rails"
+gem "turbo-rails"
+
 gem "aasm", github: "aasm/aasm"
 gem "after_commit_everywhere"
 gem "api-pagination", github: "davidcelis/api-pagination"

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_04_034052) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_03_035117) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -195,7 +195,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_04_034052) do
     t.index ["account_id"], name: "index_phone_calls_on_account_id"
     t.index ["callout_id", "status"], name: "index_phone_calls_on_callout_id_and_status"
     t.index ["callout_id"], name: "index_phone_calls_on_callout_id"
-    t.index ["callout_participation_id"], name: "index_phone_calls_on_callout_participation_id", unique: true, where: "((status)::text = 'created'::text)"
+    t.index ["callout_participation_id"], name: "index_phone_calls_on_callout_participation_id"
     t.index ["contact_id"], name: "index_phone_calls_on_contact_id"
     t.index ["created_at"], name: "index_phone_calls_on_created_at"
     t.index ["msisdn"], name: "index_phone_calls_on_msisdn"

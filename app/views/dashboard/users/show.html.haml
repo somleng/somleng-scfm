@@ -1,36 +1,12 @@
 - content_for(:page_actions) do
   = link_to(translate(:"titles.actions.edit"), edit_dashboard_user_path(resource), class: 'btn btn-outline-primary')
   = link_to(translate(:"titles.actions.delete"), dashboard_user_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
-.col
-  #user.card
-    .card-body
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right #
-        %dd.col-sm-7.col-md-6
-          %code
-            = resource.id
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = User.human_attribute_name(:email)
-        %dd.col-sm-7.col-md-6
-          %code
-            = resource.email
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = Contact.human_attribute_name(:created_at)
-        %dd.col-sm-7.col-md-6
-          %code
-            = local_time(resource.created_at)
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = Contact.human_attribute_name(:last_sign_in_at)
-        %dd.col-sm-7.col-md-6
-          %code
-            = local_time(resource.last_sign_in_at)
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = Contact.human_attribute_name(:invitation_accepted_at)
-        %dd.col-sm-7.col-md-6
-          %code
-            = local_time(resource.invitation_accepted_at)
-      = render("shared/key_value_attributes", attribute: :metadata)
+
+.card-body
+  - show_for(resource) do |f|
+    = f.attribute :id
+    = f.attribute :email
+    = f.attribute :created_at, value: local_time(resource.created_at)
+    = f.attribute :last_sign_in_at, value: local_time(resource.last_sign_in_at)
+    = f.attribute :invitation_accepted_at, value: local_time(resource.invitation_accepted_at)
+    = render("shared/key_value_attributes", attribute: :metadata)

@@ -1,17 +1,14 @@
-= page_title(title: title)
-
-- content_for(:page_actions) do
+= page_title(title: title) do
   - if resource.may_queue?
     = link_to(translate(:"titles.batch_operations.queue"), dashboard_batch_operation_batch_operation_events_path(resource, event: :queue), method: :post, class: 'btn btn-outline-success', data: { confirm: translate(:"titles.actions.data_confirm") })
   - if resource.is_a?(BatchOperation::CalloutPopulation)
-    = link_to(translate(:"titles.actions.edit"), edit_dashboard_batch_operation_callout_population_path(resource), class: 'btn btn-outline-primary')
+    = render("shared/edit_resource_page_action", path: edit_dashboard_batch_operation_callout_population_path(resource))
   - url = resource.is_a?(BatchOperation::CalloutPopulation) && resource.callout ? dashboard_callout_batch_operation_path(resource.callout, resource) : dashboard_batch_operation_path(resource)
-  = link_to(translate(:"titles.actions.delete"), url, class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+  = render("shared/destroy_resource_page_action", path: url)
 
 .card-body
   = show_for(resource) do |f|
     = f.attribute :id
-    = f.attribute :token
     = f.attribute :type, value: resource.model_name.human
     = f.attribute :status, value: resource.status.humanize
     - if resource.is_a?(BatchOperation::CalloutPopulation) && resource.callout

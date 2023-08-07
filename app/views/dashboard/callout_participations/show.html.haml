@@ -1,10 +1,8 @@
-= page_title(title: title)
+= page_title(title: title) do
+  = render("shared/destroy_resource_page_action", path: dashboard_callout_participation_path(resource))
 
-- content_for(:page_actions) do
-  = link_to(translate(:"titles.actions.delete"), dashboard_callout_participation_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
-
-- content_for(:related_links) do
-  = related_link_to t(:"titles.phone_calls.index"), dashboard_callout_participation_phone_calls_path(resource)
+  = render "shared/resource_related_links" do
+    = related_link_to t(:"titles.phone_calls.index"), dashboard_callout_participation_phone_calls_path(resource)
 
 .card-body
   = show_for(resource) do |f|
@@ -21,4 +19,3 @@
     = f.attribute :metadata do
       %pre
         %code= JSON.pretty_generate(resource.metadata)
-

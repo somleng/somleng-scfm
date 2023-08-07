@@ -1,7 +1,6 @@
-= page_title(title: title)
-
-- content_for(:related_links) do
-  = related_link_to t(:"titles.remote_phone_call_events.index"), dashboard_phone_call_remote_phone_call_events_path(resource)
+= page_title(title: title) do
+  = render "shared/resource_related_links" do
+    = related_link_to t(:"titles.remote_phone_call_events.index"), dashboard_phone_call_remote_phone_call_events_path(resource)
 
 .card-body
   = show_for(resource) do |f|

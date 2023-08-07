@@ -1,5 +1,5 @@
-- content_for(:page_actions) do
-  = link_to(translate(:"titles.contacts.new"), new_dashboard_contact_path, class: 'btn btn-outline-success')
+= page_title(title: title) do
+  = render("shared/new_resource_page_action", path: new_dashboard_contact_path)
 
 - content_for(:resources_table) do
   = render("shared/resources_table", resource_class: Contact, columns: [:msisdn, :created_at])

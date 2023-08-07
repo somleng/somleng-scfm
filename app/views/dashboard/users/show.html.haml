@@ -1,8 +1,6 @@
-= page_title(title: title)
-
-- content_for(:page_actions) do
-  = link_to(translate(:"titles.actions.edit"), edit_dashboard_user_path(resource), class: 'btn btn-outline-primary')
-  = link_to(translate(:"titles.actions.delete"), dashboard_user_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+= page_title(title: title) do
+  = render("shared/edit_resource_page_action", path: edit_dashboard_user_path(resource))
+  = render("shared/destroy_resource_page_action", path: dashboard_user_path(resource))
 
 .card-body
   = show_for(resource) do |f|

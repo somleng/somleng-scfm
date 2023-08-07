@@ -17,7 +17,6 @@
     "esbuild": "^0.18.17",
     "moment": "^2.29.4",
     "nodemon": "^3.0.1",
-    "popper.js": "^1.16.1",
     "postcss": "^8.4.27",
     "postcss-cli": "^10.1.0",
     "sass": "^1.64.2",

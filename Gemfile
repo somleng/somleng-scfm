@@ -14,7 +14,6 @@ gem "aws-sdk-s3", require: false
 gem "aws-sdk-sqs"
 gem "bitmask_attributes", github: "numerex/bitmask_attributes"
 gem "bootsnap", require: false
-gem "breadcrumbs_on_rails"
 gem "cocoon"
 gem "cssbundling-rails"
 gem "devise"

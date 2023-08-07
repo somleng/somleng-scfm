@@ -13,7 +13,5 @@ module Dashboard
     def respond_with_created_resource
       respond_with resource, location: -> { request.headers["Referer"] || dashboard_root_path }
     end
-
-    def prepare_breadcrumbs; end
   end
 end

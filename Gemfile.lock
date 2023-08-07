@@ -159,8 +159,6 @@ GEM
       smart_properties
     bootsnap (1.16.0)
       msgpack (~> 1.2)
-    breadcrumbs_on_rails (4.1.0)
-      railties (>= 5.0)
     builder (3.2.4)
     capybara (3.39.2)
       addressable
@@ -547,7 +545,6 @@ DEPENDENCIES
   aws-sdk-sqs
   bitmask_attributes!
   bootsnap
-  breadcrumbs_on_rails
   capybara
   cocoon
   cssbundling-rails

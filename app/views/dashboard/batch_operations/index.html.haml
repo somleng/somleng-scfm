@@ -2,7 +2,6 @@
   - if callout
     = render("shared/new_resource_page_action", path: new_dashboard_callout_batch_operation_callout_population_path(callout))
 
-- content_for(:resources_table) do
+.card-body
   = render("shared/resources_table", resource_class: BatchOperation::Base, columns: [:type, :status, :created_at], partial: "shared/batch_operation")
-
-= render("shared/index")
+  = render("shared/pagination", resources: resources)

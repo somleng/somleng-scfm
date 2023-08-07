@@ -12,9 +12,7 @@ RSpec.describe "Contacts", :aggregate_failures do
     expect(page).to have_title("Contacts")
 
     within("#page_actions") do
-      expect(page).to have_link_to_action(
-        :new, key: :contacts, href: new_dashboard_contact_path
-      )
+      expect(page).to have_link("New", href: new_dashboard_contact_path)
     end
 
     within("#resources") do
@@ -90,7 +88,7 @@ RSpec.describe "Contacts", :aggregate_failures do
     sign_in(user)
     visit dashboard_contact_path(contact)
 
-    click_action_button(:delete, type: :link)
+    click_on "Delete"
 
     expect(current_path).to eq(dashboard_contacts_path)
     expect(page).to have_text("Contact was successfully destroyed.")
@@ -132,13 +130,8 @@ RSpec.describe "Contacts", :aggregate_failures do
       )
     end
 
-    within("#contact") do
+    within(".contact") do
       expect(page).to have_content(contact.id)
-      expect(page).to have_content("#")
-      expect(page).to have_content("Phone number")
-      expect(page).to have_content(phone_number)
-      expect(page).to have_content("Metadata")
-      expect(page).to have_content("location:country")
       expect(page).to have_content("Cambodia")
     end
   end

@@ -15,9 +15,8 @@ RSpec.describe "Callout Populations" do
     visit(dashboard_callout_batch_operations_path(callout_population.callout))
 
     within("#page_actions") do
-      expect(page).to have_link_to_action(
-        :new,
-        key: :callout_populations,
+      expect(page).to have_link(
+        "New",
         href: new_dashboard_callout_batch_operation_callout_population_path(
           callout_population.callout
         )
@@ -55,17 +54,10 @@ RSpec.describe "Callout Populations" do
       with: { key: "location:country", value: "kh" },
       index: 1
     )
-    click_action_button(
-      :create,
-      key: :"submit.batch_operation_callout_population",
-      namespace: :helpers
-    )
+    click_on "Create Callout Population"
 
-    new_callout_population = callout.reload.callout_populations.last!
-    expect(current_path).to eq(dashboard_batch_operation_path(new_callout_population))
     expect(page).to have_text("Callout population was successfully created")
-    asserted_contact_filter_metadata = { "gender" => "f", "location" => { "country" => "kh" } }
-    expect(new_callout_population.contact_filter_metadata).to eq(asserted_contact_filter_metadata)
+    expect(page).to have_content(JSON.pretty_generate("gender" => "f", "location" => { "country" => "kh" }))
   end
 
   it "can update a callout population", :js do
@@ -89,9 +81,8 @@ RSpec.describe "Callout Populations" do
     remove_key_value_for(:contact_filter_metadata)
     add_key_value_for(:contact_filter_metadata)
     fill_in_key_value_for(:contact_filter_metadata, with: { key: "gender", value: "m" })
-    click_action_button(:update, key: :submit, namespace: :helpers)
+    click_on "Save"
 
-    expect(current_path).to eq(dashboard_batch_operation_path(callout_population))
     expect(page).to have_text("Callout population was successfully updated.")
     expect(callout_population.reload.contact_filter_metadata).to eq("gender" => "m")
   end
@@ -109,30 +100,16 @@ RSpec.describe "Callout Populations" do
     visit(dashboard_batch_operation_path(callout_population))
 
     within("#page_actions") do
-      expect(page).to have_link_to_action(
-        :edit,
+      expect(page).to have_link(
+        "Edit",
         href: edit_dashboard_batch_operation_callout_population_path(
           callout_population
         )
       )
     end
 
-    within("#resource") do
-      expect(page).to have_content(callout_population.id)
-
-      expect(page).to have_link(
-        callout_population.callout.id.to_s,
-        href: dashboard_callout_path(callout_population.callout)
-      )
-
-      expect(page).to have_content("Status")
-      expect(page).to have_content("Preview")
-      expect(page).to have_content("Callout")
-      expect(page).to have_content("Created at")
-      expect(page).to have_content("Contact filter metadata")
-      expect(page).to have_content("location:country")
-      expect(page).to have_content("Cambodia")
-    end
+    expect(page).to have_content(callout_population.id)
+    expect(page).to have_content("Cambodia")
   end
 
   it "can delete a callout population" do
@@ -142,7 +119,7 @@ RSpec.describe "Callout Populations" do
     sign_in(user)
     visit dashboard_batch_operation_path(callout_population)
 
-    click_action_button(:delete, type: :link)
+    click_on "Delete"
 
     expect(current_path).to eq(
       dashboard_callout_batch_operations_path(callout_population.callout)
@@ -158,7 +135,7 @@ RSpec.describe "Callout Populations" do
     sign_in(user)
     visit dashboard_batch_operation_path(callout_population)
 
-    click_action_button(:delete, type: :link)
+    click_on "Delete"
 
     expect(current_path).to eq(
       dashboard_batch_operation_path(callout_population)

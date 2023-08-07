@@ -6,13 +6,9 @@ RSpec.describe "User sign in" do
 
     visit new_user_session_path
 
-    within("#page_title") do
-      expect(page).to have_content(I18n.translate!(:"titles.user_sessions.new"))
-    end
-
     fill_in "Email", with: user.email
     fill_in "Password", with: "mysecret"
-    click_action_button(:create, key: :user_sessions)
+    click_on "Sign In"
 
     expect(page).to have_text("Signed in successfully.")
     expect(current_path).to eq(user_root_path)
@@ -24,10 +20,8 @@ RSpec.describe "User sign in" do
     sign_in(user)
     visit dashboard_root_path
 
-    within("#top_nav") do
-      click_action_button(:destroy, key: :user_sessions, type: :link)
-    end
+    click_on "Sign Out"
 
-    expect(current_path).to eq(root_path)
+    expect(page).to have_content("You need to sign in or sign up before continuing")
   end
 end

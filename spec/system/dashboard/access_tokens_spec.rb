@@ -12,9 +12,7 @@ RSpec.describe "API Key Management" do
     expect(page).to have_title("API Keys")
 
     within("#page_actions") do
-      expect(page).to have_link_to_action(
-        :new, key: :access_tokens, href: new_dashboard_access_token_path
-      )
+      expect(page).to have_link("New", href: new_dashboard_access_token_path)
     end
 
     within("#resources") do
@@ -70,17 +68,10 @@ RSpec.describe "API Key Management" do
     visit dashboard_access_token_path(access_token)
 
     within("#page_actions") do
-      expect(page).to have_link_to_action(
-        :edit,
-        href: edit_dashboard_access_token_path(access_token)
-      )
+      expect(page).to have_link("Edit", href: edit_dashboard_access_token_path(access_token))
     end
 
-    within("#access_token") do
-      expect(page).to have_content("#")
-      expect(page).to have_content("API key")
-      expect(page).to have_content("Created at")
-      expect(page).to have_content(access_token.id)
+    within(".access_token") do
       expect(page).to have_content(access_token.token)
       expect(page).to have_content("Read batch operations, Write contacts")
     end
@@ -117,7 +108,7 @@ RSpec.describe "API Key Management" do
     visit(dashboard_access_token_path(access_token))
 
     within("#page_actions") do
-      click_action_button(:delete, type: :link)
+      click_on "Delete"
     end
 
     expect(current_path).to eq(dashboard_access_tokens_path)

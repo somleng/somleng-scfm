@@ -21,7 +21,7 @@ module ApplicationHelper
       end
 
       if block_given?
-        content += content_tag(:div, class: "card-header-actions") do
+        content += content_tag(:div, id: "page_actions", class: "card-header-actions") do
           capture(&block)
         end
       end

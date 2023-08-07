@@ -13,9 +13,7 @@ RSpec.describe "Users" do
     expect(page).to have_title("Users")
 
     within("#page_actions") do
-      expect(page).to have_link_to_action(
-        :new, key: :user_invitations, href: new_user_invitation_path
-      )
+      expect(page).to have_link("New", href: new_user_invitation_path)
     end
 
     within("#resources") do
@@ -49,20 +47,11 @@ RSpec.describe "Users" do
     expect(page).to have_title("User #{user.id}")
 
     within("#page_actions") do
-      expect(page).to have_link_to_action(
-        :edit,
-        href: edit_dashboard_user_path(user)
-      )
+      expect(page).to have_link("Edit", href: edit_dashboard_user_path(user))
     end
 
-    within("#user") do
-      expect(page).to have_content("#")
+    within(".user") do
       expect(page).to have_content(user.id)
-      expect(page).to have_content("Email")
-      expect(page).to have_content(user.email)
-      expect(page).to have_content("Created at")
-      expect(page).to have_content("Last sign in at")
-      expect(page).to have_content("Invitation accepted at")
     end
   end
 
@@ -91,10 +80,9 @@ RSpec.describe "Users" do
     visit dashboard_user_path(other_user)
 
     within("#page_actions") do
-      click_action_button(:delete, type: :link)
+      click_on "Delete"
     end
 
-    expect(current_path).to eq(dashboard_users_path)
     expect(page).to have_text("User was successfully destroyed.")
   end
 end

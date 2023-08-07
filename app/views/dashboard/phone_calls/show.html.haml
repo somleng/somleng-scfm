@@ -1,82 +1,35 @@
+= page_title(title: title)
+
 - content_for(:related_links) do
   = related_link_to t(:"titles.remote_phone_call_events.index"), dashboard_phone_call_remote_phone_call_events_path(resource)
 
-.col
-  #resource.card
-    .card-body
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right #
-        %dd.col-sm-7.col-md-6
-          %code
-            = resource.id
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = PhoneCall.human_attribute_name(:msisdn)
-        %dd.col-sm-7.col-md-6
-          = resource.msisdn
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = PhoneCall.human_attribute_name(:contact_id)
-        %dd.col-sm-7.col-md-6
-          = link_to(resource.contact_id, dashboard_contact_path(resource.contact_id))
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = PhoneCall.human_attribute_name(:direction)
-        %dd.col-sm-7.col-md-6
-          = resource.direction.to_s.humanize
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = PhoneCall.human_attribute_name(:status)
-        %dd.col-sm-7.col-md-6
-          = resource.status.humanize
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = PhoneCall.human_attribute_name(:duration)
-        %dd.col-sm-7.col-md-6
-          = resource.duration
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = PhoneCall.human_attribute_name(:callout_participation_id)
-        - if resource.callout_participation_id
-          %dd.col-sm-7.col-md-6
-            = link_to(resource.callout_participation_id, dashboard_callout_participation_path(resource.callout_participation_id))
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = PhoneCall.human_attribute_name(:callout_id)
-        - if resource.callout_id
-          %dd.col-sm-7.col-md-6
-            = link_to(resource.callout_id, dashboard_callout_path(resource.callout_id))
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = PhoneCall.human_attribute_name(:call_flow_logic)
-        %dd.col-sm-7.col-md-6
-          %code
-            = translate("simple_form.options.defaults.call_flow_logic.#{resource.call_flow_logic}")
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = PhoneCall.human_attribute_name(:remote_call_id)
-        %dd.col-sm-7.col-md-6
-          = resource.remote_call_id
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = PhoneCall.human_attribute_name(:remote_status)
-        %dd.col-sm-7.col-md-6
-          = resource.remote_status
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = PhoneCall.human_attribute_name(:remote_error_message)
-        %dd.col-sm-7.col-md-6
-          = resource.remote_error_message
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = PhoneCall.human_attribute_name(:remotely_queued_at)
-        %dd.col-sm-7.col-md-6
-          = local_time(resource.remotely_queued_at)
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = PhoneCall.human_attribute_name(:created_at)
-        %dd.col-sm-7.col-md-6
-          = local_time(resource.created_at)
-      = render("shared/key_value_attributes", attribute: :remote_response)
-      = render("shared/key_value_attributes", attribute: :remote_queue_response)
-      = render("shared/key_value_attributes", attribute: :metadata)
+.card-body
+  = show_for(resource) do |f|
+    = f.attribute :id
+    = f.attribute :msisdn
+    = f.attribute :contact do
+      = link_to(resource.contact_id, dashboard_contact_path(resource.contact_id))
+    = f.attribute :direction, value: resource.direction.to_s.humanize
+    = f.attribute :status, value: resource.status.humanize
+    = f.attribute :duration
+    = f.attribute :callout_participation do
+      - if resource.callout_participation_id
+        = link_to(resource.callout_participation_id, dashboard_callout_participation_path(resource.callout_participation_id))
+    = f.attribute :callout do
+      - if resource.callout_id
+        = link_to(resource.callout_id, dashboard_callout_path(resource.callout_id))
+    = f.attribute :call_flow_logic, value: translate("simple_form.options.defaults.call_flow_logic.#{resource.call_flow_logic}")
+    = f.attribute :remote_call_id
+    = f.attribute :remote_status
+    = f.attribute :remote_error_message
+    = f.attribute :remotely_queued_at, value: local_time(resource.remotely_queued_at)
+    = f.attribute :created_at, value: local_time(resource.created_at)
+    = f.attribute :metadata do
+      %pre
+        %code= JSON.pretty_generate(resource.metadata)
+    = f.attribute :remote_queue_response do
+      %pre
+        %code= JSON.pretty_generate(resource.remote_queue_response)
+    = f.attribute :remote_response do
+      %pre
+        %code= JSON.pretty_generate(resource.remote_response)

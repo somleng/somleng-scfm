@@ -2,3 +2,6 @@
 @import "@coreui/coreui/scss/coreui";
 @import "direct_uploads";
 
+.card .callout {
+  border-left: 1px solid rgb(216, 219, 224);
+}

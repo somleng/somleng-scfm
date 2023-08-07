@@ -49,11 +49,6 @@ en:
       new: New Contact
       show: Contact %{id}
       update: Edit Contact
-    home:
-      about_us: About Us
-      contact: Contact
-      dashboard: Dashboard
-      index: Home
     phone_calls:
       index: Phone Calls
       queue: Send

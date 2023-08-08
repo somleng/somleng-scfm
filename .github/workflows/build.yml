@@ -117,6 +117,11 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
     needs: build
     if: github.ref == 'refs/heads/upgrade_fixes'
     env:
@@ -173,6 +178,7 @@ jobs:
           tags: |
             ${{ env.APP_ECR_REPOSITORY_URI }}:latest
             ${{ env.APP_ECR_REPOSITORY_URI }}:${{ env.IMAGE_TAG  }}
+            ${{ env.APP_GHCR_REPOSITORY_URI }}:latest
 
       - name: Build and push to AWS ECR `nginx`
         uses: docker/build-push-action@v4
@@ -185,6 +191,7 @@ jobs:
           tags: |
             ${{ env.NGINX_ECR_REPOSITORY_URI }}:latest
             ${{ env.NGINX_ECR_REPOSITORY_URI }}:${{ env.IMAGE_TAG  }}
+            ${{ env.NGINX_GHCR_REPOSITORY_URI }}:latest
 
       - name: Get current webserver task definition
         run: |

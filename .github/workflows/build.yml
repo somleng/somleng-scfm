@@ -125,6 +125,8 @@ jobs:
       ECR_PUBLIC_REGISTRY: public.ecr.aws
       APP_ECR_REPOSITORY_URI: public.ecr.aws/somleng/scfm
       NGINX_ECR_REPOSITORY_URI: public.ecr.aws/somleng/scfm-nginx
+      APP_GHCR_REPOSITORY_URI: ghcr.io/somleng-scfm/scfm
+      NGINX_GHCR_REPOSITORY_URI: ghcr.io/somleng-scfm/scfm-nginx
 
     steps:
       - name: Checkout
@@ -150,6 +152,13 @@ jobs:
         env:
           AWS_REGION: us-east-1
 
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -164,6 +173,7 @@ jobs:
           tags: |
             ${{ env.APP_ECR_REPOSITORY_URI }}:latest
             ${{ env.APP_ECR_REPOSITORY_URI }}:${{ env.IMAGE_TAG  }}
+            ${{ env.APP_GHCR_REPOSITORY_URI }}:latest
 
       - name: Build and push to AWS ECR `nginx`
         uses: docker/build-push-action@v4
@@ -176,6 +186,7 @@ jobs:
           tags: |
             ${{ env.NGINX_ECR_REPOSITORY_URI }}:latest
             ${{ env.NGINX_ECR_REPOSITORY_URI }}:${{ env.IMAGE_TAG  }}
+            ${{ env.NGINX_GHCR_REPOSITORY_URI }}:latest
 
       - name: Get current webserver task definition
         run: |

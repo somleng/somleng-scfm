@@ -199,10 +199,10 @@ jobs:
 
       - name: Get current worker (Fargate) task definition
         run: |
-          aws ecs describe-task-definition --task-definition ${{ env.APP_IDENTIFIER }}-worker --query 'taskDefinition' > task-definition.json
+          aws ecs describe-task-definition --task-definition ${{ env.APP_IDENTIFIER }}-worker-fargate --query 'taskDefinition' > task-definition.json
 
       - name: Prepare worker (Fargate) task definition
-        id: render-worker-task-def
+        id: render-fargate-worker-task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
@@ -212,11 +212,11 @@ jobs:
       - name: Register Fargate task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
-          task-definition: ${{ steps.render-worker-task-def.outputs.task-definition }}
+          task-definition: ${{ steps.render-fargate-worker-task-def.outputs.task-definition }}
 
       - name: Run DB Migrate
         run: |
-          ./bin/ecs_run_task --cluster somleng --started-by db_migrate_ci --service ${{ env.APP_IDENTIFIER }}-worker --task-definition ${{ env.APP_IDENTIFIER }}-worker --launch-type FARGATE --command "bundle exec rails db:migrate"
+          ./bin/ecs_run_task --cluster somleng --started-by db_migrate_ci --service ${{ env.APP_IDENTIFIER }}-worker --task-definition ${{ env.APP_IDENTIFIER }}-worker-fargate --launch-type FARGATE --command "bundle exec rails db:migrate"
 
       - name: Deploy App Server
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1

@@ -1,8 +1,6 @@
 module "scfm" {
   source = "../modules/scfm"
 
-  ecs_cluster = data.terraform_remote_state.core_infrastructure.outputs.ecs_cluster
-  codedeploy_role = data.terraform_remote_state.core_infrastructure.outputs.codedeploy_role
   app_identifier = "scfm"
   subdomain = "scfm"
   cdn_subdomain = "cdn-scfm"
@@ -14,18 +12,11 @@ module "scfm" {
   aws_region = var.aws_region
   load_balancer = data.terraform_remote_state.core_infrastructure.outputs.application_load_balancer
   listener_arn = data.terraform_remote_state.core_infrastructure.outputs.https_listener.arn
-  container_instance_subnets = data.terraform_remote_state.core_infrastructure.outputs.vpc.private_subnets
-  vpc_id = data.terraform_remote_state.core_infrastructure.outputs.vpc.vpc_id
+  vpc = data.terraform_remote_state.core_infrastructure.outputs.vpc
   route53_zone = data.terraform_remote_state.core_infrastructure.outputs.route53_zone_somleng_org
   cdn_certificate = data.terraform_remote_state.core_infrastructure.outputs.cdn_certificate
   logs_bucket = data.terraform_remote_state.core_infrastructure.outputs.logs_bucket.id
   uploads_bucket = "uploads.somleng.org"
   audio_bucket = "audio.somleng.org"
   db_name = "scfm"
-
-  vpc_cidr_block = data.terraform_remote_state.core_infrastructure.outputs.vpc.vpc_cidr_block
-  database_subnets = data.terraform_remote_state.core_infrastructure.outputs.vpc.database_subnets
-
-  ecs_worker_autoscale_min_instances = 1
-  ecs_worker_autoscale_max_instances = 4
 }

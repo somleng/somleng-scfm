@@ -186,28 +186,27 @@ resource "aws_appautoscaling_policy" "worker_down" {
   }
 }
 
-resource "aws_appautoscaling_target" "appserver_scale_target" {
+resource "aws_appautoscaling_target" "webserver_scale_target" {
   service_namespace  = "ecs"
-  resource_id        = "service/${var.ecs_cluster.name}/${aws_ecs_service.appserver.name}"
+  resource_id        = "service/${aws_ecs_cluster.this.id}/${aws_ecs_service.webserver.name}"
   scalable_dimension = "ecs:service:DesiredCount"
-  max_capacity       = var.ecs_appserver_autoscale_max_instances
-  min_capacity       = var.ecs_appserver_autoscale_min_instances
+  max_capacity       = var.webserver_max_tasks
+  min_capacity       = var.webserver_min_tasks
 }
 
 resource "aws_appautoscaling_target" "worker_scale_target" {
   service_namespace  = "ecs"
-  resource_id        = "service/${var.ecs_cluster.name}/${aws_ecs_service.worker.name}"
+  resource_id        = "service/${aws_ecs_cluster.this.id}/${aws_ecs_service.worker.name}"
   scalable_dimension = "ecs:service:DesiredCount"
-  max_capacity       = var.ecs_worker_autoscale_max_instances
-  min_capacity       = var.ecs_worker_autoscale_min_instances
+  max_capacity       = var.worker_max_tasks
+  min_capacity       = var.worker_min_tasks
 }
 
-
-resource "aws_appautoscaling_policy" "appserver_policy" {
-  name               = "appserver-scale"
-  service_namespace  = aws_appautoscaling_target.appserver_scale_target.service_namespace
-  resource_id        = aws_appautoscaling_target.appserver_scale_target.resource_id
-  scalable_dimension = aws_appautoscaling_target.appserver_scale_target.scalable_dimension
+resource "aws_appautoscaling_policy" "webserver_policy" {
+  name               = "webserver-scale"
+  service_namespace  = aws_appautoscaling_target.webserver_scale_target.service_namespace
+  resource_id        = aws_appautoscaling_target.webserver_scale_target.resource_id
+  scalable_dimension = aws_appautoscaling_target.webserver_scale_target.scalable_dimension
   policy_type        = "TargetTrackingScaling"
 
   target_tracking_scaling_policy_configuration {

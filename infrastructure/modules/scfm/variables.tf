@@ -1,4 +1,3 @@
-variable "ecs_cluster" {}
 variable "app_identifier" {}
 variable "app_environment" {}
 variable "app_image" {}
@@ -6,11 +5,8 @@ variable "nginx_image" {}
 variable "memory" {}
 variable "cpu" {}
 variable "aws_region" {}
-variable "container_instance_subnets" {}
-variable "vpc_id" {}
-variable "vpc_cidr_block" {}
+variable "vpc" {}
 variable "logs_bucket" {}
-variable "codedeploy_role" {}
 variable "uploads_bucket" {}
 variable "audio_bucket" {}
 variable "load_balancer" {}
@@ -41,36 +37,33 @@ variable "db_pool" {
   default = 48
 }
 
-variable "database_subnets" {}
 variable "db_username" {
   default = "somleng"
 }
 variable "db_name" {}
-variable "enable_dashboard" {
-  default = false
-}
-variable "ecs_appserver_autoscale_max_instances" {
+
+variable "webserver_max_tasks" {
   default = 4
 }
-variable "ecs_appserver_autoscale_min_instances" {
+variable "webserver_min_tasks" {
   default = 1
 }
-variable "ecs_worker_autoscale_max_instances" {
+variable "worker_max_tasks" {
   default = 4
 }
-variable "ecs_worker_autoscale_min_instances" {
+variable "worker_min_tasks" {
   default = 1
 }
 # If the average CPU utilization over a minute drops to this threshold,
 # the number of containers will be reduced (but not below ecs_autoscale_min_instances).
 variable "ecs_as_cpu_low_threshold_per" {
-  default = "20"
+  default = "30"
 }
 
 # If the average CPU utilization over a minute rises to this threshold,
 # the number of containers will be increased (but not above ecs_autoscale_max_instances).
 variable "ecs_as_cpu_high_threshold_per" {
-  default = "80"
+  default = "70"
 }
 
 variable "scheduler_schedule" {

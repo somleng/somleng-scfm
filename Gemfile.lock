@@ -102,22 +102,22 @@ GEM
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
-    addressable (2.8.4)
+    addressable (2.8.5)
       public_suffix (>= 2.0.2, < 6.0)
     after_commit_everywhere (1.3.1)
       activerecord (>= 4.2)
       activesupport
     ast (2.4.2)
     aws-eventstream (1.2.0)
-    aws-partitions (1.797.0)
+    aws-partitions (1.799.0)
     aws-record (2.11.0)
       aws-sdk-dynamodb (~> 1, >= 1.85.0)
-    aws-sdk-core (3.180.1)
+    aws-sdk-core (3.180.2)
       aws-eventstream (~> 1, >= 1.0.2)
       aws-partitions (~> 1, >= 1.651.0)
       aws-sigv4 (~> 1.5)
       jmespath (~> 1, >= 1.6.1)
-    aws-sdk-dynamodb (1.93.0)
+    aws-sdk-dynamodb (1.93.1)
       aws-sdk-core (~> 3, >= 3.177.0)
       aws-sigv4 (~> 1.1)
     aws-sdk-kms (1.71.0)
@@ -197,7 +197,7 @@ GEM
     dry-configurable (1.1.0)
       dry-core (~> 1.0, < 2)
       zeitwerk (~> 2.6)
-    dry-core (1.0.0)
+    dry-core (1.0.1)
       concurrent-ruby (~> 1.0)
       zeitwerk (~> 2.6)
     dry-inflector (1.0.0)
@@ -272,9 +272,6 @@ GEM
       rails-i18n
       rainbow (>= 2.2.2, < 4.0)
       terminal-table (>= 1.5.1)
-    jbuilder (2.11.5)
-      actionview (>= 5.0.0)
-      activesupport (>= 5.0.0)
     jmespath (1.6.2)
     jsbundling-rails (1.1.2)
       railties (>= 6.0.0)
@@ -311,7 +308,7 @@ GEM
     marcel (1.0.2)
     matrix (0.4.2)
     method_source (1.0.0)
-    mime-types (3.4.1)
+    mime-types (3.5.0)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2023.0218.1)
     mini_mime (1.1.2)
@@ -339,7 +336,7 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.5.3)
-    phony (2.20.5)
+    phony (2.20.6)
     phony_rails (0.15.0)
       activesupport (>= 3.0)
       phony (>= 2.18.12)
@@ -372,7 +369,7 @@ GEM
       actionpack (>= 5.0.1.rc1)
       actionview (>= 5.0.1.rc1)
       activesupport (>= 5.0.1.rc1)
-    rails-dom-testing (2.1.1)
+    rails-dom-testing (2.2.0)
       activesupport (>= 5.0.0)
       minitest
       nokogiri (>= 1.6)
@@ -443,7 +440,7 @@ GEM
       activesupport (>= 4.2.0)
       rack (>= 1.1)
       rubocop (>= 1.33.0, < 2.0)
-    rubocop-rspec (2.23.0)
+    rubocop-rspec (2.23.1)
       rubocop (~> 1.33)
       rubocop-capybara (~> 2.17)
       rubocop-factory_bot (~> 2.22)
@@ -496,7 +493,7 @@ GEM
       actionpack (>= 5.2)
       activesupport (>= 5.2)
       sprockets (>= 3.0.0)
-    stimulus-rails (1.2.1)
+    stimulus-rails (1.2.2)
       railties (>= 6.0.0)
     strip_attributes (1.13.0)
       activemodel (>= 3.0, < 8.0)
@@ -560,7 +557,6 @@ DEPENDENCIES
   foreman
   haml-rails
   i18n-tasks
-  jbuilder (~> 2.5)
   jsbundling-rails
   kaminari
   lograge
@@ -584,7 +580,6 @@ DEPENDENCIES
   sassc-rails
   selenium-webdriver
   sentry-rails
-  sentry-ruby
   shoryuken
   shoulda-matchers
   show_for
@@ -600,4 +595,4 @@ DEPENDENCIES
   webmock
 
 BUNDLED WITH
-   2.4.17
+   2.4.18

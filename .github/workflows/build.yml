@@ -215,7 +215,7 @@ jobs:
 
       - name: Get current worker task definition
         run: |
-          aws ecs describe-task-definition --task-definition ${{ env.APP_IDENTIFIER }}-worker" --query 'taskDefinition' > task-definition.json
+          aws ecs describe-task-definition --task-definition ${{ env.APP_IDENTIFIER }}-worker --query 'taskDefinition' > task-definition.json
 
       - name: Prepare worker task definition
         id: render-worker-task-def

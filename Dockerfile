@@ -2,6 +2,8 @@ FROM ruby:3.2-alpine AS build-env
 
 ARG APP_ROOT="/app"
 ENV BUNDLE_APP_CONFIG="/app/.bundle"
+ENV RAILS_ENV="production"
+ENV SECRET_KEY_BASE_DUMMY="1"
 
 RUN apk update && \
     apk upgrade && \
@@ -13,7 +15,6 @@ WORKDIR $APP_ROOT
 
 COPY Gemfile Gemfile.lock package.json yarn.lock $APP_ROOT/
 
-ENV RAILS_ENV="production"
 RUN bundle config --local deployment true && \
     bundle config --local path "vendor/bundle" && \
     bundle config --local without 'development test'
@@ -21,7 +22,7 @@ RUN bundle config --local deployment true && \
 RUN bundle install --jobs 20 --retry 5
 RUN yarn install --frozen-lockfile
 COPY . .
-RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+RUN bundle exec rails assets:precompile
 RUN mkdir -p tmp/pids
 RUN rm -rf vendor/bundle/ruby/*/cache/ && find vendor/ -name "*.o" -delete && find vendor/ -name "*.c"
 

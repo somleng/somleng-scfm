@@ -227,14 +227,14 @@ jobs:
 
       - name: Run DB Migrate
         run: |
-          ./bin/ecs_run_task --cluster somleng --started-by db_migrate_ci --service ${{ env.APP_IDENTIFIER }}-worker --task-definition ${{ env.APP_IDENTIFIER }}-worker-fargate --launch-type FARGATE --command "bundle exec rails db:migrate"
+          ./bin/ecs_run_task --cluster scfm --started-by db_migrate_ci --service ${{ env.APP_IDENTIFIER }}-worker --task-definition ${{ env.APP_IDENTIFIER }}-worker-fargate --launch-type FARGATE --command "bundle exec rails db:migrate"
 
       - name: Deploy Webserver
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.render-webserver-task-def.outputs.task-definition }}
           service: ${{ env.APP_IDENTIFIER }}-webserver
-          cluster: somleng
+          cluster: scfm
           wait-for-service-stability: true
 
       - name: Deploy Worker
@@ -242,5 +242,5 @@ jobs:
         with:
           task-definition: ${{ steps.render-worker-task-def.outputs.task-definition }}
           service: ${{ env.APP_IDENTIFIER }}-worker
-          cluster: somleng
+          cluster: scfm
           wait-for-service-stability: true

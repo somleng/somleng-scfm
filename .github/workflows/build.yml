@@ -130,8 +130,8 @@ jobs:
       ECR_PUBLIC_REGISTRY: public.ecr.aws
       APP_ECR_REPOSITORY_URI: public.ecr.aws/somleng/scfm
       NGINX_ECR_REPOSITORY_URI: public.ecr.aws/somleng/scfm-nginx
-      APP_GHCR_REPOSITORY_URI: ghcr.io/somleng-scfm/scfm
-      NGINX_GHCR_REPOSITORY_URI: ghcr.io/somleng-scfm/scfm-nginx
+      APP_GHCR_REPOSITORY_URI: ghcr.io/somleng/scfm
+      NGINX_GHCR_REPOSITORY_URI: ghcr.io/somleng/scfm-nginx
 
     steps:
       - name: Checkout

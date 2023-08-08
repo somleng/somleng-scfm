@@ -200,7 +200,7 @@ jobs:
           container-name: nginx
           image: ${{ env.NGINX_ECR_REPOSITORY_URI }}:${{ env.IMAGE_TAG }}
 
-      - name: Prepare app server task definition
+      - name: Prepare webserver task definition
         id: render-webserver-task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
@@ -229,7 +229,7 @@ jobs:
         run: |
           ./bin/ecs_run_task --cluster somleng --started-by db_migrate_ci --service ${{ env.APP_IDENTIFIER }}-worker --task-definition ${{ env.APP_IDENTIFIER }}-worker-fargate --launch-type FARGATE --command "bundle exec rails db:migrate"
 
-      - name: Deploy App Server
+      - name: Deploy Webserver
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.render-webserver-task-def.outputs.task-definition }}

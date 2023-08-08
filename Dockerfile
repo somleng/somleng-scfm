@@ -2,7 +2,6 @@ FROM ruby:3.2-alpine AS build-env
 
 ARG APP_ROOT="/app"
 ENV BUNDLE_APP_CONFIG="/app/.bundle"
-ENV RAILS_ENV="production"
 ENV SECRET_KEY_BASE_DUMMY="1"
 
 RUN apk update && \

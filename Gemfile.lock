@@ -272,9 +272,6 @@ GEM
       rails-i18n
       rainbow (>= 2.2.2, < 4.0)
       terminal-table (>= 1.5.1)
-    jbuilder (2.11.5)
-      actionview (>= 5.0.0)
-      activesupport (>= 5.0.0)
     jmespath (1.6.2)
     jsbundling-rails (1.1.2)
       railties (>= 6.0.0)
@@ -560,7 +557,6 @@ DEPENDENCIES
   foreman
   haml-rails
   i18n-tasks
-  jbuilder (~> 2.5)
   jsbundling-rails
   kaminari
   lograge
@@ -584,7 +580,6 @@ DEPENDENCIES
   sassc-rails
   selenium-webdriver
   sentry-rails
-  sentry-ruby
   shoryuken
   shoulda-matchers
   show_for

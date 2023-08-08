@@ -213,6 +213,18 @@ jobs:
           container-name: app
           image: ${{ env.APP_ECR_REPOSITORY_URI }}:${{ env.IMAGE_TAG }}
 
+      - name: Get current worker task definition
+        run: |
+          aws ecs describe-task-definition --task-definition ${{ env.APP_IDENTIFIER }}-worker" --query 'taskDefinition' > task-definition.json
+
+      - name: Prepare worker task definition
+        id: render-worker-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definition.json
+          container-name: worker
+          image: ${{ env.APP_ECR_REPOSITORY_URI }}:${{ env.IMAGE_TAG }}
+
       - name: Get current worker (Fargate) task definition
         run: |
           aws ecs describe-task-definition --task-definition ${{ env.APP_IDENTIFIER }}-worker-fargate --query 'taskDefinition' > task-definition.json

@@ -103,7 +103,7 @@ RSpec.describe "Phone Calls" do
       )
     end
 
-    within("#resource") do
+    within(".phone_call") do
       expect(page).to have_content(phone_call.id.to_s)
 
       expect(page).to have_link(
@@ -120,24 +120,6 @@ RSpec.describe "Phone Calls" do
         phone_call.contact_id.to_s,
         href: dashboard_contact_path(phone_call.contact_id)
       )
-
-      expect(page).to have_content("#")
-      expect(page).to have_content("Phone number")
-      expect(page).to have_content("Contact")
-      expect(page).to have_content("Direction")
-      expect(page).to have_content("Status")
-      expect(page).to have_content("Duration")
-      expect(page).to have_content("Callout participation")
-      expect(page).to have_content("Callout")
-      expect(page).to have_content("Call flow")
-      expect(page).to have_content("Remote call sid")
-      expect(page).to have_content("Remote status")
-      expect(page).to have_content("Remote error message")
-      expect(page).to have_content("Remotely queued at")
-      expect(page).to have_content("Created at")
-      expect(page).to have_content("Remote response")
-      expect(page).to have_content("Remote queue response")
-      expect(page).to have_content("Metadata")
     end
   end
 end

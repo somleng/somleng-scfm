@@ -1,42 +1,21 @@
-- content_for(:page_actions) do
-  = link_to(translate(:"titles.actions.delete"), dashboard_callout_participation_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+= page_title(title: title) do
+  = render("shared/destroy_resource_page_action", path: dashboard_callout_participation_path(resource))
 
-- content_for(:related_links) do
-  = related_link_to t(:"titles.phone_calls.index"), dashboard_callout_participation_phone_calls_path(resource)
+  = render "shared/resource_related_links" do
+    = related_link_to t(:"titles.phone_calls.index"), dashboard_callout_participation_phone_calls_path(resource)
 
-.col
-  #resource.card
-    .card-body
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right #
-        %dd.col-sm-7.col-md-6
-          %code
-            = resource.id
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = CalloutParticipation.human_attribute_name(:callout_id)
-        %dd.col-sm-7.col-md-6
-          = link_to(resource.callout_id, dashboard_callout_path(resource.callout_id))
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = CalloutParticipation.human_attribute_name(:contact_id)
-        %dd.col-sm-7.col-md-6
-          = link_to(resource.contact_id, dashboard_contact_path(resource.contact_id))
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = CalloutParticipation.human_attribute_name(:callout_population_id)
-        %dd.col-sm-7.col-md-6
-          - if resource.callout_population_id
-            = link_to(resource.callout_population_id, dashboard_batch_operation_path(resource.callout_population_id))
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = CalloutParticipation.human_attribute_name(:call_flow_logic)
-        %dd.col-sm-7.col-md-6
-          %code
-            = translate("simple_form.options.defaults.call_flow_logic.#{resource.call_flow_logic}")
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = CalloutParticipation.human_attribute_name(:created_at)
-        %dd.col-sm-7.col-md-6
-          = local_time(resource.created_at)
-      = render("shared/key_value_attributes", attribute: :metadata)
+.card-body
+  = show_for(resource) do |f|
+    = f.attribute :id
+    = f.attribute :callout do
+      = link_to(resource.callout_id, dashboard_callout_path(resource.callout_id))
+    = f.attribute :contact do
+      = link_to(resource.contact_id, dashboard_contact_path(resource.contact_id))
+    = f.attribute :callout_population do
+      - if resource.callout_population_id.present?
+        = link_to(resource.callout_population_id, dashboard_batch_operation_path(resource.callout_population_id))
+    = f.attribute :call_flow_logic, value: translate("simple_form.options.defaults.call_flow_logic.#{resource.call_flow_logic}")
+    = f.attribute :created_at, value: local_time(resource.created_at)
+    = f.attribute :metadata do
+      %pre
+        %code= JSON.pretty_generate(resource.metadata)

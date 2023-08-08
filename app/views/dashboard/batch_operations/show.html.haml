@@ -1,44 +1,21 @@
-- content_for(:page_actions) do
+= page_title(title: title) do
   - if resource.may_queue?
     = link_to(translate(:"titles.batch_operations.queue"), dashboard_batch_operation_batch_operation_events_path(resource, event: :queue), method: :post, class: 'btn btn-outline-success', data: { confirm: translate(:"titles.actions.data_confirm") })
-  - if resource.may_requeue?
-    = link_to(translate(:"titles.batch_operations.requeue"), dashboard_batch_operation_batch_operation_events_path(resource, event: :requeue), method: :post, class: 'btn btn-outline-warning', data: { confirm: translate(:"titles.actions.data_confirm") })
   - if resource.is_a?(BatchOperation::CalloutPopulation)
-    = link_to(translate(:"titles.actions.edit"), edit_dashboard_batch_operation_callout_population_path(resource), class: 'btn btn-outline-primary')
+    = render("shared/edit_resource_page_action", path: edit_dashboard_batch_operation_callout_population_path(resource))
   - url = resource.is_a?(BatchOperation::CalloutPopulation) && resource.callout ? dashboard_callout_batch_operation_path(resource.callout, resource) : dashboard_batch_operation_path(resource)
-  = link_to(translate(:"titles.actions.delete"), url, class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+  = render("shared/destroy_resource_page_action", path: url)
 
-.col
-  #resource.card
-    .card-body
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right #
-        %dd.col-sm-7.col-md-6
-          %code
-            = resource.id
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = resource.class.human_attribute_name(:type)
-        %dd.col-sm-7.col-md-6
-          %code
-            = resource.model_name.human
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = resource.class.human_attribute_name(:status)
-        %dd.col-sm-7.col-md-6
-          %code
-            = resource.status.humanize
-      - if resource.is_a?(BatchOperation::CalloutPopulation) && resource.callout
-        %dl.row
-          %dt.col-sm-5.col-md-4.text-md-right
-            = resource.class.human_attribute_name(:callout)
-          %dd.col-sm-7.col-md-6
-            = link_to(resource.callout.id, dashboard_callout_path(resource.callout))
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = resource.class.human_attribute_name(:created_at)
-        %dd.col-sm-7.col-md-6
-          %code
-            = local_time(resource.created_at)
-      - if resource.is_a?(BatchOperation::CalloutPopulation)
-        = render("shared/key_value_attributes", attribute: :contact_filter_metadata)
+.card-body
+  = show_for(resource) do |f|
+    = f.attribute :id
+    = f.attribute :type, value: resource.model_name.human
+    = f.attribute :status, value: resource.status.humanize
+    - if resource.is_a?(BatchOperation::CalloutPopulation) && resource.callout
+      = f.attribute :callout do
+        = link_to(resource.callout.id, dashboard_callout_path(resource.callout))
+      = f.attribute :contact_filter_metadata do
+        %pre
+          %code= JSON.pretty_generate(resource.contact_filter_metadata)
+
+    = f.attribute :created_at, value: local_time(resource.created_at)

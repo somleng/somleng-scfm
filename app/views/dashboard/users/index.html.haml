@@ -1,7 +1,6 @@
-- content_for(:page_actions) do
-  = link_to(translate(:"titles.user_invitations.new"), new_user_invitation_path, class: 'btn btn-outline-success')
+= page_title(title: title) do
+  = render("shared/new_resource_page_action", path: new_user_invitation_path)
 
-- content_for(:resources_table) do
+.card-body
   = render("shared/resources_table", resource_class: User, columns: [:email, :invitation_accepted_at, :last_sign_in_at, :created_at])
-
-= render("shared/index")
+  = render("shared/pagination", resources: resources)

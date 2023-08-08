@@ -95,7 +95,7 @@ RSpec.describe "Callout Participations" do
       )
     end
 
-    within("#resource") do
+    within(".callout_participation") do
       expect(page).to have_content(callout_participation.id)
 
       expect(page).to have_link(
@@ -127,7 +127,7 @@ RSpec.describe "Callout Participations" do
     sign_in(user)
     visit dashboard_callout_participation_path(callout_participation)
 
-    click_action_button(:delete, type: :link)
+    click_on "Delete"
 
     expect(current_path).to eq(dashboard_callout_participations_path)
     expect(page).to have_text("was successfully destroyed")

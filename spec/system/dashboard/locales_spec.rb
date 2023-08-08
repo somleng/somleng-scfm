@@ -10,7 +10,7 @@ RSpec.describe "Locales" do
     visit dashboard_root_path
 
     within("#language_menu") do
-      click_link("ខែ្មរ")
+      click_on("ខែ្មរ")
     end
 
     expect(page).to have_content("សមាជិកទំនាក់ទំនង")

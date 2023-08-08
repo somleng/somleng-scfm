@@ -1,29 +1,16 @@
-- content_for(:page_actions) do
-  = link_to(translate(:"titles.actions.edit"), edit_dashboard_contact_path(resource), class: 'btn btn-outline-primary')
-  = link_to(translate(:"titles.actions.delete"), dashboard_contact_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
+= page_title(title: title) do
+  = render("shared/edit_resource_page_action", path: edit_dashboard_contact_path(resource))
+  = render("shared/destroy_resource_page_action", path: dashboard_contact_path(resource))
 
-- content_for(:related_links) do
-  = related_link_to t(:"titles.callout_participations.index"), dashboard_contact_callout_participations_path(resource)
-  = related_link_to t(:"titles.phone_calls.index"), dashboard_contact_phone_calls_path(resource)
+  = render "shared/resource_related_links" do
+    = related_link_to t(:"titles.callout_participations.index"), dashboard_contact_callout_participations_path(resource)
+    = related_link_to t(:"titles.phone_calls.index"), dashboard_contact_phone_calls_path(resource)
 
-.col
-  #contact.card
-    .card-body
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right #
-        %dd.col-sm-7.col-md-6
-          %code
-            = resource.id
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = Contact.human_attribute_name(:msisdn)
-        %dd.col-sm-7.col-md-6
-          %code
-            = resource.msisdn
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = Contact.human_attribute_name(:created_at)
-        %dd.col-sm-7.col-md-6
-          %code
-            = local_time(resource.created_at)
-      = render("shared/key_value_attributes", attribute: :metadata)
+.card-body
+  = show_for(resource) do |f|
+    = f.attribute :id
+    = f.attribute :msisdn
+    = f.attribute :created_at, value: local_time(resource.created_at)
+    = f.attribute :metadata do
+      %pre
+        %code= JSON.pretty_generate(resource.metadata)

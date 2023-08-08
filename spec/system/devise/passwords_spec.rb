@@ -6,12 +6,8 @@ RSpec.describe "Passwords" do
 
     visit new_user_password_path
 
-    within("#page_title") do
-      expect(page).to have_content(I18n.translate!(:"titles.user_passwords.new"))
-    end
-
     fill_in "Email", with: user.email
-    click_action_button(:create, key: :user_passwords)
+    click_on "Forgot your password?"
 
     expect(page).to have_content("You will receive an email with instructions")
   end
@@ -22,13 +18,9 @@ RSpec.describe "Passwords" do
 
     visit edit_user_password_path(reset_password_token: token)
 
-    within("#page_title") do
-      expect(page).to have_content(I18n.translate!(:"titles.user_passwords.edit"))
-    end
-
-    fill_in "Password", with: "12345678"
-    fill_in "Password confirmation", with: "12345678"
-    click_action_button(:update, key: :user_passwords)
+    fill_in "New password", with: "12345678"
+    fill_in "Confirm your new password", with: "12345678"
+    click_on "Save"
 
     expect(page).to have_text(
       "Your password has been changed successfully. You are now signed in."

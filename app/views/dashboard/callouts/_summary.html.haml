@@ -1,42 +1,8 @@
-%dl.row
-  %dt.col-sm-5.col-md-4.text-md-right
-    = CalloutSummary.human_attribute_name(:participations)
-  %dd.col-sm-7.col-md-6
-    %code
-      = callout_summary.participations
-%dl.row
-  %dt.col-sm-5.col-md-4.text-md-right
-    = CalloutSummary.human_attribute_name(:participations_still_to_be_called)
-  %dd.col-sm-7.col-md-6
-    %code
-      = callout_summary.participations_still_to_be_called
-%dl.row
-  %dt.col-sm-5.col-md-4.text-md-right
-    = CalloutSummary.human_attribute_name(:completed_calls)
-  %dd.col-sm-7.col-md-6
-    %code
-      = callout_summary.completed_calls
-%dl.row
-  %dt.col-sm-5.col-md-4.text-md-right
-    = CalloutSummary.human_attribute_name(:not_answered_calls)
-  %dd.col-sm-7.col-md-6
-    %code
-      = callout_summary.not_answered_calls
-%dl.row
-  %dt.col-sm-5.col-md-4.text-md-right
-    = CalloutSummary.human_attribute_name(:busy_calls)
-  %dd.col-sm-7.col-md-6
-    %code
-      = callout_summary.busy_calls
-%dl.row
-  %dt.col-sm-5.col-md-4.text-md-right
-    = CalloutSummary.human_attribute_name(:failed_calls)
-  %dd.col-sm-7.col-md-6
-    %code
-      = callout_summary.failed_calls
-%dl.row
-  %dt.col-sm-5.col-md-4.text-md-right
-    = CalloutSummary.human_attribute_name(:errored_calls)
-  %dd.col-sm-7.col-md-6
-    %code
-      = callout_summary.errored_calls
+= show_for(callout_summary) do |f|
+  = f.attribute :participations
+  = f.attribute :participations_still_to_be_called
+  = f.attribute :completed_calls
+  = f.attribute :not_answered_calls
+  = f.attribute :busy_calls
+  = f.attribute :failed_calls
+  = f.attribute :errored_calls

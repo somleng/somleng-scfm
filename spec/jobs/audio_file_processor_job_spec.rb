@@ -1,7 +1,7 @@
 require "rails_helper"
 
 RSpec.describe AudioFileProcessorJob do
-  it "uploads the callout voice url to a public bucket" do
+  it "uploads the callout voice url to a public bucket", :active_storage do
     callout = create(:callout, audio_file: file_fixture("test.mp3"))
 
     s3 = Aws::S3::Resource.new(stub_responses: true)

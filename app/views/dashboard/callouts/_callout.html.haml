@@ -1,4 +1,4 @@
-= content_tag_for(:tr, callout) do
+= content_tag_for(:tr, callout, role: "row") do
   %td
     = link_to(callout.id, show_location(callout))
   %td

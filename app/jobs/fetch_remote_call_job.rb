@@ -6,7 +6,7 @@ class FetchRemoteCallJob < ApplicationJob
 
     response = Somleng::Client.new(
       provider: phone_call.platform_provider
-    ).api.calls(phone_call.remote_call_id).fetch
+    ).api.account.calls(phone_call.remote_call_id).fetch
 
     attributes = {
       remote_response: response.instance_variable_get(:@properties).compact,
@@ -16,7 +16,7 @@ class FetchRemoteCallJob < ApplicationJob
 
     phone_call.update!(remote_status_fetch_queued_at: nil, **attributes)
 
-    event = RemotePhoneCallEvent.new(phone_call: phone_call)
-    phone_call.call_flow_logic.constantize.new(event: event).run!
+    event = RemotePhoneCallEvent.new(phone_call:)
+    phone_call.call_flow_logic.constantize.new(event:).run!
   end
 end

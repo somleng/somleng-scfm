@@ -20,6 +20,7 @@ class CalloutParticipation < ApplicationRecord
 
   delegate :call_flow_logic, to: :callout, prefix: true, allow_nil: true
   delegate :msisdn, to: :contact, prefix: true, allow_nil: true
+  delegate :account, to: :callout
 
   before_validation :set_msisdn_from_contact,
                     :set_call_flow_logic,

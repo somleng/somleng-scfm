@@ -1,6 +1,0 @@
-- flash.each do |key, value|
-  .col-12
-    %div{:class => "#{flash_class(key)}"}
-      = value
-      %button.close{"aria-label" => "Close", "data-dismiss" => "alert", :type => "button"}
-        %span{"aria-hidden" => "true"} &times;

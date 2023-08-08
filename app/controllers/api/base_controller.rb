@@ -33,7 +33,7 @@ module API
         paginate(resources)
       else
         total_count = find_resources_association_chain.size
-        paginate(resources, paginate_array_options: { total_count: total_count })
+        paginate(resources, paginate_array_options: { total_count: })
       end
     end
 

@@ -10,8 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2022_08_24_082226) do
-
+ActiveRecord::Schema[7.0].define(version: 2023_08_03_035117) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -23,8 +22,8 @@ ActiveRecord::Schema.define(version: 2022_08_24_082226) do
     t.string "twilio_auth_token"
     t.string "somleng_auth_token"
     t.integer "permissions", default: 0, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "call_flow_logic", null: false
     t.string "platform_provider_name"
     t.string "somleng_api_host"
@@ -40,7 +39,7 @@ ActiveRecord::Schema.define(version: 2022_08_24_082226) do
     t.string "record_type", null: false
     t.bigint "record_id", null: false
     t.bigint "blob_id", null: false
-    t.datetime "created_at", null: false
+    t.datetime "created_at", precision: nil, null: false
     t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
     t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
   end
@@ -51,8 +50,8 @@ ActiveRecord::Schema.define(version: 2022_08_24_082226) do
     t.string "content_type"
     t.text "metadata"
     t.bigint "byte_size", null: false
-    t.string "checksum", null: false
-    t.datetime "created_at", null: false
+    t.string "checksum"
+    t.datetime "created_at", precision: nil, null: false
     t.string "service_name", null: false
     t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
   end
@@ -69,8 +68,8 @@ ActiveRecord::Schema.define(version: 2022_08_24_082226) do
     t.jsonb "metadata", default: {}, null: false
     t.string "status", null: false
     t.string "type", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "account_id", null: false
     t.index ["account_id"], name: "index_batch_operations_on_account_id"
     t.index ["callout_id"], name: "index_batch_operations_on_callout_id"
@@ -86,8 +85,8 @@ ActiveRecord::Schema.define(version: 2022_08_24_082226) do
     t.string "msisdn", null: false
     t.string "call_flow_logic", null: false
     t.jsonb "metadata", default: {}, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.boolean "answered", default: false, null: false
     t.integer "phone_calls_count", default: 0, null: false
     t.index ["callout_id", "contact_id"], name: "index_callout_participations_on_callout_id_and_contact_id", unique: true
@@ -101,8 +100,8 @@ ActiveRecord::Schema.define(version: 2022_08_24_082226) do
     t.string "status", null: false
     t.string "call_flow_logic", null: false
     t.jsonb "metadata", default: {}, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "account_id", null: false
     t.string "audio_url"
     t.jsonb "settings", default: {}, null: false
@@ -115,8 +114,8 @@ ActiveRecord::Schema.define(version: 2022_08_24_082226) do
   create_table "contacts", force: :cascade do |t|
     t.string "msisdn", null: false
     t.jsonb "metadata", default: {}, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.bigint "account_id", null: false
     t.index ["account_id", "msisdn"], name: "index_contacts_on_account_id_and_msisdn", unique: true
     t.index ["account_id"], name: "index_contacts_on_account_id"
@@ -130,8 +129,8 @@ ActiveRecord::Schema.define(version: 2022_08_24_082226) do
     t.string "token", null: false
     t.integer "expires_in", null: false
     t.text "redirect_uri", null: false
-    t.datetime "created_at", null: false
-    t.datetime "revoked_at"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "revoked_at", precision: nil
     t.string "scopes"
     t.index ["application_id"], name: "index_oauth_access_grants_on_application_id"
     t.index ["resource_owner_id"], name: "index_oauth_access_grants_on_resource_owner_id"
@@ -146,9 +145,9 @@ ActiveRecord::Schema.define(version: 2022_08_24_082226) do
     t.string "token", null: false
     t.string "refresh_token"
     t.integer "expires_in"
-    t.datetime "revoked_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "revoked_at", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "scopes"
     t.string "previous_refresh_token", default: "", null: false
     t.bigint "permissions", default: 0, null: false
@@ -166,8 +165,8 @@ ActiveRecord::Schema.define(version: 2022_08_24_082226) do
     t.string "secret", null: false
     t.text "redirect_uri", null: false
     t.string "scopes", default: "", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.index ["owner_id"], name: "index_oauth_applications_on_owner_id"
     t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
   end
@@ -185,13 +184,13 @@ ActiveRecord::Schema.define(version: 2022_08_24_082226) do
     t.jsonb "remote_response", default: {}, null: false
     t.jsonb "remote_queue_response", default: {}, null: false
     t.string "call_flow_logic", null: false
-    t.datetime "remotely_queued_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "remotely_queued_at", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "duration", default: 0, null: false
     t.integer "lock_version", default: 0, null: false
     t.bigint "account_id", null: false
-    t.datetime "remote_status_fetch_queued_at"
+    t.datetime "remote_status_fetch_queued_at", precision: nil
     t.bigint "callout_id"
     t.index ["account_id"], name: "index_phone_calls_on_account_id"
     t.index ["callout_id", "status"], name: "index_phone_calls_on_callout_id_and_status"
@@ -213,8 +212,8 @@ ActiveRecord::Schema.define(version: 2022_08_24_082226) do
     t.string "remote_call_id", null: false
     t.string "remote_direction", null: false
     t.string "call_flow_logic", null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.integer "call_duration", default: 0, null: false
     t.index ["phone_call_id"], name: "index_remote_phone_call_events_on_phone_call_id"
   end
@@ -225,26 +224,26 @@ ActiveRecord::Schema.define(version: 2022_08_24_082226) do
     t.string "email", null: false
     t.string "encrypted_password", null: false
     t.string "reset_password_token"
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
+    t.datetime "reset_password_sent_at", precision: nil
+    t.datetime "remember_created_at", precision: nil
     t.integer "sign_in_count", default: 0, null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
+    t.datetime "current_sign_in_at", precision: nil
+    t.datetime "last_sign_in_at", precision: nil
     t.inet "current_sign_in_ip"
     t.inet "last_sign_in_ip"
     t.string "confirmation_token"
-    t.datetime "confirmed_at"
-    t.datetime "confirmation_sent_at"
+    t.datetime "confirmed_at", precision: nil
+    t.datetime "confirmation_sent_at", precision: nil
     t.string "unconfirmed_email"
     t.integer "failed_attempts", default: 0, null: false
     t.string "unlock_token"
-    t.datetime "locked_at"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "locked_at", precision: nil
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
     t.string "invitation_token"
-    t.datetime "invitation_created_at"
-    t.datetime "invitation_sent_at"
-    t.datetime "invitation_accepted_at"
+    t.datetime "invitation_created_at", precision: nil
+    t.datetime "invitation_sent_at", precision: nil
+    t.datetime "invitation_accepted_at", precision: nil
     t.integer "invitation_limit"
     t.bigint "invited_by_id"
     t.integer "invitations_count", default: 0

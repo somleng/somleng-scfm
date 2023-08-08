@@ -1,9 +1,12 @@
-- content_for(:resources_filter) do
-  = link_to(translate(:"filters.all"), {}, class: "dropdown-item")
-  - PhoneCall.aasm.states.map(&:name).sort.each do |state|
-    = link_to(state.to_s.titleize, {:q => {status: state}}, class: "dropdown-item")
+= page_title(title: title) do
+  #filters.dropdown.show
+    %button.btn.btn-outline-info.dropdown-toggle{"aria-expanded" => "false", "data-coreui-toggle" => "dropdown", "type" => "button"}
+      %i.fas.fa-filter
+    .dropdown-menu{:"aria-labelledby" => :filter_menu_link}
+      = link_to(translate(:"filters.all"), {}, class: "dropdown-item")
+      - PhoneCall.aasm.states.map(&:name).sort.each do |state|
+        = link_to(state.to_s.titleize, {:q => {status: state}}, class: "dropdown-item")
 
-- content_for(:resources_table) do
+.card-body
   = render("shared/resources_table", resource_class: PhoneCall, columns: [:msisdn, :direction, :status, :duration, :created_at], unsortable_columns: [:direction])
-
-= render("shared/index")
+  = render("shared/pagination", resources: resources)

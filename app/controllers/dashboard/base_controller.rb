@@ -2,7 +2,7 @@ require "application_responder"
 
 module Dashboard
   class BaseController < ::BaseController
-    include Breadcrumbs
+    layout "dashboard"
 
     KEY_VALUE_FIELD_ATTRIBUTES = %i[key value].freeze
 
@@ -92,7 +92,6 @@ module Dashboard
     end
 
     def _prepare_for_render
-      prepare_breadcrumbs
     end
   end
 end

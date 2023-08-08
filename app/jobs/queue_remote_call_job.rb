@@ -1,8 +1,6 @@
 class QueueRemoteCallJob < ApplicationJob
   include Rails.application.routes.url_helpers
 
-  attr_accessor :phone_call
-
   def perform(phone_call)
     return if phone_call.remote_call_id.present?
 

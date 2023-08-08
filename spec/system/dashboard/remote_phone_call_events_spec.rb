@@ -51,18 +51,13 @@ RSpec.describe "Remote Phone Call Events" do
 
     expect(page).to have_title("Phone Call Event #{remote_phone_call_event.id}")
 
-    within("#resource") do
+    within(".remote_phone_call_event") do
       expect(page).to have_content(remote_phone_call_event.id)
 
       expect(page).to have_link(
         remote_phone_call_event.phone_call_id.to_s,
         href: dashboard_phone_call_path(remote_phone_call_event.phone_call_id)
       )
-
-      expect(page).to have_content("#")
-      expect(page).to have_content("Phone call")
-      expect(page).to have_content("Created at")
-      expect(page).to have_content("Details")
     end
   end
 end

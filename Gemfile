@@ -1,7 +1,10 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-gem "rails", "~> 6.1.0"
+gem "rails", "~> 7.0.0"
+
+gem "stimulus-rails"
+gem "turbo-rails"
 
 gem "aasm", github: "aasm/aasm"
 gem "after_commit_everywhere"
@@ -11,18 +14,18 @@ gem "aws-sdk-s3", require: false
 gem "aws-sdk-sqs"
 gem "bitmask_attributes", github: "numerex/bitmask_attributes"
 gem "bootsnap", require: false
-gem "breadcrumbs_on_rails"
 gem "cocoon"
+gem "cssbundling-rails"
 gem "devise"
 gem "devise-async"
 gem "devise_invitable"
 gem "doorkeeper"
-gem "down"
 gem "dry-validation"
 gem "faraday"
 gem "file_validators"
 gem "haml-rails"
 gem "jbuilder", "~> 2.5"
+gem "jsbundling-rails"
 gem "kaminari"
 gem "lograge"
 gem "okcomputer"
@@ -37,13 +40,12 @@ gem "sassc-rails"
 gem "sentry-rails"
 gem "sentry-ruby"
 gem "shoryuken"
+gem "show_for"
 gem "simple_form"
 gem "skylight"
 gem "strip_attributes"
-gem "turbolinks", "~> 5"
 gem "twilio-ruby"
 gem "tzinfo-data"
-gem "webpacker"
 
 group :development, :test do
   gem "i18n-tasks"
@@ -57,9 +59,7 @@ group :development, :test do
 end
 
 group :development do
-  gem "spring"
-  gem "spring-commands-rspec"
-  gem "web-console", ">= 3.3.0"
+  gem "foreman", require: false
 end
 
 group :test do
@@ -67,10 +67,9 @@ group :test do
   gem "email_spec"
   gem "factory_bot_rails"
   gem "rails-controller-testing"
+  gem "selenium-webdriver"
   gem "shoulda-matchers"
   gem "simplecov", require: false
   gem "simplecov-lcov", require: false
-  gem "webdrivers"
   gem "webmock"
-  gem "wisper-rspec"
 end

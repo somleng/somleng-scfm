@@ -5,17 +5,16 @@
     = favicon_link_tag
     %meta{:content => "width=device-width, initial-scale=1, shrink-to-fit=no", :name => "viewport"}/
 
-    = stylesheet_pack_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
-    = javascript_pack_tag 'application', 'data-turbolinks-track': 'reload'
     = javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
     = stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload'
 
     %title= title(resource)
-  = content_tag :body, data: { action: action_name, controller: controller_name } do
-    = render 'shared/nav_bar'
-    .container-fluid
-      = render 'shared/side_bar'
-      %main.col-12.col-md-9.col-xl-10.ml-sm-auto.pt-3.px-4
-        = render 'shared/flash_messages'
-        = render 'shared/page_toolbar'
-        = yield
+  = content_tag :body, data: { action: action_name, controller: "sidebar" } do
+    = render("layouts/dashboard/side_navigation")
+    .wrapper
+      = render("layouts/dashboard/header")
+      .body
+        .container-lg
+          = render("shared/alerts")
+          .card
+            = yield

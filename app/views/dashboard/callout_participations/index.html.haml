@@ -1,4 +1,4 @@
-- content_for(:resources_table) do
+.card-body
   = render("shared/resources_table", resource_class: CalloutParticipation, columns: [:contact_id, :callout_id, :created_at])
+  = render("shared/pagination", resources: resources)
 
-= render("shared/index")

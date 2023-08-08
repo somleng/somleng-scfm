@@ -48,12 +48,6 @@ module BatchOperation
           create(:batch_operation, :running)
         ).to transition_from(:running).to(:finished).on_event(:finish)
       end
-
-      it "requeues a batch operation" do
-        expect(
-          create(:batch_operation, :finished)
-        ).to transition_from(:finished).to(:queued).on_event(:requeue)
-      end
     end
   end
 end

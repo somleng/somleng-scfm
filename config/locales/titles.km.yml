@@ -1,13 +1,5 @@
 ---
 km:
-  breadcrumbs:
-    accounts:
-      edit: Settings
-    defaults:
-      edit: កែប្រែ
-      more: ព័ត៌មានបន្ថែម
-      new: បង្កើតថ្មី
-      show: "%{id}"
   titles:
     access_tokens:
       edit: កែប្រែ API Key
@@ -29,7 +21,6 @@ km:
     batch_operations:
       index: Batch Operations
       queue: ចាប់ផ្ដើម
-      requeue: ចាប់ផ្ដើមឡើងវិញ
       show: Batch Operation %{id}
     callout_participations:
       index: សមាជិកចូលរួមក្នុងសេចក្ដីប្រកាស
@@ -58,11 +49,6 @@ km:
       new: បង្កើត សមាជិកទំនាក់ទំនង
       show: សមាជិកទំនាក់ទំនង %{id}
       update: កែប្រែ សមាជិកទំនាក់ទំនង
-    home:
-      about_us: About Us
-      contact: Contact
-      dashboard: Dashboard
-      index: Home
     phone_calls:
       index: កំណត់ត្រាការហៅចេញ
       queue: Send

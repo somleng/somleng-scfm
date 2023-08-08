@@ -3,7 +3,7 @@ module Event
     private
 
     def valid_events
-      super & %w[queue requeue]
+      super & %w[queue]
     end
   end
 end

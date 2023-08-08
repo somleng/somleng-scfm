@@ -1,16 +1,20 @@
 Rails.application.routes.draw do
   devise_scope :user do
-    get "users/edit", to: "devise/registrations#edit", as: "edit_user_registration"
-    patch "users", to: "devise/registrations#update", as: "user_registration"
+    resource(
+      :registration,
+      only: %i[edit update],
+      controller: "users/registrations",
+      as: :user_registration,
+      path: "users"
+    )
   end
 
   devise_for :users,
-             controllers: { invitations: "dashboard/user_invitations" },
+             controllers: { invitations: "users/invitations" },
              skip: :registrations
 
-  root "home#index"
-
   get "dashboard", to: "dashboard/callouts#index", as: :user_root
+  root to: "dashboard/callouts#index"
 
   namespace "dashboard" do
     root to: "callouts#index"
@@ -50,7 +54,7 @@ Rails.application.routes.draw do
 
     resources :remote_phone_call_events, only: %i[index show]
     resources :users, except: %i[new create]
-    resources :locales, only: :update
+    resource :locale, only: :update
   end
 
   namespace "api", defaults: { format: "json" } do

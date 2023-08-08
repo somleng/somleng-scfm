@@ -1,5 +1,7 @@
 class CalloutSummary
   extend ActiveModel::Translation
+  extend ActiveModel::Naming
+  include ActiveModel::Conversion
 
   attr_accessor :callout
 

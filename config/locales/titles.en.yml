@@ -1,13 +1,5 @@
 ---
 en:
-  breadcrumbs:
-    accounts:
-      edit: Settings
-    defaults:
-      edit: Edit
-      more: More
-      new: New
-      show: "%{id}"
   titles:
     access_tokens:
       edit: Edit API Key
@@ -29,7 +21,6 @@ en:
     batch_operations:
       index: Batch Operations
       queue: Start
-      requeue: Restart
       show: Batch Operation %{id}
     callout_participations:
       index: Callout Participations
@@ -58,11 +49,6 @@ en:
       new: New Contact
       show: Contact %{id}
       update: Edit Contact
-    home:
-      about_us: About Us
-      contact: Contact
-      dashboard: Dashboard
-      index: Home
     phone_calls:
       index: Phone Calls
       queue: Send

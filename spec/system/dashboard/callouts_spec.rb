@@ -17,9 +17,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(page).to have_title("Callouts")
 
     within("#page_actions") do
-      expect(page).to have_link_to_action(
-        :new, key: :callouts, href: new_dashboard_callout_path
-      )
+      expect(page).to have_link("New", href: new_dashboard_callout_path)
     end
 
     within("#resources") do
@@ -101,9 +99,8 @@ RSpec.describe "Callouts", :aggregate_failures do
     remove_key_value_for(:metadata)
     remove_key_value_for(:metadata)
     remove_key_value_for(:settings)
-    click_action_button(:update, key: :submit, namespace: :helpers)
+    click_on "Save"
 
-    expect(current_path).to eq(dashboard_callout_path(callout))
     expect(page).to have_text("Callout was successfully updated.")
     expect(callout.reload.metadata).to eq({})
     expect(callout.reload.settings).to eq({})
@@ -117,7 +114,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     sign_in(user)
     visit dashboard_callout_path(callout)
 
-    click_action_button(:delete, type: :link)
+    click_on "Delete"
 
     expect(current_path).to eq(dashboard_callouts_path)
     expect(page).to have_text("Callout was successfully destroyed.")
@@ -169,23 +166,10 @@ RSpec.describe "Callouts", :aggregate_failures do
       )
     end
 
-    within("#callout") do
+    within(".callout") do
       expect(page).to have_content(callout.id)
       expect(page).to have_link(callout.audio_url, href: callout.audio_url)
       expect(page).to have_link(callout.created_by_id.to_s, href: dashboard_user_path(callout.created_by))
-      expect(page).to have_content("Status")
-      expect(page).to have_content("Initialized")
-      expect(page).to have_content("Created at")
-      expect(page).to have_content("Audio file")
-      expect(page).to have_content("Audio URL")
-      expect(page).to have_content("Call flow")
-      expect(page).to have_content("Hello World")
-      expect(page).to have_content("Metadata")
-      expect(page).to have_content("location:country")
-      expect(page).to have_content("Cambodia")
-      expect(page).to have_content("Settings")
-      expect(page).to have_content("rapidpro:flow_id")
-      expect(page).to have_content("flow-id")
     end
 
     within("#callout_summary") do

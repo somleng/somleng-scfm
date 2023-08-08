@@ -1,66 +1,41 @@
-- content_for(:page_actions) do
+= page_title(title: title) do
   - if resource.may_start?
     = link_to(translate(:"titles.callouts.start_callout"), dashboard_callout_callout_events_path(resource, event: :start),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
   - if resource.may_stop?
     = link_to(translate(:"titles.callouts.stop_callout"), dashboard_callout_callout_events_path(resource, event: :stop),  class: 'btn btn-outline-danger', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
   - if resource.may_resume?
     = link_to(translate(:"titles.callouts.resume_callout"), dashboard_callout_callout_events_path(resource, event: :resume),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
-  = link_to(translate(:"titles.actions.edit"), edit_dashboard_callout_path(resource), class: 'btn btn-outline-primary')
-  = link_to(translate(:"titles.actions.delete"), dashboard_callout_path(resource), class: 'btn btn-outline-danger', method: :delete, data: { confirm: translate(:"titles.actions.data_confirm") })
 
-- content_for(:related_links) do
-  = related_link_to t(:"titles.batch_operations.index"), dashboard_callout_batch_operations_path(resource)
-  = related_link_to t(:"titles.callout_participations.index"), dashboard_callout_callout_participations_path(resource)
-  = related_link_to t(:"titles.phone_calls.index"), dashboard_callout_phone_calls_path(resource)
+  = render("shared/edit_resource_page_action", path: edit_dashboard_callout_path(resource))
+  = render("shared/destroy_resource_page_action", path: dashboard_callout_path(resource))
 
-.col
-  #callout.card
-    .card-body
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right #
-        %dd.col-sm-7.col-md-6
-          %code
-            = resource.id
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = Callout.human_attribute_name(:status)
-        %dd.col-sm-7.col-md-6
-          %code
-            = resource.status.humanize
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = Callout.human_attribute_name(:audio_file)
-        %dd.col-sm-7.col-md-6
-          - if resource.audio_file.attached?
-            = link_to(resource.audio_file_blob.filename, url_for(resource.audio_file))
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = Callout.human_attribute_name(:audio_url)
-        %dd.col-sm-7.col-md-6
-          - if resource.audio_url.present?
-            = link_to(resource.audio_url, resource.audio_url)
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = Callout.human_attribute_name(:call_flow_logic)
-        %dd.col-sm-7.col-md-6
-          %code
-            = translate("simple_form.options.defaults.call_flow_logic.#{resource.call_flow_logic}")
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = Callout.human_attribute_name(:created_at)
-        %dd.col-sm-7.col-md-6
-          %code
-            = local_time(resource.created_at)
-      %dl.row
-        %dt.col-sm-5.col-md-4.text-md-right
-          = Callout.human_attribute_name(:created_by)
-        %dd.col-sm-7.col-md-6
-          - if resource.created_by_id?
-            = link_to(resource.created_by_id, dashboard_user_path(resource.created_by_id))
-      = render("shared/key_value_attributes", attribute: :settings)
-      = render("shared/key_value_attributes", attribute: :metadata)
+  = render "shared/resource_related_links" do
+    = related_link_to t(:"titles.batch_operations.index"), dashboard_callout_batch_operations_path(resource)
+    = related_link_to t(:"titles.callout_participations.index"), dashboard_callout_callout_participations_path(resource)
+    = related_link_to t(:"titles.phone_calls.index"), dashboard_callout_phone_calls_path(resource)
 
-.col
+.card-body
+  = show_for(resource) do |f|
+    = f.attribute :id
+    = f.attribute :status, value: resource.status.humanize
+    = f.attribute :audio_file do
+      - if resource.audio_file.attached?
+        = link_to(resource.audio_file_blob.filename, url_for(resource.audio_file))
+    = f.attribute :audio_url do
+      - if resource.audio_url.present?
+        = link_to(resource.audio_url, resource.audio_url)
+    = f.attribute :call_flow_logic, value: translate("simple_form.options.defaults.call_flow_logic.#{resource.call_flow_logic}")
+    = f.attribute :created_at, value: local_time(resource.created_at)
+    = f.attribute :created_by do
+      - if resource.created_by_id.present?
+        = link_to(resource.created_by_id, dashboard_user_path(resource.created_by_id))
+    = f.attribute :settings do
+      %pre
+        %code= JSON.pretty_generate(resource.settings)
+    = f.attribute :metadata do
+      %pre
+        %code= JSON.pretty_generate(resource.metadata)
+
   #callout_summary.card
     .card-body
       .card-title

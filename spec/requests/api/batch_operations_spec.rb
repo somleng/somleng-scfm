@@ -5,17 +5,17 @@ RSpec.resource "Batch Operations" do
 
   get "/api/batch_operations" do
     example "List all Batch Operations" do
-      callout = create(:callout, account: account)
+      callout = create(:callout, account:)
 
       callout_population = create(
         :callout_population,
-        account: account,
-        callout: callout
+        account:,
+        callout:
       )
-      create(:batch_operation, account: account)
+      create(:batch_operation, account:)
       create(:batch_operation)
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(
         q: {
           callout_id: callout.id
@@ -55,7 +55,7 @@ RSpec.resource "Batch Operations" do
         Specify `contact_filter_params` in order to filter which contacts will participate in the callout.
       HEREDOC
 
-      callout = create(:callout, account: account)
+      callout = create(:callout, account:)
       body = build_batch_operation_request_body(
         type: "BatchOperation::CalloutPopulation",
         callout_id: callout.id,
@@ -71,10 +71,10 @@ RSpec.resource "Batch Operations" do
         }
       )
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(callout_id: callout.id, **body)
 
-      assert_batch_operation_created!(account: account, request_body: body)
+      assert_batch_operation_created!(account:, request_body: body)
       expect(callout.reload.callout_populations.count).to eq(1)
     end
 
@@ -83,14 +83,14 @@ RSpec.resource "Batch Operations" do
         type: "Contact"
       )
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(body)
 
       expect(response_status).to eq(422)
     end
 
     example "Create a batch operation with an invalid query", document: false do
-      callout = create(:callout, account: account)
+      callout = create(:callout, account:)
 
       body = build_batch_operation_request_body(
         type: "BatchOperation::CalloutPopulation",
@@ -104,7 +104,7 @@ RSpec.resource "Batch Operations" do
         }
       )
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(body)
 
       expect(response_status).to eq(422)
@@ -113,9 +113,9 @@ RSpec.resource "Batch Operations" do
 
   get "/api/batch_operations/:id" do
     example "Retrieve a Batch Operation" do
-      batch_operation = create(:batch_operation, account: account)
+      batch_operation = create(:batch_operation, account:)
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(id: batch_operation.id)
 
       expect(response_status).to eq(200)
@@ -127,7 +127,7 @@ RSpec.resource "Batch Operations" do
     example "Update a Batch Operation" do
       batch_operation = create(
         :batch_operation,
-        account: account,
+        account:,
         metadata: {
           "foo" => "bar"
         }
@@ -144,7 +144,7 @@ RSpec.resource "Batch Operations" do
         }
       )
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(id: batch_operation.id, **body)
 
       expect(response_status).to eq(204)
@@ -156,9 +156,9 @@ RSpec.resource "Batch Operations" do
 
   delete "/api/batch_operations/:id" do
     example "Delete a Batch Operation" do
-      batch_operation = create(:batch_operation, account: account)
+      batch_operation = create(:batch_operation, account:)
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(id: batch_operation.id)
 
       expect(response_status).to eq(204)
@@ -166,10 +166,10 @@ RSpec.resource "Batch Operations" do
     end
 
     example "Delete a callout population with callout participations", document: false do
-      callout_population = create(:callout_population, account: account)
-      create(:callout_participation, callout_population: callout_population)
+      callout_population = create(:callout_population, account:)
+      create(:callout_participation, callout_population:)
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(id: callout_population.id)
 
       expect(response_status).to eq(422)
@@ -179,18 +179,18 @@ RSpec.resource "Batch Operations" do
   post "/api/batch_operations/:batch_operation_id/batch_operation_events" do
     parameter(
       :event,
-      "Either `queue` or `requeue`.",
+      "Either `queue`.",
       required: true
     )
 
     example "Create a Batch Operation Event" do
       batch_operation = create(
         :batch_operation,
-        account: account,
+        account:,
         status: BatchOperation::Base::STATE_PREVIEW
       )
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       perform_enqueued_jobs do
         do_request(
           batch_operation_id: batch_operation.id,
@@ -205,35 +205,14 @@ RSpec.resource "Batch Operations" do
       expect(batch_operation.reload).to be_finished
     end
 
-    example "Requeue a batch operation", document: false do
-      batch_operation = create(
-        :batch_operation,
-        account: account,
-        status: BatchOperation::Base::STATE_FINISHED
-      )
-
-      set_authorization_header(access_token: access_token)
-      perform_enqueued_jobs do
-        do_request(
-          batch_operation_id: batch_operation.id,
-          event: "requeue"
-        )
-      end
-
-      expect(response_status).to eq(201)
-      parsed_body = JSON.parse(response_body)
-      expect(parsed_body.fetch("status")).to eq("queued")
-      expect(batch_operation.reload).to be_finished
-    end
-
     example "Queue a finished batch operation", document: false do
       batch_operation = create(
         :batch_operation,
-        account: account,
+        account:,
         status: BatchOperation::Base::STATE_FINISHED
       )
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(
         batch_operation_id: batch_operation.id,
         event: "queue"
@@ -264,7 +243,7 @@ RSpec.resource "Batch Operations" do
       metadata: {
         "foo" => "bar"
       }.merge(metadata),
-      parameters: parameters
+      parameters:
     }.merge(options)
   end
 

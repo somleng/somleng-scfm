@@ -346,7 +346,7 @@ GEM
     public_suffix (5.0.3)
     puma (6.3.0)
       nio4r (~> 2.0)
-    pumi (0.20.1)
+    pumi (0.20.2)
     racc (1.7.1)
     rack (2.2.8)
     rack-test (2.1.0)

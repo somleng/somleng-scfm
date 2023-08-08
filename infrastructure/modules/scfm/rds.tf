@@ -5,7 +5,7 @@ locals {
 
 resource "aws_security_group" "db" {
   name   = var.app_identifier
-  vpc_id = var.vpc_id
+  vpc_id = var.vpc.vpc_id
 
   ingress {
     from_port = local.database_port
@@ -32,7 +32,7 @@ resource "aws_ssm_parameter" "db_master_password" {
 resource "aws_db_subnet_group" "db" {
   name        = local.identifier
   description = "For Aurora cluster ${local.identifier}"
-  subnet_ids  = var.database_subnets
+  subnet_ids  = var.vpc.database_subnets
 
   tags = {
     Name = "aurora-${local.identifier}"
@@ -43,7 +43,9 @@ resource "aws_rds_cluster" "db" {
   cluster_identifier = local.identifier
   engine             = "aurora-postgresql"
   engine_mode        = "provisioned"
-  engine_version     = "13.6"
+  engine_version     = "15.3"
+  allow_major_version_upgrade = true
+  db_instance_parameter_group_name = "aurora-postgresql15"
   master_username    = var.db_username
   master_password    = aws_ssm_parameter.db_master_password.value
   vpc_security_group_ids = [aws_security_group.db.id]
@@ -66,12 +68,21 @@ resource "aws_rds_cluster_instance" "db" {
   instance_class     = "db.serverless"
   engine             = aws_rds_cluster.db.engine
   engine_version     = aws_rds_cluster.db.engine_version
-  db_parameter_group_name = aws_db_parameter_group.db.name
 }
 
-resource "aws_db_parameter_group" "db" {
+resource "aws_db_parameter_group" "aurora_postgresql13" {
   name   = "${local.identifier}-aurora-postgresql13"
   family = "aurora-postgresql13"
+
+  parameter {
+    name  = "log_min_duration_statement"
+    value = "250"
+  }
+}
+
+resource "aws_db_parameter_group" "aurora_postgresql15" {
+  name   = "${local.identifier}-aurora-postgresql15"
+  family = "aurora-postgresql15"
 
   parameter {
     name  = "log_min_duration_statement"

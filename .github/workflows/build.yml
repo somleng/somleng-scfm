@@ -8,7 +8,6 @@ env:
   NGINX_ECR_REPOSITORY_URI: public.ecr.aws/somleng/scfm-nginx
   APP_GHCR_REPOSITORY_URI: ghcr.io/somleng/scfm
   NGINX_GHCR_REPOSITORY_URI: ghcr.io/somleng/scfm-nginx
-  DEPLOY_BRANCH: refs/heads/configure-codebuild
 
 jobs:
   build:
@@ -57,13 +56,13 @@ jobs:
           bundle exec rspec --format RspecApiDocumentation::ApiFormatter
 
       - name: Prepare Documentation Source
-        if: github.ref == env.DEPLOY_BRANCH
+        if: github.ref == 'refs/heads/configure-codebuild'
         run: |
           cp -R doc/slate/source/* doc/api
           cp app/assets/images/scfm_logo.png doc/api/logo.png
 
       - name: Upload Documentation Source
-        if: github.ref == env.DEPLOY_BRANCH
+        if: github.ref == 'refs/heads/configure-codebuild'
         uses: actions/upload-artifact@v3
         with:
           name: documentation_source
@@ -73,7 +72,7 @@ jobs:
     name: Build Documentation
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == env.DEPLOY_BRANCH
+    if: github.ref == 'refs/heads/configure-codebuild'
 
     steps:
       - name: Checkout Slate
@@ -126,7 +125,7 @@ jobs:
   build-packages:
     name: Build Packages
     runs-on: ubuntu-latest
-    if: github.ref == env.DEPLOY_BRANCH
+    if: github.ref == 'refs/heads/configure-codebuild'
 
     strategy:
       fail-fast: false
@@ -176,7 +175,6 @@ jobs:
   build-manifest:
     name: Build Manifest
     runs-on: ubuntu-latest
-    if: github.ref == env.DEPLOY_BRANCH
 
     needs:
       - build
@@ -209,8 +207,6 @@ jobs:
 
     needs:
       - build-manifest
-
-    if: github.ref == env.DEPLOY_BRANCH
 
     steps:
       - name: Configure AWS credentials

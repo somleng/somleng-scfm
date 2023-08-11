@@ -36,28 +36,35 @@ RSpec.describe "Callout Populations" do
     end
   end
 
-  it "can create a callout population", :js do
+  it "create and start callout population", :js do
     user = create(:user)
     callout = create(:callout, account: user.account)
 
     sign_in(user)
     visit(new_dashboard_callout_batch_operation_callout_population_path(callout))
 
-    fill_in_key_value_for(
+    fill_in_key_values_for(
       :contact_filter_metadata,
-      with: { key: "gender", value: "f" },
-      index: 0
+      with: {
+        "gender" => "f",
+        "location:country" => "kh"
+      }
     )
-    add_key_value_for(:contact_filter_metadata)
-    fill_in_key_value_for(
-      :contact_filter_metadata,
-      with: { key: "location:country", value: "kh" },
-      index: 1
-    )
-    click_on "Create Callout Population"
+
+    click_on("Create Callout Population")
 
     expect(page).to have_text("Callout population was successfully created")
-    expect(page).to have_content(JSON.pretty_generate("gender" => "f", "location" => { "country" => "kh" }))
+    expect(page).to have_content(
+      JSON.pretty_generate(
+        "gender" => "f",
+        "location" => { "country" => "kh" }
+      )
+    )
+
+    click_on("Start")
+
+    expect(page).to have_content("Event was successfully created.")
+    expect(page).not_to have_selector(:link_or_button, "Start")
   end
 
   it "can update a callout population", :js do
@@ -121,8 +128,8 @@ RSpec.describe "Callout Populations" do
 
     click_on "Delete"
 
-    expect(current_path).to eq(
-      dashboard_callout_batch_operations_path(callout_population.callout)
+    expect(page).to have_current_path(
+      dashboard_callout_batch_operations_path(callout_population.callout), ignore_query: true
     )
     expect(page).to have_text("successfully destroyed.")
   end
@@ -130,15 +137,15 @@ RSpec.describe "Callout Populations" do
   it "cannot delete a callout population with callout participations" do
     user = create(:user)
     callout_population = create(:callout_population, account: user.account)
-    create(:callout_participation, callout_population: callout_population)
+    create(:callout_participation, callout_population:)
 
     sign_in(user)
     visit dashboard_batch_operation_path(callout_population)
 
     click_on "Delete"
 
-    expect(current_path).to eq(
-      dashboard_batch_operation_path(callout_population)
+    expect(page).to have_current_path(
+      dashboard_batch_operation_path(callout_population), ignore_query: true
     )
     expect(page).to have_text("could not be destroyed")
   end
@@ -146,16 +153,16 @@ RSpec.describe "Callout Populations" do
   def create_callout_population(account, contact_filter_metadata)
     create(
       :callout_population,
-      account: account,
-      contact_filter_metadata: contact_filter_metadata
+      account:,
+      contact_filter_metadata:
     )
   end
 
   def create_contact(account, metadata)
     create(
       :contact,
-      account: account,
-      metadata: metadata
+      account:,
+      metadata:
     )
   end
 end

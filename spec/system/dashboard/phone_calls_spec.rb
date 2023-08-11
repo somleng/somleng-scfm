@@ -21,7 +21,7 @@ RSpec.describe "Phone Calls" do
 
       expect(page).to have_link(
         "Created",
-        href: dashboard_phone_calls_path(q: {status: "created"})
+        href: dashboard_phone_calls_path(q: { status: "created" })
       )
     end
 
@@ -61,7 +61,7 @@ RSpec.describe "Phone Calls" do
     user = create(:user)
     callout_participation = create_callout_participation(account: user.account)
     phone_call = create_phone_call(
-      account: user.account, callout_participation: callout_participation
+      account: user.account, callout_participation:
     )
     other_phone_call = create_phone_call(account: user.account)
 
@@ -96,9 +96,8 @@ RSpec.describe "Phone Calls" do
     visit(dashboard_phone_call_path(phone_call))
 
     within("#related_links") do
-      expect(page).to have_link_to_action(
-        :index,
-        key: :remote_phone_call_events,
+      expect(page).to have_link(
+        "Phone Call Events",
         href: dashboard_phone_call_remote_phone_call_events_path(phone_call)
       )
     end

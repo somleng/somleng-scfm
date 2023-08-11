@@ -1,17 +1,10 @@
 module SystemSpecHelpers
-  def click_action_button(action, key: nil, type: nil, namespace: nil, **interpolations)
-    type ||= :button
-    key ||= :actions
-    namespace ||= :titles
-    public_send("click_#{type}", I18n.translate!(:"#{namespace}.#{key}.#{action}", **interpolations))
-  end
-
   def fill_in_key_values_for(attribute, with:)
     with.each_with_index do |(key, value), index|
       fill_in_key_value_for(
         attribute,
-        with: { key: key, value: value },
-        index: index
+        with: { key:, value: },
+        index:
       )
       add_key_value_for(attribute)
     end
@@ -34,14 +27,6 @@ module SystemSpecHelpers
     within("##{attribute}_fields") do
       click_link("Add")
     end
-  end
-
-  def have_link_to_action(action, key: nil, href: nil)
-    key ||= :actions
-    have_link(
-      I18n.translate!(:"titles.#{key}.#{action}"),
-      **{ href: href }.compact
-    )
   end
 
   def have_content_tag_for(model, model_name: nil)

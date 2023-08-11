@@ -1,10 +1,13 @@
 = page_title(title: title) do
   - if resource.may_start?
-    = link_to(translate(:"titles.callouts.start_callout"), dashboard_callout_callout_events_path(resource, event: :start),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
+    = button_to(dashboard_callout_callout_events_path(resource, event: :start), class: "btn btn-outline-success", form_class: "d-inline", form: { data: { turbo_confim: translate(:"titles.actions.data_confirm")}}) do
+      = translate(:"titles.callouts.start_callout")
   - if resource.may_stop?
-    = link_to(translate(:"titles.callouts.stop_callout"), dashboard_callout_callout_events_path(resource, event: :stop),  class: 'btn btn-outline-danger', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
+    = button_to(dashboard_callout_callout_events_path(resource, event: :stop), class: "btn btn-outline-success", form_class: "d-inline", form: { data: { turbo_confim: translate(:"titles.actions.data_confirm")}}) do
+      = translate(:"titles.callouts.stop_callout")
   - if resource.may_resume?
-    = link_to(translate(:"titles.callouts.resume_callout"), dashboard_callout_callout_events_path(resource, event: :resume),  class: 'btn btn-outline-success', method: :post, data: { confirm: translate(:"titles.actions.data_confirm") })
+    = button_to(dashboard_callout_callout_events_path(resource, event: :resume), class: "btn btn-outline-success", form_class: "d-inline", form: { data: { turbo_confim: translate(:"titles.actions.data_confirm")}}) do
+      = translate(:"titles.callouts.resume_callout")
 
   = render("shared/edit_resource_page_action", path: edit_dashboard_callout_path(resource))
   = render("shared/destroy_resource_page_action", path: dashboard_callout_path(resource))

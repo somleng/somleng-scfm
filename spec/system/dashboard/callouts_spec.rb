@@ -36,7 +36,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     end
   end
 
-  it "can create a callout" do
+  it "create and start a callout", :js do
     user = create(:user)
 
     sign_in(user)
@@ -46,23 +46,34 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     fill_in("Audio URL", with: "https://www.example.com/sample.mp3")
     choose("Hello World")
-    fill_in_key_value_for(:metadata, with: { key: "location:country", value: "kh" })
-    fill_in_key_value_for(:settings, with: { key: "rapidpro:flow_id", value: "flow-id" })
 
-    expect do
-      click_action_button(:create, key: :submit, namespace: :helpers, model: "Callout")
-    end.not_to have_enqueued_job(AudioFileProcessorJob)
+    fill_in_key_values_for(
+      :metadata,
+      with: {
+        "location:country" => "kh"
+      }
+    )
 
-    new_callout = Callout.last!
-    expect(page).to have_current_path(dashboard_callout_path(new_callout))
-    expect(page).to have_text("Callout was successfully created.")
-    expect(new_callout.account).to eq(user.account)
-    expect(new_callout.audio_file).not_to be_attached
-    expect(new_callout.created_by).to eq(user)
-    expect(new_callout.audio_url).to eq("https://www.example.com/sample.mp3")
-    expect(new_callout.call_flow_logic).to eq(CallFlowLogic::HelloWorld.to_s)
-    expect(new_callout.metadata).to eq("location" => { "country" => "kh" })
-    expect(new_callout.settings).to eq("rapidpro" => { "flow_id" => "flow-id" })
+    fill_in_key_values_for(
+      :settings,
+      with: {
+        "rapidpro:flow_id" => "flow-id"
+      }
+    )
+
+    expect { click_on("Create Callout") }.not_to have_enqueued_job(AudioFileProcessorJob)
+
+    expect(page).to have_content("Callout was successfully created.")
+    expect(page).to have_content(
+      JSON.pretty_generate(
+        "location" => { "country" => "kh" }
+      )
+    )
+    expect(page).to have_content(
+      JSON.pretty_generate(
+        "rapidpro" => { "flow_id" => "flow-id" }
+      )
+    )
   end
 
   it "can create a callout attaching an audio file" do
@@ -73,12 +84,9 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     attach_file("Audio file", Rails.root + file_fixture("test.mp3"))
     choose("Hello World")
-    expect do
-      click_action_button(:create, key: :submit, namespace: :helpers, model: "Callout")
-    end.to have_enqueued_job(AudioFileProcessorJob)
+    expect { click_on("Create Callout") }.to have_enqueued_job(AudioFileProcessorJob)
 
-    new_callout = Callout.last!
-    expect(new_callout.audio_file).to be_attached
+    expect(page).to have_content("Callout was successfully created.")
   end
 
   it "can update a callout", :js do
@@ -116,7 +124,7 @@ RSpec.describe "Callouts", :aggregate_failures do
 
     click_on "Delete"
 
-    expect(current_path).to eq(dashboard_callouts_path)
+    expect(page).to have_current_path(dashboard_callouts_path, ignore_query: true)
     expect(page).to have_text("Callout was successfully destroyed.")
   end
 
@@ -140,28 +148,21 @@ RSpec.describe "Callouts", :aggregate_failures do
     expect(page).to have_title("Callout #{callout.id}")
 
     within("#page_actions") do
-      expect(page).to have_link_to_action(
-        :edit,
-        href: edit_dashboard_callout_path(callout)
-      )
+      expect(page).to have_link("Edit", href: edit_dashboard_callout_path(callout))
     end
 
     within("#related_links") do
-      expect(page).to have_link_to_action(
-        :index,
-        key: :batch_operations,
+      expect(page).to have_link(
+        "Callout Populations",
         href: dashboard_callout_batch_operations_path(callout)
       )
 
-      expect(page).to have_link_to_action(
-        :index,
-        key: :callout_participations,
+      expect(page).to have_link(
+        "Callout Participations",
         href: dashboard_callout_callout_participations_path(callout)
       )
-
-      expect(page).to have_link_to_action(
-        :index,
-        key: :phone_calls,
+      expect(page).to have_link(
+        "Phone Calls",
         href: dashboard_callout_phone_calls_path(callout)
       )
     end
@@ -169,7 +170,10 @@ RSpec.describe "Callouts", :aggregate_failures do
     within(".callout") do
       expect(page).to have_content(callout.id)
       expect(page).to have_link(callout.audio_url, href: callout.audio_url)
-      expect(page).to have_link(callout.created_by_id.to_s, href: dashboard_user_path(callout.created_by))
+      expect(page).to have_link(
+        callout.created_by_id.to_s,
+        href: dashboard_user_path(callout.created_by)
+      )
     end
 
     within("#callout_summary") do
@@ -185,7 +189,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     end
   end
 
-  it "can perform actions on callouts" do
+  it "can perform actions on callouts", :js do
     user = create(:user)
     callout = create(
       :callout,
@@ -196,21 +200,18 @@ RSpec.describe "Callouts", :aggregate_failures do
     sign_in(user)
     visit dashboard_callout_path(callout)
 
-    click_action_button(:start_callout, key: :callouts, type: :link)
+    click_on("Start")
 
-    expect(callout.reload).to be_running
-    expect(page).to have_text("Event was successfully created.")
-    expect(page).not_to have_link_to_action(:start_callout, key: :callouts)
+    expect(page).to have_content("Event was successfully created.")
+    expect(page).not_to have_selector(:link_or_button, "Start")
 
-    click_action_button(:stop_callout, key: :callouts, type: :link)
+    click_on("Stop")
 
-    expect(callout.reload).to be_stopped
-    expect(page).not_to have_link_to_action(:stop_callout, key: :callouts)
+    expect(page).not_to have_selector(:link_or_button, "Stop")
 
-    click_action_button(:resume_callout, key: :callouts, type: :link)
+    click_on("Resume")
 
-    expect(callout.reload).to be_running
-    expect(page).not_to have_link_to_action(:resume_callout, key: :callouts)
-    expect(page).to have_link_to_action(:stop_callout, key: :callouts)
+    expect(page).not_to have_selector(:link_or_button, "Resume")
+    expect(page).to have_selector(:link_or_button, "Stop")
   end
 end

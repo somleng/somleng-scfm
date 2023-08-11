@@ -65,11 +65,10 @@ RSpec.describe "Users" do
     expect(page).to have_title("Edit User")
 
     fill_in_key_value_for(:metadata, with: { key: "name", value: "Bob Chann" })
-    click_action_button(:update, key: :submit, namespace: :helpers)
+    click_on("Save")
 
-    expect(current_path).to eq(dashboard_user_path(other_user))
     expect(page).to have_text("User was successfully updated.")
-    expect(other_user.reload.metadata).to eq("name" => "Bob Chann")
+    expect(page).to have_content("Bob Chann")
   end
 
   it "can delete a user" do

@@ -19,9 +19,9 @@ km:
       update: កែប្រែ
     app_name: សំឡេង SCFM
     batch_operations:
-      index: Batch Operations
+      index: Callout Populations
       queue: ចាប់ផ្ដើម
-      show: Batch Operation %{id}
+      show: Callout Population %{id}
     callout_participations:
       index: សមាជិកចូលរួមក្នុងសេចក្ដីប្រកាស
       show: សមាជិកចូលរួមក្នុងសេចក្ដីប្រកាស %{id}

@@ -79,7 +79,7 @@ RSpec.describe "Callout Participations" do
     callout_participation = create_callout_participation(
       account: user.account,
       callout: callout_population.callout,
-      callout_population: callout_population
+      callout_population:
     )
 
     sign_in(user)
@@ -88,9 +88,8 @@ RSpec.describe "Callout Participations" do
     expect(page).to have_title("Callout Participation #{callout_participation.id}")
 
     within("#related_links") do
-      expect(page).to have_link_to_action(
-        :index,
-        key: :phone_calls,
+      expect(page).to have_link(
+        "Phone Calls",
         href: dashboard_callout_participation_phone_calls_path(callout_participation)
       )
     end
@@ -129,7 +128,7 @@ RSpec.describe "Callout Participations" do
 
     click_on "Delete"
 
-    expect(current_path).to eq(dashboard_callout_participations_path)
+    expect(page).to have_current_path(dashboard_callout_participations_path, ignore_query: true)
     expect(page).to have_text("was successfully destroyed")
   end
 end

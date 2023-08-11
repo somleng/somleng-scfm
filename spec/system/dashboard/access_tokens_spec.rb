@@ -39,12 +39,15 @@ RSpec.describe "API Key Management" do
     check("Write contacts")
     check("Read batch operations")
 
-    click_action_button(:create, key: :submit, namespace: :helpers, model: "API key")
+    click_on("Create API key")
 
     expect(page).to have_content("API key was successfully created.")
     new_access_token = user.account.access_tokens.first!
     expect(new_access_token).to be_persisted
-    expect(current_path).to eq(dashboard_access_token_path(new_access_token))
+    expect(page).to have_current_path(
+      dashboard_access_token_path(new_access_token),
+      ignore_query: true
+    )
     expect(new_access_token.permissions).to match_array(
       %i[
         batch_operations_read
@@ -93,10 +96,10 @@ RSpec.describe "API Key Management" do
 
     uncheck("Write contacts")
     check("Write callouts")
-    click_action_button(:update, key: :submit, namespace: :helpers)
+    click_on("Save")
 
     expect(page).to have_text("API key was successfully updated.")
-    expect(current_path).to eq(dashboard_access_token_path(access_token))
+    expect(page).to have_current_path(dashboard_access_token_path(access_token), ignore_query: true)
     expect(access_token.reload.permissions).to match_array(%i[batch_operations_read callouts_write])
   end
 
@@ -111,7 +114,7 @@ RSpec.describe "API Key Management" do
       click_on "Delete"
     end
 
-    expect(current_path).to eq(dashboard_access_tokens_path)
+    expect(page).to have_current_path(dashboard_access_tokens_path, ignore_query: true)
     expect(AccessToken.find_by_id(access_token.id)).to eq(nil)
   end
 end

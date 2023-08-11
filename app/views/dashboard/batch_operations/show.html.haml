@@ -1,6 +1,7 @@
 = page_title(title: title) do
   - if resource.may_queue?
-    = link_to(translate(:"titles.batch_operations.queue"), dashboard_batch_operation_batch_operation_events_path(resource, event: :queue), method: :post, class: 'btn btn-outline-success', data: { confirm: translate(:"titles.actions.data_confirm") })
+    = button_to(dashboard_batch_operation_batch_operation_events_path(resource, event: :queue), class: "btn btn-outline-success", form_class: "d-inline", form: { data: { turbo_confim: translate(:"titles.actions.data_confirm")}}) do
+      = translate(:"titles.batch_operations.queue")
   - if resource.is_a?(BatchOperation::CalloutPopulation)
     = render("shared/edit_resource_page_action", path: edit_dashboard_batch_operation_callout_population_path(resource))
   - url = resource.is_a?(BatchOperation::CalloutPopulation) && resource.callout ? dashboard_callout_batch_operation_path(resource.callout, resource) : dashboard_batch_operation_path(resource)

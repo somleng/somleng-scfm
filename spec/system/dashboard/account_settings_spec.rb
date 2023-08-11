@@ -27,9 +27,9 @@ RSpec.describe "Account Settings" do
       }
     )
 
-    click_action_button(:update, key: :submit, namespace: :helpers)
+    click_on("Save")
 
-    expect(current_path).to eq(edit_dashboard_account_path)
+    expect(page).to have_current_path(edit_dashboard_account_path, ignore_query: true)
     expect(page).to have_text("Account was successfully updated.")
     user.account.reload
     expect(user.account.platform_provider_name).to eq("somleng")

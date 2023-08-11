@@ -1,4 +1,7 @@
 = page_title(title: title) do
+
+  = render("shared/edit_resource_page_action", path: edit_dashboard_callout_path(resource))
+  = render("shared/destroy_resource_page_action", path: dashboard_callout_path(resource))
   - if resource.may_start?
     = button_to(dashboard_callout_callout_events_path(resource, event: :start), class: "btn btn-outline-success", form_class: "d-inline", form: { data: { turbo_confim: translate(:"titles.actions.data_confirm")}}) do
       = translate(:"titles.callouts.start_callout")
@@ -8,9 +11,6 @@
   - if resource.may_resume?
     = button_to(dashboard_callout_callout_events_path(resource, event: :resume), class: "btn btn-outline-success", form_class: "d-inline", form: { data: { turbo_confim: translate(:"titles.actions.data_confirm")}}) do
       = translate(:"titles.callouts.resume_callout")
-
-  = render("shared/edit_resource_page_action", path: edit_dashboard_callout_path(resource))
-  = render("shared/destroy_resource_page_action", path: dashboard_callout_path(resource))
 
   = render "shared/resource_related_links" do
     = related_link_to t(:"titles.batch_operations.index"), dashboard_callout_batch_operations_path(resource)

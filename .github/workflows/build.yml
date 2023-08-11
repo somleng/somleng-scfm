@@ -4,6 +4,7 @@ name: Build
 env:
   IMAGE_TAG: ${{ github.sha }}
   APP_IDENTIFIER: scfm
+  ECS_CLUSTER: scfm
   APP_ECR_REPOSITORY_URI: public.ecr.aws/somleng/scfm
   NGINX_ECR_REPOSITORY_URI: public.ecr.aws/somleng/scfm-nginx
   APP_GHCR_REPOSITORY_URI: ghcr.io/somleng/scfm

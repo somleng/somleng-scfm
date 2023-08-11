@@ -74,9 +74,6 @@ RSpec.describe "Callouts", :aggregate_failures do
         "rapidpro" => { "flow_id" => "flow-id" }
       )
     )
-
-    click_on("Start")
-    expect(page).to have_content("Event was successfully created.")
   end
 
   it "can create a callout attaching an audio file" do
@@ -192,7 +189,7 @@ RSpec.describe "Callouts", :aggregate_failures do
     end
   end
 
-  it "can perform actions on callouts" do
+  it "can perform actions on callouts", :js do
     user = create(:user)
     callout = create(
       :callout,

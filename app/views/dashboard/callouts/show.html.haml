@@ -3,7 +3,7 @@
     = button_to(dashboard_callout_callout_events_path(resource, event: :start), class: "btn btn-outline-success", form_class: "d-inline", form: { data: { turbo_confim: translate(:"titles.actions.data_confirm")}}) do
       = translate(:"titles.callouts.start_callout")
   - if resource.may_stop?
-    = button_to(dashboard_callout_callout_events_path(resource, event: :stop), class: "btn btn-outline-success", form_class: "d-inline", form: { data: { turbo_confim: translate(:"titles.actions.data_confirm")}}) do
+    = button_to(dashboard_callout_callout_events_path(resource, event: :stop), class: "btn btn-outline-danger", form_class: "d-inline", form: { data: { turbo_confim: translate(:"titles.actions.data_confirm")}}) do
       = translate(:"titles.callouts.stop_callout")
   - if resource.may_resume?
     = button_to(dashboard_callout_callout_events_path(resource, event: :resume), class: "btn btn-outline-success", form_class: "d-inline", form: { data: { turbo_confim: translate(:"titles.actions.data_confirm")}}) do

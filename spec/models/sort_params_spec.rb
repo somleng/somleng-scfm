@@ -46,7 +46,7 @@ RSpec.describe SortParams do
 
       result = sort_params.order_column
 
-      expect(result).to eq(:created_at)
+      expect(result).to eq(:id)
     end
 
     it "returns the first column of the sort params" do

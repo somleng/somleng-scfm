@@ -27,7 +27,7 @@ RSpec.resource "Shared API Features" do
       filtered_contacts = create_list(
         :contact,
         26,
-        account: account,
+        account:,
         metadata: {
           "gender" => "f",
           "date_of_birth" => "2022-01-15"
@@ -36,14 +36,14 @@ RSpec.resource "Shared API Features" do
 
       create(
         :contact,
-        account: account,
+        account:,
         metadata: {
           "gender" => "f"
         },
         created_at: 2.days.ago
       )
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(
         q: {
           "metadata" => {
@@ -76,7 +76,7 @@ RSpec.resource "Shared API Features" do
 
     parameter(
       :metadata_merge_mode,
-      "One of: `merge` (default), `replace` or `deep_merge`. `merge` merges the new metadata with the existing metadata. `replace` replaces the existing metadata with the new metadata. `deep_merge` deep merges the existing metadata with the new metadata.",
+      "One of: `merge` (default), `replace` or `deep_merge`. `merge` merges the new metadata with the existing metadata. `replace` replaces the existing metadata with the new metadata. `deep_merge` deep merges the existing metadata with the new metadata."
     )
 
     example "Metadata" do
@@ -88,7 +88,7 @@ RSpec.resource "Shared API Features" do
 
       contact = create(
         :contact,
-        account: account,
+        account:,
         metadata: {
           "gender" => "f"
         }
@@ -101,7 +101,7 @@ RSpec.resource "Shared API Features" do
         metadata_merge_mode: "replace"
       }
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(id: contact.id, **request_body)
 
       expect(response_status).to eq(204)
@@ -111,5 +111,7 @@ RSpec.resource "Shared API Features" do
   end
 
   let(:account) { create(:account) }
-  let(:access_token) { create(:access_token, resource_owner: account, permissions: %i[contacts_read contacts_write]) }
+  let(:access_token) {
+    create(:access_token, resource_owner: account, permissions: %i[contacts_read contacts_write])
+  }
 end

@@ -24,17 +24,7 @@ RSpec.describe "Users" do
         href: dashboard_user_path(other_user)
       )
 
-      expect(page).to have_sortable_column("email")
-      expect(page).to have_sortable_column("invitation_accepted_at")
-      expect(page).to have_sortable_column("last_sign_in_at")
-      expect(page).to have_sortable_column("created_at")
       expect(other_user.email).to appear_before(user.email)
-    end
-
-    click_link("Created at")
-
-    within("#resources") do
-      expect(user.email).to appear_before(other_user.email)
     end
   end
 

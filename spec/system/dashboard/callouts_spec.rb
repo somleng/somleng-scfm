@@ -28,10 +28,6 @@ RSpec.describe "Callouts", :aggregate_failures do
         callout.id.to_s,
         href: dashboard_callout_path(callout)
       )
-      expect(page).to have_sortable_column("status")
-      expect(page).to have_sortable_column("created_at")
-      expect(page).to have_content("Initialized")
-      expect(page).to have_sortable_column("call_flow_logic")
       expect(page).to have_content("Hello World")
     end
   end

@@ -3,19 +3,9 @@
     %tr{role: "row"}
       %th #
       - columns.each do |column|
-        %th.th-sortable
-          - if column.in?(Array(local_assigns[:unsortable_columns]))
-            .text
-              = resource_class.human_attribute_name(column.to_sym)
-          - else
-            = link_to(url_for(action: :index, **SortParams.new(sort_column: column, sort_direction: sort_params.toggle_order_direction).build_params), class: "sortable", id: column) do
-              = resource_class.human_attribute_name(column.to_sym)
-            - if column.to_s == sort_params.order_column.to_s
-              %span.sortable-icons
-                - if sort_params.order_direction == SortParams::ORDER_ASCENDING
-                  %i.fas.fa-sort-up
-                - else
-                  %i.fas.fa-sort-down
+        %th
+          .text
+            = resource_class.human_attribute_name(column.to_sym)
 
   %tbody
     - if local_assigns[:partial]

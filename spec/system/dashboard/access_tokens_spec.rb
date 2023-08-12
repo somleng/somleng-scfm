@@ -25,8 +25,6 @@ RSpec.describe "API Key Management" do
         access_token.id.to_s,
         href: dashboard_access_token_path(access_token)
       )
-
-      expect(page).to have_sortable_column("created_at")
     end
   end
 

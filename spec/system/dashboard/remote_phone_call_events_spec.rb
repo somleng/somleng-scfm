@@ -24,7 +24,6 @@ RSpec.describe "Remote Phone Call Events" do
         remote_phone_call_event.phone_call_id.to_s,
         href: dashboard_phone_call_path(remote_phone_call_event.phone_call_id)
       )
-      expect(page).to have_sortable_column("created_at")
     end
   end
 

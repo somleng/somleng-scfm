@@ -35,11 +35,6 @@ RSpec.describe "Phone Calls" do
         phone_call.id.to_s,
         href: dashboard_phone_call_path(phone_call)
       )
-
-      expect(page).to have_sortable_column("msisdn")
-      expect(page).to have_sortable_column("status")
-      expect(page).to have_sortable_column("duration")
-      expect(page).to have_sortable_column("created_at")
     end
   end
 

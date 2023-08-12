@@ -23,9 +23,6 @@ RSpec.describe "Contacts", :aggregate_failures do
         contact.id.to_s,
         href: dashboard_contact_path(contact)
       )
-
-      expect(page).to have_sortable_column("msisdn")
-      expect(page).to have_sortable_column("created_at")
     end
   end
 

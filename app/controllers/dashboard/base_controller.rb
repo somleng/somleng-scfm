@@ -15,7 +15,7 @@ module Dashboard
 
     before_action :authenticate_user!, :set_locale
     helper_method :resource, :resources, :show_location, :resources_path,
-                  :current_account, :sort_params
+                  :current_account
 
     def new
       build_new_resource
@@ -91,7 +91,6 @@ module Dashboard
       I18n.locale = current_user.locale
     end
 
-    def _prepare_for_render
-    end
+    def _prepare_for_render; end
   end
 end

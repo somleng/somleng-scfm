@@ -337,7 +337,7 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.5.3)
-    phony (2.20.6)
+    phony (2.20.7)
     phony_rails (0.15.0)
       activesupport (>= 3.0)
       phony (>= 2.18.12)

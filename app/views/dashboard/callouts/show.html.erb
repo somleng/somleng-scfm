@@ -1,0 +1,81 @@
+<%= page_title(title: title) do %>
+  <%= render("shared/edit_resource_page_action", path: edit_dashboard_callout_path(resource)) %>
+  <%= render("shared/destroy_resource_page_action", path: dashboard_callout_path(resource)) %>
+
+  <% if resource.may_start? %>
+    <%= button_to(dashboard_callout_callout_events_path(resource, event: :start), class: "btn btn-outline-success", form_class: "d-inline", form: { data: { turbo_confim: translate(:"titles.actions.data_confirm")}}) do %>
+      <%= translate(:"titles.callouts.start_callout") %>
+    <% end %>
+  <% end %>
+  <% if resource.may_stop? %>
+    <%= button_to(dashboard_callout_callout_events_path(resource, event: :stop), class: "btn btn-outline-danger", form_class: "d-inline", form: { data: { turbo_confim: translate(:"titles.actions.data_confirm")}}) do %>
+      <%= translate(:"titles.callouts.stop_callout") %>
+    <% end %>
+  <% end %>
+  <% if resource.may_resume? %>
+    <%= button_to(dashboard_callout_callout_events_path(resource, event: :resume), class: "btn btn-outline-success", form_class: "d-inline", form: { data: { turbo_confim: translate(:"titles.actions.data_confirm")}}) do %>
+      <%= translate(:"titles.callouts.resume_callout") %>
+    <% end %>
+  <% end %>
+
+  <%= render "shared/resource_related_links" do %>
+    <%= related_link_to t(:"titles.batch_operations.index"), dashboard_callout_batch_operations_path(resource) %>
+    <%= related_link_to t(:"titles.callout_participations.index"), dashboard_callout_callout_participations_path(resource) %>
+    <%= related_link_to t(:"titles.phone_calls.index"), dashboard_callout_phone_calls_path(resource) %>
+  <% end %>
+<% end %>
+
+<div class="card-body">
+  <%= show_for(resource) do |f| %>
+    <%= f.attribute :id %>
+    <%= f.attribute :status, value: resource.status.humanize %>
+    <%= f.attribute :audio_file do %>
+      <% if resource.audio_file.attached? %>
+        <%= link_to(resource.audio_file_blob.filename, url_for(resource.audio_file)) %>
+      <% end %>
+    <% end %>
+    <%= f.attribute :audio_url do %>
+      <% if resource.audio_url.present? %>
+        <%= link_to(resource.audio_url, resource.audio_url) %>
+      <% end %>
+    <% end %>
+    <%= f.attribute :call_flow_logic, value: translate("simple_form.options.defaults.call_flow_logic.#{resource.call_flow_logic}") %>
+    <%= f.attribute :created_at, value: local_time(resource.created_at) %>
+    <%= f.attribute :created_by do %>
+      <% if resource.created_by_id.present? %>
+        <%= link_to(resource.created_by_id, dashboard_user_path(resource.created_by_id)) %>
+      <% end %>
+    <% end %>
+    <%= f.attribute :settings do %>
+      <pre>
+        <code>
+          <%= JSON.pretty_generate(resource.settings) %>
+        </code>
+      </pre>
+    <% end %>
+    <%= f.attribute :metadata do %>
+      <pre>
+        <code>
+          <%= JSON.pretty_generate(resource.metadata) %>
+        </code>
+      </pre>
+    <% end %>
+  <% end %>
+
+  <div class="card" id="callout_summary">
+    <div class="card-body">
+      <div class="card-title">
+        <h5>
+          <%= translate(:"titles.callouts.summary") %>
+        </h5>
+        <small>
+          <%= link_to do %>
+            <%= tag.i(class: "fas fa-sync-alt") %>
+            <%= translate(:"titles.actions.refresh") %>
+          <% end %>
+        </small>
+      </div>
+      <%= render("summary") %>
+    </div>
+  </div>
+</div>

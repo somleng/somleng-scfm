@@ -1,0 +1,35 @@
+<%= page_title(title: title) do %>
+  <% url = resource.is_a?(BatchOperation::CalloutPopulation) && resource.callout ? dashboard_callout_batch_operation_path(resource.callout, resource) : dashboard_batch_operation_path(resource) %>
+  <%= render("shared/destroy_resource_page_action", path: url) %>
+
+  <% if resource.may_queue? %>
+    <%= button_to(dashboard_batch_operation_batch_operation_events_path(resource, event: :queue), class: "btn btn-outline-success", form_class: "d-inline", form: { data: { turbo_confim: translate(:"titles.actions.data_confirm")}}) do %>
+      <%= translate(:"titles.batch_operations.queue") %>
+    <% end %>
+  <% end %>
+
+  <% if resource.is_a?(BatchOperation::CalloutPopulation) %>
+    <%= render("shared/edit_resource_page_action", path: edit_dashboard_batch_operation_callout_population_path(resource)) %>
+  <% end %>
+<% end %>
+
+<div class="card-body">
+  <%= show_for(resource) do |f| %>
+    <%= f.attribute :id %>
+    <%= f.attribute :type, value: resource.model_name.human %>
+    <%= f.attribute :status, value: resource.status.humanize %>
+    <% if resource.is_a?(BatchOperation::CalloutPopulation) && resource.callout %>
+      <%= f.attribute :callout do %>
+        <%= link_to(resource.callout.id, dashboard_callout_path(resource.callout)) %>
+      <% end %>
+      <%= f.attribute :contact_filter_metadata do %>
+        <pre>
+          <code>
+            <%= JSON.pretty_generate(resource.contact_filter_metadata) %>
+          </code>
+        </pre>
+      <% end %>
+    <% end %>
+    <%= f.attribute :created_at, value: local_time(resource.created_at) %>
+  <% end %>
+</div>

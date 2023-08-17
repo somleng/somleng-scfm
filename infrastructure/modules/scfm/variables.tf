@@ -2,8 +2,6 @@ variable "app_identifier" {}
 variable "app_environment" {}
 variable "app_image" {}
 variable "nginx_image" {}
-variable "memory" {}
-variable "cpu" {}
 variable "aws_region" {}
 variable "vpc" {}
 variable "logs_bucket" {}

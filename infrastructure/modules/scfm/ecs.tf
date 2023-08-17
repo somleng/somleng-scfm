@@ -49,7 +49,6 @@ data "template_file" "webserver_container_definitions" {
     aws_sqs_default_queue_name = aws_sqs_queue.default.name
     aws_sqs_low_priority_queue_name = aws_sqs_queue.low_priority.name
     aws_sqs_scheduler_queue_name = aws_sqs_queue.scheduler.name
-    memory = var.memory
     nginx_logs_group = aws_cloudwatch_log_group.nginx.name
     app_logs_group = aws_cloudwatch_log_group.app.name
     logs_group_region = var.aws_region
@@ -78,7 +77,6 @@ data "template_file" "worker_container_definitions" {
     aws_sqs_default_queue_name = aws_sqs_queue.default.name
     aws_sqs_low_priority_queue_name = aws_sqs_queue.low_priority.name
     aws_sqs_scheduler_queue_name = aws_sqs_queue.scheduler.name
-    memory = var.memory
     worker_logs_group = aws_cloudwatch_log_group.worker.name
     logs_group_region = var.aws_region
     app_environment = var.app_environment
@@ -101,7 +99,7 @@ resource "aws_ecs_task_definition" "webserver" {
   container_definitions = data.template_file.webserver_container_definitions.rendered
   task_role_arn = aws_iam_role.ecs_task_role.arn
   execution_role_arn = aws_iam_role.task_execution_role.arn
-  memory = module.container_instances.ec2_instance_type.memory_size - 256
+  memory = 896
 }
 
 resource "aws_ecs_service" "webserver" {
@@ -145,7 +143,7 @@ resource "aws_ecs_task_definition" "worker" {
   container_definitions = data.template_file.worker_container_definitions.rendered
   task_role_arn = aws_iam_role.ecs_task_role.arn
   execution_role_arn = aws_iam_role.task_execution_role.arn
-  memory = module.container_instances.ec2_instance_type.memory_size - 256
+  memory = 896
 }
 
 resource "aws_ecs_task_definition" "worker_fargate" {

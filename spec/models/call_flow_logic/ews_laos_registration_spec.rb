@@ -14,7 +14,7 @@ module CallFlowLogic
 
       response = parse_response(call_flow_logic.to_xml)
       expect(event.phone_call.metadata.fetch("status")).to eq("playing_introduction")
-      assert_play("introduction-lao.wav", response)
+      assert_play("introduction-lao.mp3", response)
     end
 
     it "prompts for the province" do
@@ -29,7 +29,7 @@ module CallFlowLogic
       call_flow_logic.run!
 
       response = parse_response(call_flow_logic.to_xml)
-      assert_gather("select_province-lao.wav", response)
+      assert_gather("select_province-lao.mp3", response)
       expect(event.phone_call.metadata.fetch("status")).to eq("gathering_province")
     end
 
@@ -47,7 +47,7 @@ module CallFlowLogic
       call_flow_logic.run!
 
       response = parse_response(call_flow_logic.to_xml)
-      assert_gather("select_province-lao.wav", response)
+      assert_gather("select_province-lao.mp3", response)
       expect(event.phone_call.metadata["province_code"]).to eq(nil)
       expect(event.phone_call.metadata.fetch("status")).to eq("gathering_province")
     end
@@ -67,7 +67,7 @@ module CallFlowLogic
       call_flow_logic.run!
 
       response = parse_response(call_flow_logic.to_xml)
-      assert_gather("14-lao.wav", response)
+      assert_gather("14-lao.mp3", response)
       expect(event.phone_call.metadata.fetch("province_code")).to eq("14")
       expect(event.phone_call.metadata.fetch("status")).to eq("gathering_district")
     end
@@ -88,7 +88,7 @@ module CallFlowLogic
       call_flow_logic.run!
 
       response = parse_response(call_flow_logic.to_xml)
-      assert_gather("14-lao.wav", response)
+      assert_gather("14-lao.mp3", response)
       expect(event.phone_call.metadata["district_code"]).to eq(nil)
       expect(event.phone_call.metadata.fetch("status")).to eq("gathering_district")
     end
@@ -110,7 +110,7 @@ module CallFlowLogic
 
       response = parse_response(call_flow_logic.to_xml)
       expect(event.phone_call.metadata.fetch("status")).to eq("gathering_province")
-      assert_gather("select_province-lao.wav", response)
+      assert_gather("select_province-lao.mp3", response)
     end
 
     it "saves the district, updates the contact and plays a conclusion" do
@@ -147,7 +147,7 @@ module CallFlowLogic
         "latest_address_en" => "Paksong District, Champasak Province",
         "latest_address_lo" => "ເມືອງປາກຊ່ອງ ແຂວງຈຳປາສັກ"
       )
-      assert_play("registration_successful-lao.wav", response)
+      assert_play("registration_successful-lao.mp3", response)
     end
 
     it "hangs up the call" do

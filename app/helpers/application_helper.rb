@@ -63,4 +63,12 @@ module ApplicationHelper
 
     tag.time(time.utc.iso8601, data: { behavior: "local-time" })
   end
+
+  def json_attribute_value(json)
+    content_tag(:pre) do
+      content_tag(:code) do
+        JSON.pretty_generate(json)
+      end
+    end
+  end
 end

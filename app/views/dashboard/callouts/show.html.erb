@@ -46,20 +46,8 @@
         <%= link_to(resource.created_by_id, dashboard_user_path(resource.created_by_id)) %>
       <% end %>
     <% end %>
-    <%= f.attribute :settings do %>
-      <pre>
-        <code>
-          <%= JSON.pretty_generate(resource.settings) %>
-        </code>
-      </pre>
-    <% end %>
-    <%= f.attribute :metadata do %>
-      <pre>
-        <code>
-          <%= JSON.pretty_generate(resource.metadata) %>
-        </code>
-      </pre>
-    <% end %>
+    <%= f.attribute :settings, value: json_attribute_value(resource.settings) %>
+    <%= f.attribute :metadata, value: json_attribute_value(resource.metadata) %>
   <% end %>
 
   <div class="card" id="callout_summary">

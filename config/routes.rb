@@ -16,6 +16,17 @@ Rails.application.routes.draw do
   get "dashboard", to: "dashboard/callouts#index", as: :user_root
   root to: "dashboard/callouts#index"
 
+  namespace :admin do
+    mount(PgHero::Engine, at: "pghero")
+    resources :accounts, only: %i[index show]
+    resources :callouts, only: %i[index show]
+    resources :contacts, only: %i[index show]
+    resources :phone_calls, only: %i[index show]
+    resources :users, only: %i[index show]
+
+    root to: "accounts#index"
+  end
+
   namespace "dashboard" do
     root to: "callouts#index"
     resources :access_tokens

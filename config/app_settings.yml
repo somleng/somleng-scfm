@@ -9,14 +9,17 @@ default: &default
   aws_region: <%= ENV.fetch("AWS_DEFAULT_REGION", "ap-southeast-1") %>
   uploads_bucket: <%= ENV.fetch("UPLOADS_BUCKET", "uploads.somleng.org") %>
   audio_bucket: <%= ENV.fetch("AUDIO_BUCKET", "audio.somleng.org") %>
+  admin_username: "admin"
+  admin_password: "password"
 
 production: &production
   <<: *default
   default_url_host: "https://scfm.somleng.org"
   sentry_dsn: "<%= Rails.application.credentials.sentry_dsn %>"
+  admin_password: "<%= ENV.fetch("ADMIN_PASSWORD") { Rails.application.credentials.admin_password } %>"
 
 development: &development
-  <<: *production
+  <<: *default
   default_url_host: "http://localhost:3000"
 
 test:

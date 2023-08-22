@@ -58,4 +58,5 @@ module SomlengScfm
   end
 end
 
+require "administrate_extensions"
 require "api_pagination_with_preloaded_total_count"

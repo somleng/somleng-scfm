@@ -39,7 +39,7 @@ DOC
 resource "aws_cloudwatch_event_rule" "scheduler" {
   name                = "${var.app_identifier}-SchedulerJob"
   schedule_expression = "cron(* * * * ? *)"
-  role_arn = aws_iam_role.app_scheduler.arn
+  role_arn            = aws_iam_role.app_scheduler.arn
 }
 
 resource "aws_cloudwatch_event_target" "ecs_scheduled_task" {
@@ -56,7 +56,7 @@ DOC
 
 resource "aws_cloudwatch_event_rule" "scheduler_daily" {
   name                = "${var.app_identifier}-SchedulerJob-daily"
-  schedule_expression =  "cron(0 0 * * ? *)"
+  schedule_expression = "cron(0 0 * * ? *)"
 }
 
 resource "aws_cloudwatch_event_target" "scheduler_daily" {

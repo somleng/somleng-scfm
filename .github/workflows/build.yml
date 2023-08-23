@@ -125,7 +125,7 @@ jobs:
   build-packages:
     name: Build Packages
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/better_task_memory'
+    if: github.ref == 'refs/heads/master'
 
     strategy:
       fail-fast: false

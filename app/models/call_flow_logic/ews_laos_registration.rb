@@ -238,7 +238,11 @@ module CallFlowLogic
     def update_contact
       contact = phone_call.contact
       district = DISTRICTS.find { |d| d.code == phone_call_metadata(:district_code) }
+      registered_districts = contact.metadata.fetch("registered_districts", [])
+      registered_districts << district.code
+      registered_districts.uniq!
       contact.metadata = {
+        "registered_districts" => registered_districts,
         "latest_district_id" => district.code,
         "latest_address_en" => district.address_en,
         "latest_address_lo" => district.address_lo

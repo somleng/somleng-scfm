@@ -117,7 +117,8 @@ module CallFlowLogic
       contact = create(
         :contact,
         metadata: {
-          name: "John Doe"
+          name: "John Doe",
+          registered_districts: %w[1603 1604]
         }
       )
       phone_call = create(
@@ -143,6 +144,7 @@ module CallFlowLogic
       expect(phone_call.metadata.fetch("status")).to eq("playing_conclusion")
       expect(contact.metadata).to eq(
         "name" => "John Doe",
+        "registered_districts" => %w[1603 1604],
         "latest_district_id" => "1604",
         "latest_address_en" => "Paksong District, Champasak Province",
         "latest_address_lo" => "ເມືອງປາກຊ່ອງ ແຂວງຈຳປາສັກ"

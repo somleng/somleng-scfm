@@ -99,7 +99,7 @@ resource "aws_ecs_task_definition" "webserver" {
   container_definitions = data.template_file.webserver_container_definitions.rendered
   task_role_arn = aws_iam_role.ecs_task_role.arn
   execution_role_arn = aws_iam_role.task_execution_role.arn
-  memory = 768
+  memory = module.container_instances.ec2_instance_type.memory_size - 512
 }
 
 resource "aws_ecs_service" "webserver" {
@@ -119,6 +119,10 @@ resource "aws_ecs_service" "webserver" {
   capacity_provider_strategy {
     capacity_provider = aws_ecs_capacity_provider.this.name
     weight = 1
+  }
+
+  placement_constraints {
+    type       = "distinctInstance"
   }
 
   load_balancer {
@@ -143,7 +147,7 @@ resource "aws_ecs_task_definition" "worker" {
   container_definitions = data.template_file.worker_container_definitions.rendered
   task_role_arn = aws_iam_role.ecs_task_role.arn
   execution_role_arn = aws_iam_role.task_execution_role.arn
-  memory = 768
+  memory = module.container_instances.ec2_instance_type.memory_size - 512
 }
 
 resource "aws_ecs_task_definition" "worker_fargate" {
@@ -179,6 +183,10 @@ resource "aws_ecs_service" "worker" {
       aws_security_group.worker.id,
       aws_security_group.db.id
     ]
+  }
+
+  placement_constraints {
+    type       = "distinctInstance"
   }
 
   depends_on = [

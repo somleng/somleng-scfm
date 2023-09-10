@@ -5,37 +5,68 @@ RSpec.resource "Contacts" do
 
   get "/api/contacts" do
     example "List all Contacts" do
-      filtered_contact = create(:contact, account: account, metadata: { "foo" => "bar" })
-
-      create(:contact, account: account)
+      account = create(:account)
+      access_token = create_access_token(resource_owner: account)
+      account_contact = create(:contact, account:)
       create(:contact)
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
+      do_request
+
+      expect(response_status).to eq(200)
+      json_response = JSON.parse(response_body)
+      expect(json_response.size).to eq(1)
+      expect(json_response.dig(0, "id")).to eq(account_contact.id)
+    end
+
+    example "Filter contacts by metadata" do
+      explanation """
+        Filters contacts by the metadata provided in the query.
+
+        Available operators: #{JSONQueryHelpers::OPERATORS.keys.join(', ')}
+      """
+
+      account = create(:account)
+      access_token = create_access_token(resource_owner: account)
+      filtered_contact = create(
+        :contact,
+        account:,
+        metadata: { "registered_districts" => %w[1401] }
+      )
+      create(
+        :contact,
+        account:,
+        metadata: { "registered_districts" => %w[1403] }
+      )
+
+      set_authorization_header(access_token:)
       do_request(
         q: {
-          "metadata" => { "foo" => "bar" }
+          "metadata" => { "registered_districts.any" => %w[1402 1401] }
         }
       )
 
       expect(response_status).to eq(200)
-      parsed_body = JSON.parse(response_body)
-      expect(parsed_body.size).to eq(1)
-      expect(parsed_body.first.fetch("id")).to eq(filtered_contact.id)
+      json_response = JSON.parse(response_body)
+      expect(json_response.size).to eq(1)
+      expect(json_response.dig(0, "id")).to eq(filtered_contact.id)
     end
   end
 
   get "/api/callouts/:callout_id/contacts" do
     example "List Contacts in a callout", document: false do
-      callout = create(:callout, account: account)
-      contact = create(:contact, account: account)
+      account = create(:account)
+      access_token = create_access_token(resource_owner: account)
+      callout = create(:callout, account:)
+      contact = create(:contact, account:)
       _callout_participation = create_callout_participation(
-        account: account,
-        callout: callout,
-        contact: contact
+        account:,
+        callout:,
+        contact:
       )
-      _other_contact = create(:contact, account: account)
+      _other_contact = create(:contact, account:)
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(callout_id: callout.id)
 
       expect(response_status).to eq(200)
@@ -53,6 +84,9 @@ RSpec.resource "Contacts" do
     )
 
     example "Create a Contact" do
+      account = create(:account)
+      access_token = create_access_token(resource_owner: account)
+
       request_body = {
         msisdn: generate(:somali_msisdn),
         metadata: {
@@ -61,7 +95,7 @@ RSpec.resource "Contacts" do
         }
       }
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(request_body)
 
       expect(response_status).to eq(201)
@@ -72,7 +106,10 @@ RSpec.resource "Contacts" do
     end
 
     example "Create an invalid Contact", document: false do
-      set_authorization_header(access_token: access_token)
+      account = create(:account)
+      access_token = create_access_token(resource_owner: account)
+
+      set_authorization_header(access_token:)
       do_request
 
       expect(response_status).to eq(422)
@@ -81,9 +118,11 @@ RSpec.resource "Contacts" do
 
   get "/api/contacts/:id" do
     example "Retrieve a Contact" do
-      contact = create(:contact, account: account)
+      account = create(:account)
+      access_token = create_access_token(resource_owner: account)
+      contact = create(:contact, account:)
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(id: contact.id)
 
       expect(response_status).to eq(200)
@@ -96,9 +135,12 @@ RSpec.resource "Contacts" do
 
   patch "/api/contacts/:id" do
     example "Update a Contact" do
+      account = create(:account)
+      access_token = create_access_token(resource_owner: account)
+
       contact = create(
         :contact,
-        account: account,
+        account:,
         metadata: {
           "foo" => "bar"
         }
@@ -111,7 +153,7 @@ RSpec.resource "Contacts" do
         metadata_merge_mode: "replace"
       }
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(id: contact.id, **request_body)
 
       expect(response_status).to eq(204)
@@ -120,10 +162,12 @@ RSpec.resource "Contacts" do
     end
 
     example "Update a Contact with invalid data", document: false do
-      contact = create(:contact, account: account)
+      account = create(:account)
+      access_token = create_access_token(resource_owner: account)
+      contact = create(:contact, account:)
       request_body = { msisdn: "1234" }
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(id: contact.id, **request_body)
 
       expect(response_status).to eq(422)
@@ -133,6 +177,8 @@ RSpec.resource "Contacts" do
   post "/api/contact_data" do
     example "Create or update a Contact" do
       explanation "Creates or updates a contact. If a contact is found with the `msisdn`, it is updated, otherwise it is created."
+      account = create(:account)
+      access_token = create_access_token(resource_owner: account)
 
       request_body = {
         msisdn: generate(:somali_msisdn),
@@ -142,7 +188,7 @@ RSpec.resource "Contacts" do
         }
       }
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(request_body)
 
       expect(response_status).to eq(201)
@@ -153,11 +199,14 @@ RSpec.resource "Contacts" do
     end
 
     example "Update a Contact by data", document: false do
+      account = create(:account)
+      access_token = create_access_token(resource_owner: account)
       msisdn = generate(:somali_msisdn)
-      contact = create(:contact, account: account, msisdn: msisdn, metadata: { "bar" => "foo" })
-      request_body = { msisdn: msisdn, metadata_merge_mode: "replace", metadata: { "foo" => "bar" } }
+      contact = create(:contact, account:, msisdn:, metadata: { "bar" => "foo" })
+      request_body = { msisdn:, metadata_merge_mode: "replace",
+                       metadata: { "foo" => "bar" } }
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(request_body)
 
       expect(response_status).to eq(201)
@@ -170,9 +219,11 @@ RSpec.resource "Contacts" do
 
   delete "/api/contacts/:id" do
     example "Delete a Contact" do
-      contact = create(:contact, account: account)
+      account = create(:account)
+      access_token = create_access_token(resource_owner: account)
+      contact = create(:contact, account:)
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(id: contact.id)
 
       expect(response_status).to eq(204)
@@ -180,18 +231,17 @@ RSpec.resource "Contacts" do
     end
 
     example "Delete a Contact with phone calls", document: false do
-      contact = create(:contact, account: account)
-      _phone_call = create_phone_call(account: account, contact: contact)
+      account = create(:account)
+      access_token = create_access_token(resource_owner: account)
+      contact = create(:contact, account:)
+      _phone_call = create_phone_call(account:, contact:)
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(id: contact.id)
 
       expect(response_status).to eq(422)
     end
   end
-
-  let(:account) { create(:account) }
-  let(:access_token) { create_access_token(resource_owner: account) }
 
   def create_access_token(**options)
     create(

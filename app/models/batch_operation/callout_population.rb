@@ -72,7 +72,11 @@ module BatchOperation
           status: :created
         }
       end
-      PhoneCall.upsert_all(phone_calls) if phone_calls.any?
+
+      if phone_calls.any?
+        PhoneCall.upsert_all(phone_calls)
+        CalloutParticipation.where(id: phone_calls.pluck(:callout_participation_id)).update_all(phone_calls_count: 1)
+      end
     end
 
     def batch_operation_account_settings_param

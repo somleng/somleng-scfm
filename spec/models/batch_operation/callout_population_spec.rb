@@ -22,7 +22,7 @@ module BatchOperation
         expect(callout_population.callout_participations.count).to eq(1)
         callout_participation = callout_population.callout_participations.first
         expect(callout_participation.contact).to eq(contact)
-        expect(callout_participation.phone_calls.count).to eq(1)
+        expect(callout_participation.phone_calls_count).to eq(1)
         phone_call = callout_participation.phone_calls.first
         expect(phone_call).to have_attributes(
           contact:,
@@ -49,7 +49,7 @@ module BatchOperation
 
         expect(callout_population.callout_participations.count).to eq(1)
         callout_participation = callout_population.callout_participations.first
-        expect(callout_participation.phone_calls.count).to eq(1)
+        expect(callout_participation.phone_calls_count).to eq(1)
       end
     end
 

@@ -33,28 +33,35 @@ RSpec.describe ScheduledJob do
   it "fetches in progress call statuses" do
     account = create(:account)
 
-    phone_call_with_in_progress_status = create_phone_call(
+    in_progress_phone_call = create_phone_call(
       account:,
       status: :in_progress,
       remotely_queued_at: 10.minutes.ago
     )
-    _in_progress_phone_call = create_phone_call(
+    _in_progress_recent_phone_call = create_phone_call(
       account:,
       status: :in_progress,
       remotely_queued_at: Time.current
     )
-    _in_progress_phone_call = create_phone_call(
+    _in_progress_queued_for_fetch_phone_call = create_phone_call(
       account:,
       status: :in_progress,
       remotely_queued_at: 10.minutes.ago,
       remote_status_fetch_queued_at: Time.current
     )
+    in_progress_queued_for_fetch_expired_phone_call = create_phone_call(
+      account:,
+      status: :in_progress,
+      remotely_queued_at: 10.minutes.ago,
+      remote_status_fetch_queued_at: 20.minutes.ago
+    )
 
     ScheduledJob.perform_now
 
-    expect(FetchRemoteCallJob).to have_been_enqueued.exactly(:once)
-    expect(FetchRemoteCallJob).to have_been_enqueued.with(phone_call_with_in_progress_status)
-    expect(phone_call_with_in_progress_status.reload.remote_status_fetch_queued_at).to be_present
+    expect(FetchRemoteCallJob).to have_been_enqueued.exactly(:twice)
+    expect(FetchRemoteCallJob).to have_been_enqueued.with(in_progress_phone_call)
+    expect(FetchRemoteCallJob).to have_been_enqueued.with(in_progress_queued_for_fetch_expired_phone_call)
+    expect(in_progress_phone_call.reload.remote_status_fetch_queued_at).to be_present
   end
 
   def create_phone_call(account:, callout_status: :running, **attributes)

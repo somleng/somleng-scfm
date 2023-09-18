@@ -113,11 +113,10 @@ class PhoneCall < ApplicationRecord
   end
 
   def self.to_fetch_remote_status
-    where(
-      status: IN_PROGRESS_STATUSES
-    ).where(
-      remote_status_fetch_queued_at: nil
-    ).where(arel_table[:remotely_queued_at].lt(10.minutes.ago))
+    where(status: IN_PROGRESS_STATUSES, remotely_queued_at: ..10.minutes.ago)
+      .merge(
+        where(remote_status_fetch_queued_at: nil).or(where(remote_status_fetch_queued_at: ..15.minutes.ago))
+      )
   end
 
   def inbound?

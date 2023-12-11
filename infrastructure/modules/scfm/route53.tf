@@ -22,4 +22,14 @@ resource "aws_route53_record" "cdn" {
   }
 }
 
+resource "aws_route53_record" "audio" {
+  zone_id = var.route53_zone.zone_id
+  name    = var.audio_subdomain
+  type    = "A"
 
+  alias {
+    name                   = aws_cloudfront_distribution.audio.domain_name
+    zone_id                = aws_cloudfront_distribution.audio.hosted_zone_id
+    evaluate_target_health = true
+  }
+}

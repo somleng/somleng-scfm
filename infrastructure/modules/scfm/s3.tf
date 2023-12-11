@@ -22,6 +22,14 @@ resource "aws_s3_bucket" "audio" {
   bucket = var.audio_bucket
 }
 
+resource "aws_s3_bucket_website_configuration" "audio" {
+  bucket = aws_s3_bucket.audio.id
+
+  index_document {
+    suffix = "index.html"
+  }
+}
+
 resource "aws_s3_bucket_acl" "audio" {
   bucket = aws_s3_bucket.audio.id
   acl    = "public-read"

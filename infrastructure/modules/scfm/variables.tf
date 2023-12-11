@@ -10,6 +10,7 @@ variable "audio_bucket" {}
 variable "load_balancer" {}
 variable "listener_arn" {}
 variable "subdomain" {}
+variable "audio_subdomain" {}
 variable "cdn_subdomain" {}
 variable "route53_zone" {}
 variable "cdn_certificate" {}

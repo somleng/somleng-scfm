@@ -275,7 +275,7 @@ GEM
     foreman (0.87.2)
     globalid (1.2.1)
       activesupport (>= 6.1)
-    google-protobuf (3.24.1)
+    google-protobuf (3.25.1)
     haml (6.1.1)
       temple (>= 0.8.2)
       thor
@@ -374,7 +374,7 @@ GEM
       ast (~> 2.4.1)
       racc
     pg (1.5.4)
-    pg_query (4.2.3)
+    pg_query (5.0.0)
       google-protobuf (>= 3.22.3)
     pghero (3.4.0)
       activerecord (>= 6)

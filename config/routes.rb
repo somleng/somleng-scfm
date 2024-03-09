@@ -69,10 +69,6 @@ Rails.application.routes.draw do
   end
 
   namespace "api", defaults: { format: "json" } do
-    defaults format: :xml do
-      resources :remote_phone_call_events, only: :create
-    end
-
     resources :accounts, except: %i[new edit] do
       resources :users, only: :index
       resources :access_tokens, only: :index
@@ -124,5 +120,6 @@ Rails.application.routes.draw do
 
   namespace :twilio_webhooks, defaults: { format: :xml } do
     resources :recording_status_callbacks, only: :create
+    resources :phone_call_events, only: :create
   end
 end

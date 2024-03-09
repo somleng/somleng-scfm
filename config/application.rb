@@ -49,7 +49,7 @@ module SomlengScfm
     config.middleware.use(
       Rack::SomlengWebhookAuthentication,
       nil,
-      "api/remote_phone_call_events", "/twilio_webhooks",
+      "/twilio_webhooks",
       methods: :post
     ) do |account_sid|
       account = Account.find_by_platform_account_sid(account_sid)

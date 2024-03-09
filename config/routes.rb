@@ -118,5 +118,11 @@ Rails.application.routes.draw do
     resources :phone_calls, only: %i[index show] do
       resources :remote_phone_call_events, only: :index
     end
+
+    resources :recordings, only: %i[index show]
+  end
+
+  namespace :twilio_webhooks, defaults: { format: :xml } do
+    resources :recording_status_callbacks, only: :create
   end
 end

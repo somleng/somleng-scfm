@@ -6,16 +6,16 @@ RSpec.resource "Phone Calls" do
   get "/api/phone_calls" do
     example "List all Phone Calls" do
       phone_call = create_phone_call(
-        account: account,
+        account:,
         metadata: {
           "foo" => "bar"
         }
       )
 
-      create_phone_call(account: account)
+      create_phone_call(account:)
       create(:phone_call)
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(
         q: {
           "metadata" => { "foo" => "bar" }
@@ -28,10 +28,10 @@ RSpec.resource "Phone Calls" do
 
   get "/api/callout_participations/:callout_participation_id/phone_calls" do
     example "List phone calls for a callout participation", document: false do
-      phone_call = create_phone_call(account: account)
-      _other_phone_call = create_phone_call(account: account)
+      phone_call = create_phone_call(account:)
+      _other_phone_call = create_phone_call(account:)
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(callout_participation_id: phone_call.callout_participation.id)
 
       assert_filtered!(phone_call)
@@ -40,10 +40,10 @@ RSpec.resource "Phone Calls" do
 
   get "/api/callouts/:callout_id/phone_calls" do
     example "List phone calls for a callout", document: false do
-      phone_call = create_phone_call(account: account)
-      _other_phone_call = create_phone_call(account: account)
+      phone_call = create_phone_call(account:)
+      _other_phone_call = create_phone_call(account:)
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(callout_id: phone_call.callout.id)
 
       assert_filtered!(phone_call)
@@ -52,10 +52,10 @@ RSpec.resource "Phone Calls" do
 
   get "/api/contacts/:contact_id/phone_calls" do
     example "List phone calls for a contact", document: false do
-      phone_call = create_phone_call(account: account)
-      _other_phone_call = create_phone_call(account: account)
+      phone_call = create_phone_call(account:)
+      _other_phone_call = create_phone_call(account:)
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(contact_id: phone_call.contact.id)
 
       assert_filtered!(phone_call)
@@ -64,9 +64,9 @@ RSpec.resource "Phone Calls" do
 
   get "/api/phone_calls/:id" do
     example "Retrieve a Phone Call" do
-      phone_call = create_phone_call(account: account)
+      phone_call = create_phone_call(account:)
 
-      set_authorization_header(access_token: access_token)
+      set_authorization_header(access_token:)
       do_request(id: phone_call.id)
 
       expect(response_status).to eq(200)

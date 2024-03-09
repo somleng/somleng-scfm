@@ -6,29 +6,29 @@ module CallFlowLogic
     LANGUAGE_MENU = [
       Language.new(
         code: "khm", name: "Khmer",
-        links: ["https://iso639-3.sil.org/code/khm", "https://en.wikipedia.org/wiki/Khmer_language"]
+        links: [ "https://iso639-3.sil.org/code/khm", "https://en.wikipedia.org/wiki/Khmer_language" ]
       ),
       Language.new(
         code: "cmo", name: "Central Mnong",
-        links: ["https://iso639-3.sil.org/code/cmo", "https://en.wikipedia.org/wiki/Mnong_language"]
+        links: [ "https://iso639-3.sil.org/code/cmo", "https://en.wikipedia.org/wiki/Mnong_language" ]
       ),
       Language.new(
         code: "jra", name: "Jarai",
-        links: ["https://iso639-3.sil.org/code/jra", "https://en.wikipedia.org/wiki/Jarai_language"]
+        links: [ "https://iso639-3.sil.org/code/jra", "https://en.wikipedia.org/wiki/Jarai_language" ]
       ),
       Language.new(
         code: "tpu", name: "Tampuan",
-        links: ["https://iso639-3.sil.org/code/tpu", "https://en.wikipedia.org/wiki/Tampuan_language"]
+        links: [ "https://iso639-3.sil.org/code/tpu", "https://en.wikipedia.org/wiki/Tampuan_language" ]
       ),
       Language.new(
         code: "krr", name: "Krung",
-        links: ["https://iso639-3.sil.org/code/krr", "https://en.wikipedia.org/wiki/Brao_language"]
+        links: [ "https://iso639-3.sil.org/code/krr", "https://en.wikipedia.org/wiki/Brao_language" ]
       )
     ].freeze
 
     Province = Struct.new(:code, :name, :available_languages, keyword_init: true) do
       def initialize(options)
-        super(options.reverse_merge(available_languages: ["khm"]))
+        super(options.reverse_merge(available_languages: [ "khm" ]))
       end
     end
 
@@ -70,6 +70,8 @@ module CallFlowLogic
     aasm(column: :status, whiny_transitions: false) do
       state INITIAL_STATUS, initial: true
       state :playing_introduction
+      state :main_menu
+      state :recording_feedback
       state :gathering_language
       state :gathering_province
       state :gathering_district
@@ -86,8 +88,18 @@ module CallFlowLogic
                     after: :play_introduction
 
         transitions from: :playing_introduction,
+                    to: :main_menu,
+                    after: :prompt_main_menu
+
+        transitions from: :main_menu,
                     to: :gathering_language,
+                    if: :register?,
                     after: :gather_language
+
+        transitions from: :main_menu,
+                    to: :recording_feedback,
+                    if: :record_feedback?,
+                    after: :record_feedback
 
         transitions from: :gathering_language,
                     to: :gathering_province,
@@ -148,6 +160,19 @@ module CallFlowLogic
       end
     end
 
+    def prompt_main_menu
+      @voice_response = gather do |response|
+        play(:main_menu, response, language_code: "khm")
+      end
+    end
+
+    def record_feedback
+      @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
+        play(:record_feedback, response, language_code: "khm")
+        response.record(recording_status_callback: url_helpers.twilio_webhooks_recording_status_callbacks_url)
+      end
+    end
+
     def gather_language
       @voice_response = gather do |response|
         play(:select_language, response)
@@ -200,7 +225,7 @@ module CallFlowLogic
     end
 
     def play(filename, response, language_code: nil)
-      key = ["ews_registration/#{filename}", language_code].compact.join("-")
+      key = [ "ews_registration/#{filename}", language_code ].compact.join("-")
       response.play(url: AudioURL.new(key: "#{key}.wav").url)
     end
 
@@ -210,6 +235,14 @@ module CallFlowLogic
 
     def start_over?
       dtmf_tones.to_s.first == "*"
+    end
+
+    def register?
+      dtmf_tones.blank? || pressed_digits == 1
+    end
+
+    def record_feedback?
+      pressed_digits == 2
     end
 
     def language_gathered?
@@ -330,6 +363,10 @@ module CallFlowLogic
 
     def pressed_digits
       dtmf_tones.to_i
+    end
+
+    def url_helpers
+      @url_helpers ||= Rails.application.routes.url_helpers
     end
   end
 end

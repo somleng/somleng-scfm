@@ -30,7 +30,7 @@ module Filter
         Hash[
           filter_query_mappings.map do |k, v|
             filter_value = params[filter_param_key(k)]
-            [v, parse_filter_value(filter_value)]
+            [ v, parse_filter_value(filter_value) ]
           end
         ].compact
       end
@@ -45,7 +45,7 @@ module Filter
       end
 
       def filter_param_key(key)
-        [timestamp_attribute, key].join("_").to_sym
+        [ timestamp_attribute, key ].join("_").to_sym
       end
 
       def parse_filter_value(raw_value)

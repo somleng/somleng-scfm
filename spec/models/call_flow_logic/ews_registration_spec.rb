@@ -16,8 +16,64 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     assert_play("introduction-khm.wav", response)
   end
 
-  it "prompts for the language" do
+  it "prompts the main menu" do
     event = create_phone_call_event(phone_call_metadata: { status: :playing_introduction })
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(
+      phone_call: event.phone_call,
+      event: event,
+      current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+    )
+
+    call_flow_logic.run!
+
+    response = parse_response(call_flow_logic.to_xml)
+    assert_gather("main_menu-khm.wav", response)
+    expect(event.phone_call.metadata.fetch("status")).to eq("main_menu")
+  end
+
+  it "gathers feedback" do
+    event = create_phone_call_event(
+      phone_call_metadata: { status: :main_menu },
+      event_details: { Digits: "2" }
+    )
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(
+      phone_call: event.phone_call,
+      event: event,
+      current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+    )
+
+    call_flow_logic.run!
+
+    response = parse_response(call_flow_logic.to_xml)
+    expect(response).to include(
+      "Play" => "https://s3.ap-southeast-1.amazonaws.com/audio.somleng.org/ews_registration/record_feedback-khm.wav",
+      "Record" => {
+        "recordingStatusCallback" => "https://scfm.somleng.org/twilio_webhooks/recording_status_callbacks"
+      }
+    )
+    expect(event.phone_call.metadata.fetch("status")).to eq("recording_feedback")
+  end
+
+  it "starts the registration process" do
+    event = create_phone_call_event(
+      phone_call_metadata: { status: :main_menu },
+      event_details: { Digits: "1" }
+    )
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(
+      phone_call: event.phone_call,
+      event: event,
+      current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+    )
+
+    call_flow_logic.run!
+
+    response = parse_response(call_flow_logic.to_xml)
+    assert_gather("select_language.wav", response)
+    expect(event.phone_call.metadata.fetch("status")).to eq("gathering_language")
+  end
+
+  it "starts the registration process if no input is received" do
+    event = create_phone_call_event(phone_call_metadata: { status: :main_menu })
     call_flow_logic = CallFlowLogic::EWSRegistration.new(
       phone_call: event.phone_call,
       event: event,

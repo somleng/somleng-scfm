@@ -3,7 +3,7 @@ FactoryBot.define do
 
   sequence :twilio_request_params do
     params = Twilio::REST::Client.new.api.account.calls.method(:create).parameters.map do |param|
-      [param[1].to_s, param[1].to_s]
+      [ param[1].to_s, param[1].to_s ]
     end
 
     Hash[params]
@@ -86,7 +86,7 @@ FactoryBot.define do
 
     traits_for_enum :status, %i[preview queued running finished]
 
-    factory :callout_population, aliases: [:batch_operation],
+    factory :callout_population, aliases: [ :batch_operation ],
                                  class: "BatchOperation::CalloutPopulation" do
       after(:build) do |callout_population|
         callout_population.callout ||= build(:callout, account: callout_population.account)
@@ -170,7 +170,7 @@ FactoryBot.define do
     end
 
     trait :super_admin do
-      permissions { [:super_admin] }
+      permissions { [ :super_admin ] }
     end
   end
 
@@ -184,5 +184,11 @@ FactoryBot.define do
   factory :access_token do
     association :resource_owner, factory: :account
     created_by { resource_owner }
+  end
+
+  factory :recording do
+    phone_call
+    account { phone_call.account }
+    contact { phone_call.contact }
   end
 end

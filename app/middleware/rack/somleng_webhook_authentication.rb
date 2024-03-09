@@ -4,7 +4,7 @@ module Rack
   class SomlengWebhookAuthentication < TwilioWebhookAuthentication
     def initialize(app, auth_token, *paths, &auth_token_lookup)
       options = paths.extract_options!
-      @methods = [options[:methods]].compact.flatten.map { |method| method.to_s.upcase }
+      @methods = [ options[:methods] ].compact.flatten.map { |method| method.to_s.upcase }
       super
     end
 

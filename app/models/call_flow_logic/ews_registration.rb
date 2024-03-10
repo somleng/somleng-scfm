@@ -72,6 +72,7 @@ module CallFlowLogic
       state :playing_introduction
       state :main_menu
       state :recording_feedback
+      state :playing_feedback_successful
       state :gathering_language
       state :gathering_province
       state :gathering_district
@@ -79,7 +80,7 @@ module CallFlowLogic
       state :playing_conclusion
       state :finished
 
-      before_all_events :read_status
+      before_all_events :read_status, :initialize_voice_response
       after_all_events :persist_status
 
       event :process_call do
@@ -100,6 +101,14 @@ module CallFlowLogic
                     to: :recording_feedback,
                     if: :record_feedback?,
                     after: :record_feedback
+
+        transitions from: :recording_feedback,
+                    to: :playing_feedback_successful,
+                    after: :play_feedback_successful
+
+        transitions from: :playing_feedback_successful,
+                    to: :finished,
+                    after: :hangup
 
         transitions from: :gathering_language,
                     to: :gathering_province,
@@ -147,6 +156,21 @@ module CallFlowLogic
 
     def read_status
       aasm.current_state = phone_call.metadata.fetch("status", INITIAL_STATUS).to_sym
+    end
+
+    def initialize_voice_response
+      case aasm.current_state
+      when :main_menu
+        prompt_main_menu
+      when :gathering_language
+        gather_language
+      when :gathering_province
+        gather_province
+      when :gathering_district
+        gather_district
+      when :gathering_commune
+        gather_commune
+      end
     end
 
     def persist_status
@@ -209,6 +233,13 @@ module CallFlowLogic
       end
     end
 
+    def play_feedback_successful
+      @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
+        play(:feedback_successful, response, language_code: :khm)
+        response.redirect(current_url)
+      end
+    end
+
     def play_conclusion
       @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
         play(:registration_successful, response, language_code: phone_call_metadata(:language_code))
@@ -246,31 +277,19 @@ module CallFlowLogic
     end
 
     def language_gathered?
-      return true if selected_language.present?
-
-      gather_language
-      false
+      selected_language.present?
     end
 
     def province_gathered?
-      return true if selected_province.present?
-
-      gather_province
-      false
+      selected_province.present?
     end
 
     def district_gathered?
-      return true if selected_district.present?
-
-      gather_district
-      false
+      selected_district.present?
     end
 
     def commune_gathered?
-      return true if selected_commune.present?
-
-      gather_commune
-      false
+      selected_commune.present?
     end
 
     def selected_language

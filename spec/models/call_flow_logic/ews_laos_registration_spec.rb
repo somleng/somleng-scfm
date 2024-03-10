@@ -7,7 +7,7 @@ module CallFlowLogic
       call_flow_logic = EWSLaosRegistration.new(
         phone_call: event.phone_call,
         event:,
-        current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+        current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
       )
 
       call_flow_logic.run!
@@ -134,7 +134,7 @@ module CallFlowLogic
       call_flow_logic = EWSLaosRegistration.new(
         phone_call:,
         event:,
-        current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+        current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
       )
 
       call_flow_logic.run!
@@ -191,7 +191,7 @@ module CallFlowLogic
     def assert_play(filename, response)
       expect(response).to eq(
         "Play" => "https://s3.ap-southeast-1.amazonaws.com/audio.somleng.org/ews_laos_registration/#{filename}",
-        "Redirect" => "https://scfm.somleng.org/api/remote_phone_call_events"
+        "Redirect" => "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
       )
     end
   end

@@ -6,7 +6,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     call_flow_logic = CallFlowLogic::EWSRegistration.new(
       phone_call: event.phone_call,
       event: event,
-      current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+      current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
     )
 
     call_flow_logic.run!
@@ -21,7 +21,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     call_flow_logic = CallFlowLogic::EWSRegistration.new(
       phone_call: event.phone_call,
       event: event,
-      current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+      current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
     )
 
     call_flow_logic.run!
@@ -39,7 +39,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     call_flow_logic = CallFlowLogic::EWSRegistration.new(
       phone_call: event.phone_call,
       event: event,
-      current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+      current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
     )
 
     call_flow_logic.run!
@@ -54,6 +54,39 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     expect(event.phone_call.metadata.fetch("status")).to eq("recording_feedback")
   end
 
+  it "thanks the caller for providing feedback" do
+    event = create_phone_call_event(
+      phone_call_metadata: { status: :recording_feedback }
+    )
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(
+      phone_call: event.phone_call,
+      event: event,
+      current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
+    )
+
+    call_flow_logic.run!
+
+    response = parse_response(call_flow_logic.to_xml)
+    assert_play("feedback_successful-khm.wav", response)
+    expect(event.phone_call.metadata.fetch("status")).to eq("playing_feedback_successful")
+  end
+
+  it "completes the feedback flow" do
+    event = create_phone_call_event(
+      phone_call_metadata: { status: :playing_feedback_successful }
+    )
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(
+      phone_call: event.phone_call,
+      event: event,
+      current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
+    )
+
+    call_flow_logic.run!
+
+    response = parse_response(call_flow_logic.to_xml)
+    expect(response).to have_key("Hangup")
+  end
+
   it "starts the registration process" do
     event = create_phone_call_event(
       phone_call_metadata: { status: :main_menu },
@@ -62,7 +95,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     call_flow_logic = CallFlowLogic::EWSRegistration.new(
       phone_call: event.phone_call,
       event: event,
-      current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+      current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
     )
 
     call_flow_logic.run!
@@ -77,7 +110,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     call_flow_logic = CallFlowLogic::EWSRegistration.new(
       phone_call: event.phone_call,
       event: event,
-      current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+      current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
     )
 
     call_flow_logic.run!
@@ -85,6 +118,24 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     response = parse_response(call_flow_logic.to_xml)
     assert_gather("select_language.wav", response)
     expect(event.phone_call.metadata.fetch("status")).to eq("gathering_language")
+  end
+
+  it "handles invalid main menu responses" do
+    event = create_phone_call_event(
+      phone_call_metadata: { status: :main_menu },
+      event_details: { Digits: "3" }
+    )
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(
+      phone_call: event.phone_call,
+      event: event,
+      current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
+    )
+
+    call_flow_logic.run!
+
+    response = parse_response(call_flow_logic.to_xml)
+    assert_gather("main_menu-khm.wav", response)
+    expect(event.phone_call.metadata.fetch("status")).to eq("main_menu")
   end
 
   it "prompts for the language again if no input is received" do
@@ -269,7 +320,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     call_flow_logic = CallFlowLogic::EWSRegistration.new(
       phone_call: phone_call,
       event: event,
-      current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+      current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
     )
 
     call_flow_logic.run!
@@ -290,9 +341,16 @@ RSpec.describe CallFlowLogic::EWSRegistration do
 
   it "hangs up the call" do
     event = create_phone_call_event(
-      phone_call_metadata: { status: :playing_conclusion }
+      phone_call_metadata: {
+        language_code: "khm",
+        status: :playing_conclusion
+      }
     )
-    call_flow_logic = CallFlowLogic::EWSRegistration.new(phone_call: event.phone_call, event: event)
+    call_flow_logic = CallFlowLogic::EWSRegistration.new(
+      phone_call: event.phone_call,
+      event:,
+      current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
+    )
 
     call_flow_logic.run!
 
@@ -324,7 +382,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
   def assert_play(filename, response)
     expect(response).to eq(
       "Play" => "https://s3.ap-southeast-1.amazonaws.com/audio.somleng.org/ews_registration/#{filename}",
-      "Redirect" => "https://scfm.somleng.org/api/remote_phone_call_events"
+      "Redirect" => "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
     )
   end
 end

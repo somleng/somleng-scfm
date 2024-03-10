@@ -17,7 +17,7 @@ module API
     end
 
     def association_chain
-      current_account.remote_phone_call_events.all
+      current_account.remote_phone_call_events
     end
 
     def filter_class

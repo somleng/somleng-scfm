@@ -7,7 +7,7 @@ module CallFlowLogic
       call_flow_logic = CallFlowLogic::MamaInfoRegistration.new(
         phone_call: event.phone_call,
         event: event,
-        current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+        current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
       )
 
       call_flow_logic.run!
@@ -26,7 +26,7 @@ module CallFlowLogic
       call_flow_logic = CallFlowLogic::MamaInfoRegistration.new(
         phone_call: phone_call,
         event: event,
-        current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+        current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
       )
 
       call_flow_logic.run!
@@ -44,7 +44,7 @@ module CallFlowLogic
         call_flow_logic = CallFlowLogic::MamaInfoRegistration.new(
           phone_call: phone_call,
           event: event,
-          current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+          current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
         )
 
         call_flow_logic.run!
@@ -69,7 +69,7 @@ module CallFlowLogic
         call_flow_logic = CallFlowLogic::MamaInfoRegistration.new(
           phone_call: phone_call,
           event: event,
-          current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+          current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
         )
 
         call_flow_logic.run!
@@ -93,7 +93,7 @@ module CallFlowLogic
       call_flow_logic = CallFlowLogic::MamaInfoRegistration.new(
         phone_call: phone_call,
         event: event,
-        current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+        current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
       )
 
       call_flow_logic.run!
@@ -113,7 +113,7 @@ module CallFlowLogic
       call_flow_logic = CallFlowLogic::MamaInfoRegistration.new(
         phone_call: phone_call,
         event: event,
-        current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+        current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
       )
 
       call_flow_logic.run!
@@ -133,7 +133,7 @@ module CallFlowLogic
       call_flow_logic = CallFlowLogic::MamaInfoRegistration.new(
         phone_call: phone_call,
         event: event,
-        current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+        current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
       )
 
       call_flow_logic.run!
@@ -155,7 +155,7 @@ module CallFlowLogic
       call_flow_logic = CallFlowLogic::MamaInfoRegistration.new(
         phone_call: phone_call,
         event: event,
-        current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+        current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
       )
 
       call_flow_logic.run!
@@ -171,7 +171,7 @@ module CallFlowLogic
       call_flow_logic = CallFlowLogic::MamaInfoRegistration.new(
         phone_call: phone_call,
         event: event,
-        current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+        current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
       )
 
       call_flow_logic.run!
@@ -298,7 +298,7 @@ module CallFlowLogic
       call_flow_logic = CallFlowLogic::MamaInfoRegistration.new(
         phone_call: phone_call,
         event: event,
-        current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+        current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
       )
 
       call_flow_logic.run!
@@ -442,7 +442,7 @@ module CallFlowLogic
       call_flow_logic = CallFlowLogic::MamaInfoRegistration.new(
         phone_call: phone_call,
         event: event,
-        current_url: "https://scfm.somleng.org/api/remote_phone_call_events"
+        current_url: "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
       )
 
       call_flow_logic.run!
@@ -537,7 +537,7 @@ module CallFlowLogic
     def assert_play(filename, response)
       expect(response).to eq(
         "Play" => filename,
-        "Redirect" => "https://scfm.somleng.org/api/remote_phone_call_events"
+        "Redirect" => "https://scfm.somleng.org/twilio_webhooks/phone_call_events"
       )
     end
 

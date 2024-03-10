@@ -1,6 +1,9 @@
 module CallFlowLogic
   class EWSRegistration < Base
     Language = Struct.new(:code, :name, :links, keyword_init: true)
+    FEEDBACK_FEATURE_FLAG_PHONE_NUMBERS = [
+      "+855715100860", "+85570753999"
+    ].freeze
 
     # https://en.wikipedia.org/wiki/ISO_639-3
     LANGUAGE_MENU = [
@@ -90,7 +93,12 @@ module CallFlowLogic
 
         transitions from: :playing_introduction,
                     to: :main_menu,
+                    if: :feedback_enabled?,
                     after: :prompt_main_menu
+
+        transitions from: :playing_introduction,
+                    to: :gathering_language,
+                    after: :gather_language
 
         transitions from: :main_menu,
                     to: :gathering_language,
@@ -186,13 +194,13 @@ module CallFlowLogic
 
     def prompt_main_menu
       @voice_response = gather do |response|
-        play(:main_menu, response, language_code: "khm")
+        play(:main_menu, response, language_code: "khm", file_extension: "mp3")
       end
     end
 
     def record_feedback
       @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
-        play(:record_feedback, response, language_code: "khm")
+        play(:record_feedback_instructions, response, language_code: "khm", file_extension: "mp3")
         response.record(recording_status_callback: url_helpers.twilio_webhooks_recording_status_callbacks_url)
       end
     end
@@ -235,7 +243,7 @@ module CallFlowLogic
 
     def play_feedback_successful
       @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
-        play(:feedback_successful, response, language_code: :khm)
+        play(:feedback_successful, response, language_code: :khm, file_extension: "mp3")
         response.redirect(current_url)
       end
     end
@@ -255,9 +263,9 @@ module CallFlowLogic
       end
     end
 
-    def play(filename, response, language_code: nil)
+    def play(filename, response, language_code: nil, file_extension: "wav")
       key = [ "ews_registration/#{filename}", language_code ].compact.join("-")
-      response.play(url: AudioURL.new(key: "#{key}.wav").url)
+      response.play(url: AudioURL.new(key: "#{key}.#{file_extension}").url)
     end
 
     def hangup
@@ -274,6 +282,10 @@ module CallFlowLogic
 
     def record_feedback?
       pressed_digits == 2
+    end
+
+    def feedback_enabled?
+      FEEDBACK_FEATURE_FLAG_PHONE_NUMBERS.include?(phone_call.contact.msisdn)
     end
 
     def language_gathered?

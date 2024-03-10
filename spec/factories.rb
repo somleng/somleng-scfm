@@ -186,6 +186,19 @@ FactoryBot.define do
     created_by { resource_owner }
   end
 
+  factory :active_storage_attachment, class: "ActiveStorage::Blob" do
+    transient do
+      filename { "test.mp3" }
+    end
+
+    initialize_with do
+      ActiveStorage::Blob.create_and_upload!(
+        io: File.open("#{RSpec.configuration.file_fixture_path}/#{filename}"),
+        filename:
+      )
+    end
+  end
+
   factory :recording do
     phone_call
     account { phone_call.account }
@@ -193,5 +206,7 @@ FactoryBot.define do
     external_recording_id { SecureRandom.uuid }
     external_recording_url { "https://api.somleng.org/2010-04-01/Accounts/#{SecureRandom.uuid}/Calls/#{SecureRandom.uuid}/Recordings/#{external_recording_id}" }
     duration { 15 }
+
+    association :audio_file, factory: :active_storage_attachment, filename: "test.mp3"
   end
 end

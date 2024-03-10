@@ -65,6 +65,7 @@ Rails.application.routes.draw do
 
     resources :remote_phone_call_events, only: %i[index show]
     resources :users, except: %i[new create]
+    resources :recordings, only: %i[index show]
     resource :locale, only: :update
   end
 

@@ -17,7 +17,15 @@ RSpec.describe CallFlowLogic::EWSRegistration do
   end
 
   it "prompts the main menu" do
-    event = create_phone_call_event(phone_call_metadata: { status: :playing_introduction })
+    contact = create(:contact, msisdn: "+855715100860")
+    phone_call = create(
+      :phone_call,
+      :inbound,
+      contact:,
+      msisdn: contact.msisdn,
+      metadata: { status: :playing_introduction }
+    )
+    event = create_phone_call_event(phone_call:)
     call_flow_logic = CallFlowLogic::EWSRegistration.new(
       phone_call: event.phone_call,
       event: event,
@@ -27,7 +35,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     call_flow_logic.run!
 
     response = parse_response(call_flow_logic.to_xml)
-    assert_gather("main_menu-khm.wav", response)
+    assert_gather("main_menu-khm.mp3", response)
     expect(event.phone_call.metadata.fetch("status")).to eq("main_menu")
   end
 
@@ -46,7 +54,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
 
     response = parse_response(call_flow_logic.to_xml)
     expect(response).to include(
-      "Play" => "https://s3.ap-southeast-1.amazonaws.com/audio.somleng.org/ews_registration/record_feedback-khm.wav",
+      "Play" => "https://s3.ap-southeast-1.amazonaws.com/audio.somleng.org/ews_registration/record_feedback_instructions-khm.mp3",
       "Record" => {
         "recordingStatusCallback" => "https://scfm.somleng.org/twilio_webhooks/recording_status_callbacks"
       }
@@ -67,7 +75,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     call_flow_logic.run!
 
     response = parse_response(call_flow_logic.to_xml)
-    assert_play("feedback_successful-khm.wav", response)
+    assert_play("feedback_successful-khm.mp3", response)
     expect(event.phone_call.metadata.fetch("status")).to eq("playing_feedback_successful")
   end
 
@@ -134,7 +142,7 @@ RSpec.describe CallFlowLogic::EWSRegistration do
     call_flow_logic.run!
 
     response = parse_response(call_flow_logic.to_xml)
-    assert_gather("main_menu-khm.wav", response)
+    assert_gather("main_menu-khm.mp3", response)
     expect(event.phone_call.metadata.fetch("status")).to eq("main_menu")
   end
 

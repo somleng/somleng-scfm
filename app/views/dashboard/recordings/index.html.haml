@@ -1,0 +1,5 @@
+= page_title(title: title)
+
+.card-body
+  = render("shared/resources_table", resource_class: Recording, columns: [:audio_file, :duration, :created_at])
+  = render("shared/pagination", resources: resources)

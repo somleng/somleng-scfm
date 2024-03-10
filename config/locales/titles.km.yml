@@ -54,6 +54,9 @@ km:
       queue: Send
       queue_remote_fetch: Fetch Remote Status
       show: កំណត់ត្រាការហៅចេញ %{id}
+    recordings:
+      index: Recordings
+      show: Recording %{id}
     remote_phone_call_events:
       index: ព្រឹត្តិការណ៍ការហៅចេញ
       show: ព្រឹត្តិការណ៍ការហៅចេញ %{id}

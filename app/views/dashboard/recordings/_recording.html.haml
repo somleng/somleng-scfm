@@ -2,8 +2,7 @@
   %td
     = link_to(recording.id, show_location(recording))
   %td
-    - if recording.audio_file.attached?
-      = link_to(recording.audio_file.blob.filename, url_for(recording.audio_file))
+    = link_to(recording.audio_file.blob.filename, url_for(recording.audio_file))
   %td
     = recording.duration
   %td

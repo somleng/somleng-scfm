@@ -4,8 +4,7 @@
   = show_for(resource) do |f|
     = f.attribute :id
     = f.attribute :audio_file do
-      - if resource.audio_file.attached?
-        = link_to(resource.audio_file.filename, rails_blob_path(resource.audio_file, disposition: "attachment"))
+      = link_to(resource.audio_file.filename, rails_blob_path(resource.audio_file, disposition: "attachment"))
     = f.attribute :phone_call do
       = link_to(resource.phone_call_id, dashboard_phone_call_path(resource.phone_call_id))
     = f.attribute :contact do

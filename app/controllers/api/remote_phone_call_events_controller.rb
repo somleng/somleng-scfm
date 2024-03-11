@@ -1,18 +1,5 @@
 module API
   class RemotePhoneCallEventsController < API::BaseController
-    respond_to :xml,  only: :create
-    respond_to :json, except: :create
-
-    skip_before_action :doorkeeper_authorize!,
-                       :authorize_access_token_for_write!,
-                       only: :create
-
-    def create
-      schema = RemotePhoneCallEventRequestSchema.new(input_params: request.request_parameters)
-      result = HandlePhoneCallEvent.call(request.original_url, schema.output)
-      respond_with(result, location: nil)
-    end
-
     private
 
     def find_resources_association_chain
@@ -30,7 +17,7 @@ module API
     end
 
     def association_chain
-      current_account.remote_phone_call_events.all
+      current_account.remote_phone_call_events
     end
 
     def filter_class

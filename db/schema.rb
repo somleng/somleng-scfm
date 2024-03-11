@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_08_22_052048) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_07_112427) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
@@ -217,6 +217,21 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_22_052048) do
     t.index ["status"], name: "index_phone_calls_on_status"
   end
 
+  create_table "recordings", force: :cascade do |t|
+    t.bigint "phone_call_id", null: false
+    t.bigint "account_id", null: false
+    t.bigint "contact_id", null: false
+    t.string "external_recording_id", null: false
+    t.string "external_recording_url", null: false
+    t.integer "duration", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["account_id"], name: "index_recordings_on_account_id"
+    t.index ["contact_id"], name: "index_recordings_on_contact_id"
+    t.index ["created_at"], name: "index_recordings_on_created_at"
+    t.index ["phone_call_id"], name: "index_recordings_on_phone_call_id"
+  end
+
   create_table "remote_phone_call_events", force: :cascade do |t|
     t.bigint "phone_call_id", null: false
     t.jsonb "details", default: {}, null: false
@@ -288,6 +303,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_22_052048) do
   add_foreign_key "phone_calls", "callout_participations"
   add_foreign_key "phone_calls", "callouts"
   add_foreign_key "phone_calls", "contacts"
+  add_foreign_key "recordings", "accounts"
+  add_foreign_key "recordings", "contacts"
+  add_foreign_key "recordings", "phone_calls"
   add_foreign_key "remote_phone_call_events", "phone_calls"
   add_foreign_key "users", "accounts"
   add_foreign_key "users", "users", column: "invited_by_id"

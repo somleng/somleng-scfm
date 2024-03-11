@@ -22,6 +22,7 @@ class AccessToken < Doorkeeper::AccessToken
     remote_phone_call_events_write
     users_read
     users_write
+    recordings_read
   ].freeze
 
   include TimestampQueryHelpers

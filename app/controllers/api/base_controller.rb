@@ -13,15 +13,15 @@ module API
     private
 
     def respond_with_resource_parts
-      [:api, resource]
+      [ :api, resource ]
     end
 
     def show_location(resource)
-      polymorphic_path([:api, resource])
+      polymorphic_path([ :api, resource ])
     end
 
     def resources_path
-      polymorphic_path([:api, association_chain.model])
+      polymorphic_path([ :api, association_chain.model ])
     end
 
     def respond_with_resources
@@ -60,7 +60,7 @@ module API
     end
 
     def access_token_read_permissions
-      [:"#{controller_name}_read"]
+      [ :"#{controller_name}_read" ]
     end
 
     def authorize_access_token_for_write!
@@ -68,7 +68,7 @@ module API
     end
 
     def access_token_write_permissions
-      [:"#{controller_name}_write"]
+      [ :"#{controller_name}_write" ]
     end
 
     def authorize_access_token!(*permissions)

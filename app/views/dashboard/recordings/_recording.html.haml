@@ -1,0 +1,10 @@
+= content_tag_for(:tr, recording) do
+  %td
+    = link_to(recording.id, show_location(recording))
+  %td
+    - if recording.audio_file.attached?
+      = link_to(recording.audio_file.blob.filename, url_for(recording.audio_file))
+  %td
+    = recording.duration
+  %td
+    = local_time(recording.created_at)

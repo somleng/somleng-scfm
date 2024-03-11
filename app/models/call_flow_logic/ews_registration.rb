@@ -1,34 +1,37 @@
 module CallFlowLogic
   class EWSRegistration < Base
     Language = Struct.new(:code, :name, :links, keyword_init: true)
+    FEEDBACK_FEATURE_FLAG_PHONE_NUMBERS = [
+      "+855715100860", "+85570753999"
+    ].freeze
 
     # https://en.wikipedia.org/wiki/ISO_639-3
     LANGUAGE_MENU = [
       Language.new(
         code: "khm", name: "Khmer",
-        links: ["https://iso639-3.sil.org/code/khm", "https://en.wikipedia.org/wiki/Khmer_language"]
+        links: [ "https://iso639-3.sil.org/code/khm", "https://en.wikipedia.org/wiki/Khmer_language" ]
       ),
       Language.new(
         code: "cmo", name: "Central Mnong",
-        links: ["https://iso639-3.sil.org/code/cmo", "https://en.wikipedia.org/wiki/Mnong_language"]
+        links: [ "https://iso639-3.sil.org/code/cmo", "https://en.wikipedia.org/wiki/Mnong_language" ]
       ),
       Language.new(
         code: "jra", name: "Jarai",
-        links: ["https://iso639-3.sil.org/code/jra", "https://en.wikipedia.org/wiki/Jarai_language"]
+        links: [ "https://iso639-3.sil.org/code/jra", "https://en.wikipedia.org/wiki/Jarai_language" ]
       ),
       Language.new(
         code: "tpu", name: "Tampuan",
-        links: ["https://iso639-3.sil.org/code/tpu", "https://en.wikipedia.org/wiki/Tampuan_language"]
+        links: [ "https://iso639-3.sil.org/code/tpu", "https://en.wikipedia.org/wiki/Tampuan_language" ]
       ),
       Language.new(
         code: "krr", name: "Krung",
-        links: ["https://iso639-3.sil.org/code/krr", "https://en.wikipedia.org/wiki/Brao_language"]
+        links: [ "https://iso639-3.sil.org/code/krr", "https://en.wikipedia.org/wiki/Brao_language" ]
       )
     ].freeze
 
     Province = Struct.new(:code, :name, :available_languages, keyword_init: true) do
       def initialize(options)
-        super(options.reverse_merge(available_languages: ["khm"]))
+        super(options.reverse_merge(available_languages: [ "khm" ]))
       end
     end
 
@@ -70,6 +73,9 @@ module CallFlowLogic
     aasm(column: :status, whiny_transitions: false) do
       state INITIAL_STATUS, initial: true
       state :playing_introduction
+      state :main_menu
+      state :recording_feedback
+      state :playing_feedback_successful
       state :gathering_language
       state :gathering_province
       state :gathering_district
@@ -77,7 +83,7 @@ module CallFlowLogic
       state :playing_conclusion
       state :finished
 
-      before_all_events :read_status
+      before_all_events :read_status, :initialize_voice_response
       after_all_events :persist_status
 
       event :process_call do
@@ -86,8 +92,31 @@ module CallFlowLogic
                     after: :play_introduction
 
         transitions from: :playing_introduction,
+                    to: :main_menu,
+                    if: :feedback_enabled?,
+                    after: :prompt_main_menu
+
+        transitions from: :playing_introduction,
                     to: :gathering_language,
                     after: :gather_language
+
+        transitions from: :main_menu,
+                    to: :gathering_language,
+                    if: :register?,
+                    after: :gather_language
+
+        transitions from: :main_menu,
+                    to: :recording_feedback,
+                    if: :record_feedback?,
+                    after: :record_feedback
+
+        transitions from: :recording_feedback,
+                    to: :playing_feedback_successful,
+                    after: :play_feedback_successful
+
+        transitions from: :playing_feedback_successful,
+                    to: :finished,
+                    after: :hangup
 
         transitions from: :gathering_language,
                     to: :gathering_province,
@@ -137,6 +166,21 @@ module CallFlowLogic
       aasm.current_state = phone_call.metadata.fetch("status", INITIAL_STATUS).to_sym
     end
 
+    def initialize_voice_response
+      case aasm.current_state
+      when :main_menu
+        prompt_main_menu
+      when :gathering_language
+        gather_language
+      when :gathering_province
+        gather_province
+      when :gathering_district
+        gather_district
+      when :gathering_commune
+        gather_commune
+      end
+    end
+
     def persist_status
       update_phone_call!(status: aasm.to_state)
     end
@@ -145,6 +189,19 @@ module CallFlowLogic
       @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
         play(:introduction, response, language_code: "khm")
         response.redirect(current_url)
+      end
+    end
+
+    def prompt_main_menu
+      @voice_response = gather do |response|
+        play(:main_menu, response, language_code: "khm", file_extension: "mp3")
+      end
+    end
+
+    def record_feedback
+      @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
+        play(:record_feedback_instructions, response, language_code: "khm", file_extension: "mp3")
+        response.record(recording_status_callback: url_helpers.twilio_webhooks_recording_status_callbacks_url)
       end
     end
 
@@ -184,6 +241,13 @@ module CallFlowLogic
       end
     end
 
+    def play_feedback_successful
+      @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
+        play(:feedback_successful, response, language_code: :khm, file_extension: "mp3")
+        response.redirect(current_url)
+      end
+    end
+
     def play_conclusion
       @voice_response = Twilio::TwiML::VoiceResponse.new do |response|
         play(:registration_successful, response, language_code: phone_call_metadata(:language_code))
@@ -199,9 +263,9 @@ module CallFlowLogic
       end
     end
 
-    def play(filename, response, language_code: nil)
-      key = ["ews_registration/#{filename}", language_code].compact.join("-")
-      response.play(url: AudioURL.new(key: "#{key}.wav").url)
+    def play(filename, response, language_code: nil, file_extension: "wav")
+      key = [ "ews_registration/#{filename}", language_code ].compact.join("-")
+      response.play(url: AudioURL.new(key: "#{key}.#{file_extension}").url)
     end
 
     def hangup
@@ -212,32 +276,32 @@ module CallFlowLogic
       dtmf_tones.to_s.first == "*"
     end
 
-    def language_gathered?
-      return true if selected_language.present?
+    def register?
+      dtmf_tones.blank? || pressed_digits == 1
+    end
 
-      gather_language
-      false
+    def record_feedback?
+      pressed_digits == 2
+    end
+
+    def feedback_enabled?
+      FEEDBACK_FEATURE_FLAG_PHONE_NUMBERS.include?(phone_call.contact.msisdn)
+    end
+
+    def language_gathered?
+      selected_language.present?
     end
 
     def province_gathered?
-      return true if selected_province.present?
-
-      gather_province
-      false
+      selected_province.present?
     end
 
     def district_gathered?
-      return true if selected_district.present?
-
-      gather_district
-      false
+      selected_district.present?
     end
 
     def commune_gathered?
-      return true if selected_commune.present?
-
-      gather_commune
-      false
+      selected_commune.present?
     end
 
     def selected_language
@@ -330,6 +394,10 @@ module CallFlowLogic
 
     def pressed_digits
       dtmf_tones.to_i
+    end
+
+    def url_helpers
+      @url_helpers ||= Rails.application.routes.url_helpers
     end
   end
 end

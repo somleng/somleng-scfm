@@ -54,6 +54,9 @@ en:
       queue: Send
       queue_remote_fetch: Fetch Remote Status
       show: Phone Call %{id}
+    recordings:
+      index: Recordings
+      show: Recording %{id}
     remote_phone_call_events:
       index: Phone Call Events
       show: Phone Call Event %{id}

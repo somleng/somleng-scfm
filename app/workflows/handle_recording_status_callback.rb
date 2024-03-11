@@ -6,12 +6,14 @@ class HandleRecordingStatusCallback < ApplicationWorkflow
   end
 
   def call
-    recording = create_recording
-    recording.audio_file.attach(
-      io: URI.parse("#{recording_params.fetch(:recording_url)}.mp3").open,
-      filename: "#{recording_params.fetch(:recording_sid)}.mp3"
-    )
-    recording
+    Recording.transaction do
+      recording = create_recording
+      recording.audio_file.attach(
+        io: URI.parse("#{recording_params.fetch(:recording_url)}.mp3").open,
+        filename: "#{recording_params.fetch(:recording_sid)}.mp3"
+      )
+      recording
+    end
   end
 
   private

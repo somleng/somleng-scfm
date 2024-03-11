@@ -39,6 +39,19 @@ RSpec.resource "Recordings" do
     end
   end
 
+  get "api/recordings/:id.mp3" do
+    example "Retrieve a recording as mp3" do
+      recording = create(:recording)
+      access_token = create_access_token(resource_owner: recording.account)
+      set_authorization_header(access_token:)
+
+      do_request(id: recording.id)
+
+      expect(response_status).to eq(302)
+      expect(response_headers["Location"]).to end_with(".mp3")
+    end
+  end
+
   def create_access_token(**params)
     create(
       :access_token,

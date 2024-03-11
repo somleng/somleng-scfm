@@ -1,5 +1,5 @@
 module TwilioWebhooks
-  class PhoneCallEventsController < ApplicationController
+  class PhoneCallEventsController < TwilioWebhooksController
     respond_to :xml
 
     def create

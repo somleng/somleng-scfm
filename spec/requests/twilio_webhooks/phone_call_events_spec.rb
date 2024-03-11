@@ -1,7 +1,7 @@
 require "rails_helper"
 
-RSpec.describe "Remote Phone Call Events" do
-  it "Creates a remote phone call event for an inbound call" do
+RSpec.describe "Phone Call Events" do
+  it "Creates a phone call event for an inbound call" do
     account = create(:account, :with_twilio_provider)
     request_body = build_request_body(
       account_sid: account.twilio_account_sid,
@@ -37,7 +37,7 @@ RSpec.describe "Remote Phone Call Events" do
     expect(response.body).to eq(CallFlowLogic::HelloWorld.new.to_xml)
   end
 
-  it "Creates a remote phone call event for an outbound call" do
+  it "Creates a phone call event for an outbound call" do
     account = create(:account, :with_twilio_provider)
     phone_call = create_phone_call(:remotely_queued, account:)
 
@@ -78,7 +78,7 @@ RSpec.describe "Remote Phone Call Events" do
     expect(response.body).to eq(CallFlowLogic::HelloWorld.new.to_xml)
   end
 
-  it "Does not create a remote phone call event with the wrong signature" do
+  it "Handles incorrect signatures" do
     account = create(:account, :with_twilio_provider)
     request_body = build_request_body(account_sid: account.twilio_account_sid)
 
@@ -97,11 +97,12 @@ RSpec.describe "Remote Phone Call Events" do
     {
       CallSid: options.fetch(:call_sid) { SecureRandom.uuid },
       From: options.fetch(:from) { "+85510202101" },
-      To: options.fetch(:to) { "345" },
+      To: options.fetch(:to) { "1294" },
       Direction: options.fetch(:direction) { "inbound" },
-      CallStatus: options.fetch(:call_status) { "in-progress" },
+      CallStatus: options.fetch(:call_status) { "ringing" },
       AccountSid: options.fetch(:account_sid),
-      CallDuration: options.fetch(:call_duration) { nil }
+      CallDuration: options.fetch(:call_duration) { nil },
+      ApiVersion: options.fetch(:api_version) { "2010-04-01" },
     }.compact
   end
 

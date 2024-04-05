@@ -2,7 +2,8 @@ module CallFlowLogic
   class EWSRegistration < Base
     Language = Struct.new(:code, :name, :links, keyword_init: true)
     FEEDBACK_FEATURE_FLAG_PHONE_NUMBERS = [
-      "+855715100860", "+85570753999", "+855966164166"
+      "+855715100860", "+85570753999", "+855966164166", "+85592943196", "+855965636025",
+      "+85578746371", "+85512716884", "+855966946549", "+85511765511"
     ].freeze
 
     # https://en.wikipedia.org/wiki/ISO_639-3

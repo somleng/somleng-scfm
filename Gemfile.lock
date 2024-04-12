@@ -274,7 +274,7 @@ GEM
     file_validators (3.0.0)
       activemodel (>= 3.2)
       mime-types (>= 1.0)
-    foreman (0.87.2)
+    foreman (0.88.1)
     globalid (1.2.1)
       activesupport (>= 6.1)
     google-protobuf (4.26.1)

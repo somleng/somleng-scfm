@@ -446,7 +446,8 @@ GEM
     responders (3.1.1)
       actionpack (>= 5.2)
       railties (>= 5.2)
-    rexml (3.2.6)
+    rexml (3.2.8)
+      strscan (>= 3.0.9)
     rspec (3.13.0)
       rspec-core (~> 3.13.0)
       rspec-expectations (~> 3.13.0)
@@ -519,7 +520,7 @@ GEM
       sprockets-rails
       tilt
     selectize-rails (0.12.6)
-    selenium-webdriver (4.20.1)
+    selenium-webdriver (4.21.0)
       base64 (~> 0.2)
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
@@ -563,6 +564,7 @@ GEM
     stringio (3.1.0)
     strip_attributes (1.13.0)
       activemodel (>= 3.0, < 8.0)
+    strscan (3.1.0)
     temple (0.10.3)
     terminal-table (3.0.2)
       unicode-display_width (>= 1.1.1, < 3)

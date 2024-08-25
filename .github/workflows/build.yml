@@ -56,13 +56,13 @@ jobs:
           bundle exec rspec --format RspecApiDocumentation::ApiFormatter
 
       - name: Prepare Documentation Source
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/handle_updated_core_infrastructure'
         run: |
           cp -R doc/slate/source/* doc/api
           cp app/assets/images/scfm_logo.png doc/api/logo.png
 
       - name: Upload Documentation Source
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/handle_updated_core_infrastructure'
         uses: actions/upload-artifact@v4
         with:
           name: documentation_source
@@ -72,7 +72,7 @@ jobs:
     name: Build Documentation
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/handle_updated_core_infrastructure'
 
     steps:
       - name: Checkout Slate
@@ -125,7 +125,7 @@ jobs:
   build-packages:
     name: Build Packages
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
+    if: github.ref == 'refs/heads/handle_updated_core_infrastructure'
 
     strategy:
       fail-fast: false

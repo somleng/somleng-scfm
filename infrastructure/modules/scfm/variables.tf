@@ -8,11 +8,14 @@ variable "logs_bucket" {}
 variable "uploads_bucket" {}
 variable "audio_bucket" {}
 variable "load_balancer" {}
-variable "listener_arn" {}
+variable "internal_load_balancer" {}
+variable "listener" {}
+variable "internal_listener" {}
 variable "subdomain" {}
 variable "audio_subdomain" {}
 variable "cdn_subdomain" {}
 variable "route53_zone" {}
+variable "internal_route53_zone" {}
 variable "cdn_certificate" {}
 
 variable "webserver_container_name" {

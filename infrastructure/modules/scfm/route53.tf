@@ -10,6 +10,18 @@ resource "aws_route53_record" "app" {
   }
 }
 
+resource "aws_route53_record" "app_internal" {
+  zone_id = var.internal_route53_zone.zone_id
+  name    = var.subdomain
+  type    = "A"
+
+  alias {
+    name                   = var.internal_load_balancer.dns_name
+    zone_id                = var.internal_load_balancer.zone_id
+    evaluate_target_health = false
+  }
+}
+
 resource "aws_route53_record" "cdn" {
   zone_id = var.route53_zone.zone_id
   name    = var.cdn_subdomain

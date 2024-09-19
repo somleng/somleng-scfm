@@ -4,6 +4,7 @@ module CallFlowLogic
 
     RETRY_CALL_STATUSES = %w[not_answered busy failed].freeze
     ALWAYS_RETRY_CALL_STATUSES = %w[canceled expired errored].freeze
+    MAX_RETRIES = 10
 
     def self.registered
       @registered ||= descendants.reject(&:abstract_class?).map(&:to_s)
@@ -39,6 +40,7 @@ module CallFlowLogic
       return unless phone_call.status.in?(RETRY_CALL_STATUSES + ALWAYS_RETRY_CALL_STATUSES)
       return if callout_participation.blank?
       return if phone_call.status.in?(RETRY_CALL_STATUSES) && callout_participation.phone_calls_count >= phone_call.account.max_phone_calls_for_callout_participation
+      return if callout_participation.phone_calls_count >= MAX_RETRIES
 
       RetryPhoneCallJob.set(wait: 15.minutes).perform_later(phone_call)
     end

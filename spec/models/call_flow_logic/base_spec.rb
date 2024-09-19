@@ -69,6 +69,23 @@ RSpec.describe CallFlowLogic::Base do
       expect(RetryPhoneCallJob).not_to have_been_enqueued
     end
 
+    it "does not retry calls past the global max retries limit" do
+      stub_const("CallFlowLogic::Base::MAX_RETRIES", 1)
+      account = create(:account, settings: { max_phone_calls_for_callout_participation: 100 })
+
+      callout_participation = create_callout_participation(account: account)
+      _, event = create_phone_call_with_event(
+        callout_participation: callout_participation,
+        status: "remotely_queued",
+        remote_status: "failed"
+      )
+      call_flow_logic = described_class.new(event: event)
+
+      call_flow_logic.run!
+
+      expect(RetryPhoneCallJob).not_to have_been_enqueued
+    end
+
     it "retries ActiveRecord::StaleObjectError" do
       phone_call, event = create_phone_call_with_event(status: :remotely_queued, remote_status: "in-progress")
       call_flow_logic = described_class.new(event: event)

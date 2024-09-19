@@ -5,7 +5,7 @@ locals {
 
 resource "aws_security_group" "db" {
   name   = var.app_identifier
-  vpc_id = var.vpc.vpc_id
+  vpc_id = var.region.vpc.vpc_id
 
   ingress {
     from_port = local.database_port
@@ -32,7 +32,7 @@ resource "aws_ssm_parameter" "db_master_password" {
 resource "aws_db_subnet_group" "db" {
   name        = local.identifier
   description = "For Aurora cluster ${local.identifier}"
-  subnet_ids  = var.vpc.database_subnets
+  subnet_ids  = var.region.vpc.database_subnets
 
   tags = {
     Name = "aurora-${local.identifier}"

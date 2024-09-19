@@ -4,9 +4,9 @@ resource "aws_route53_record" "app" {
   type    = "A"
 
   alias {
-    name                   = var.load_balancer.dns_name
-    zone_id                = var.load_balancer.zone_id
-    evaluate_target_health = false
+    name                   = var.global_accelerator.dns_name
+    zone_id                = var.global_accelerator.hosted_zone_id
+    evaluate_target_health = true
   }
 }
 
@@ -16,8 +16,8 @@ resource "aws_route53_record" "app_internal" {
   type    = "A"
 
   alias {
-    name                   = var.internal_load_balancer.dns_name
-    zone_id                = var.internal_load_balancer.zone_id
+    name                   = var.region.internal_load_balancer.this.dns_name
+    zone_id                = var.region.internal_load_balancer.this.zone_id
     evaluate_target_health = false
   }
 }

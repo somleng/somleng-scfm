@@ -110,7 +110,7 @@ resource "aws_ecs_service" "webserver" {
   desired_count   = var.webserver_min_tasks
 
   network_configuration {
-    subnets = var.vpc.private_subnets
+    subnets = var.region.vpc.private_subnets
     security_groups = [
       aws_security_group.webserver.id,
       aws_security_group.db.id
@@ -185,7 +185,7 @@ resource "aws_ecs_service" "worker" {
   }
 
   network_configuration {
-    subnets = var.vpc.private_subnets
+    subnets = var.region.vpc.private_subnets
     security_groups = [
       aws_security_group.worker.id,
       aws_security_group.db.id

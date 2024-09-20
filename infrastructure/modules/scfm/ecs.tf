@@ -138,6 +138,11 @@ resource "aws_ecs_service" "webserver" {
     container_port   = 80
   }
 
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
+  }
+
   lifecycle {
     ignore_changes = [task_definition]
   }
@@ -190,6 +195,11 @@ resource "aws_ecs_service" "worker" {
       aws_security_group.worker.id,
       aws_security_group.db.id
     ]
+  }
+
+  deployment_circuit_breaker {
+    enable   = true
+    rollback = true
   }
 
   placement_constraints {

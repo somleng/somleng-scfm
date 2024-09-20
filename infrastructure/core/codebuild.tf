@@ -22,7 +22,7 @@ resource "aws_iam_role" "codebuild" {
 
 data "aws_iam_policy_document" "codebuild" {
   statement {
-    effect    = "Allow"
+    effect = "Allow"
 
     resources = [
       "arn:aws:logs:*:*:log-group:/aws/codebuild/${local.codebuild_identifier}*",
@@ -42,13 +42,13 @@ resource "aws_iam_role_policy" "codebuild" {
   policy = data.aws_iam_policy_document.codebuild.json
 }
 
-resource "aws_iam_role_policy_attachment" "codebuild_ecr_public" {
+resource "aws_iam_role_policy_attachment" "codebuild_ecr" {
   role       = aws_iam_role.codebuild.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonElasticContainerRegistryPublicPowerUser"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryPowerUser"
 }
 
 resource "aws_codebuild_project" "amd64" {
-  name           = "${local.codebuild_identifier}-amd64"
+  name = "${local.codebuild_identifier}-amd64"
 
   service_role = aws_iam_role.codebuild.arn
 
@@ -62,20 +62,20 @@ resource "aws_codebuild_project" "amd64" {
   }
 
   environment {
-    compute_type = "BUILD_GENERAL1_SMALL"
-    image = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
-    type = "LINUX_CONTAINER"
+    compute_type    = "BUILD_GENERAL1_SMALL"
+    image           = "aws/codebuild/amazonlinux2-x86_64-standard:5.0"
+    type            = "LINUX_CONTAINER"
     privileged_mode = true
   }
 
   source {
-    type = "GITHUB"
+    type     = "GITHUB"
     location = "https://github.com/somleng/somleng-scfm.git"
   }
 }
 
 resource "aws_codebuild_project" "arm64" {
-  name           = "${local.codebuild_identifier}-arm64"
+  name = "${local.codebuild_identifier}-arm64"
 
   service_role = aws_iam_role.codebuild.arn
 
@@ -89,14 +89,14 @@ resource "aws_codebuild_project" "arm64" {
   }
 
   environment {
-    compute_type = "BUILD_GENERAL1_SMALL"
-    image = "aws/codebuild/amazonlinux2-aarch64-standard:3.0"
-    type = "ARM_CONTAINER"
+    compute_type    = "BUILD_GENERAL1_SMALL"
+    image           = "aws/codebuild/amazonlinux2-aarch64-standard:3.0"
+    type            = "ARM_CONTAINER"
     privileged_mode = true
   }
 
   source {
-    type = "GITHUB"
+    type     = "GITHUB"
     location = "https://github.com/somleng/somleng-scfm.git"
   }
 }

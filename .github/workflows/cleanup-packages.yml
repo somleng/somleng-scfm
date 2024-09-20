@@ -1,0 +1,24 @@
+name: Cleanup Packages
+
+on:
+  schedule:
+    - cron: '0 0 * * *'
+
+jobs:
+  cleanup_packages:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Delete Untagged 'somleng' Packages
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: 'scfm'
+          package-type: 'container'
+          delete-only-untagged-versions: 'true'
+
+      - name: Delete Untagged 'somleng-nginx' Packages
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: 'scfm-webserver'
+          package-type: 'container'
+          delete-only-untagged-versions: 'true'

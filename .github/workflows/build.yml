@@ -301,7 +301,7 @@ jobs:
         with:
           task-definition: task-definition.json
           container-name: worker
-          image: ${{ secrets.ECR_REGISTRY }}/${{ env.WEBSERVER_REPOSITORY_NAME }}:${{ env.IMAGE_TAG }}
+          image: ${{ secrets.ECR_REGISTRY }}/${{ env.APP_REPOSITORY_NAME }}:${{ env.IMAGE_TAG }}
 
       - name: Get current worker (Fargate) task definition
         run: |

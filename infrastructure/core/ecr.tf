@@ -24,7 +24,7 @@ module "app_ecr_repository" {
   name   = "scfm"
 }
 
-module "nginx_ecr_repository" {
+module "webserver_ecr_repository" {
   source = "../modules/ecr_repository"
-  name   = "scfm-nginx"
+  name   = "scfm-webserver"
 }

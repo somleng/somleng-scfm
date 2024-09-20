@@ -9,7 +9,7 @@ module "scfm" {
   global_accelerator    = data.terraform_remote_state.core_infrastructure.outputs.global_accelerator
   region                = data.terraform_remote_state.core_infrastructure.outputs.hydrogen_region
   app_image             = data.terraform_remote_state.core.outputs.app_ecr_repository.this.repository_url
-  nginx_image           = data.terraform_remote_state.core.outputs.nginx_ecr_repository.this.repository_url
+  nginx_image           = data.terraform_remote_state.core.outputs.webserver_ecr_repository.this.repository_url
   aws_region            = var.aws_region
   route53_zone          = data.terraform_remote_state.core_infrastructure.outputs.route53_zone_somleng_org
   internal_route53_zone = data.terraform_remote_state.core_infrastructure.outputs.route53_zone_internal_somleng_org

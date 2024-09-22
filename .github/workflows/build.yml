@@ -2,7 +2,7 @@ on: push
 name: Build
 
 env:
-  IMAGE_TAG: ${{ github.sha }}
+  IMAGE_TAG: prod-${{ github.sha }}
   IMAGE_ALIAS: latest
   APP_IDENTIFIER: scfm
   ECS_CLUSTER: scfm

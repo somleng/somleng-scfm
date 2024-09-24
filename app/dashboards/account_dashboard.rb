@@ -7,11 +7,9 @@ class AccountDashboard < Administrate::BaseDashboard
     call_flow_logic: Field::String,
     callouts: Field::HasMany,
     contacts: Field::HasMany,
-    contacts_count: Field::Number,
     metadata: Field::JSON.with_options(searchable: false),
     settings: Field::JSON.with_options(searchable: false),
     phone_calls: Field::HasMany,
-    phone_calls_count: Field::Number,
     platform_provider_name: Field::String,
     permissions: Field::String,
     somleng_account_sid: Field::String,
@@ -27,8 +25,6 @@ class AccountDashboard < Administrate::BaseDashboard
     id
     metadata
     call_flow_logic
-    contacts_count
-    phone_calls_count
     created_at
   ].freeze
 
@@ -37,11 +33,9 @@ class AccountDashboard < Administrate::BaseDashboard
     call_flow_logic
     callouts
     contacts
-    contacts_count
     metadata
     permissions
     phone_calls
-    phone_calls_count
     platform_provider_name
     settings
     somleng_account_sid

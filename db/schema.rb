@@ -10,16 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_07_112427) do
+ActiveRecord::Schema[7.1].define(version: 2024_09_24_122954) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "citext"
   enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
 
   create_table "accounts", force: :cascade do |t|
     t.jsonb "metadata", default: {}, null: false
     t.jsonb "settings", default: {}, null: false
-    t.string "twilio_account_sid"
-    t.string "somleng_account_sid"
+    t.citext "twilio_account_sid"
+    t.citext "somleng_account_sid"
     t.string "twilio_auth_token"
     t.string "somleng_auth_token"
     t.integer "permissions", default: 0, null: false
@@ -29,8 +30,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_07_112427) do
     t.string "platform_provider_name"
     t.string "somleng_api_host"
     t.string "somleng_api_base_url"
-    t.integer "phone_calls_count", default: 0, null: false
-    t.integer "contacts_count", default: 0, null: false
     t.index ["somleng_account_sid"], name: "index_accounts_on_somleng_account_sid", unique: true
     t.index ["twilio_account_sid"], name: "index_accounts_on_twilio_account_sid", unique: true
   end

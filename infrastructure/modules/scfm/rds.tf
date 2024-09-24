@@ -54,7 +54,7 @@ resource "aws_rds_cluster" "db" {
   enabled_cloudwatch_logs_exports  = ["postgresql"]
 
   serverlessv2_scaling_configuration {
-    max_capacity = 6.0
+    max_capacity = 64
     min_capacity = 0.5
   }
 

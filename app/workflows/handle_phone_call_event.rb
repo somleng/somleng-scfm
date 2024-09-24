@@ -51,7 +51,7 @@ class HandlePhoneCallEvent < ApplicationWorkflow
   end
 
   def create_or_find_phone_call!(event)
-    PhoneCall.create_or_find_by!(remote_call_id: event.remote_call_id) do |phone_call|
+    PhoneCall.find_or_create_by!(remote_call_id: event.remote_call_id) do |phone_call|
       phone_call.remote_direction = event.remote_direction
       phone_call.msisdn = phone_call.inbound? ? params.fetch(:From) : params.fetch(:To)
       phone_call.contact = create_or_find_contact!(params.fetch(:AccountSid), phone_call.msisdn)
@@ -60,6 +60,6 @@ class HandlePhoneCallEvent < ApplicationWorkflow
 
   def create_or_find_contact!(platform_account_sid, msisdn)
     account = Account.find_by_platform_account_sid(platform_account_sid)
-    Contact.create_or_find_by!(account: account, msisdn: PhonyRails.normalize_number(msisdn))
+    Contact.find_or_create_by!(account: account, msisdn: PhonyRails.normalize_number(msisdn))
   end
 end

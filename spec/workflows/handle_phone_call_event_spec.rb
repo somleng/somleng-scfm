@@ -11,7 +11,7 @@ RSpec.describe HandlePhoneCallEvent do
       account: account, direction: "inbound", call_status: "in-progress"
     )
 
-    result = described_class.call(url, event_details)
+    result = HandlePhoneCallEvent.call(url, event_details)
 
     expect(result).to be_a(MyCallFlowLogic)
     expect(result.current_url).to eq(url)
@@ -46,7 +46,7 @@ RSpec.describe HandlePhoneCallEvent do
       call_duration: "87"
     )
 
-    result = described_class.call(url, event_details)
+    result = HandlePhoneCallEvent.call(url, event_details)
 
     expect(result).to be_a(CallFlowLogic::HelloWorld)
 
@@ -69,7 +69,7 @@ RSpec.describe HandlePhoneCallEvent do
       call_duration: 0
     )
 
-    event = described_class.call(url, event_details).event
+    event = HandlePhoneCallEvent.call(url, event_details).event
 
     expect(event.phone_call).to eq(phone_call)
     expect(event.phone_call.duration).to eq(87)
@@ -89,7 +89,7 @@ RSpec.describe HandlePhoneCallEvent do
     allow(RemotePhoneCallEvent).to receive(:new).and_return(concurrent_event, non_concurrent_event)
     PhoneCall.find(phone_call.id).touch
 
-    event = described_class.call(url, event_details).event
+    event = HandlePhoneCallEvent.call(url, event_details).event
 
     expect(event).to be_persisted
   end
@@ -108,7 +108,8 @@ RSpec.describe HandlePhoneCallEvent do
       AccountSid: options.fetch(:account).somleng_account_sid,
       CallStatus: options[:call_status],
       CallDuration: options[:call_duration],
-      Direction: options[:direction]
+      Direction: options[:direction],
+      From: options[:from]
     }.compact.reverse_merge(generate(:twilio_remote_call_event_details))
   end
 

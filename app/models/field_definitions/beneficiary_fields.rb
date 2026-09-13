@@ -97,22 +97,10 @@ module FieldDefinitions
       description: "The second-level administrative subdivision code of the address (e.g. district code)"
     ),
     Field.new(
-      name: :administrative_division_level_2_name,
-      prefix: :address,
-      filter: BeneficiaryFilter.address(:administrative_division_level_2_name),
-      description: "The second-level administrative subdivision name of the address (e.g. district name)"
-    ),
-    Field.new(
       name: :administrative_division_level_3_code,
       prefix: :address,
       filter: BeneficiaryFilter.address(:administrative_division_level_3_code),
       description: "The third-level administrative subdivision code of the address (e.g. township code)"
-    ),
-    Field.new(
-      name: :administrative_division_level_3_name,
-      prefix: :address,
-      filter: BeneficiaryFilter.address(:administrative_division_level_3_name),
-      description: "The third-level administrative subdivision name of the address (e.g. township name)"
     ),
     Field.new(
       name: :administrative_division_level_4_code,
@@ -121,16 +109,28 @@ module FieldDefinitions
       description: "The fourth-level administrative subdivision code of the address (e.g. town code)"
     ),
     Field.new(
-      name: :administrative_division_level_4_name,
-      prefix: :address,
-      filter: BeneficiaryFilter.address(:administrative_division_level_4_name),
-      description: "The fourth-level administrative subdivision name of the address (e.g. town name)"
-    ),
-    Field.new(
       name: :administrative_division_level_5_code,
       prefix: :address,
       filter: BeneficiaryFilter.address(:administrative_division_level_5_code),
       description: "The fifth-level administrative subdivision code of the address (e.g. village code)"
+    ),
+    Field.new(
+      name: :administrative_division_level_2_name,
+      prefix: :address,
+      filter: BeneficiaryFilter.address(:administrative_division_level_2_name),
+      description: "The second-level administrative subdivision name of the address (e.g. district name)"
+    ),
+    Field.new(
+      name: :administrative_division_level_3_name,
+      prefix: :address,
+      filter: BeneficiaryFilter.address(:administrative_division_level_3_name),
+      description: "The third-level administrative subdivision name of the address (e.g. township name)"
+    ),
+    Field.new(
+      name: :administrative_division_level_4_name,
+      prefix: :address,
+      filter: BeneficiaryFilter.address(:administrative_division_level_4_name),
+      description: "The fourth-level administrative subdivision name of the address (e.g. town name)"
     ),
     Field.new(
       name: :administrative_division_level_5_name,

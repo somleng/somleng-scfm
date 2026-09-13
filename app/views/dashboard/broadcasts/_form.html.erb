@@ -15,7 +15,18 @@
           <%= f.input :name %>
         </div>
         <div class="col">
-          <%= f.input :channel, collection: f.object.channel_options_for_select, include_blank: false, disabled: f.object.persisted?, input_html: { data: { broadcasts_target: "channelInput", action: "broadcasts#toggleChannel" } } %>
+          <%= f.input(
+            :channel,
+            collection: f.object.channel_options_for_select,
+            include_blank: false,
+            disabled: f.object.persisted?,
+            input_html: {
+              data: {
+                broadcasts_target: "channelInput",
+                action: "broadcasts#toggleChannel"
+              }
+            }
+          ) %>
         </div>
         <div class="col" data-broadcasts-target="audioFileInput">
           <%= f.input(
@@ -44,7 +55,7 @@
         <div class="col-4">
           <%= f.input(
             :beneficiary_groups,
-            collection: f.object.beneficiary_groups_options_for_select,
+            collection: f.object.account.beneficiary_groups,
             multiple: true,
             input_html: { class: "list-select" }
           ) %>
@@ -69,10 +80,10 @@
       <% end %>
 
       <%= f.input(
-        :target_areas,
+        :geocode_target_areas,
         as: :hidden,
         input_html: {
-          value: @broadcast.target_areas.value.to_json
+          value: @broadcast.geocode_target_areas.as_json.to_json,
         }
       ) %>
 

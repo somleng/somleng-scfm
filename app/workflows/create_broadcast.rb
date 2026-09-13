@@ -13,7 +13,7 @@ class CreateBroadcast < ApplicationWorkflow
       broadcast.transition_to!(desired_status) if desired_status.present?
       GeocodeTargetArea.insert_all(
         build_geocode_target_area_records(broadcast),
-        unique_by: [ :broadcast_id, :administrative_level, :geocode ]
+        unique_by: [ :broadcast_id, :path ]
       )
       ExecuteWorkflowJob.perform_later(StartBroadcast.to_s, broadcast) if broadcast.queued?
       CreateEvent.call(type: "broadcast.created", resource: broadcast)

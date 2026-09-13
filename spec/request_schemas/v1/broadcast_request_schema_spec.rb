@@ -162,7 +162,11 @@ module V1
               attributes: {
                 target_areas: {
                   geocode: [
-                    { iso_region_code: "KH-1", administrative_division_level_3_code: "010201" }
+                    {
+                      iso_region_code: "KH-1",
+                      administrative_division_level_2_code: nil,
+                      administrative_division_level_3_code: "010201"
+                    }
                   ]
                 }
               }

@@ -1,5 +1,7 @@
 module V1
   class TargetAreaSchema < ApplicationRequestSchema
+    option :geocode_target_area_validator, default: -> { GeocodeTargetAreaValidator.new }
+
     params do
       required(:geocode).array(:hash) do
         required(:iso_region_code).filled(:string, max_size?: 255)
@@ -11,11 +13,7 @@ module V1
     end
 
     rule(:geocode).each do
-      levels = value.keys
-              .map { FieldDefinitions::GeocodeFieldMap.to_administrative_level(it) }
-              .sort
-
-      next if levels == (1..levels.size).to_a
+      next if geocode_target_area_validator.valid?(value)
 
       key.failure("must include contiguous administrative levels starting at level 1")
     end

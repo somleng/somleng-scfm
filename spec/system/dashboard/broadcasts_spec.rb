@@ -51,7 +51,6 @@ RSpec.describe "Broadcasts" do
     fill_in("Name", with: "My broadcast")
     select("Voice call", from: "Channel")
     attach_file("Audio file", file_fixture("test.mp3"))
-
     select_list("My group", "My other group", from: "Beneficiary groups")
     select_filter("Gender", operator: "Equals", select: "Male")
     select_filter("Target areas")

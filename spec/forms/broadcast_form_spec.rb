@@ -8,7 +8,7 @@ RSpec.describe BroadcastForm do
       beneficiary_filter: {
         gender: { eq: "M" },
         "address.iso_region_code": { eq: "KH-1" }
-      },
+      }
     )
 
     form = BroadcastForm.initialize_with(broadcast)
@@ -28,10 +28,20 @@ RSpec.describe BroadcastForm do
     )
   end
 
-  it "handles inputs for voice" do
+  it "handles new records" do
     account = create(:account)
+    user = create(:user, account:)
 
-    form = BroadcastForm.new(account:, audio_file: file_fixture("test.mp3"), channel: :voice_call, beneficiary_filter: { gender: { operator: "eq", value: "M" } })
+    form = BroadcastForm.new(
+      account:,
+      audio_file: file_fixture("test.mp3"),
+      channel: :voice_call,
+      beneficiary_filter: { gender: { operator: "eq", value: "M" } },
+      geocode_target_areas: [
+        { iso_region_code: "KH-1" }
+      ],
+      created_by: user
+    )
 
     expect(form).to have_attributes(
       account:,
@@ -52,29 +62,51 @@ RSpec.describe BroadcastForm do
       audio_file: be_attached,
       beneficiary_filter: {
         "gender" => { "eq" => "M" }
-      }
+      },
+      target_areas: have_attributes(
+        geocode: contain_exactly(
+          have_attributes(path: [ "KH-1" ])
+        )
+      ),
+      created_via: "dashboard",
+      created_by: user
     )
   end
 
-  it "handles inputs for messages" do
+  it "handles existing records" do
     account = create(:account)
     user = create(:user, account:)
-    form = BroadcastForm.new(account:, message: "Test message", channel: :text_message, created_by: user)
-
-    expect(form).to have_attributes(
+    broadcast = create(
+      :broadcast,
+      :text_message,
       account:,
-      channel: "text_message",
-      message: "Test message"
+      beneficiary_filter: { gender: { operator: "eq", value: "M" } },
+      target_areas: { geocode: [ { iso_region_code: "KH-1" } ] }
+    )
+    form = BroadcastForm.initialize_with(broadcast)
+    form.assign_attributes(
+      updated_by: user,
+      message: "New message",
+      beneficiary_filter: { gender: { operator: "eq", value: "F" } },
+      geocode_target_areas: [
+        { iso_region_code: "KH-2", administrative_division_level_2_code: "0201" }
+      ]
     )
 
     expect(form.save).to be_truthy
 
     expect(form.object).to have_attributes(
       persisted?: true,
-      channel: "text_message",
-      message: "Test message",
-      created_via: "dashboard",
-      created_by: user
+      message: "New message",
+      updated_by: user,
+      beneficiary_filter: {
+        "gender" => { "eq" => "F" }
+      },
+      target_areas: have_attributes(
+        geocode: contain_exactly(
+          have_attributes(path: [ "KH-2", "0201" ])
+        )
+      )
     )
   end
 
@@ -134,5 +166,22 @@ RSpec.describe BroadcastForm do
     form.valid?
 
     expect(form.errors[:audio_file]).to be_present
+  end
+
+  it "validates the geocode target areas" do
+    form = BroadcastForm.new(
+      account: create(:account),
+      geocode_target_areas: [
+        {
+          iso_region_code: "KH-1",
+          administrative_division_level_2_code: "",
+          administrative_division_level_3_code: "010201"
+        }
+      ]
+    )
+
+    form.valid?
+
+    expect(form.errors[:geocode_target_areas]).to be_present
   end
 end

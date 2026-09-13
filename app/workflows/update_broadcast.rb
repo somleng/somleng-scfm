@@ -39,7 +39,7 @@ class UpdateBroadcast < ApplicationWorkflow
 
   def update_target_areas
     GeocodeTargetArea.where(broadcast_id: broadcast.id).delete_all
-    GeocodeTargetArea.insert_all(build_geocode_target_area_records)
+    GeocodeTargetArea.insert_all(build_geocode_target_area_records, unique_by: [ :broadcast_id, :path ])
   end
 
   def build_geocode_target_area_records

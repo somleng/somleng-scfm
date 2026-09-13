@@ -245,7 +245,13 @@
       <% else %>
         <%= show_for(@broadcast) do |f| %>
           <%= f.attribute :target_areas, label: false do %>
-            <%= text_area_tag(:target_areas, JSON.pretty_generate(@broadcast.target_areas.value), rows: 10, class: "form-control w-100", readonly: true) %>
+            <%= text_area_tag(
+              :target_areas,
+              JSON.pretty_generate(@broadcast.target_areas.as_json),
+              rows: 10,
+              class: "form-control w-100",
+              readonly: true
+            ) %>
           <% end %>
         <% end %>
       <% end %>

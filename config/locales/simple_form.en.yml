@@ -8,3 +8,7 @@ en:
         destroy: Sign out
       user:
         update: Save
+  simple_form:
+    hints:
+      broadcast:
+        geocode_target_areas: "JSON array of geocodes used to target one or multiple geographic locations."

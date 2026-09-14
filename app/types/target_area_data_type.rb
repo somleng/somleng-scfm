@@ -35,18 +35,9 @@ class TargetAreaDataType < ActiveRecord::Type::Json
 
   def cast(value)
     return value if value.is_a?(TargetAreas)
+    return TargetAreas.blank if value.blank?
 
-    value = parse_json(value) if value.is_a?(::String)
-
-    return TargetAreas.blank if value.blank? || !value.is_a?(Hash)
-
-    payload = value.with_indifferent_access
-    return TargetAreas.blank unless payload[:geocode].is_a?(Array)
-
-    geocode_areas = payload.fetch(:geocode).map do |area|
-      return TargetAreas.blank unless area.is_a?(Hash)
-      return TargetAreas.blank unless area.keys.all? { administrative_level_fields.include?(it.to_s) }
-
+    geocode_areas = Array(value.with_indifferent_access[:geocode]).map do |area|
       hierarchy = area.map do |field_name, value|
         AdministrativeDivision.new(
           field_name:,
@@ -70,17 +61,7 @@ class TargetAreaDataType < ActiveRecord::Type::Json
 
   private
 
-  def parse_json(value)
-    ActiveSupport::JSON.decode(value)
-  rescue JSON::ParserError
-    nil
-  end
-
   def administrative_level_for(field_name)
     FieldDefinitions::GeocodeFieldMap.to_administrative_level(field_name)
-  end
-
-  def administrative_level_fields
-    FieldDefinitions::GeocodeFieldMap.fields.map { it.name.to_s }
   end
 end

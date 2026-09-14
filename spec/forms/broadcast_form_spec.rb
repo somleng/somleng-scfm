@@ -119,14 +119,42 @@ RSpec.describe BroadcastForm do
     expect(broadcast.reload.channel).to eq("voice_call")
   end
 
-  it "validates the beneficiary groups length" do
+  it "validates the beneficiary groups" do
     account = create(:account)
     beneficiary_groups = create_list(:beneficiary_group, 11, account:)
-    form = BroadcastForm.new(account:, beneficiary_groups: beneficiary_groups.pluck(:id))
+    form = BroadcastForm.new(
+      account:,
+      channel: "voice_call",
+      beneficiary_groups: beneficiary_groups.pluck(:id)
+    )
 
     form.valid?
 
     expect(form.errors[:beneficiary_groups]).to be_present
+
+    form = BroadcastForm.new(
+      account:,
+      channel: "audio",
+      beneficiary_groups: beneficiary_groups.pluck(:id).first(1)
+    )
+
+    form.valid?
+
+    expect(form.errors[:beneficiary_groups]).to be_present
+  end
+
+  it "validates the beneficiary filter" do
+    account = create(:account)
+
+    form = BroadcastForm.new(
+      account:,
+      channel: "audio",
+      beneficiary_filter: { gender: { operator: "eq", value: "M" } },
+    )
+
+    form.valid?
+
+    expect(form.errors[:beneficiary_filter]).to be_present
   end
 
   it "validates the channel" do
@@ -171,17 +199,20 @@ RSpec.describe BroadcastForm do
   it "validates the geocode target areas" do
     form = BroadcastForm.new(
       account: create(:account),
-      geocode_target_areas: [
-        {
-          iso_region_code: "KH-1",
-          administrative_division_level_2_code: "",
-          administrative_division_level_3_code: "010201"
-        }
-      ]
+      geocode_target_areas: "foobar"
     )
 
     form.valid?
 
     expect(form.errors[:geocode_target_areas]).to be_present
+
+    form = BroadcastForm.new(
+      account: create(:account),
+      geocode_target_areas: ""
+    )
+
+    form.valid?
+
+    expect(form.errors[:geocode_target_areas]).to be_empty
   end
 end

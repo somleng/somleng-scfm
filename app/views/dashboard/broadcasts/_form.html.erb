@@ -5,7 +5,10 @@
       data: {
         controller: :broadcasts,
         broadcasts_message_segment_warning_threshold_value: 1,
-        broadcasts_character_count_translations_value: pluralized_translations(".character_count").to_json
+        broadcasts_character_count_translations_value: pluralized_translations(".character_count").to_json,
+        broadcasts_deliverable_channels_value: BroadcastChannelCapabilities::DELIVERABLE_CHANNELS.to_json,
+        broadcasts_text_channels_value: BroadcastChannelCapabilities::TEXT_CHANNELS.to_json,
+        broadcasts_audio_channels_value: BroadcastChannelCapabilities::AUDIO_CHANNELS.to_json
       }
     }
   ) do |f| %>
@@ -52,23 +55,27 @@
         </div>
       </div>
       <div class="row">
-        <div class="col-4">
+        <div class="col-4", data-broadcasts-target="beneficiaryGroupsInput">
           <%= f.input(
             :beneficiary_groups,
             collection: f.object.account.beneficiary_groups,
             multiple: true,
-            input_html: { class: "list-select" }
+            input_html: {
+              class: "list-select"
+            }
           ) %>
         </div>
       </div>
 
-      <div class="hr-text">
-        <%= t("beneficiary_filters")%>
-      </div>
+      <%= tag.div(data: { broadcasts_target: "beneficiaryFiltersContainer" }) do %>
+        <% beneficiary_fields = @broadcast.beneficiary_filter_fields %>
+        <% if beneficiary_fields.any? %>
+          <div class="hr-text">
+            <%= t("beneficiary_filters")%>
+          </div>
 
-      <% beneficiary_fields = @broadcast.beneficiary_filter_fields %>
-      <% if beneficiary_fields.any? %>
-        <%= render("shared/filter_form/field_headers") %>
+          <%= render("shared/filter_form/field_headers") %>
+        <% end %>
 
         <%= f.simple_fields_for(:beneficiary_filter, @broadcast.beneficiary_filter) do |filter_form| %>
           <%= render(
@@ -79,18 +86,18 @@
         <% end %>
       <% end %>
 
-      <%= f.input(
-        :geocode_target_areas,
-        as: :hidden,
-        input_html: {
-          value: @broadcast.geocode_target_areas.as_json.to_json,
-        }
-      ) %>
+      <div class="hr-text">
+        <%= Broadcast.human_attribute_name(:target_areas) %>
+      </div>
 
       <% if CountryLocalityData.supported?(current_account.iso_country_code)  %>
-        <div class="hr-text">
-          <%= Broadcast.human_attribute_name(:target_areas) %>
-        </div>
+        <%= f.input(
+          :geocode_target_areas,
+          as: :hidden,
+          input_html: {
+            value: @broadcast.geocode_target_areas.as_json.to_json,
+          }
+        ) %>
 
         <div class="row" id="target_areas">
           <div class="col">
@@ -103,7 +110,42 @@
             ) %>
           </div>
         </div>
-
+      <% else %>
+        <% geocode_target_areas = @broadcast.geocode_target_areas %>
+        <%= f.input(
+          :geocode_target_areas,
+          as: :text,
+          label: safe_join(
+            [
+              f.label(:geocode_target_areas),
+              link_to(
+                "https://www.open-ews.org/docs/api/#broadcasts",
+                target: "_blank",
+                rel: "noopener",
+                style: "text-decoration: none;",
+                aria: { label: "Help" }
+              ) do
+                content_tag(:i, "", class: "ti ti-info-circle")
+              end
+            ], " "
+          ),
+          hint: true,
+          input_html: {
+            rows: 10,
+            value: (geocode_target_areas.present? && geocode_target_areas.is_a?(Array)) ? JSON.pretty_generate(geocode_target_areas) : geocode_target_areas,
+          },
+          placeholder: <<~JSON.strip
+            [
+              {
+                "iso_region_code": "KH-1"
+              },
+              {
+                "iso_region_code": "KH-2",
+                "administrative_division_level_2_code": "0201"
+              }
+            ]
+          JSON
+        ) %>
       <% end %>
     </div>
 

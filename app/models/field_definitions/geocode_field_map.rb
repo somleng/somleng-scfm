@@ -9,15 +9,15 @@ module FieldDefinitions
         map.fetch(:field_names).fetch(level)
       end
 
-      def fields
-        field_definitions.select { it.metadata.key?(:administrative_level) }
+      def field_names
+        map.fetch(:administrative_levels).keys
       end
 
       private
 
       def map
         @map ||= begin
-          fields.each_with_object(Hash.new { |h, key| h[key] = {} }) do |field, result|
+          field_definitions.each_with_object(Hash.new { |h, key| h[key] = {} }) do |field, result|
             administrative_level = field.metadata.fetch(:administrative_level)
 
             result[:administrative_levels][field.name.to_sym] = administrative_level
@@ -27,7 +27,7 @@ module FieldDefinitions
       end
 
       def field_definitions
-        BroadcastFields
+        BroadcastFields.select { it.metadata.key?(:administrative_level) }
       end
     end
   end

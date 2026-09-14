@@ -120,11 +120,22 @@ RSpec.describe "Broadcasts" do
     select_filter("ISO region code", operator: "Equals", fill_in: "US-AL")
     select_filter("Administrative division level 2 code", operator: "Equals", fill_in: "001")
     select_filter("Administrative division level 2 name", operator: "Starts with", fill_in: "Autauga")
+    fill_in(
+      "Geocode target areas",
+      with: JSON.pretty_generate(
+        [
+          { iso_region_code: "US-AL" },
+          { iso_region_code: "US-NY", administrative_division_level_2_code: "0201" }
+        ]
+      )
+    )
 
     click_on("Create Broadcast")
 
     expect(page).to have_content("Broadcast was successfully created.")
-
+    expect(page).to have_content("US-AL")
+    expect(page).to have_content("US-NY")
+    expect(page).to have_content("0201")
     within("#beneficiary_filter_iso_country_code") do
       expect(page).to have_field(with: "Country")
       expect(page).to have_field(with: "Equals")
@@ -152,7 +163,6 @@ RSpec.describe "Broadcasts" do
       :account,
       iso_country_code: "KH",
       dashboard_broadcast_beneficiary_filter_whitelist: [
-        "administrative_division_level_3_code",
         "gender"
       ]
     )
@@ -161,33 +171,8 @@ RSpec.describe "Broadcasts" do
     account_sign_in(user)
     visit new_dashboard_broadcast_path
 
-    expect(page).to have_field(with: "Target areas")
     expect(page).to have_field(with: "Gender")
     expect(page).to have_no_field(with: "Phone number")
-  end
-
-  it "show a broadcast" do
-    account = create(:account, iso_country_code: "US")
-    user = create(:user, account:)
-    broadcast = create(
-      :broadcast,
-      account:,
-      beneficiary_filter: {
-        gender: { eq: "M" }
-      },
-      target_areas: {
-        geocode: [
-          { iso_region_code: "US-AL" },
-          { iso_region_code: "US-NY", administrative_division_level_2_code: "0201" }
-        ]
-      }
-    )
-
-    account_sign_in(user)
-    visit dashboard_broadcast_path(broadcast)
-
-    expect(page).to have_content("US-AL")
-    expect(page).to have_field(with: "Male")
   end
 
   it "show a broadcast with a tree", :js do

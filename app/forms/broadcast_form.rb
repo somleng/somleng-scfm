@@ -1,4 +1,15 @@
 class BroadcastForm < ApplicationForm
+  class JSONType < ActiveRecord::Type::Json
+    def cast(value)
+      return super(value) unless value.is_a?(String)
+
+      super(ActiveSupport::JSON.decode(value))
+    rescue ActiveSupport::JSON.parse_error
+      super(value)
+    end
+  end
+
+
   attribute :account
   attribute :channel
   attribute :audio_file
@@ -17,7 +28,7 @@ class BroadcastForm < ApplicationForm
             ),
             default: -> { BeneficiaryFilterForm.new }
 
-  attribute :geocode_target_areas, ActiveRecord::Type::Json.new, default: []
+  attribute :geocode_target_areas, JSONType.new
   attribute :geocode_target_area_validator, default: -> { GeocodeTargetAreaValidator.new }
   attribute :object, default: -> { Broadcast.new }
 
@@ -31,6 +42,8 @@ class BroadcastForm < ApplicationForm
   validates :message, presence: true, if: -> { channel_capabilities.text? }
   validates :channel, presence: true, inclusion: { in: ->(form) { form.supported_channels } }, if: :new_record?
   validates :beneficiary_groups, length: { maximum: Broadcast::MAX_BENEFICIARY_GROUPS, allow_blank: true }
+  validates :beneficiary_groups, absence: true, unless: -> { channel_capabilities.deliverable? }
+  validates :beneficiary_filter, absence: true, unless: -> { channel_capabilities.deliverable? }
 
   validate :validate_audio_file
   validate :validate_status
@@ -50,7 +63,7 @@ class BroadcastForm < ApplicationForm
       audio_file: broadcast.audio_file.blob,
       beneficiary_groups: broadcast.beneficiary_group_ids,
       beneficiary_filter: BeneficiaryFilterData.new(data: broadcast.beneficiary_filter),
-      geocode_target_areas: broadcast.target_areas.geocode
+      geocode_target_areas: broadcast.target_areas.geocode.presence
     )
   end
 
@@ -63,7 +76,7 @@ class BroadcastForm < ApplicationForm
     attributes[:message] = message if channel_capabilities.text?
     attributes[:audio_file] = audio_file if channel_capabilities.audio?
     attributes[:beneficiary_group_ids] = account.beneficiary_groups.where(id: beneficiary_groups).pluck(:id)
-    attributes[:target_areas] = build_target_areas unless geocode_target_areas.blank?
+    attributes[:target_areas] = build_target_areas
     attributes[:beneficiary_filter] = FilterFormType.new(
       form: BeneficiaryFilterForm,
       filter_data: BeneficiaryFilterData,
@@ -109,8 +122,8 @@ class BroadcastForm < ApplicationForm
 
   def build_target_areas
     target_areas = object.target_areas.as_json
-    target_areas["geocode"] = geocode_target_areas
-    target_areas
+    target_areas["geocode"] = geocode_target_areas.presence
+    target_areas.compact_blank
   end
 
   def validate_audio_file
@@ -130,6 +143,9 @@ class BroadcastForm < ApplicationForm
   end
 
   def validate_geocode_target_areas
+    return if geocode_target_areas.blank?
+    return errors.add(:geocode_target_areas, :invalid) unless geocode_target_areas.is_a?(Array)
+
     geocode_target_areas.each do |area|
       next if geocode_target_area_validator.valid?(area)
 

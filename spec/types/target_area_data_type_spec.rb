@@ -5,27 +5,7 @@ RSpec.describe TargetAreaDataType do
     expect(cast_data({})).to be_blank
   end
 
-  it "handles invalid json" do
-    expect(cast_data("foobar")).to be_blank
-    expect(cast_data("foobar" => [])).to be_blank
-    expect(cast_data("geocode" => [ "iso_region_code" => "KH-1", "foo" => "bar" ])).to be_blank
-  end
-
   it "handles parsing target area data" do
-    result = cast_data(
-      {
-        "geocode" => [
-          { "iso_region_code" => "KH-1" }
-        ]
-      }.to_json
-    )
-
-    expect(result).to have_attributes(
-      geocode: contain_exactly(
-        have_attributes(path: [ "KH-1" ])
-      )
-    )
-
     result = cast_data(
       "geocode" => [
         { "iso_region_code" => "KH-1" },

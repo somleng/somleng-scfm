@@ -59,8 +59,9 @@ module Dashboard
         :audio_file,
         :message,
         :channel,
+        :geocode_target_areas,
         beneficiary_groups: [],
-        beneficiary_filter: {}
+        beneficiary_filter: {},
       )
     end
   end

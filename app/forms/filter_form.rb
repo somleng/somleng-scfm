@@ -5,6 +5,10 @@ class FilterForm < ApplicationForm
     ActiveModel::Name.new(self, nil, "Filter")
   end
 
+  def blank?
+    attributes.values.all?(&:blank?)
+  end
+
   def apply(scope)
     FilterScope.new(
       scope:,

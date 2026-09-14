@@ -164,6 +164,14 @@
       <%= f.attribute :started_at, value: local_time(@broadcast.started_at) %>
       <%= f.attribute :created_at, value: local_time(@broadcast.created_at) %>
       <%= f.attribute :updated_at, value: local_time(@broadcast.updated_at) %>
+
+      <% unless CountryLocalityData.supported?(current_account.iso_country_code) %>
+        <%= f.attribute :geocode_target_areas do %>
+          <% if @broadcast.geocode_target_areas.exists? %>
+            <pre class="language-json bg-surface text-body border rounded" style="max-height: 8rem;"><code><%= JSON.pretty_generate(@broadcast.target_areas.geocode.as_json) %></code></pre>
+          <% end %>
+        <% end %>
+      <% end %>
     <% end %>
 
     <% if @broadcast.beneficiary_filter.present? %>
@@ -225,36 +233,22 @@
       <% end %>
     <% end %>
 
-    <% if @broadcast.target_areas.present? %>
+    <% if @broadcast.geocode_target_areas.exists? && CountryLocalityData.supported?(current_account.iso_country_code) %>
       <div class="hr-text">
         <%= Broadcast.human_attribute_name(:target_areas) %>
       </div>
 
-      <% if CountryLocalityData.supported?(current_account.iso_country_code) %>
-        <div class="row" id="target_areas">
-          <div class="col">
-            <%= tag.div(
-              data: {
-                controller: :treeview,
-                treeview_data_value: locality_tree.to_json,
-                treeview_selected_value: @broadcast.geocode_target_areas.pluck(:path).to_json
-              }
-            ) %>
-          </div>
+      <div class="row" id="target_areas">
+        <div class="col">
+          <%= tag.div(
+            data: {
+              controller: :treeview,
+              treeview_data_value: locality_tree.to_json,
+              treeview_selected_value: @broadcast.geocode_target_areas.pluck(:path).to_json
+            }
+          ) %>
         </div>
-      <% else %>
-        <%= show_for(@broadcast) do |f| %>
-          <%= f.attribute :target_areas, label: false do %>
-            <%= text_area_tag(
-              :target_areas,
-              JSON.pretty_generate(@broadcast.target_areas.as_json),
-              rows: 10,
-              class: "form-control w-100",
-              readonly: true
-            ) %>
-          <% end %>
-        <% end %>
-      <% end %>
+      </div>
     <% end %>
   </div>
 </div>

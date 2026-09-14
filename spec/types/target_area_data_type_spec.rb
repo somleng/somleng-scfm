@@ -1,26 +1,37 @@
 require "rails_helper"
 
 RSpec.describe TargetAreaDataType do
+  it "handles empty values" do
+    expect(cast_data({})).to be_blank
+  end
+
+  it "handles invalid json" do
+    expect(cast_data("foobar")).to be_blank
+    expect(cast_data("foobar" => [])).to be_blank
+    expect(cast_data("geocode" => [ "iso_region_code" => "KH-1", "foo" => "bar" ])).to be_blank
+  end
+
   it "handles parsing target area data" do
-    klass = Class.new do
-      include ActiveModel::Model
-      include ActiveModel::Attributes
-
-      attribute :target_areas, TargetAreaDataType.new
-    end
-
-    expect(
-      klass.new(target_areas: {}).target_areas
-    ).to have_attributes(geocode: [])
-
-    result = klass.new(
-      target_areas: {
+    result = cast_data(
+      {
         "geocode" => [
-          { "iso_region_code" => "KH-1" },
-          { "administrative_division_level_2_code" => "0201", "iso_region_code" => "KH-2" }
+          { "iso_region_code" => "KH-1" }
         ]
-      }
-    ).target_areas
+      }.to_json
+    )
+
+    expect(result).to have_attributes(
+      geocode: contain_exactly(
+        have_attributes(path: [ "KH-1" ])
+      )
+    )
+
+    result = cast_data(
+      "geocode" => [
+        { "iso_region_code" => "KH-1" },
+        { "administrative_division_level_2_code" => "0201", "iso_region_code" => "KH-2" }
+      ]
+    )
 
     expect(result).to have_attributes(
       as_json: eq(
@@ -63,5 +74,16 @@ RSpec.describe TargetAreaDataType do
         )
       )
     )
+  end
+
+  def cast_data(data)
+    klass = Class.new do
+      include ActiveModel::Model
+      include ActiveModel::Attributes
+
+      attribute :target_areas, TargetAreaDataType.new
+    end
+
+    klass.new(target_areas: data).target_areas
   end
 end

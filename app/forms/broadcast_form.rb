@@ -30,7 +30,6 @@ class BroadcastForm < ApplicationForm
   validates :audio_file, presence: true, if: -> { new_record? && channel_capabilities.audio? }
   validates :message, presence: true, if: -> { channel_capabilities.text? }
   validates :channel, presence: true, inclusion: { in: ->(form) { form.supported_channels } }, if: :new_record?
-  validates :beneficiary_filter, presence: true, if: :new_record?
   validates :beneficiary_groups, length: { maximum: Broadcast::MAX_BENEFICIARY_GROUPS, allow_blank: true }
 
   validate :validate_audio_file
@@ -64,7 +63,7 @@ class BroadcastForm < ApplicationForm
     attributes[:message] = message if channel_capabilities.text?
     attributes[:audio_file] = audio_file if channel_capabilities.audio?
     attributes[:beneficiary_group_ids] = account.beneficiary_groups.where(id: beneficiary_groups).pluck(:id)
-    attributes[:target_areas] = build_target_areas
+    attributes[:target_areas] = build_target_areas unless geocode_target_areas.blank?
     attributes[:beneficiary_filter] = FilterFormType.new(
       form: BeneficiaryFilterForm,
       filter_data: BeneficiaryFilterData,

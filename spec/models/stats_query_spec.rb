@@ -50,9 +50,7 @@ RSpec.describe StatsQuery, type: :model do
       filter_group: FilterGroup.new(
         conditions: [
           FilterField.new(
-            query: FieldQuery.new(
-              arel_column: Beneficiary.arel_table[:gender]
-            ),
+            name: :gender,
             operator: "eq",
             value: "M"
           )

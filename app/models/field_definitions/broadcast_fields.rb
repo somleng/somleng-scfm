@@ -4,10 +4,7 @@ module FieldDefinitions
       Field.new(
         name: "name",
         filter: BroadcastFilter.new(
-          schema: FilterSchema::StringType.define,
-          query: FieldQuery.new(
-            arel_column: Broadcast.arel_table[:name],
-          )
+          schema: FilterSchema::StringType.define
         ),
         description: "The name of the broadcast."
       ),
@@ -15,9 +12,6 @@ module FieldDefinitions
         name: "status",
         filter: BroadcastFilter.new(
           schema: FilterSchema::ListType.define(type: :string, options: Broadcast.status.values),
-          query: FieldQuery.new(
-            arel_column: Broadcast.arel_table[:status],
-          )
         ),
         description: "Must be one of #{Broadcast.status.values.map { |t| "`#{t}`" }.join(", ")}."
       ),
@@ -33,29 +27,17 @@ module FieldDefinitions
       ),
       Field.new(
         name: "created_at",
-        filter: BroadcastFilter.timestamp(
-          query: FieldQuery.new(
-            arel_column: Broadcast.arel_table[:created_at],
-          )
-        ),
+        filter: BroadcastFilter.timestamp,
         description: "The [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp of when the broadcast was created."
       ),
       Field.new(
         name: "started_at",
-        filter: BroadcastFilter.timestamp(
-          query: FieldQuery.new(
-            arel_column: Broadcast.arel_table[:started_at],
-          )
-        ),
+        filter: BroadcastFilter.timestamp,
         description: "The [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp of when the broadcast was started."
       ),
       Field.new(
         name: "completed_at",
-        filter: BroadcastFilter.timestamp(
-          query: FieldQuery.new(
-            arel_column: Broadcast.arel_table[:completed_at],
-          )
-        ),
+        filter: BroadcastFilter.timestamp,
         description: "The [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) timestamp of when the broadcast was completed."
       ),
       Field.new(

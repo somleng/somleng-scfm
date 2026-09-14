@@ -41,6 +41,7 @@ class ApplicationFilter < ApplicationRequestSchema
       field_definition = field_collection.find_by!(path: filter)
 
       FilterField.new(
+        name: field_definition.name,
         operator:,
         value:,
         query: field_definition.filter.query,

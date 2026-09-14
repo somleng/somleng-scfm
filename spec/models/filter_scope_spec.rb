@@ -6,6 +6,7 @@ RSpec.describe FilterScope, type: :model do
     create(:beneficiary_address, beneficiary: beneficiary_with_address)
     beneficiary_without_address = create(:beneficiary)
     filter_field = FilterField.new(
+      name: :iso_region_code,
       query: FieldQuery.new(
         arel_column: BeneficiaryAddress.arel_table[:iso_region_code],
         association: :addresses
@@ -25,6 +26,7 @@ RSpec.describe FilterScope, type: :model do
     beneficiary = create(:beneficiary)
     create_list(:beneficiary_address, 2, beneficiary:, iso_region_code: "KH-1")
     filter_field = FilterField.new(
+      name: :iso_region_code,
       query: FieldQuery.new(
         arel_column: BeneficiaryAddress.arel_table[:iso_region_code],
         association: :addresses

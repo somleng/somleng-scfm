@@ -17,6 +17,6 @@ class FilterScope
   end
 
   def conditions
-    filter_group.conditions.map(&:to_query).compact_blank.reduce(:and)
+    filter_group.conditions.map { it.to_query(scope:) }.compact_blank.reduce(:and)
   end
 end

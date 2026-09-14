@@ -7,7 +7,7 @@ class AggregateQuery
   end
 
   def apply
-    scope.left_joins(joins_with).group(group_columns)
+    scope.left_joins(joins_with).group(group_columns(scope))
   end
 
   private
@@ -16,7 +16,7 @@ class AggregateQuery
     group_by.map { it.query.association }.compact_blank.uniq
   end
 
-  def group_columns
-    group_by.map { it.query.arel_column }
+  def group_columns(scope)
+    group_by.map { it.query.arel_column || scope.arel_table[it.name] }
   end
 end

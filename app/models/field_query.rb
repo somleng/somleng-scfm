@@ -8,16 +8,19 @@ class FieldQuery < Data.define(:association, :arel_column)
   end
 
   class ArelBuilder
-    attr_reader :arel_column, :operator, :value
+    attr_reader :arel_column, :column_name, :operator, :value, :scope
 
-    def initialize(arel_column:, operator:, value:, **)
+    def initialize(arel_column:, column_name:, operator:, value:, scope:, **)
       @arel_column = arel_column
+      @column_name = column_name
       @operator = operator.to_sym
       @value = value
+      @scope = scope
     end
 
     def build
-      arel_column.public_send(operator_method, filter_value)
+      column = arel_column.present? ? arel_column : scope.arel_table[column_name]
+      column.public_send(operator_method, filter_value)
     end
 
     private

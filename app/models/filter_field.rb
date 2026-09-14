@@ -1,10 +1,10 @@
-FilterField = Data.define(:operator, :value, :query, :metadata) do
+FilterField = Data.define(:name, :operator, :value, :query, :metadata) do
   def initialize(**)
-    super(metadata: {}, **)
+    super(metadata: {}, query: FieldQuery.new, **)
   end
 
-  def to_query
-    query.to_arel(operator:, value:, **metadata)
+  def to_query(**)
+    query.to_arel(column_name: name, operator:, value:, **metadata, **)
   end
 
   def associations

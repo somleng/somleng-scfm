@@ -4,10 +4,7 @@ module FieldDefinitions
       Field.new(
         name: "name",
         filter: Filter.new(
-          schema: FilterSchema::StringType.define,
-          query: FieldQuery.new(
-            arel_column: BeneficiaryGroup.arel_table[:name],
-          )
+          schema: FilterSchema::StringType.define
         ),
         description: "A friendly name for the group."
       )

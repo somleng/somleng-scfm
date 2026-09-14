@@ -8,8 +8,8 @@ class FilterGroup
     @conjunction = conjunction
   end
 
-  def to_query
-    conditions.map(&:to_query).reduce(conjunction)
+  def to_query(...)
+    conditions.map { it.to_query(...) }.reduce(conjunction)
   end
 
   def associations

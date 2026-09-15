@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_06_09_123004) do
+ActiveRecord::Schema[8.1].define(version: 2026_09_10_012554) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "citext"
   enable_extension "pg_catalog.plpgsql"
@@ -144,6 +144,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_09_123004) do
     t.bigint "started_by_id"
     t.string "status", null: false
     t.bigint "stopped_by_id"
+    t.jsonb "target_areas", default: {}, null: false
     t.datetime "updated_at", precision: nil, null: false
     t.bigint "updated_by_id"
     t.index ["account_id", "name"], name: "index_broadcasts_on_account_id_and_name"
@@ -208,6 +209,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_09_123004) do
     t.bigint "user_id", null: false
     t.index ["account_id"], name: "index_exports_on_account_id"
     t.index ["user_id"], name: "index_exports_on_user_id"
+  end
+
+  create_table "geocode_target_areas", force: :cascade do |t|
+    t.integer "administrative_level", null: false
+    t.bigint "broadcast_id", null: false
+    t.datetime "created_at", null: false
+    t.string "geocode", null: false
+    t.string "path", null: false, array: true
+    t.datetime "updated_at", null: false
+    t.index ["administrative_level", "geocode"], name: "index_geocode_target_areas_on_administrative_level_and_geocode"
+    t.index ["broadcast_id", "path"], name: "index_geocode_target_areas_on_broadcast_id_and_path", unique: true
   end
 
   create_table "imports", force: :cascade do |t|
@@ -380,6 +392,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_06_09_123004) do
   add_foreign_key "events", "accounts", on_delete: :cascade
   add_foreign_key "exports", "accounts", on_delete: :cascade
   add_foreign_key "exports", "users", on_delete: :cascade
+  add_foreign_key "geocode_target_areas", "broadcasts", on_delete: :cascade
   add_foreign_key "imports", "accounts", on_delete: :cascade
   add_foreign_key "imports", "users", on_delete: :cascade
   add_foreign_key "notifications", "beneficiaries", on_delete: :nullify

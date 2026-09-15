@@ -13,7 +13,7 @@ class Notification < ApplicationRecord
 
   before_create :set_phone_number
 
-  class StateMachine < StateMachine::ActiveRecord
+  class StateMachine < ::StateMachine::ActiveRecord
     state :pending, initial: true, transitions_to: [ :failed, :succeeded ]
     state :failed
     state :succeeded

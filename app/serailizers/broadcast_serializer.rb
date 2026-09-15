@@ -5,4 +5,8 @@ class BroadcastSerializer < ResourceSerializer
   attribute :channels do |object|
     Array(object.channel)
   end
+
+  attribute :target_areas do |object|
+    object.target_areas.as_json
+  end
 end

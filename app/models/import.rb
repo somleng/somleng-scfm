@@ -14,7 +14,7 @@ class Import < ApplicationRecord
 
   delegate :transition_to!, to: :state_machine
 
-  class StateMachine < StateMachine::ActiveRecord
+  class StateMachine < ::StateMachine::ActiveRecord
     state :processing, initial: true, transitions_to: [ :failed, :succeeded ]
     state :failed
     state :succeeded

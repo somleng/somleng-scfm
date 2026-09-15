@@ -1,56 +1,13 @@
-<% whitelist_behavior = local_assigns.fetch(:whitelist_behavior, :none).to_s.inquiry %>
-<% whitelist = Array(local_assigns[:whitelist]) %>
-<% tree_address_field_definition = CountryAddressData.address_field(current_account.iso_country_code) %>
-<% display_as_tree = tree_address_field_definition.present? && (whitelist_behavior.none? || whitelist.include?(tree_address_field_definition)) %>
+<% whitelist = local_assigns[:whitelist] %>
 
 <% filter_form.object.class.attributes.each do |attribute_name, attribute_type| %>
   <% field_definition = FieldDefinitions::BeneficiaryFields.find_by!(name: attribute_name) %>
-  <% next if field_definition == tree_address_field_definition && display_as_tree %>
 
   <%= render(
     "shared/filter_form/field",
     filter_form:,
     field_name: attribute_name,
     field_definition:,
-    visibility: ("hidden".inquiry if whitelist_behavior.hide? && whitelist.exclude?(field_definition))
+    visibility: ("hidden".inquiry if whitelist.present? && whitelist.exclude?(field_definition))
   ) %>
-<% end %>
-
-<% if display_as_tree %>
-  <%= filter_form.simple_fields_for(tree_address_field_definition.name, filter_form.object.attributes[tree_address_field_definition.name.to_s]) do |address_field| %>
-    <% element_id = address_field.object_name.parameterize.underscore %>
-    <div class="row filter-field"
-          id="<%= element_id %>"
-          data-controller="beneficiary-addresses-filter-field"
-          data-beneficiary-addresses-filter-field-data-value="<%= treeview_address_data.to_json %>"
-          data-beneficiary-addresses-filter-field-selected-value="<%= Array(address_field.object&.value).to_json %>"
-          data-beneficiary-addresses-filter-field-field-name-value="<%= address_field.object_name %>">
-      <div class="col">
-        <div class="input-group mb-1">
-          <span class="input-group-text">
-            <input class="form-check-input m-0"
-                    id="<%= "#{element_id}_enabled" %>"
-                    type="checkbox"
-                    <%= "checked" if address_field.object&.value.present? %>
-                    data-beneficiary-addresses-filter-field-target="toggleElement"
-                    data-action="beneficiary-addresses-filter-field#toggle"
-                    data-bs-toggle="collapse"
-                    data-bs-target="#addresses-treeview" />
-          </span>
-          <input class="form-control"
-                  type="text"
-                  value="<%= address_field_label %>"
-                  readonly
-                  data-beneficiary-addresses-filter-field-target="fieldName" />
-
-          <%= address_field.input(:operator, as: :hidden, input_html: { value: "in", data: { "beneficiary-addresses-filter-field-target": "operator" } }) %>
-        </div>
-
-        <div id="addresses-treeview"
-              class="collapse overflow-auto <%= "show" if address_field.object&.value.present? %>"
-              data-beneficiary-addresses-filter-field-target="treeview">
-        </div>
-      </div>
-    </div>
-  <% end %>
 <% end %>

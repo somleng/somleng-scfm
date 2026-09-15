@@ -1,6 +1,12 @@
 module V1
   class BeneficiaryStatsRequestSchema < ApplicationRequestSchema
     option :beneficiary_address_validator, default: -> { BeneficiaryAddressValidator.new }
+    option :output_serializer, default: -> {
+      StatsRequestSchemaOutputSerializer.new(
+        filter_class: BeneficiaryFilter,
+        field_definitions: FieldDefinitions::BeneficiaryFields
+      )
+    }
 
     GROUPS = [
       "gender",
@@ -41,17 +47,7 @@ module V1
     end
 
     def output
-      result = super
-
-      if result[:filter]
-        result[:filter_fields] = BeneficiaryFilter.new(input_params: result[:filter]).output
-      end
-
-      result[:group_by_fields] = result[:group_by].map do |group|
-        FieldDefinitions::BeneficiaryFields.find_by!(path: group)
-      end
-
-      result
+      output_serializer.serialize(super)
     end
   end
 end

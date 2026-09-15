@@ -1,4 +1,15 @@
 class BroadcastForm < ApplicationForm
+  class JSONType < ActiveRecord::Type::Json
+    def cast(value)
+      return super(value) unless value.is_a?(String)
+
+      super(ActiveSupport::JSON.decode(value))
+    rescue ActiveSupport::JSON.parse_error
+      super(value)
+    end
+  end
+
+
   attribute :account
   attribute :channel
   attribute :audio_file
@@ -17,6 +28,8 @@ class BroadcastForm < ApplicationForm
             ),
             default: -> { BeneficiaryFilterForm.new }
 
+  attribute :geocode_target_areas, JSONType.new
+  attribute :geocode_target_area_validator, default: -> { GeocodeTargetAreaValidator.new }
   attribute :object, default: -> { Broadcast.new }
 
   enumerize :channel, in: Broadcast.channel.values, default: ->(form) { form.supported_channels.first }
@@ -28,10 +41,13 @@ class BroadcastForm < ApplicationForm
   validates :audio_file, presence: true, if: -> { new_record? && channel_capabilities.audio? }
   validates :message, presence: true, if: -> { channel_capabilities.text? }
   validates :channel, presence: true, inclusion: { in: ->(form) { form.supported_channels } }, if: :new_record?
-  validates :beneficiary_filter, presence: true, if: :new_record?
   validates :beneficiary_groups, length: { maximum: Broadcast::MAX_BENEFICIARY_GROUPS, allow_blank: true }
+  validates :beneficiary_groups, absence: true, unless: -> { channel_capabilities.deliverable? }
+  validates :beneficiary_filter, absence: true, unless: -> { channel_capabilities.deliverable? }
 
   validate :validate_audio_file
+  validate :validate_status
+  validate :validate_geocode_target_areas
 
   def self.model_name
     Broadcast.model_name
@@ -46,39 +62,39 @@ class BroadcastForm < ApplicationForm
       channel: broadcast.channel,
       audio_file: broadcast.audio_file.blob,
       beneficiary_groups: broadcast.beneficiary_group_ids,
-      beneficiary_filter: BeneficiaryFilterData.new(data: broadcast.beneficiary_filter)
+      beneficiary_filter: BeneficiaryFilterData.new(data: broadcast.beneficiary_filter),
+      geocode_target_areas: broadcast.target_areas.geocode.presence
     )
   end
 
   def save
     return false if invalid?
 
-    object.name = name.presence
-    object.channel = channel if new_record? && channel.present?
-    object.message = message.presence if channel_capabilities.text?
-    object.audio_file = audio_file if channel_capabilities.audio?
-    object.account ||= account
-    object.beneficiary_group_ids = beneficiary_groups
-    object.beneficiary_filter = FilterFormType.new(
+    attributes = {}
+    attributes[:account] = account
+    attributes[:name] = name.presence
+    attributes[:message] = message if channel_capabilities.text?
+    attributes[:audio_file] = audio_file if channel_capabilities.audio?
+    attributes[:beneficiary_group_ids] = account.beneficiary_groups.where(id: beneficiary_groups).pluck(:id)
+    attributes[:target_areas] = build_target_areas
+    attributes[:beneficiary_filter] = FilterFormType.new(
       form: BeneficiaryFilterForm,
       filter_data: BeneficiaryFilterData,
       field_definitions: FieldDefinitions::BeneficiaryFields
     ).serialize(beneficiary_filter)
 
     if new_record?
-      object.created_by = created_by
-      object.created_via = :dashboard
-      object.save!
-      create_event("broadcast.created")
+      self.object = CreateBroadcast.call(
+        channel:,
+        created_by:,
+        created_via: :dashboard,
+        **attributes
+      )
     else
-      object.updated_by = updated_by
-      object.save!
-      create_event("broadcast.updated")
+      UpdateBroadcast.call(object, updated_by:, **attributes)
     end
-  end
 
-  def beneficiary_groups_options_for_select
-    account.beneficiary_groups
+    true
   end
 
   def channel_options_for_select
@@ -100,8 +116,14 @@ class BroadcastForm < ApplicationForm
     BroadcastChannelCapabilities.new(channel)
   end
 
-  def create_event(event_type)
-    CreateEvent.call(type: event_type, resource: object)
+  def state_machine
+    @state_machine ||= BroadcastStateMachine.new(object.status)
+  end
+
+  def build_target_areas
+    target_areas = object.target_areas.as_json
+    target_areas["geocode"] = geocode_target_areas.presence
+    target_areas.compact_blank
   end
 
   def validate_audio_file
@@ -113,6 +135,21 @@ class BroadcastForm < ApplicationForm
       object.errors[:audio_file].each do |message|
         errors.add(:audio_file, message)
       end
+    end
+  end
+
+  def validate_status
+    errors.add(:base, :invalid) unless state_machine.updatable?
+  end
+
+  def validate_geocode_target_areas
+    return if geocode_target_areas.blank?
+    return errors.add(:geocode_target_areas, :invalid) unless geocode_target_areas.is_a?(Array)
+
+    geocode_target_areas.each do |area|
+      next if geocode_target_area_validator.valid?(area)
+
+      return errors.add(:geocode_target_areas, :invalid)
     end
   end
 end

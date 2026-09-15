@@ -34,7 +34,7 @@
     <%= render "shared/resource_related_links" do %>
       <%= render "shared/destroy_resource_page_action", path: dashboard_broadcast_path(@broadcast) %>
     <% end %>
-  <% elsif @broadcast.channel_capabilities.any? { it.deliverable? } %>
+  <% elsif @broadcast.channel_capabilities.any?(&:deliverable?) %>
     <%= render "shared/resource_related_links" do %>
       <%= link_to(dashboard_broadcast_notifications_path(@broadcast), class: "dropdown-item") do %>
         <i class="icon ti ti-message"></i>
@@ -53,7 +53,9 @@
 
       <%= f.attribute :beneficiary_groups do %>
         <% @broadcast.beneficiary_groups.each do |beneficiary_group| %>
-          <span class="badge bg-default-lt"><%= link_to(beneficiary_group.name, dashboard_beneficiary_group_path(beneficiary_group)) %></span>
+          <span class="badge bg-default-lt">
+            <%= link_to(beneficiary_group.name, dashboard_beneficiary_group_path(beneficiary_group)) %>
+          </span>
         <% end %>
       <% end %>
 
@@ -63,43 +65,73 @@
           <div class="text-danger"><%= error_message_for(@broadcast.error_code) %></div>
         <% end %>
 
-        <% if @broadcast.channel_capabilities.any? { it.deliverable? } %>
+        <% if @broadcast.channel_capabilities.any?(&:deliverable?) %>
           <div class="notification-stats mt-3">
             <div class="progress progress-separated mb-3">
               <% @broadcast.notification_stats_percentage.each do |status, percentage| %>
                 <% count = @broadcast.notification_stats[status] %>
-                <div
-                  class="progress-bar bg-<%= notification_status_color(status) %>"
-                  role="progressbar"
-                  data-bs-toggle="popover"
-                  data-bs-content="<%= count_of_total(count, total: pluralize_model(@broadcast.total_notifications_count, Notification.model_name)) %>"
-                  data-bs-trigger="hover"
-                  style="width: <%= percentage %>%">
-                </div>
+                <%= tag.div(
+                  class: [
+                    "progress-bar",
+                    "bg-#{notification_status_color(status)}"
+                  ],
+                  role: "progressbar",
+                  data: {
+                    bs_toggle: "popover",
+                    bs_content: count_of_total(
+                      count,
+                      total: pluralize_model(
+                        @broadcast.total_notifications_count, Notification.model_name
+                      )
+                    ),
+                    bs_trigger: "hover"
+                  },
+                  style: "width: #{percentage}%"
+                ) %>
               <% end %>
             </div>
 
             <div class="row">
               <% @broadcast.notification_stats_percentage.each do |status, percentage| %>
                 <% count = @broadcast.notification_stats[status] %>
-                <div class="col-auto d-flex align-items-center pe-2"
-                  data-bs-toggle="popover"
-                  data-bs-content="<%= count_of_total(count, total: pluralize_model(@broadcast.total_notifications_count, Notification.model_name)) %>"
-                  data-bs-trigger="hover"
-                  data-bs-placement="top"
-                  data-bs-trigger="hover"
-                >
-                  <span class="legend me-2 bg-<%= notification_status_color(status) %>"></span>
-                  <span><%= t("statuses.#{status}", default: status.to_s.humanize) %></span>
-                  <span class="d-none d-md-inline d-lg-none d-xxl-inline ms-2 text-secondary"><%= number_to_percentage(percentage, precision: 0, strip_insignificant_zeros: true) %></span>
-                </div>
+                <%= tag.div(
+                  class: "col-auto d-flex align-items-center pe-2",
+                  data: {
+                    bs_toggle: "popover",
+                    bs_content: count_of_total(
+                      count,
+                      total: pluralize_model(
+                        @broadcast.total_notifications_count,
+                        Notification.model_name
+                      )
+                    ),
+                    bs_trigger: "hover",
+                    bs_placement: "top",
+                  }
+                ) do %>
+                  <%= tag.span(
+                    class: [
+                      "legend",
+                      "me-2",
+                      "bg-#{notification_status_color(status)}"
+                    ]
+                  ) %>
+
+                  <span>
+                    <%= t("statuses.#{status}", default: status.to_s.humanize) %>
+                  </span>
+
+                  <span class="d-none d-md-inline d-lg-none d-xxl-inline ms-2 text-secondary">
+                    <%= number_to_percentage(percentage, precision: 0, strip_insignificant_zeros: true) %>
+                  </span>
+                <% end %>
               <% end %>
             </div>
           </div>
         <% end %>
       <% end %>
 
-      <% if @broadcast.channel_capabilities.any? { it.audio? } %>
+      <% if @broadcast.channel_capabilities.any?(&:audio?) %>
         <%= f.attribute :audio_file do %>
           <% if @broadcast.audio_file.attached? %>
             <%= audio_tag(@broadcast.audio_file, controls: true) %>
@@ -107,7 +139,7 @@
         <% end %>
       <% end %>
 
-      <% if @broadcast.channel_capabilities.any? { it.text? } %>
+      <% if @broadcast.channel_capabilities.any?(&:text?) %>
         <%= f.attribute :message do %>
           <%= text_area_tag(:message, @broadcast.message, rows: 4, class: "form-control w-100", readonly: true) %>
         <% end %>
@@ -132,60 +164,89 @@
       <%= f.attribute :started_at, value: local_time(@broadcast.started_at) %>
       <%= f.attribute :created_at, value: local_time(@broadcast.created_at) %>
       <%= f.attribute :updated_at, value: local_time(@broadcast.updated_at) %>
-    <% end %>
 
-    <div class="hr-text">
-      <%= t("beneficiary_filters")%>
-    </div>
-
-    <%= render("shared/filter_form/field_headers") %>
-
-    <% filter = BeneficiaryFilterData.new(
-      data: @broadcast.beneficiary_filter,
-      address_data_field_definition: CountryAddressData.address_field(current_account.iso_country_code)
-    ) %>
-
-    <% filter.data.fields.values.each do |field| %>
-      <% next if filter.address_data_field.present? && filter.address_data_field == field %>
-      <div class="row mb-3" id="beneficiary_filter_<%= field.name %>">
-        <div class="col">
-          <input class="field-name form-control" type="text" value="<%= field.field_definition.human_name(namespace: current_account.iso_country_code) %>" readonly />
-        </div>
-        <div class="col">
-          <input class="field-operator form-control" type="text" value="<%= field.field_definition.human_operator(field.operator) %>" readonly />
-        </div>
-        <div class="col">
-          <% if field.operator == "between" %>
-            <div class="row">
-              <div class="col">
-                <input class="field-value form-control" type="text" value="<%= field.value[0] %>" readonly />
-              </div>
-              <div class="col">
-                <input class="field-value form-control" type="text" value="<%= field.value[1] %>" readonly />
-              </div>
-            </div>
-          <% elsif field.value.is_a?(Array) %>
-            <select class="input-tags-readonly form-control" readonly multiple>
-              <% field.value.each do |value| %>
-                <option selected><%= field.field_definition.human_value(value) %></option>
-              <% end %>
-            </select>
-          <% else %>
-            <input class="field-value form-control" type="text" value="<%= field.field_definition.human_value(field.value) %>" readonly />
+      <% unless CountryLocalityData.supported?(current_account.iso_country_code) %>
+        <%= f.attribute :geocode_target_areas do %>
+          <% if @broadcast.geocode_target_areas.exists? %>
+            <pre class="language-json bg-surface text-body border rounded" style="max-height: 8rem;"><code><%= JSON.pretty_generate(@broadcast.target_areas.geocode.as_json) %></code></pre>
           <% end %>
-        </div>
-      </div>
+        <% end %>
+      <% end %>
     <% end %>
 
-    <% if filter.address_data_field.present? %>
-      <div class="row" id="beneficiary_filter_<%= filter.address_data_field.name %>">
-        <div class="col">
-          <input class="mb-1 field-name form-control" type="text" value="<%= ApplicationRecord.human_attribute_name(:target_areas) %>" readonly />
+    <% if @broadcast.beneficiary_filter.present? %>
+      <div class="hr-text">
+        <%= t("beneficiary_filters")%>
+      </div>
 
-          <div data-controller="treeview"
-               data-treeview-data-value="<%= treeview_address_data.to_json %>"
-               data-treeview-selected-value="<%= Array(filter.address_data_field.value).to_json %>">
+      <%= render("shared/filter_form/field_headers") %>
+
+      <% filter = BeneficiaryFilterData.new(data: @broadcast.beneficiary_filter) %>
+      <% filter.data.fields.values.each do |field| %>
+        <div class="row mb-3" id="beneficiary_filter_<%= field.name %>">
+          <div class="col">
+            <%= tag.input(
+              class: "field-name form-control",
+              type: "text",
+              value: human_attribute_name(field.name, namespace: current_account.iso_country_code),
+              readonly: true
+            ) %>
           </div>
+          <div class="col">
+            <%= tag.input(
+              class: "field-operator form-control",
+              type: "text",
+              value: human_operator(field.operator),
+              readonly: true
+            ) %>
+          </div>
+          <div class="col">
+            <% if field.operator == "between" %>
+              <div class="row">
+                <% field.value.each do |value| %>
+                  <div class="col">
+                    <%= tag.input(
+                      class: "field-value form-control",
+                      type: "text",
+                      value:,
+                      readonly: true
+                    ) %>
+                  </div>
+                <% end %>
+              </div>
+            <% elsif field.value.is_a?(Array) %>
+              <select class="input-tags-readonly form-control" readonly multiple>
+                <% field.value.each do |value| %>
+                  <option selected><%= human_value(value, schema: field.field_definition.filter.schema) %></option>
+                <% end %>
+              </select>
+            <% else %>
+              <%= tag.input(
+                class: "field-value form-control",
+                type: "text",
+                value: human_value(field.value, schema: field.field_definition.filter.schema),
+                readonly: true
+              ) %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% end %>
+
+    <% if @broadcast.geocode_target_areas.exists? && CountryLocalityData.supported?(current_account.iso_country_code) %>
+      <div class="hr-text">
+        <%= Broadcast.human_attribute_name(:target_areas) %>
+      </div>
+
+      <div class="row" id="target_areas">
+        <div class="col">
+          <%= tag.div(
+            data: {
+              controller: :treeview,
+              treeview_data_value: locality_tree.to_json,
+              treeview_selected_value: @broadcast.geocode_target_areas.pluck(:path).to_json
+            }
+          ) %>
         </div>
       </div>
     <% end %>

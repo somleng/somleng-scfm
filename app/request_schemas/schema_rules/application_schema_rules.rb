@@ -6,8 +6,6 @@ module SchemaRules
       @context = context
     end
 
-    private
-
     delegate :account, :values, :resource, :key, to: :context
   end
 end

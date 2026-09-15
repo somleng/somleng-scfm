@@ -17,11 +17,9 @@ module SystemSpecHelpers
   end
 
   def select_filter(name, **options)
-    field = find_field(with: name, disabled: :all)
-    filter_field_wrapper = field.find(:xpath, ".//ancestor::*[contains(@class, 'filter-field')]")
-    filter_id = filter_field_wrapper[:id]
-
-    filter_field_wrapper.find_field(type: "checkbox").check unless field.checked?
+    checkbox, wrapper = find_filter_toggle(name)
+    checkbox.check unless checkbox.checked?
+    filter_id = wrapper[:id]
 
     select(options.fetch(:operator), from: "#{filter_id}_operator") if options[:operator].present?
 
@@ -40,6 +38,11 @@ module SystemSpecHelpers
     end
   end
 
+  def deselect_filter(name)
+    checkbox, = find_filter_toggle(name)
+    checkbox.uncheck if checkbox.checked?
+  end
+
   def select_list(*values, from:)
     return values.each { select(it, from:) } if Capybara.current_driver == :rack_test
 
@@ -47,6 +50,15 @@ module SystemSpecHelpers
     control_wrapper.click
 
     values.each { control_wrapper.find(:xpath, "..//*[text()='#{it}']").click }
+  end
+
+  private
+
+  def find_filter_toggle(name)
+    field = find_field(with: name, disabled: :all)
+    filter_field_wrapper = field.find(:xpath, ".//ancestor::*[contains(@class, 'filter-field')]")
+
+    [ filter_field_wrapper.find_field(type: "checkbox"), filter_field_wrapper ]
   end
 end
 

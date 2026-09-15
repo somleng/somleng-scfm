@@ -77,7 +77,7 @@ module ApplicationHelper
   def start_broadcast_confirmation(broadcast)
     default = "Are you sure?"
 
-    if broadcast.channel_capabilities.any? { it.deliverable? }
+    if broadcast.channel_capabilities.any?(&:deliverable?)
       action(
         :start_broadcast_with_count,
         count: @broadcast.approximate_beneficiaries,
@@ -105,22 +105,24 @@ module ApplicationHelper
     tag.time(time.utc.iso8601, data: { behavior: "local-time" })
   end
 
-  def treeview_address_data
+  def locality_tree
     iso_country_code = current_account.iso_country_code
 
     Rails.cache.fetch("#{iso_country_code}-#{I18n.locale}") do
-      CountryAddressData.address_data(iso_country_code).map { |locality| treeview_node(locality) }
+      locality_data = CountryLocalityData.locality_data(iso_country_code)
+      display_local_language = I18n.locale == locality_data.local_language
+      locality_data.to_tree do |locality|
+        {
+          id: locality.value,
+          text: display_local_language ? locality.name_local : locality.name_en,
+          children: [],
+          metadata: {
+            path: locality.path,
+            field_name: FieldDefinitions::GeocodeFieldMap.to_name(locality.administrative_level)
+          }
+        }
+      end
     end
-  end
-
-  def treeview_node(locality)
-    children = locality.subdivisions.map { |i| treeview_node(i) } if locality.subdivisions.present?
-
-    {
-      id: locality.value,
-      text: I18n.locale == :en ? locality.name_en : locality.name_local,
-      children: children
-    }
   end
 
   def broadcast_status(broadcast)
@@ -211,6 +213,21 @@ module ApplicationHelper
 
   def format_phone_number(value)
     Phony.format(value)
+  end
+
+  def human_operator(operator)
+    I18n.t("filter_operators.#{operator}")
+  end
+
+  def human_value(value, schema: nil)
+    return value unless schema.respond_to?(:options_for_select)
+
+    schema.options_for_select.find { it[1] == value }.first
+  end
+
+  def human_attribute_name(name, **options)
+    translation_key = [ options[:namespace]&.downcase, name ].compact.join(".")
+    ApplicationRecord.human_attribute_name(translation_key)
   end
 
   def mfa_qr_code(user)

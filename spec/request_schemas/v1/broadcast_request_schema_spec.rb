@@ -106,10 +106,104 @@ module V1
           }
         )
       ).not_to have_valid_field(:data, :attributes, :beneficiary_filter)
+
+      expect(
+        validate_schema(
+          input_params: {
+            data: {
+              attributes: {
+                channels: [ "audio" ],
+                beneficiary_filter: {
+                  gender: { eq: "F" }
+                }
+              }
+            }
+          }
+        )
+      ).not_to have_valid_field(:data, :attributes, :beneficiary_filter)
+
+      expect(
+        validate_schema(
+          input_params: {
+            data: {
+              attributes: {
+                channels: [ "voice_call" ],
+                target_areas: {
+                  geocode: [
+                    { iso_region_code: "KH-1" }
+                  ]
+                }
+              }
+            }
+          }
+        )
+      ).to have_valid_field(:data, :attributes, :beneficiary_filter)
+    end
+
+    it "validates the target areas" do
+      expect(
+        validate_schema(
+          input_params: {
+            data: {
+              attributes: {
+                target_areas: {
+                  geocode: [ {} ]
+                }
+              }
+            }
+          }
+        )
+      ).not_to have_valid_field(:data, :attributes, :target_areas, :geocode, 0, :iso_region_code)
+
+      expect(
+        validate_schema(
+          input_params: {
+            data: {
+              attributes: {
+                target_areas: {
+                  geocode: [
+                    {
+                      iso_region_code: "KH-1",
+                      administrative_division_level_2_code: nil,
+                      administrative_division_level_3_code: "010201"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        )
+      ).not_to have_valid_field(
+        :data, :attributes, :target_areas, :geocode, 0,
+        error_message: "must include contiguous administrative levels starting at level 1"
+      )
+
+      expect(
+        validate_schema(
+          input_params: {
+            data: {
+              attributes: {
+                target_areas: {
+                  geocode: [
+                    {
+                      iso_region_code: "KH-1"
+                    },
+                    {
+                      iso_region_code: "KH-2",
+                      administrative_division_level_2_code: "0201"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        )
+      ).to have_valid_field(:data, :attributes, :target_areas, :geocode)
     end
 
     it "validates the beneficiary groups" do
       account = create(:account)
+      beneficiary_group = create(:beneficiary_group, account:)
       other_beneficiary_group = create(:beneficiary_group)
 
       expect(
@@ -138,6 +232,31 @@ module V1
                   data: [
                     {
                       id: other_beneficiary_group.id,
+                      type: "beneficiary_group"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          options: {
+            account:
+          }
+        )
+      ).not_to have_valid_field(:data, :relationships, :beneficiary_groups, :data)
+
+      expect(
+        validate_schema(
+          input_params: {
+            data: {
+              attributes: {
+                channels: [ "audio" ]
+              },
+              relationships: {
+                beneficiary_groups: {
+                  data: [
+                    {
+                      id: beneficiary_group.id,
                       type: "beneficiary_group"
                     }
                   ]

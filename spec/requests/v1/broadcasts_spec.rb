@@ -25,7 +25,14 @@ RSpec.resource "Broadcasts"  do
 
     example "Filter broadcasts" do
       account = create(:account)
-      broadcast = create(:broadcast, :running, :text_message, account:, name: "Test Broadcast")
+      matching_broadcast = create(
+        :broadcast,
+        :running,
+        :text_message,
+        account:,
+        name: "Test Broadcast"
+      )
+
       create(:broadcast, :running, account:, started_at: 6.hours.ago, created_at: 6.hours.ago)
       create(:broadcast, :stopped, account:)
 
@@ -35,14 +42,107 @@ RSpec.resource "Broadcasts"  do
           status: { eq: "running" },
           started_at: { gt: 5.hours.ago.utc.iso8601 },
           name: { starts_with: "Test" },
-          channels: { in: [ "text_message" ] }
+          channels: { contains: "text_message" }
         }
       )
 
       expect(response_status).to eq(200)
       expect(response_body).to match_jsonapi_resource_collection_schema("broadcast")
       expect(json_response.fetch("data").pluck("id")).to contain_exactly(
-        broadcast.id.to_s
+        matching_broadcast.id.to_s
+      )
+    end
+
+    example "Filter running broadcasts by included coverage area" do
+      explanation <<~HEREDOC
+        Use the `contains` operator to return broadcasts where any target area contains any of specified administrative divisions.
+        The filter matches broadcasts whose target area coverage contains the provided geocodes.
+      HEREDOC
+
+      account = create(:account)
+      matching_broadcast = create(:broadcast, :running, account:)
+      create(:broadcast, :running, account:)
+      create(
+        :geocode_target_area,
+        broadcast: matching_broadcast,
+        path: [ "KH-1" ]
+      )
+      create(
+        :geocode_target_area,
+        broadcast: matching_broadcast,
+        path: [ "KH-1", "0102" ]
+      )
+      create(
+        :geocode_target_area,
+        broadcast: matching_broadcast,
+        path: [ "KH-1", "0102", "010201" ]
+      )
+
+      set_authorization_header_for(account)
+      do_request(
+        filter: {
+          status: {
+            eq: :running
+          },
+          "target_areas.geocode.administrative_division_level_3_code": {
+            contains: [ "010201",  "010202" ]
+          }
+        }
+      )
+
+      expect(response_status).to eq(200)
+      expect(response_body).to match_jsonapi_resource_collection_schema("broadcast")
+      expect(json_response.fetch("data").pluck("id")).to contain_exactly(
+        matching_broadcast.id.to_s
+      )
+    end
+
+    example "Filter running broadcasts by exclusive coverage area" do
+      explanation <<~HEREDOC
+        Use the `eq` operator to return broadcasts where all target areas match exactly the specified administrative divisions.
+        The filter matches broadcasts whose target areas are entirely within the provided geocodes.
+      HEREDOC
+
+      account = create(:account)
+      matching_broadcast = create(:broadcast, :running, account:)
+      non_matching_broadcast = create(:broadcast, :running, account:)
+      create(
+        :geocode_target_area,
+        broadcast: matching_broadcast,
+        path: [ "KH-1" ]
+      )
+      create(
+        :geocode_target_area,
+        broadcast: matching_broadcast,
+        path: [ "KH-1", "0102" ]
+      )
+      create(
+        :geocode_target_area,
+        broadcast: matching_broadcast,
+        path: [ "KH-1", "0102", "010201" ]
+      )
+      create(
+        :geocode_target_area,
+        broadcast: non_matching_broadcast,
+        path: [ "KH-2" ]
+      )
+
+      set_authorization_header_for(account)
+      do_request(
+        filter: {
+          status: {
+            eq: :running
+          },
+          "target_areas.geocode.iso_region_code": {
+            eq: [ "KH-1" ]
+          }
+        }
+      )
+
+      expect(response_status).to eq(200)
+      expect(response_body).to match_jsonapi_resource_collection_schema("broadcast")
+      expect(json_response.fetch("data").pluck("id")).to contain_exactly(
+        matching_broadcast.id.to_s
       )
     end
   end
@@ -133,6 +233,15 @@ RSpec.resource "Broadcasts"  do
     end
 
     example "Create and start a voice call broadcast" do
+      explanation <<~HEREDOC
+        For broadcasts with *deliverable notifications*, such as voice calls or text messages,
+        `beneficiary_filter` defines which *beneficiaries* are eligible to receive the broadcast,
+        while `target_areas` further filters those beneficiaries based on their geographic location.
+        Multiple geographic targets can be specified in `target_areas`.
+        A geographic target can include one or more geographic codes, allowing you to target a region as a whole or a specific administrative area within a region.
+        Geographic targets are combined using `OR` logic, so a beneficiary must match the `beneficiary_filter` and be located within any of the specified geographic targets.
+      HEREDOC
+
       account = create(:account, :configured_for_broadcasts)
       oauth_application = create(:oauth_application, owner: account)
       webhook_endpoint = create(:webhook_endpoint, oauth_application:, subscriptions: [ "broadcast.created", "broadcast.updated" ])
@@ -151,8 +260,16 @@ RSpec.resource "Broadcasts"  do
               audio_url: "https://www.example.com/test.mp3",
               status: :running,
               beneficiary_filter: {
-                gender: { eq: "M" },
-                "address.iso_region_code" => { in: [ "KH-1", "KH-2" ] }
+                gender: { eq: "M" }
+              },
+              target_areas: {
+                geocode: [
+                  { iso_region_code: "KH-1" },
+                  {
+                    iso_region_code: "KH-2",
+                    administrative_division_level_2_code: "0201"
+                  }
+                ]
               }
             }
           }
@@ -166,10 +283,19 @@ RSpec.resource "Broadcasts"  do
         "status" => "queued",
         "audio_url" => "https://www.example.com/test.mp3",
         "beneficiary_filter" => {
-          "gender" => { "eq" => "M" },
-          "address.iso_region_code" => { "in" => [ "KH-1", "KH-2" ] }
+          "gender" => { "eq" => "M" }
+        },
+        "target_areas" => {
+          "geocode" => [
+            { "iso_region_code" => "KH-1" },
+            {
+              "iso_region_code" => "KH-2",
+              "administrative_division_level_2_code" => "0201"
+            }
+          ]
         }
       )
+
       expect(webhook_endpoint.webhook_request_logs).to contain_exactly(
         have_attributes(
           event: have_attributes(
@@ -186,7 +312,11 @@ RSpec.resource "Broadcasts"  do
 
     example "Create and start a text message broadcast" do
       account = create(:account, :configured_for_broadcasts)
-      create(:beneficiary_address, beneficiary: create(:beneficiary, gender: "M", account:), iso_region_code: "KH-1")
+      create(
+        :beneficiary_address,
+        beneficiary: create(:beneficiary, gender: "M", account:),
+        iso_region_code: "KH-1"
+      )
 
       set_authorization_header_for(account)
       perform_enqueued_jobs do
@@ -198,8 +328,12 @@ RSpec.resource "Broadcasts"  do
               message: "Test message",
               status: :running,
               beneficiary_filter: {
-                gender: { eq: "M" },
-                "address.iso_region_code" => { in: [ "KH-1", "KH-2" ] }
+                gender: { eq: "M" }
+              },
+              target_areas: {
+                geocode: [
+                  { iso_region_code: "KH-1" }
+                ]
               }
             }
           }
@@ -213,13 +347,26 @@ RSpec.resource "Broadcasts"  do
         "status" => "queued",
         "message" => "Test message",
         "beneficiary_filter" => {
-          "gender" => { "eq" => "M" },
-          "address.iso_region_code" => { "in" => [ "KH-1", "KH-2" ] }
+          "gender" => { "eq" => "M" }
+        },
+        "target_areas" => {
+          "geocode" => [
+            { "iso_region_code" => "KH-1" }
+          ]
         }
       )
     end
 
     example "Create and start an audio broadcast" do
+      explanation <<~HEREDOC
+        For broadcasts *without deliverable notifications*,
+        such as audio broadcasts, `beneficiary_filter` cannot be specified.
+        Multiple geographic targets can be specified in `target_areas` to define the geographic areas where the broadcast should be delivered.
+        Each geographic target can include one or more geographic codes,
+        allowing you to target a region as a whole or a specific administrative area within a region.
+        In this case, `target_areas` does not filter beneficiaries; it only determines the geographic areas targeted by the broadcast.
+      HEREDOC
+
       account = create(:account)
       set_authorization_header_for(account)
       stub_request(:get, "https://www.example.com/test.mp3").to_return(status: 200, body: file_fixture("test.mp3"))
@@ -231,7 +378,16 @@ RSpec.resource "Broadcasts"  do
             attributes: {
               channels: [ "audio" ],
               audio_url: "https://www.example.com/test.mp3",
-              status: :running
+              status: :running,
+              target_areas: {
+                geocode: [
+                  {
+                    iso_region_code: "KH-1",
+                    administrative_division_level_2_code: "1201",
+                    administrative_division_level_3_code: "120101"
+                  }
+                ]
+              }
             }
           }
         )
@@ -241,7 +397,16 @@ RSpec.resource "Broadcasts"  do
       expect(response_body).to match_jsonapi_resource_schema("broadcast")
       expect(json_response.dig("data", "attributes")).to include(
         "channels" => [ "audio" ],
-        "status" => "queued"
+        "status" => "queued",
+        "target_areas" => {
+          "geocode" => [
+            {
+              "iso_region_code" => "KH-1",
+              "administrative_division_level_2_code" => "1201",
+              "administrative_division_level_3_code" => "120101"
+            }
+          ]
+        }
       )
     end
 
@@ -306,6 +471,41 @@ RSpec.resource "Broadcasts"  do
 
       expect(response_status).to eq(201)
       expect(response_body).to match_jsonapi_resource_schema("broadcast")
+    end
+
+    example "Supports beneficiary address filters", document: false do
+      account = create(:account, :configured_for_broadcasts)
+      beneficiary = create(:beneficiary, account:)
+      create(:beneficiary, account:)
+      create(:beneficiary_address, beneficiary:, iso_region_code: "KH-1")
+
+      set_authorization_header_for(account)
+      perform_enqueued_jobs do
+        do_request(
+          data: {
+            type: :broadcast,
+            attributes: {
+              channels: [ "text_message" ],
+              message: "Test message",
+              status: :running,
+              beneficiary_filter: {
+                "address.iso_region_code" => { eq: "KH-1" }
+              }
+            }
+          }
+        )
+      end
+
+      expect(response_status).to eq(201)
+      expect(response_body).to match_jsonapi_resource_schema("broadcast")
+      expect(json_response.dig("data", "attributes")).to include(
+        "status" => "queued",
+        "beneficiary_filter" => {
+          "address.iso_region_code" => { "eq" => "KH-1" }
+        }
+      )
+      broadcast = Broadcast.find(json_response.dig("data", "id"))
+      expect(broadcast.beneficiaries).to contain_exactly(beneficiary)
     end
 
     example "Fail to create a broadcast", document: false do
@@ -525,6 +725,11 @@ RSpec.resource "Broadcasts"  do
             audio_url: "https://www.example.com/new.mp3",
             beneficiary_filter: {
               gender: { eq: "F" }
+            },
+            target_areas: {
+              geocode: [
+                { iso_region_code: "KH-1" }
+              ]
             }
           },
           relationships: {
@@ -545,6 +750,11 @@ RSpec.resource "Broadcasts"  do
           "audio_url" => "https://www.example.com/new.mp3",
           "beneficiary_filter" => {
             "gender" => { "eq" => "F" }
+          },
+          "target_areas" => {
+            "geocode" => [
+              { "iso_region_code" => "KH-1" }
+            ]
           }
         ),
         "relationships" => {

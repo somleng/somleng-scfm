@@ -23,9 +23,13 @@ module Dashboard
     end
 
     def update
-      @broadcast = BroadcastForm.initialize_with(find_broadcast)
+      @broadcast = BroadcastForm.new(
+        account: current_account,
+        object: find_broadcast,
+        updated_by: current_user,
+        **permitted_params
+      )
       authorize(@broadcast)
-      @broadcast.assign_attributes(updated_by: current_user, **permitted_params)
       @broadcast.save
 
       respond_with(:dashboard, @broadcast)
@@ -59,8 +63,9 @@ module Dashboard
         :audio_file,
         :message,
         :channel,
+        :geocode_target_areas,
         beneficiary_groups: [],
-        beneficiary_filter: {}
+        beneficiary_filter: {},
       )
     end
   end

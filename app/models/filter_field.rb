@@ -1,40 +1,15 @@
-class FilterField
-  attr_reader :field_definition, :operator, :value
-
-  delegate :association, :column, to: :field_definition
-
-  def initialize(field_definition:, operator:, value:)
-    @field_definition = field_definition
-    @operator = operator.to_sym
-    @value = value
+FilterField = Data.define(:name, :operator, :value, :query, :metadata) do
+  def initialize(**)
+    super(metadata: {}, query: FieldQuery.new, **)
   end
 
-  def to_query
-    column.public_send(operator_method, filter_value)
+  def to_query(**)
+    query.to_arel(column_name: name, operator:, value:, **metadata, **)
   end
 
-  private
+  def associations
+    return [] if query.association.blank?
 
-  # NOTE: cast from user input operator to arel attribute's predications
-  # https://www.rubydoc.info/gems/arel/Arel/Predications
-  def operator_method
-    case operator
-    when :eq, :not_eq, :gt, :gteq, :lt, :lteq, :between, :in, :not_in then operator
-    when :contains, :starts_with then :matches
-    when :not_contains then :does_not_match
-    when :is_null then value ? :eq : :not_eq
-    else
-      raise ArgumentError, "Unsupported operator #{operator}"
-    end
-  end
-
-  def filter_value
-    case operator
-    when :is_null then nil
-    when :contains, :not_contains then Arel::Nodes::Quoted.new("%#{value}%")
-    when :starts_with then Arel::Nodes::Quoted.new("#{value}%")
-    when :between then Range.new(value[0], value[1])
-    else value
-    end
+    [ query.association ]
   end
 end

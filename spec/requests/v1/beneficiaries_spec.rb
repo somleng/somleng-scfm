@@ -59,7 +59,7 @@ RSpec.resource "Beneficiaries"  do
       )
     end
 
-    example "Includes relationships", document: false do
+    example "includes relationships", document: false do
       account = create(:account)
       beneficiary = create(:beneficiary, account:)
       create(:beneficiary_address, beneficiary:)

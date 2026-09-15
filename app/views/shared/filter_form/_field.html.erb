@@ -6,33 +6,71 @@
         <span class="input-group-text">
           <input class="form-check-input m-0" id="<%= "#{element_id}_enabled" %>" type="checkbox" <%= "checked" if field_form.object.present? %> data-filter-field-target="toggleElement" data-action="filter-field#toggle" />
         </span>
-        <input class="form-control" type="text" value="<%= field_definition.human_name(namespace: current_account.iso_country_code) %>" readonly data-filter-field-target="fieldName" />
+        <input class="form-control" type="text" value="<%= human_attribute_name(field_name, namespace: current_account.iso_country_code) %>" readonly data-filter-field-target="fieldName" />
       </div>
     </div>
 
     <div class="col">
-      <%= field_form.input :operator, label: false, as: :select, collection: field_definition.operator_options_for_select, required: true, input_html: { data: { "filter-field-target": "operator", action: "filter-field#operatorChanged" } } %>
+      <%= field_form.input(
+        :operator,
+        label: false,
+        as: :select,
+        collection: field_definition.filter.schema.operators.map { [ human_operator(it), it ] },
+        required: true,
+        input_html: {
+          data: {
+            action: "filter-field#operatorChanged",
+            "filter-field-target": "operator"
+          }
+        }
+      ) %>
     </div>
 
     <div class="col">
       <div class="value-input hidden">
         <% base_options = { label: false, required: true, input_html: { data: { "filter-field-target": "value" } } } %>
-        <% case field_definition.schema %>
+        <% case field_definition.filter.schema %>
         <% when FieldDefinitions::FilterSchema::ListType, FieldDefinitions::FilterSchema::ArrayType %>
-          <%= field_form.input(:value, as: :select, collection: field_definition.schema.options_for_select, **base_options) %>
+          <%= field_form.input(
+            :value,
+            as: :select,
+            collection: field_definition.filter.schema.options_for_select,
+            **base_options
+          ) %>
         <% when FieldDefinitions::FilterSchema::StringType %>
-          <%= field_form.input(:value, as: :string, **base_options.deep_merge(input_html: { class: "w-100", minlength: field_definition.schema.options[:length], maxlength: field_definition.schema.options[:length] })) %>
+          <%= field_form.input(
+            :value,
+            as: :string,
+            **base_options.deep_merge(
+              input_html: {
+                class: "w-100",
+                minlength: field_definition.filter.schema.options[:length],
+                maxlength: field_definition.filter.schema.options[:length]
+              }
+            )
+          ) %>
         <% when FieldDefinitions::FilterSchema::ValueType %>
           <% if field_form.object.present? && field_form.object.value.is_a?(Array) %>
             <% base_options = base_options.deep_merge(input_html: { value: "" })  %>
-          <% elsif field_definition.schema.form_value_type == :integer %>
-            <% base_options = base_options.deep_merge(input_html: { min: field_definition.schema.options.dig(:type_options, :gteq?), max: field_definition.schema.options.dig(:type_options, :lteq?), step: 1 }) %>
+          <% elsif field_definition.filter.schema.form_value_type == :integer %>
+            <% base_options = base_options.deep_merge(
+              input_html: {
+                min: field_definition.filter.schema.options.dig(:type_options, :gteq?),
+                max: field_definition.filter.schema.options.dig(:type_options, :lteq?),
+                step: 1
+              }
+            ) %>
           <% end %>
-          <%= field_form.input(:value, as: field_definition.schema.form_value_type, html5: true, **base_options) %>
+          <%= field_form.input(
+            :value,
+            as: field_definition.filter.schema.form_value_type,
+            html5: true,
+            **base_options
+          ) %>
         <% end %>
       </div>
 
-      <% if field_definition.schema.is_a?(FieldDefinitions::FilterSchema::ValueType) %>
+      <% if field_definition.filter.schema.is_a?(FieldDefinitions::FilterSchema::ValueType) %>
         <%
           base_options = {
             label: false,
@@ -47,11 +85,11 @@
         <%
           base_options = base_options.deep_merge(
             input_html: {
-              min: field_definition.schema.options.dig(:type_options, :gteq?),
-              max: field_definition.schema.options.dig(:type_options, :lteq?),
+              min: field_definition.filter.schema.options.dig(:type_options, :gteq?),
+              max: field_definition.filter.schema.options.dig(:type_options, :lteq?),
               step: 1
             }
-          ) if field_definition.schema.form_value_type == :integer
+          ) if field_definition.filter.schema.form_value_type == :integer
         %>
         <% existing_field_values = field_form.object&.operator == "between" ? field_form.object.value : [] %>
         <div class="between-value-input hidden">
@@ -60,7 +98,7 @@
               <div class="col">
                 <%= field_form.input(
                   :value,
-                  as: field_definition.schema.form_value_type,
+                  as: field_definition.filter.schema.form_value_type,
                   html5: true,
                   **base_options.deep_merge(
                     input_html: {
@@ -76,12 +114,34 @@
       <% end %>
 
       <div class="multi-value-input hidden">
-        <% selected_values = FieldDefinitions::Field::MULTIPLE_SELECTION_OPERATORS.include?(field_form.object&.operator) ? field_form.object.value : [] %>
+        <% selected_values = [ "in", "not_in" ].include?(field_form.object&.operator) ? field_form.object.value : [] %>
         <% base_options = { label: false, required: true, include_hidden: false, multiple: true, selected: selected_values } %>
-        <% if field_definition.schema.respond_to?(:options_for_select) %>
-          <%= field_form.input(:value, as: :select, collection: field_definition.schema.options_for_select, input_html: { class: "list-select", data: { "filter-field-target": "multiValue" } }, **base_options) %>
+        <% if field_definition.filter.schema.respond_to?(:options_for_select) %>
+          <%= field_form.input(
+            :value,
+            as: :select,
+            collection: field_definition.filter.schema.options_for_select,
+            input_html: {
+              class: "list-select",
+              data: {
+                "filter-field-target": "multiValue"
+              }
+            },
+            **base_options
+          ) %>
         <% else %>
-          <%= field_form.input(:value, as: :select, collection: selected_values, input_html: { class: "input-tags", data: { "filter-field-target": "multiValue" } }, **base_options) %>
+          <%= field_form.input(
+            :value,
+            as: :select,
+            collection: selected_values,
+            input_html: {
+              class: "input-tags",
+              data: {
+                "filter-field-target": "multiValue"
+              }
+            },
+            **base_options
+          ) %>
         <% end %>
       </div>
 

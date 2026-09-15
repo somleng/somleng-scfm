@@ -10,7 +10,7 @@ class DeliveryAttempt < ApplicationRecord
 
   enumerize :error_code, in: [ :phone_number_unreachable ]
 
-  class StateMachine < StateMachine::ActiveRecord
+  class StateMachine < ::StateMachine::ActiveRecord
     state :created, initial: true, transitions_to: :queued
     state :queued, transitions_to: [ :initiated, :failed ]
     state :initiated, transitions_to: [ :failed, :succeeded ]

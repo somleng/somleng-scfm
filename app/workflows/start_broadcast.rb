@@ -15,10 +15,10 @@ class StartBroadcast < ApplicationWorkflow
   def call
     return unless broadcast.queued?
 
-    prepare_audio_file if broadcast.channel_capabilities.any? { it.audio? }
+    prepare_audio_file if broadcast.channel_capabilities.any?(&:audio?)
 
     ApplicationRecord.transaction do
-      unless broadcast.channel.audio?
+      if broadcast.channel_capabilities.any?(&:deliverable?)
         create_notifications
         create_delivery_attempts
       end

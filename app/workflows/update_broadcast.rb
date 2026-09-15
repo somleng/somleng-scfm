@@ -13,6 +13,7 @@ class UpdateBroadcast < ApplicationWorkflow
   def call
     broadcast.transaction do
       broadcast.update!(params)
+      update_target_areas if params.key?(:target_areas)
       if desired_status.present?
         broadcast.transition_to!(desired_status)
 
@@ -30,7 +31,22 @@ class UpdateBroadcast < ApplicationWorkflow
     end
 
     broadcast
-  rescue StateMachine::Machine::InvalidStateTransitionError => e
+  rescue ::StateMachine::Machine::InvalidStateTransitionError => e
     raise InvalidStateTransitionError, e.message
+  end
+
+  private
+
+  def update_target_areas
+    GeocodeTargetArea.where(broadcast_id: broadcast.id).delete_all
+    GeocodeTargetArea.insert_all(build_geocode_target_area_records, unique_by: [ :broadcast_id, :path ])
+  end
+
+  def build_geocode_target_area_records
+    BuildGeocodeTargetAreaRecords.call(broadcast.target_areas.geocode, locality_data:).map { it.merge(broadcast_id: broadcast.id) }
+  end
+
+  def locality_data
+    CountryLocalityData.locality_data(broadcast.account.iso_country_code).collection
   end
 end

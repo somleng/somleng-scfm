@@ -1,5 +1,12 @@
 module V1
   class NotificationStatsRequestSchema < ApplicationRequestSchema
+    option :output_serializer, default: -> {
+      StatsRequestSchemaOutputSerializer.new(
+        filter_class: NotificationFilter,
+        field_definitions: FieldDefinitions::NotificationFields
+      )
+    }
+
     GROUPS = [
       "status",
       *BeneficiaryStatsRequestSchema::GROUPS.map { |f| "beneficiary.#{f}" }
@@ -13,17 +20,7 @@ module V1
     rule(:filter).validate(contract: NotificationFilter)
 
     def output
-      result = super
-
-      if result[:filter]
-        result[:filter_fields] = NotificationFilter.new(input_params: result[:filter]).output
-      end
-
-      result[:group_by_fields] = result[:group_by].map do |group|
-        FieldDefinitions::NotificationFields.find_by!(path: group)
-      end
-
-      result
+      output_serializer.serialize(super)
     end
   end
 end

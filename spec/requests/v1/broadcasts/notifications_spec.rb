@@ -169,7 +169,7 @@ RSpec.resource "Notifications" do
       set_authorization_header_for(account)
       do_request(
         broadcast_id: broadcast.id,
-        filter: { "status": { eq: "succeeded" } },
+        filter: { "status" => { eq: "succeeded" } },
         group_by: [
           "beneficiary.gender"
         ]

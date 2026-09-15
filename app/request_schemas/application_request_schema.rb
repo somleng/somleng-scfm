@@ -40,6 +40,8 @@ class ApplicationRequestSchema < Dry::Validation::Contract
   # rule(:a).validate(contract: OtherContract)
   #
   register_macro(:contract) do |macro:|
+    next unless key?
+
     contract_instance = macro.args[0]
     contract_result = contract_instance.new(input_params: value)
     unless contract_result.success?

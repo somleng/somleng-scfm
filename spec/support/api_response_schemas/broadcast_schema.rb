@@ -11,6 +11,7 @@ module APIResponseSchema
       required(:audio_url).maybe(:str?)
       required(:message).maybe(:str?)
       required(:beneficiary_filter).maybe(:hash?)
+      required(:target_areas).maybe(:hash?)
       required(:metadata).maybe(:hash?)
       required(:status).filled(:str?)
       required(:error_code).maybe(:str?)

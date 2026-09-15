@@ -24,8 +24,12 @@ RSpec.describe StartBroadcast do
       account:,
       error_code: "no_matching_beneficiaries",
       beneficiary_filter: {
-        gender: { eq: "F" },
-        "address.iso_region_code": { eq: "KH-12" }
+        gender: { eq: "F" }
+      },
+      target_areas: {
+        geocode: [
+          { iso_region_code: "KH-12" }
+        ]
       },
       beneficiary_groups: [ beneficiary_group, other_beneficiary_group ]
     )
@@ -95,19 +99,26 @@ RSpec.describe StartBroadcast do
 
   it "handles audio channels" do
     account = create(:account)
+    create(:beneficiary_address, beneficiary: create(:beneficiary, account:), iso_region_code: "KH-12")
 
     broadcast = create(
       :broadcast,
       :audio,
       :with_attached_audio,
       status: :queued,
-      account:
+      account:,
+      target_areas: {
+        geocode: [
+          { iso_region_code: [ "KH-12" ] }
+        ]
+      }
     )
 
     StartBroadcast.call(broadcast)
 
     expect(broadcast).to have_attributes(
-      status: "running"
+      status: "running",
+      notifications: be_empty
     )
   end
 

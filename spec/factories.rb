@@ -87,6 +87,13 @@ FactoryBot.define do
     beneficiary_group {  association :beneficiary_group, account: broadcast.account }
   end
 
+  factory :geocode_target_area do
+    broadcast
+    path { [ "KH-1" ] }
+    geocode { path.last }
+    administrative_level { path.size }
+  end
+
   factory :beneficiary do
     account
     iso_country_code { "KH" }

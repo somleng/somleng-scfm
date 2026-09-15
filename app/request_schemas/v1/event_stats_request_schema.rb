@@ -1,5 +1,12 @@
 module V1
   class EventStatsRequestSchema < ApplicationRequestSchema
+    option :output_serializer, default: -> {
+      StatsRequestSchemaOutputSerializer.new(
+        filter_class: EventFilter,
+        field_definitions: FieldDefinitions::EventFields
+      )
+    }
+
     GROUPS = [ "type" ].freeze
 
     params do
@@ -10,17 +17,7 @@ module V1
     rule(:filter).validate(contract: EventFilter)
 
     def output
-      result = super
-
-      if result[:filter]
-        result[:filter_fields] = EventFilter.new(input_params: result[:filter]).output
-      end
-
-      result[:group_by_fields] = result[:group_by].map do |group|
-        FieldDefinitions::EventFields.find_by!(path: group)
-      end
-
-      result
+      output_serializer.serialize(super)
     end
   end
 end

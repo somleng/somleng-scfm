@@ -3,22 +3,23 @@ class StatsQuery
 
   class TooManyResultsError < StandardError; end
 
-  attr_reader :filter_fields, :group_by_fields
+  attr_reader :filter_group, :group_by
 
   def initialize(options)
-    @filter_fields = options.fetch(:filter_fields, [])
-    @group_by_fields = options.fetch(:group_by_fields)
+    @filter_group = options[:filter_group]
+    @group_by = options.fetch(:group_by)
   end
 
   def apply(scope)
-    query = apply_filters(scope)
+    query = scope
+    query = apply_filters(query) if filter_group.present?
     query = apply_aggregate(query)
 
     raise TooManyResultsError if total_count(query) > MAX_RESULTS
 
     query.count.map.with_index do |(key, value), index|
       StatResult.new(
-        groups: group_by_fields.map(&:path),
+        groups: group_by.map(&:name),
         key: Array(key),
         value:,
         sequence_number: index + 1
@@ -29,11 +30,11 @@ class StatsQuery
   private
 
   def apply_filters(scope)
-    FilterScopeQuery.new(scope, filter_fields).apply
+    FilterScope.new(scope:, filter_group:).apply
   end
 
   def apply_aggregate(scope)
-    AggregateQuery.new(scope, group_by_fields).apply
+    AggregateQuery.new(scope:, group_by:).apply
   end
 
   def total_count(query)

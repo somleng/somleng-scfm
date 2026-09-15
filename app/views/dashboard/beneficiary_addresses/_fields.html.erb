@@ -13,7 +13,7 @@
           label:
             safe_join(
               [
-                FieldDefinitions::BeneficiaryFields.find_by!(name: :iso_region_code).human_name(namespace: current_account.iso_country_code),
+                human_attribute_name(:iso_region_code, namespace: current_account.iso_country_code),
                 link_to(
                   "https://en.wikipedia.org/wiki/ISO_3166-2:#{current_account.iso_country_code}",
                   target: "_blank",
@@ -33,13 +33,13 @@
       <div class="col">
         <%= form.input(
           :administrative_division_level_2_code,
-          label: FieldDefinitions::BeneficiaryFields.find_by!(name: :administrative_division_level_2_code).human_name(namespace: current_account.iso_country_code)
+          label: human_attribute_name(:administrative_division_level_2_code, namespace: current_account.iso_country_code)
         ) %>
       </div>
       <div class="col">
         <%= form.input(
           :administrative_division_level_2_name,
-          label: FieldDefinitions::BeneficiaryFields.find_by!(name: :administrative_division_level_2_name).human_name(namespace: current_account.iso_country_code)
+          label: human_attribute_name(:administrative_division_level_2_name, namespace: current_account.iso_country_code)
         ) %>
       </div>
     </div>
@@ -48,13 +48,13 @@
       <div class="col">
         <%= form.input(
           :administrative_division_level_3_code,
-          label: FieldDefinitions::BeneficiaryFields.find_by!(name: :administrative_division_level_3_code).human_name(namespace: current_account.iso_country_code)
+          label: human_attribute_name(:administrative_division_level_3_code, namespace: current_account.iso_country_code)
         ) %>
       </div>
       <div class="col">
         <%= form.input(
           :administrative_division_level_3_name,
-          label: FieldDefinitions::BeneficiaryFields.find_by!(name: :administrative_division_level_3_name).human_name(namespace: current_account.iso_country_code)
+          label: human_attribute_name(:administrative_division_level_3_name, namespace: current_account.iso_country_code)
         ) %>
       </div>
     </div>
@@ -63,13 +63,13 @@
       <div class="col">
         <%= form.input(
           :administrative_division_level_4_code,
-          label: FieldDefinitions::BeneficiaryFields.find_by!(name: :administrative_division_level_4_code).human_name(namespace: current_account.iso_country_code)
+          label: human_attribute_name(:administrative_division_level_4_code, namespace: current_account.iso_country_code)
         ) %>
       </div>
       <div class="col">
         <%= form.input(
           :administrative_division_level_4_name,
-          label: FieldDefinitions::BeneficiaryFields.find_by!(name: :administrative_division_level_4_name).human_name(namespace: current_account.iso_country_code)
+          label: human_attribute_name(:administrative_division_level_4_name, namespace: current_account.iso_country_code)
         ) %>
       </div>
     </div>
@@ -78,13 +78,13 @@
       <div class="col">
         <%= form.input(
           :administrative_division_level_5_code,
-          label: FieldDefinitions::BeneficiaryFields.find_by!(name: :administrative_division_level_5_code).human_name(namespace: current_account.iso_country_code)
+          label: human_attribute_name(:administrative_division_level_5_code, namespace: current_account.iso_country_code)
         ) %>
       </div>
       <div class="col">
         <%= form.input(
           :administrative_division_level_5_name,
-          label: FieldDefinitions::BeneficiaryFields.find_by!(name: :administrative_division_level_5_name).human_name(namespace: current_account.iso_country_code)
+          label: human_attribute_name(:administrative_division_level_5_name, namespace: current_account.iso_country_code)
         ) %>
       </div>
     </div>

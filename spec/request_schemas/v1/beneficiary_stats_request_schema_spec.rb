@@ -27,20 +27,36 @@ module V1
         }
       ).output
 
-      expect(result[:filter_fields][0]).to have_attributes(
-        field_definition: FieldDefinitions::BeneficiaryFields.find_by!(name: :gender),
-        operator: :eq,
-        value: "M"
-      )
-      expect(result[:filter_fields][1]).to have_attributes(
-        field_definition: FieldDefinitions::BeneficiaryFields.find_by!(name: :iso_country_code),
-        operator: :eq,
-        value: "KH"
-      )
-      expect(result[:group_by_fields]).to contain_exactly(
-        FieldDefinitions::BeneficiaryFields.find_by!(name: :iso_country_code),
-        FieldDefinitions::BeneficiaryFields.find_by!(name: :gender),
-        FieldDefinitions::BeneficiaryFields.find_by!(name: :iso_region_code)
+      expect(result).to include(
+        filter_group: have_attributes(
+          conditions: contain_exactly(
+            have_attributes(
+              query: have_attributes(
+                arel_column: Beneficiary.arel_table[:gender]
+              ),
+              operator: :eq,
+              value: "M"
+            ),
+            have_attributes(
+              query: have_attributes(
+                arel_column: Beneficiary.arel_table[:iso_country_code]
+              ),
+              operator: :eq,
+              value: "KH"
+            )
+          )
+        ),
+        group_by: contain_exactly(
+          have_attributes(
+            name: "iso_country_code",
+          ),
+          have_attributes(
+            name: "gender"
+          ),
+          have_attributes(
+            name: "address.iso_region_code"
+          )
+        )
       )
     end
 

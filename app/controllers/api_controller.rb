@@ -59,8 +59,8 @@ class APIController < ActionController::API
     validate_request_schema(
       with: with.filter_contract,
       input_params: request.query_parameters
-    ) do |permitted_params|
-      FilterScopeQuery.new(scope, permitted_params).apply
+    ) do |filter_group|
+      FilterScope.new(scope:, filter_group:).apply
     end
   end
 

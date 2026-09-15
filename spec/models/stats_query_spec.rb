@@ -6,8 +6,8 @@ RSpec.describe StatsQuery, type: :model do
     create_list(:beneficiary, 3, gender: "F")
 
     result = StatsQuery.new(
-      group_by_fields: [
-        FieldDefinitions::BeneficiaryFields.find_by!(name: :gender)
+      group_by: [
+        build_beneficiary_group_by_field(:gender)
       ],
     ).apply(Beneficiary.all)
 
@@ -47,17 +47,27 @@ RSpec.describe StatsQuery, type: :model do
     )
 
     result = StatsQuery.new(
-      filter_fields: [
-        FilterField.new(
-          field_definition: FieldDefinitions::BeneficiaryFields.find_by!(name: :gender),
-          operator: "eq",
-          value: "M"
+      filter_group: FilterGroup.new(
+        conditions: [
+          FilterField.new(
+            name: :gender,
+            operator: "eq",
+            value: "M"
+          )
+        ]
+      ),
+      group_by: [
+        build_beneficiary_group_by_field(:iso_country_code),
+        build_beneficiary_group_by_field(
+          "address.iso_region_code",
+          arel_column: BeneficiaryAddress.arel_table[:iso_region_code],
+          association: :addresses
+        ),
+        build_beneficiary_group_by_field(
+          "address.administrative_division_level_2_code",
+          arel_column: BeneficiaryAddress.arel_table[:administrative_division_level_2_code],
+          association: :addresses
         )
-      ],
-      group_by_fields: [
-        FieldDefinitions::BeneficiaryFields.find_by!(name: :iso_country_code),
-        FieldDefinitions::BeneficiaryFields.find_by!(name: :iso_region_code),
-        FieldDefinitions::BeneficiaryFields.find_by!(name: :administrative_division_level_2_code)
       ],
     ).apply(Beneficiary.all)
 
@@ -94,12 +104,30 @@ RSpec.describe StatsQuery, type: :model do
 
     expect {
       StatsQuery.new(
-        group_by_fields: [
-          FieldDefinitions::BeneficiaryFields.find_by!(name: :iso_country_code),
-          FieldDefinitions::BeneficiaryFields.find_by!(name: :iso_region_code),
-          FieldDefinitions::BeneficiaryFields.find_by!(name: :administrative_division_level_2_code)
+        group_by: [
+          build_beneficiary_group_by_field(:iso_country_code),
+          build_beneficiary_group_by_field(
+            "address.iso_region_code",
+            arel_column: BeneficiaryAddress.arel_table[:iso_region_code],
+            association: :addresses
+          ),
+          build_beneficiary_group_by_field(
+            "address.administrative_division_level_2_code",
+            arel_column: BeneficiaryAddress.arel_table[:administrative_division_level_2_code],
+            association: :addresses
+          )
         ],
       ).apply(Beneficiary.all)
     }.to raise_error(StatsQuery::TooManyResultsError)
+  end
+
+  def build_beneficiary_group_by_field(name, arel_column: nil, association: nil)
+    GroupByField.new(
+      name: name.to_s,
+      query: FieldQuery.new(
+        arel_column: arel_column || Beneficiary.arel_table[name],
+        association:
+      )
+    )
   end
 end

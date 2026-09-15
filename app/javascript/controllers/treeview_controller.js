@@ -26,23 +26,24 @@ export default class extends Controller {
   }
 
   #markChecked() {
-    this.tree
-      .deepest()
-      .available()
-      .each((n) => {
-        const node = n.itree.ref
-        const originalLabel = node.querySelector("a.title")
-        const parent = originalLabel.parentNode
+    const selectedPaths = new Set(
+      this.selectedValue.map((path) => this.#pathKey(path)),
+    )
 
-        const label = document.createElement("a")
-        label.className = originalLabel.className
-        label.innerHTML = originalLabel.innerHTML
-        parent.replaceChild(label, originalLabel)
+    this.tree.available().each((n) => {
+      const node = n.itree.ref
+      const originalLabel = node.querySelector("a.title")
+      const parent = originalLabel.parentNode
 
-        if (this.selectedValue.includes(n.id)) {
-          n.check()
-        }
-      })
+      const label = document.createElement("a")
+      label.className = originalLabel.className
+      label.innerHTML = originalLabel.innerHTML
+      parent.replaceChild(label, originalLabel)
+
+      if (selectedPaths.has(this.#pathKey(n.metadata.path))) {
+        n.check()
+      }
+    })
   }
 
   #hideUnchecked() {
@@ -58,5 +59,9 @@ export default class extends Controller {
 
       checkbox.disabled = true
     })
+  }
+
+  #pathKey(path) {
+    return path.join(".")
   }
 }

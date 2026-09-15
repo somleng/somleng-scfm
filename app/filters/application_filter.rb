@@ -6,7 +6,7 @@ class ApplicationFilter < ApplicationRequestSchema
 
     params do
       field_collection.each do |field|
-        optional(field.path.to_sym).filled(:hash).schema(field.schema.schema_definition)
+        optional(field.path.to_sym).filled(:hash).schema(field.filter.schema.schema_definition)
       end
     end
   end
@@ -21,8 +21,6 @@ class ApplicationFilter < ApplicationRequestSchema
       rule(:filter).validate(contract: this)
 
       def output
-        return {} if result[:filter].blank?
-
         self.class.superclass.new(input_params: result[:filter]).output
       end
     end
@@ -30,13 +28,27 @@ class ApplicationFilter < ApplicationRequestSchema
 
   def output
     filters = super
-    return {} if filters.blank?
+    return FilterGroup.new if filters.blank?
 
-    filters.map do |(filter, condition)|
+    build_filter_group(filters)
+  end
+
+  private
+
+  def build_filter_group(filters)
+    group = filters.map do |(filter, condition)|
       operator, value = condition.first
       field_definition = field_collection.find_by!(path: filter)
 
-      FilterField.new(field_definition:, operator:, value:)
+      FilterField.new(
+        name: field_definition.name,
+        operator:,
+        value:,
+        query: field_definition.filter.query,
+        metadata: field_definition.metadata
+      )
     end
+
+    FilterGroup.new(conditions: group)
   end
 end

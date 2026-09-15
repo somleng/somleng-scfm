@@ -80,6 +80,24 @@ module V1
       expect(
         validate_schema(input_params: { data: { attributes: { beneficiary_filter: { status: { eq: "active" } } } } }, options: { resource: stopped_broadcast })
       ).not_to have_valid_field(:data, :attributes, :beneficiary_filter)
+
+      expect(
+        validate_schema(
+          input_params: {
+            data: {
+              attributes: {
+                channels: [ "audio" ],
+                beneficiary_filter: {
+                  gender: { eq: "F" }
+                }
+              }
+            }
+          },
+          options: {
+            resource: create(:broadcast, :pending, :audio)
+          }
+        )
+      ).not_to have_valid_field(:data, :attributes, :beneficiary_filter)
     end
 
     it "validates the status" do
@@ -160,6 +178,7 @@ module V1
     it "validates the beneficiary groups" do
       account = create(:account)
       broadcast = create(:broadcast, :pending, account:)
+      audio_broadcast = create(:broadcast, :pending, :audio, account:)
       running_broadcast = create(:broadcast, :running, account:)
       beneficiary_group = create(:beneficiary_group, account:)
       other_beneficiary_group = create(:beneficiary_group)
@@ -227,12 +246,131 @@ module V1
           }
         )
       ).not_to have_valid_field(:data, :relationships, :beneficiary_groups, :data)
+
+      expect(
+        validate_schema(
+          input_params: {
+            data: {
+              relationships: {
+                beneficiary_groups: {
+                  data: [
+                    {
+                      id: beneficiary_group.id,
+                      type: "beneficiary_group"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          options: {
+            account:,
+            resource: audio_broadcast
+          }
+        )
+      ).not_to have_valid_field(:data, :relationships, :beneficiary_groups, :data)
+    end
+
+    it "validates the target areas" do
+      account = create(:account)
+      broadcast = create(:broadcast, :pending, account:)
+      running_broadcast = create(:broadcast, :running, account:)
+
+      expect(
+        validate_schema(
+          input_params: {
+            data: {
+              attributes: {
+                target_areas: {
+                  geocode: [ {} ]
+                }
+              }
+            }
+          },
+          options: {
+            account:,
+            resource: broadcast
+          }
+        )
+      ).not_to have_valid_field(:data, :attributes, :target_areas, :geocode, 0, :iso_region_code)
+
+      expect(
+        validate_schema(
+          input_params: {
+            data: {
+              attributes: {
+                target_areas: {
+                  geocode: [
+                    { iso_region_code: "KH-1", administrative_division_level_3_code: "010201" }
+                  ]
+                }
+              }
+            }
+          },
+          options: {
+            account:,
+            resource: broadcast
+          }
+        )
+      ).not_to have_valid_field(
+        :data, :attributes, :target_areas, :geocode, 0,
+        error_message: "must include contiguous administrative levels starting at level 1"
+      )
+
+      expect(
+        validate_schema(
+          input_params: {
+            data: {
+              attributes: {
+                target_areas: {
+                  geocode: [
+                    {
+                      iso_region_code: "KH-1"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          options: {
+            account:,
+            resource: running_broadcast
+          }
+        )
+      ).not_to have_valid_field(:data, :attributes, :target_areas)
+
+      expect(
+        validate_schema(
+          input_params: {
+            data: {
+              attributes: {
+                target_areas: {
+                  geocode: [
+                    {
+                      iso_region_code: "KH-1"
+                    },
+                    {
+                      iso_region_code: "KH-2",
+                      administrative_division_level_2_code: "0201"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          options: {
+            account:,
+            resource: broadcast
+          }
+        )
+      ).to have_valid_field(:data, :attributes, :target_areas, :geocode)
     end
 
     it "handles post processing" do
-      pending_broadcast = create(:broadcast, :pending, :voice_call)
-      errored_broadcast = create(:broadcast, :errored, :voice_call)
-      text_message_broadcast = create(:broadcast, :pending, :text_message)
+      account = create(:account)
+      pending_broadcast = create(:broadcast, :pending, :voice_call, account:)
+      errored_broadcast = create(:broadcast, :errored, :voice_call, account:)
+      text_message_broadcast = create(:broadcast, :pending, :text_message, account:)
 
       result = validate_schema(
         input_params: {
@@ -249,7 +387,7 @@ module V1
 
       expect(result).to include(
         desired_status: :queued,
-        audio_url: "http://example.com/sample.mp3"
+        audio_url: "http://example.com/sample.mp3",
       )
 
       result = validate_schema(

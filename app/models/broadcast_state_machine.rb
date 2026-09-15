@@ -3,7 +3,7 @@ class BroadcastStateMachine
 
   delegate :pending?, :errored?, :may_transition_to?, :transition_to!, to: :state_machine
 
-  class StateMachine < StateMachine::Machine
+  class StateMachine < ::StateMachine::Machine
     state :pending, initial: true, transitions_to: { running: { as: :queued } }
     state :queued
     state :errored, transitions_to: { running: { as: :queued } }
